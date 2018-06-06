@@ -1,0 +1,45 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="gurux.dlms.android.GXXmlTranslator">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:text="To XML"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/toXml" />
+
+            <Button
+                android:text="To PDU"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/toPdu" />
+        </LinearLayout>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:text="@string/pduHelp"
+            android:ems="10"
+            android:id="@+id/pdu"
+            android:gravity="start|top"
+            android:layout_height="200dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/xmlHelp"
+            android:ems="10"
+            android:id="@+id/xml"
+            android:gravity="start|top"
+            android:layout_weight="1" />
+    </LinearLayout>
+</FrameLayout>
