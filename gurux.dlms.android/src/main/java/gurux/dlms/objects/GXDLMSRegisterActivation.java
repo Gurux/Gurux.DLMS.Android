@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -50,7 +50,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSRegisterActivation
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSRegisterActivation
  */
 public class GXDLMSRegisterActivation extends GXDLMSObject
         implements IGXDLMSBase {
@@ -150,23 +150,24 @@ public class GXDLMSRegisterActivation extends GXDLMSObject
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // RegisterAssignment
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         // MaskList
-        if (!isRead(3)) {
+        if (all || !isRead(3)) {
             attributes.add(new Integer(3));
         }
         // ActiveMask
-        if (!isRead(4)) {
+        if (all || !isRead(4)) {
             attributes.add(new Integer(4));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -222,9 +223,9 @@ public class GXDLMSRegisterActivation extends GXDLMSObject
             for (GXDLMSObjectDefinition it : getRegisterAssignment()) {
                 data.setUInt8(DataType.STRUCTURE.getValue());
                 data.setUInt8(2);
-                GXCommon.setData(data, DataType.UINT16,
+                GXCommon.setData(settings, data, DataType.UINT16,
                         new Integer(it.getObjectType().getValue()));
-                GXCommon.setData(data, DataType.OCTET_STRING,
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
                         GXCommon.logicalNameToBytes(it.getLogicalName()));
             }
             return data.array();
@@ -236,11 +237,13 @@ public class GXDLMSRegisterActivation extends GXDLMSObject
             for (Entry<byte[], byte[]> it : maskList) {
                 data.setUInt8(DataType.STRUCTURE.getValue());
                 data.setUInt8(2);
-                GXCommon.setData(data, DataType.OCTET_STRING, it.getKey());
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                        it.getKey());
                 data.setUInt8(DataType.ARRAY.getValue());
                 data.setUInt8(it.getValue().length);
                 for (byte b : it.getValue()) {
-                    GXCommon.setData(data, DataType.UINT8, new Byte(b));
+                    GXCommon.setData(settings, data, DataType.UINT8,
+                            new Byte(b));
                 }
             }
             return data.array();

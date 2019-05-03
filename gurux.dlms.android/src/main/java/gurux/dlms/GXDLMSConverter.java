@@ -16,6 +16,7 @@ import java.util.List;
 
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ObjectType;
+import gurux.dlms.enums.Standard;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSObjectCollection;
@@ -28,6 +29,25 @@ public class GXDLMSConverter {
      */
     private GXStandardObisCodeCollection codes =
             new GXStandardObisCodeCollection();
+
+    private Standard standard;
+
+    /**
+     * Constructor.
+     */
+    public GXDLMSConverter() {
+
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param value
+     *            Used standard.
+     */
+    public GXDLMSConverter(Standard value) {
+        standard = value;
+    }
 
     /**
      * @param context Context.
@@ -269,6 +289,9 @@ public class GXDLMSConverter {
     updateOBISCodeInformation(final Context context, final GXDLMSObjectCollection objects) {
         synchronized (codes) {
             if (codes.size() == 0) {
+                if (context == null){
+                    return;
+                }
                 readStandardObisInfo(context, codes);
             }
             for (GXDLMSObject it : objects) {
@@ -429,8 +452,6 @@ public class GXDLMSConverter {
             throw new IllegalArgumentException("Can't change array types.");
         case BCD:
             break;
-        case BITSTRING:
-            break;
         case BOOLEAN:
             if (value instanceof String) {
                 return Boolean.parseBoolean((String) value);
@@ -485,6 +506,7 @@ public class GXDLMSConverter {
             throw new IllegalArgumentException(
                     "Can't change octect string type.");
         case STRING:
+        case BITSTRING:
             return String.valueOf(value);
         case STRING_UTF8:
             return String.valueOf(value);

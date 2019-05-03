@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -41,7 +41,7 @@ import gurux.dlms.objects.enums.SecuritySuite;
 
 public class AesGcmParameter {
 
-    private byte tag;
+    private int tag;
     private Security security;
 
     /**
@@ -129,7 +129,7 @@ public class AesGcmParameter {
     public AesGcmParameter(final int forTag, final Security forSecurity,
             final long forInvocationCounter, final byte[] forSystemTitle,
             final byte[] forBlockCipherKey, final byte[] forAuthenticationKey) {
-        tag = (byte) forTag;
+        tag = forTag;
         security = forSecurity;
         invocationCounter = forInvocationCounter;
         systemTitle = forSystemTitle;
@@ -169,7 +169,7 @@ public class AesGcmParameter {
             final byte[] forOriginatorSystemTitle,
             final byte[] forRecipientSystemTitle, final byte[] forDateTime,
             final byte[] forOtherInformation) {
-        tag = (byte) forTag;
+        tag = forTag;
         security = forSecurity;
         invocationCounter = forInvocationCounter;
         securitySuite = forSecuritySuite;
@@ -200,7 +200,7 @@ public class AesGcmParameter {
         type = CountType.PACKET;
     }
 
-    public final byte getTag() {
+    public final int getTag() {
         return tag;
     }
 

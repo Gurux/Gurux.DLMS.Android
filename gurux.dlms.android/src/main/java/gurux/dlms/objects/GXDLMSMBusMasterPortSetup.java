@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -43,7 +43,7 @@ import gurux.dlms.objects.enums.BaudRate;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSMBusMasterPortSetup
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSMBusMasterPortSetup
  */
 public class GXDLMSMBusMasterPortSetup extends GXDLMSObject
         implements IGXDLMSBase {
@@ -102,15 +102,16 @@ public class GXDLMSMBusMasterPortSetup extends GXDLMSObject
     }
 
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // CommSpeed
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);

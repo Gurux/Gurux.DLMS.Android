@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -57,7 +57,7 @@ import gurux.dlms.objects.enums.SortMethod;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSProfileGeneric
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSProfileGeneric
  */
 public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     private GXProfileGenericUpdater updater = null;
@@ -344,39 +344,40 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // Buffer
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         // CaptureObjects
-        if (!isRead(3)) {
+        if (all || !isRead(3)) {
             attributes.add(new Integer(3));
         }
         // CapturePeriod
-        if (!isRead(4)) {
+        if (all || !isRead(4)) {
             attributes.add(new Integer(4));
         }
         // SortMethod
-        if (!isRead(5)) {
+        if (all || !isRead(5)) {
             attributes.add(new Integer(5));
         }
         // SortObject
-        if (!isRead(6)) {
+        if (all || !isRead(6)) {
             attributes.add(new Integer(6));
         }
         // EntriesInUse
-        if (!isRead(7)) {
+        if (all || !isRead(7)) {
             attributes.add(new Integer(7));
         }
         // ProfileEntries
-        if (!isRead(8)) {
+        if (all || !isRead(8)) {
             attributes.add(new Integer(8));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -413,16 +414,16 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(4); // Count
             // ClassID
-            GXCommon.setData(data, DataType.UINT16,
+            GXCommon.setData(null, data, DataType.UINT16,
                     it.getKey().getObjectType().getValue());
             // LN
-            GXCommon.setData(data, DataType.OCTET_STRING,
+            GXCommon.setData(null, data, DataType.OCTET_STRING,
                     GXCommon.logicalNameToBytes(it.getKey().getLogicalName()));
             // Attribute Index
-            GXCommon.setData(data, DataType.INT8,
+            GXCommon.setData(null, data, DataType.INT8,
                     it.getValue().getAttributeIndex());
             // Data Index
-            GXCommon.setData(data, DataType.UINT16,
+            GXCommon.setData(null, data, DataType.UINT16,
                     it.getValue().getDataIndex());
         }
         return data.array();
@@ -468,7 +469,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
                         tp = GXDLMSConverter.getDLMSDataType(value);
                         types[pos] = tp;
                     }
-                    GXCommon.setData(data, tp, value);
+                    GXCommon.setData(settings, data, tp, value);
                 }
                 ++pos;
             }
@@ -584,14 +585,14 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
         if (e.getSelector() == 1) {
             GXDataInfo info = new GXDataInfo();
             info.setType(DataType.DATETIME);
-            java.util.Date start = ((GXDateTime) GXCommon
-                    .getData(new GXByteBuffer((byte[]) arr[1]), info))
-                            .getMeterCalendar().getTime();
+            java.util.Date start = ((GXDateTime) GXCommon.getData(settings,
+                    new GXByteBuffer((byte[]) arr[1]), info)).getMeterCalendar()
+                            .getTime();
             info.clear();
             info.setType(DataType.DATETIME);
-            java.util.Date end = ((GXDateTime) GXCommon
-                    .getData(new GXByteBuffer((byte[]) arr[2]), info))
-                            .getMeterCalendar().getTime();
+            java.util.Date end = ((GXDateTime) GXCommon.getData(settings,
+                    new GXByteBuffer((byte[]) arr[2]), info)).getMeterCalendar()
+                            .getTime();
             for (Object row : getBuffer()) {
                 java.util.Date tm;
                 Object tmp = ((Object[]) row)[0];
@@ -687,24 +688,27 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
             data.setUInt8((byte) 4); // Count
             if (sortObject == null) {
                 // ClassID
-                GXCommon.setData(data, DataType.UINT16, 0);
+                GXCommon.setData(settings, data, DataType.UINT16, 0);
                 // LN
-                GXCommon.setData(data, DataType.OCTET_STRING, new byte[6]);
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                        new byte[6]);
                 // Selected Attribute Index
-                GXCommon.setData(data, DataType.INT8, 0);
+                GXCommon.setData(settings, data, DataType.INT8, 0);
                 // Selected Data Index
-                GXCommon.setData(data, DataType.UINT16, 0);
+                GXCommon.setData(settings, data, DataType.UINT16, 0);
             } else {
                 // ClassID
-                GXCommon.setData(data, DataType.UINT16,
+                GXCommon.setData(settings, data, DataType.UINT16,
                         sortObject.getObjectType().getValue());
                 // LN
-                GXCommon.setData(data, DataType.OCTET_STRING, GXCommon
+                GXCommon.setData(settings, data, DataType.OCTET_STRING, GXCommon
                         .logicalNameToBytes(sortObject.getLogicalName()));
                 // Attribute Index
-                GXCommon.setData(data, DataType.INT8, sortObjectAttributeIndex);
+                GXCommon.setData(settings, data, DataType.INT8,
+                        sortObjectAttributeIndex);
                 // Data Index
-                GXCommon.setData(data, DataType.UINT16, sortObjectDataIndex);
+                GXCommon.setData(settings, data, DataType.UINT16,
+                        sortObjectDataIndex);
             }
             return data.array();
         }
@@ -749,8 +753,13 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
                         obj = gurux.dlms.GXDLMSClient.createObject(type);
                         obj.setLogicalName(ln);
                     }
-                    addCaptureObject(obj, ((Number) tmp[2]).intValue(),
-                            ((Number) tmp[3]).intValue());
+                    int index;
+                    try {
+                        index = ((Byte) tmp[2]) & 0xFF;
+                    } catch (Exception ex) {
+                        index = ((Number) tmp[2]).intValue();
+                    }
+                    addCaptureObject(obj, index, ((Number) tmp[3]).intValue());
                 }
             }
         } else if (e.getIndex() == 4) {
@@ -893,7 +902,12 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
                                     capturePeriod);
                             row[colIndex] = new GXDateTime(lastDate.getTime());
                         }
+                    } else if (type == DataType.DATETIME
+                            && row[colIndex] instanceof Number) {
+                        row[colIndex] = GXDateTime.fromUnixTime(
+                                ((Number) row[colIndex]).longValue());
                     }
+
                     Entry<GXDLMSObject, GXDLMSCaptureObject> item =
                             cols.get(colIndex);
                     if (item.getKey() instanceof GXDLMSRegister

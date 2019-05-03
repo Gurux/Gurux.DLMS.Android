@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -50,7 +50,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSMBusClient
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSMBusClient
  */
 public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
     private long capturePeriod;
@@ -215,55 +215,56 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // MBusPortReference
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         // CaptureDefinition
-        if (canRead(3)) {
+        if (all || canRead(3)) {
             attributes.add(new Integer(3));
         }
         // CapturePeriod
-        if (canRead(4)) {
+        if (all || canRead(4)) {
             attributes.add(new Integer(4));
         }
         // PrimaryAddress
-        if (canRead(5)) {
+        if (all || canRead(5)) {
             attributes.add(new Integer(5));
         }
         // IdentificationNumber
-        if (canRead(6)) {
+        if (all || canRead(6)) {
             attributes.add(new Integer(6));
         }
         // ManufacturerID
-        if (canRead(7)) {
+        if (all || canRead(7)) {
             attributes.add(new Integer(7));
         }
         // Version
-        if (canRead(8)) {
+        if (all || canRead(8)) {
             attributes.add(new Integer(8));
         }
         // DeviceType
-        if (canRead(9)) {
+        if (all || canRead(9)) {
             attributes.add(new Integer(9));
         }
         // AccessNumber
-        if (canRead(10)) {
+        if (all || canRead(10)) {
             attributes.add(new Integer(10));
         }
         // Status
-        if (canRead(11)) {
+        if (all || canRead(11)) {
             attributes.add(new Integer(11));
         }
         // Alarm
-        if (canRead(12)) {
+        if (all || canRead(12)) {
             attributes.add(new Integer(12));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -346,11 +347,12 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
             for (Map.Entry<String, String> it : captureDefinition) {
                 buff.setUInt8(DataType.STRUCTURE.getValue());
                 buff.setUInt8(2);
-                GXCommon.setData(buff, DataType.UINT8, it.getKey());
+                GXCommon.setData(settings, buff, DataType.UINT8, it.getKey());
                 if (it.getValue() == null) {
-                    GXCommon.setData(buff, DataType.OCTET_STRING, null);
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING,
+                            null);
                 } else {
-                    GXCommon.setData(buff, DataType.OCTET_STRING,
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING,
                             it.getValue().getBytes());
                 }
             }

@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -44,7 +44,7 @@ import gurux.dlms.objects.enums.BaudRate;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSHdlcSetup
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSHdlcSetup
  */
 public class GXDLMSHdlcSetup extends GXDLMSObject implements IGXDLMSBase {
     private int inactivityTimeout;
@@ -173,43 +173,44 @@ public class GXDLMSHdlcSetup extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // CommunicationSpeed
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         // WindowSizeTransmit
-        if (!isRead(3)) {
+        if (all || !isRead(3)) {
             attributes.add(new Integer(3));
         }
         // WindowSizeReceive
-        if (!isRead(4)) {
+        if (all || !isRead(4)) {
             attributes.add(new Integer(4));
         }
         // MaximumInfoLengthTransmit
-        if (!isRead(5)) {
+        if (all || !isRead(5)) {
             attributes.add(new Integer(5));
         }
         // MaximumInfoLengthReceive
-        if (!isRead(6)) {
+        if (all || !isRead(6)) {
             attributes.add(new Integer(6));
         }
         // InterCharachterTimeout
-        if (!isRead(7)) {
+        if (all || !isRead(7)) {
             attributes.add(new Integer(7));
         }
         // InactivityTimeout
-        if (!isRead(8)) {
+        if (all || !isRead(8)) {
             attributes.add(new Integer(8));
         }
         // DeviceAddress
-        if (!isRead(9)) {
+        if (all || !isRead(9)) {
             attributes.add(new Integer(9));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);

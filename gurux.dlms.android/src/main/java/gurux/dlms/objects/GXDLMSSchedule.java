@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -47,7 +47,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSSchedule
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSSchedule
  */
 public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
     /**
@@ -113,15 +113,16 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // Entries
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -183,15 +184,15 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
             for (Object it : arr) {
                 GXDLMSScheduleEntry item = new GXDLMSScheduleEntry();
                 Object[] tmp = (Object[]) it;
-                item.setIndex(((Number) tmp[0]).byteValue());
+                item.setIndex(((Number) tmp[0]).intValue());
                 item.setEnable(((Boolean) tmp[1]).booleanValue());
                 item.setLogicalName(GXDLMSClient
                         .changeType((byte[]) tmp[2], DataType.OCTET_STRING)
                         .toString());
-                item.setScriptSelector(((Number) tmp[3]).byteValue());
+                item.setScriptSelector(((Number) tmp[3]).intValue());
                 item.setSwitchTime((GXDateTime) GXDLMSClient
                         .changeType((byte[]) tmp[4], DataType.DATETIME));
-                item.setValidityWindow(((Number) tmp[5]).byteValue());
+                item.setValidityWindow(((Number) tmp[5]).intValue());
                 item.setExecWeekdays((String) tmp[6]);
                 item.setExecSpecDays((String) tmp[7]);
                 item.setBeginDate((GXDateTime) GXDLMSClient

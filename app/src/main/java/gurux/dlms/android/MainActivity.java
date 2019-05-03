@@ -273,6 +273,6 @@ public class MainActivity extends AppCompatActivity
             mDevice.getMedia().close();
             mDevice.setMedia(null);
         }
-        super.onStop();
+        super.onDestroy();
     }
 }

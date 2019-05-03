@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -49,7 +49,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSRegister
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSRegister
  */
 public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
     private int scaler;
@@ -188,20 +188,20 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public int[] getAttributeIndexToRead() {
-        // CHECKSTYLE:ON
+    public int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // ScalerUnit
-        if (!isRead(3)) {
+        if (all || !isRead(3)) {
             attributes.add(new Integer(3));
         }
         // Value
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -276,8 +276,9 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
             GXByteBuffer data = new GXByteBuffer();
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(2);
-            GXCommon.setData(data, DataType.INT8, new Integer(scaler));
-            GXCommon.setData(data, DataType.ENUM, new Integer(unit));
+            GXCommon.setData(settings, data, DataType.INT8,
+                    new Integer(scaler));
+            GXCommon.setData(settings, data, DataType.ENUM, new Integer(unit));
             return data.array();
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);

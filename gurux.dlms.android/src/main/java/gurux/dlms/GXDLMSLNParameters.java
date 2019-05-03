@@ -26,13 +26,15 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
 package gurux.dlms;
+
+import gurux.dlms.enums.Command;
 
 /**
  * LN Parameters
@@ -46,6 +48,10 @@ class GXDLMSLNParameters {
      * DLMS Command.
      */
     int command;
+    /**
+     * DLMS ciphered Command.
+     */
+    int cipheredCommand;
     /**
      * Request type.
      */
@@ -118,12 +124,14 @@ class GXDLMSLNParameters {
     GXDLMSLNParameters(final GXDLMSSettings forSettings, final long forInvokeId,
             final int forCommand, final int forCommandType,
             final GXByteBuffer forAttributeDescriptor,
-            final GXByteBuffer forData, final int forStatus) {
+            final GXByteBuffer forData, final int forStatus,
+            int forCipheredCommand) {
         settings = forSettings;
         invokeId = forInvokeId;
         setBlockIndex(settings.getBlockIndex());
         blockNumberAck = settings.getBlockNumberAck();
         command = forCommand;
+        cipheredCommand = forCipheredCommand;
         setRequestType(forCommandType);
         attributeDescriptor = forAttributeDescriptor;
         data = forData;
@@ -132,6 +140,13 @@ class GXDLMSLNParameters {
         setMultipleBlocks(forSettings.getCount() != forSettings.getIndex());
         setLastBlock(forSettings.getCount() == forSettings.getIndex());
         windowSize = 1;
+        if (settings != null) {
+            settings.setCommand(forCommand);
+            if (forCommand == Command.GET_REQUEST
+                    && forCommandType != GetCommandType.NEXT_DATA_BLOCK) {
+                settings.setCommandType((byte) forCommandType);
+            }
+        }
     }
 
     /**
@@ -146,6 +161,13 @@ class GXDLMSLNParameters {
      */
     public int getCommand() {
         return command;
+    }
+
+    /**
+     * @return Ciphered DLMS Command.
+     */
+    public int getCipheredCommand() {
+        return cipheredCommand;
     }
 
     /**

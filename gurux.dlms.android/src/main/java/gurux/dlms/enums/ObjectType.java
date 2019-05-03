@@ -26,13 +26,17 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
 package gurux.dlms.enums;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * ObjectType enumerates the usable types of DLMS objects in GuruxDLMS.
@@ -214,6 +218,8 @@ public enum ObjectType {
 
     PUSH_SETUP(40),
 
+    COMPACT_DATA(62),
+
     PARAMETER_MONITOR(65), WIRELESS_MODE_Q_CHANNEL(73),
     MBUS_MASTER_PORT_SETUP(74),
     /*
@@ -304,7 +310,47 @@ public enum ObjectType {
      * In an object of type UtilityTables each "Table" = ANSI C12.19:1997 table
      * data is represented as an instance, and identified by its logical name.
      */
-    UTILITY_TABLES(26);
+    UTILITY_TABLES(26),
+
+    /**
+     * S-FSK Phy MAC Setup
+     */
+    SFSK_PHY_MAC_SETUP(50),
+
+    /*
+     * S-FSK Active initiator.
+     */
+    SFSK_ACTIVE_INITIATOR(51),
+    /*
+     * S-FSK MAC synchronization timeouts
+     */
+    SFSK_MAC_SYNCHRONIZATION_TIMEOUTS(52),
+
+    /*
+     * S-FSK MAC Counters.
+     */
+    SFSK_MAC_COUNTERS(53),
+
+    /*
+     * G3-PLC MAC layer counters
+     */
+    G3_PLC_MAC_LAYER_COUNTERS(90),
+
+    /*
+     * G3-PLC MAC setup.
+     */
+    G3_PLC_MAC_SETUP(91),
+
+    /*
+     * G3-PLC 6LoWPAN.
+     */
+    G3_PLC6_LO_WPAN(92),
+
+    /**
+     * Tariff Plan (Piano Tariffario) is used in Italian standard UNI/TS
+     * 11291-11.
+     */
+    TARIFF_PLAN(8192);
 
     private int intValue;
     private static java.util.HashMap<Integer, ObjectType> mappings;
@@ -336,5 +382,20 @@ public enum ObjectType {
     public static ObjectType forValue(final int value) {
         ObjectType ot = getMappings().get(new Integer(value));
         return ot;
+    }
+
+    public static ObjectType getEnum(final String value) {
+        String tmp = value.toUpperCase();
+        Iterator<Entry<Integer, ObjectType>> it =
+                mappings.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, ObjectType> pair =
+                    (Map.Entry<Integer, ObjectType>) it.next();
+            if (tmp.compareTo(pair.getValue().toString()) == 0 || tmp.compareTo(
+                    pair.getValue().toString().replaceAll("_", "")) == 0) {
+                return pair.getValue();
+            }
+        }
+        return null;
     }
 }

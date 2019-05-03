@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -51,7 +51,7 @@ import gurux.dlms.objects.enums.ImageTransferStatus;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSImageTransfer
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSImageTransfer
  */
 public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     private long imageSize;
@@ -206,35 +206,36 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // ImageBlockSize
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         // ImageTransferredBlocksStatus
-        if (!isRead(3)) {
+        if (all || !isRead(3)) {
             attributes.add(new Integer(3));
         }
         // ImageFirstNotTransferredBlockNumber
-        if (!isRead(4)) {
+        if (all || !isRead(4)) {
             attributes.add(new Integer(4));
         }
         // ImageTransferEnabled
-        if (!isRead(5)) {
+        if (all || !isRead(5)) {
             attributes.add(new Integer(5));
         }
         // ImageTransferStatus
-        if (!isRead(6)) {
+        if (all || !isRead(6)) {
             attributes.add(new Integer(6));
         }
         // ImageActivateInfo
-        if (!isRead(7)) {
+        if (all || !isRead(7)) {
             attributes.add(new Integer(7));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -370,10 +371,11 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
                 data.setUInt8((byte) DataType.STRUCTURE.getValue());
                 // Item count.
                 data.setUInt8((byte) 3);
-                GXCommon.setData(data, DataType.UINT32, new Long(it.getSize()));
-                GXCommon.setData(data, DataType.OCTET_STRING,
+                GXCommon.setData(settings, data, DataType.UINT32,
+                        new Long(it.getSize()));
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
                         it.getIdentification());
-                GXCommon.setData(data, DataType.OCTET_STRING,
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
                         it.getSignature());
             }
             return data.array();
@@ -397,11 +399,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
                 setImageBlockSize(((Number) e.getValue()).intValue());
             }
         } else if (e.getIndex() == 3) {
-            if (e.getValue() == null) {
-                imageTransferredBlocksStatus = "";
-            } else {
-                imageTransferredBlocksStatus = e.getValue().toString();
-            }
+            imageTransferredBlocksStatus = String.valueOf(e.getValue());
         } else if (e.getIndex() == 4) {
             if (e.getValue() == null) {
                 setImageFirstNotTransferredBlockNumber(0);
@@ -453,9 +451,9 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         data.setUInt8(2);
-        GXCommon.setData(data, DataType.OCTET_STRING,
+        GXCommon.setData(null, data, DataType.OCTET_STRING,
                 GXCommon.getBytes(imageIdentifier));
-        GXCommon.setData(data, DataType.UINT32, new Long(forImageSize));
+        GXCommon.setData(null, data, DataType.UINT32, new Long(forImageSize));
         return client.method(this, 1, data.array(), DataType.ARRAY);
     }
 
@@ -473,7 +471,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
             GXByteBuffer data = new GXByteBuffer();
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(2);
-            GXCommon.setData(data, DataType.UINT32, new Integer(pos));
+            GXCommon.setData(null, data, DataType.UINT32, new Integer(pos));
             byte[] tmp;
             int bytes = (int) (imageBlockValue.length
                     - ((pos + 1) * imageBlockSize));
@@ -488,7 +486,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
                 System.arraycopy(imageBlockValue, (int) (pos * imageBlockSize),
                         tmp, 0, (int) imageBlockSize);
             }
-            GXCommon.setData(data, DataType.OCTET_STRING, tmp);
+            GXCommon.setData(null, data, DataType.OCTET_STRING, tmp);
             packets.addAll(Arrays.asList(
                     client.method(this, 2, data.array(), DataType.ARRAY)));
         }

@@ -509,12 +509,18 @@ public class GXDLMSServerBase {
         if (getSettings().getInterfaceType() == InterfaceType.HDLC) {
             replyData.set(0, GXCommon.LLC_REPLY_BYTES);
         }
+        byte[] tmp = GXAPDU.getUserInformation(settings, settings.getCipher());
         replyData.setUInt8(0x63);
-        // LEN.
-        replyData.setUInt8(0x03);
+        // Len.
+        replyData.setUInt8((byte) (tmp.length + 3));
         replyData.setUInt8(0x80);
         replyData.setUInt8(0x01);
         replyData.setUInt8(0x00);
+        replyData.setUInt8(0xBE);
+        replyData.setUInt8((byte) (tmp.length + 1));
+        replyData.setUInt8(4);
+        replyData.setUInt8((byte) (tmp.length));
+        replyData.set(tmp);
     }
 
     /*
@@ -523,7 +529,7 @@ public class GXDLMSServerBase {
      * @return Returns returned UA packet.
      */
     private void handleSnrmRequest(final GXByteBuffer data) {
-        GXDLMS.parseSnrmUaResponse(data, settings.getLimits());
+        GXDLMS.parseSnrmUaResponse(data, settings);
         reset(true);
         replyData.setUInt8(0x81); // FromatID
         replyData.setUInt8(0x80); // GroupID
@@ -576,6 +582,13 @@ public class GXDLMSServerBase {
      * @return Disconnect request.
      */
     private void generateDisconnectRequest() {
+        // Return error if connection is not established.
+        if ((settings.getConnected() & ConnectionState.DLMS) == 0) {
+            replyData.add(generateConfirmedServiceError(
+                    ConfirmedServiceError.INITIATE_ERROR, ServiceError.SERVICE,
+                    Service.UNSUPPORTED.getValue()));
+            return;
+        }
         replyData.setUInt8(0x81); // FromatID
         replyData.setUInt8(0x80); // GroupID
         replyData.setUInt8(0); // Length
@@ -610,6 +623,7 @@ public class GXDLMSServerBase {
             settings.setServerAddress(0);
             settings.setClientAddress(0);
         }
+        settings.setProtocolVersion(null);
         settings.setCtoSChallenge(null);
         settings.setStoCChallenge(null);
         receivedData.clear();
@@ -651,7 +665,7 @@ public class GXDLMSServerBase {
                 boolean first = settings.getServerAddress() == 0
                         && settings.getClientAddress() == 0;
                 try {
-                    GXDLMS.getData(settings, receivedData, info);
+                    GXDLMS.getData(settings, receivedData, info, null);
                 } catch (Exception ex) {
                     dataReceived = Calendar.getInstance().getTimeInMillis();
                     receivedData.size(0);
@@ -665,8 +679,7 @@ public class GXDLMSServerBase {
                 }
                 receivedData.clear();
                 if (info.getCommand() == Command.DISCONNECT_REQUEST
-                        && (settings.getConnected()
-                                & ConnectionState.DLMS) == 0) {
+                        && (settings.getConnected() == ConnectionState.NONE)) {
                     sr.setReply(GXDLMS.getHdlcFrame(settings,
                             Command.DISCONNECT_MODE, replyData));
                     info.clear();
@@ -748,8 +761,8 @@ public class GXDLMSServerBase {
                 info.setCommand(Command.GENERAL_BLOCK_TRANSFER);
             }
             try {
-                sr.setReply(
-                        handleCommand(info.getCommand(), info.getData(), sr));
+                sr.setReply(handleCommand(info.getCommand(), info.getData(), sr,
+                        info.getCipheredCommand()));
             } catch (Exception ex) {
                 receivedData.size(0);
                 sr.setReply(GXDLMS.getHdlcFrame(settings,
@@ -842,7 +855,7 @@ public class GXDLMSServerBase {
         }
         if (settings.getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0, cmd, 1,
-                    null, null, error.getValue());
+                    null, null, error.getValue(), info.getCipheredCommand());
             GXDLMS.getLNPdu(p, replyData);
         } else {
             GXByteBuffer bb = new GXByteBuffer();
@@ -866,7 +879,8 @@ public class GXDLMSServerBase {
      * @return Response for the client.
      */
     private byte[] handleCommand(final int cmd, final GXByteBuffer data,
-            final GXServerReply sr) throws Exception {
+            final GXServerReply sr, final int cipheredCommand)
+            throws Exception {
         byte frame = 0;
         if (replyData.size() != 0) {
             // Get next frame.
@@ -875,29 +889,29 @@ public class GXDLMSServerBase {
         switch (cmd) {
         case Command.ACCESS_REQUEST:
             GXDLMSLNCommandHandler.handleAccessRequest(settings, this, data,
-                    replyData, null);
+                    replyData, null, cipheredCommand);
             break;
         case Command.SET_REQUEST:
             GXDLMSLNCommandHandler.handleSetRequest(settings, this, data,
-                    replyData, null);
+                    replyData, null, cipheredCommand);
             break;
         case Command.WRITE_REQUEST:
             GXDLMSSNCommandHandler.handleWriteRequest(settings, this, data,
-                    replyData, null);
+                    replyData, null, cipheredCommand);
             break;
         case Command.GET_REQUEST:
             if (data.size() != 0) {
                 GXDLMSLNCommandHandler.handleGetRequest(settings, this, data,
-                        replyData, null);
+                        replyData, null, cipheredCommand);
             }
             break;
         case Command.READ_REQUEST:
             GXDLMSSNCommandHandler.handleReadRequest(settings, this, data,
-                    replyData, null);
+                    replyData, null, cipheredCommand);
             break;
         case Command.METHOD_REQUEST:
             GXDLMSLNCommandHandler.handleMethodRequest(settings, this, data,
-                    sr.getConnectionInfo(), replyData, null);
+                    sr.getConnectionInfo(), replyData, null, cipheredCommand);
             break;
         case Command.SNRM:
             handleSnrmRequest(data);
@@ -936,7 +950,8 @@ public class GXDLMSServerBase {
             frame = Command.UA;
             break;
         case Command.GENERAL_BLOCK_TRANSFER:
-            if (!handleGeneralBlockTransfer(data, sr)) {
+            if (!handleGeneralBlockTransfer(data, sr,
+                    info.getCipheredCommand())) {
                 return null;
             }
             break;
@@ -961,7 +976,8 @@ public class GXDLMSServerBase {
     }
 
     private boolean handleGeneralBlockTransfer(final GXByteBuffer data,
-            final GXServerReply sr) throws Exception {
+            final GXServerReply sr, final int cipheredCommand)
+            throws Exception {
         if (transaction != null) {
             if (transaction.getCommand() == Command.GET_REQUEST) {
                 // Get request for next data block
@@ -971,7 +987,7 @@ public class GXDLMSServerBase {
                     sr.setCount(settings.getWindowSize());
                 }
                 GXDLMSLNCommandHandler.getRequestNextDataBlock(settings, 0,
-                        this, data, replyData, null, true);
+                        this, data, replyData, null, true, cipheredCommand);
                 if (sr.getCount() != 0) {
                     sr.setCount(sr.getCount() - 1);
                 }
@@ -1001,7 +1017,7 @@ public class GXDLMSServerBase {
                     int bn = settings.getBlockIndex();
                     if ((bc & 0x80) != 0) {
                         handleCommand(transaction.getCommand(),
-                                transaction.getData(), sr);
+                                transaction.getData(), sr, cipheredCommand);
                         transaction = null;
                         igonoreAck = false;
                         windowSize = 1;

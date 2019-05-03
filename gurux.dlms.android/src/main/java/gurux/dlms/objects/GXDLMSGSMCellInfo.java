@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -53,6 +53,21 @@ public class GXDLMSGSMCellInfo {
      * Signal quality.
      */
     private int signalQuality;
+
+    /**
+     * Mobile Country Code.
+     */
+    private int mobileCountryCode;
+
+    /**
+     * Mobile Network Code.
+     */
+    private int mobileNetworkCode;
+
+    /**
+     * Absolute radio frequency channel number.
+     */
+    private long channelNumber;
 
     /**
      * @return Four-byte cell ID.
@@ -112,6 +127,51 @@ public class GXDLMSGSMCellInfo {
      */
     public final void setBer(final int value) {
         ber = value;
+    }
+
+    /**
+     * @return Mobile Country Code.
+     */
+    public int getMobileCountryCode() {
+        return mobileCountryCode;
+    }
+
+    /**
+     * @param value
+     *            Mobile Country Code.
+     */
+    public void setMobileCountryCode(final int value) {
+        mobileCountryCode = value;
+    }
+
+    /**
+     * @return Absolute radio frequency channel number.
+     */
+    public long getChannelNumber() {
+        return channelNumber;
+    }
+
+    /**
+     * @param value
+     *            Absolute radio frequency channel number.
+     */
+    public void setChannelNumber(final long value) {
+        channelNumber = value;
+    }
+
+    /**
+     * @return Mobile Network Code.
+     */
+    public int getMobileNetworkCode() {
+        return mobileNetworkCode;
+    }
+
+    /**
+     * @param value
+     *            Mobile Network Code.
+     */
+    public void setMobileNetworkCode(final int value) {
+        mobileNetworkCode = value;
     }
 
 }

@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -75,7 +75,7 @@ import gurux.dlms.secure.GXDLMSSecureClient;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSSecuritySetup
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSSecuritySetup
  */
 public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     /**
@@ -290,9 +290,9 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         for (GXSimpleEntry<GlobalKeyType, byte[]> it : list) {
             bb.setUInt8(DataType.STRUCTURE.getValue());
             bb.setUInt8(2);
-            GXCommon.setData(bb, DataType.ENUM, it.getKey().ordinal());
+            GXCommon.setData(null, bb, DataType.ENUM, it.getKey().ordinal());
             tmp = GXDLMSSecureClient.encrypt(kek, it.getValue());
-            GXCommon.setData(bb, DataType.OCTET_STRING, tmp);
+            GXCommon.setData(null, bb, DataType.OCTET_STRING, tmp);
         }
         return client.method(this, 2, bb.array(), DataType.ARRAY);
     }
@@ -318,8 +318,8 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         for (GXSimpleEntry<GlobalKeyType, byte[]> it : list) {
             bb.setUInt8(DataType.STRUCTURE.getValue());
             bb.setUInt8(2);
-            GXCommon.setData(bb, DataType.ENUM, it.getKey().ordinal());
-            GXCommon.setData(bb, DataType.OCTET_STRING, it.getValue());
+            GXCommon.setData(null, bb, DataType.ENUM, it.getKey().ordinal());
+            GXCommon.setData(null, bb, DataType.OCTET_STRING, it.getValue());
         }
         return client.method(this, 3, bb.array(), DataType.ARRAY);
     }
@@ -456,7 +456,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         bb.setUInt8(DataType.ENUM.getValue());
         bb.setUInt8(type.getValue());
         // system_title
-        GXCommon.setData(bb, DataType.OCTET_STRING, systemTitle);
+        GXCommon.setData(null, bb, DataType.OCTET_STRING, systemTitle);
         return client.method(this, 7, bb.array(), DataType.STRUCTURE);
     }
 
@@ -484,9 +484,10 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         bb.setUInt8(DataType.STRUCTURE.getValue());
         bb.setUInt8(2);
         // serialNumber
-        GXCommon.setData(bb, DataType.OCTET_STRING, serialNumber.getBytes());
+        GXCommon.setData(null, bb, DataType.OCTET_STRING,
+                serialNumber.getBytes());
         // issuer
-        GXCommon.setData(bb, DataType.OCTET_STRING, issuer.getBytes());
+        GXCommon.setData(null, bb, DataType.OCTET_STRING, issuer.getBytes());
         return client.method(this, 7, bb.array(), DataType.STRUCTURE);
     }
 
@@ -522,7 +523,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         bb.setUInt8(DataType.ENUM.getValue());
         bb.setUInt8(type.getValue());
         // system_title
-        GXCommon.setData(bb, DataType.OCTET_STRING, systemTitle);
+        GXCommon.setData(null, bb, DataType.OCTET_STRING, systemTitle);
         return client.method(this, 8, bb.array(), DataType.STRUCTURE);
     }
 
@@ -550,9 +551,10 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         bb.setUInt8(DataType.STRUCTURE.getValue());
         bb.setUInt8(2);
         // serialNumber
-        GXCommon.setData(bb, DataType.OCTET_STRING, serialNumber.getBytes());
+        GXCommon.setData(null, bb, DataType.OCTET_STRING,
+                serialNumber.getBytes());
         // issuer
-        GXCommon.setData(bb, DataType.OCTET_STRING, issuer.getBytes());
+        GXCommon.setData(null, bb, DataType.OCTET_STRING, issuer.getBytes());
         return client.method(this, 8, bb.array(), DataType.STRUCTURE);
     }
 
@@ -881,32 +883,33 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // SecurityPolicy
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         // SecuritySuite
-        if (canRead(3)) {
+        if (all || canRead(3)) {
             attributes.add(new Integer(3));
         }
-        if (getVersion() > 0) {
-            // ClientSystemTitle
-            if (canRead(4)) {
-                attributes.add(new Integer(4));
-            }
-            // ServerSystemTitle
-            if (canRead(5)) {
-                attributes.add(new Integer(5));
-            }
+        // ClientSystemTitle
+        if (all || canRead(4)) {
+            attributes.add(new Integer(4));
+        }
+        // ServerSystemTitle
+        if (all || canRead(5)) {
+            attributes.add(new Integer(5));
+        }
+        if (getVersion() != 0) {
             // Certificates
-            if (canRead(6)) {
+            if (all || canRead(6)) {
                 attributes.add(new Integer(6));
             }
         }
@@ -976,10 +979,10 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
             bb.setUInt8((byte) DataType.STRUCTURE.getValue());
             GXCommon.setObjectCount(6, bb);
             bb.setUInt8((byte) DataType.ENUM.getValue());
-            // certificate_entity: enum:
+            // TODO: certificate_entity: enum:
             bb.setUInt8((byte) CertificateEntity.SERVER.getValue());
             bb.setUInt8((byte) DataType.ENUM.getValue());
-            // digital signature
+            // TODO: digital signature
             bb.setUInt8((byte) CertificateType.DIGITAL_SIGNATURE.getValue());
             GXCommon.addString(it.getSerialNumber().toString(), bb);
             GXCommon.addString(it.getIssuer(), bb);

@@ -267,6 +267,10 @@ final class TranslatorSimpleTags {
         GXDLMSTranslator.addTag(list,
                 TranslatorGeneralTags.RESPONDING_AE_INVOCATION_ID,
                 "RespondingAEInvocationId");
+        GXDLMSTranslator.addTag(list, Command.GATEWAY_REQUEST,
+                "GatewayRequest");
+        GXDLMSTranslator.addTag(list, Command.GATEWAY_RESPONSE,
+                "GatewayResponse");
     }
 
     /**
@@ -316,6 +320,10 @@ final class TranslatorSimpleTags {
      */
     static void getDedTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
+        GXDLMSTranslator.addTag(list, Command.DED_INITIATE_REQUEST,
+                "ded_InitiateRequest");
+        GXDLMSTranslator.addTag(list, Command.DED_INITIATE_RESPONSE,
+                "ded_InitiateResponse");
         GXDLMSTranslator.addTag(list, Command.DED_GET_REQUEST,
                 "ded_GetRequest");
         GXDLMSTranslator.addTag(list, Command.DED_GET_RESPONSE,
@@ -446,9 +454,23 @@ final class TranslatorSimpleTags {
         GXDLMSTranslator.addTag(list, TranslatorTags.BLOCK_DATA, "BlockData");
         GXDLMSTranslator.addTag(list, TranslatorTags.CONTENTS_DESCRIPTION,
                 "ContentsDescription");
-
         GXDLMSTranslator.addTag(list, TranslatorTags.ARRAY_CONTENTS,
                 "ArrayContents");
+        GXDLMSTranslator.addTag(list, TranslatorTags.NETWORK_ID, "NetworkId");
+        GXDLMSTranslator.addTag(list, TranslatorTags.PHYSICAL_DEVICE_ADDRESS,
+                "PhysicalDeviceAddress");
+        GXDLMSTranslator.addTag(list, TranslatorTags.PROTOCOL_VERSION,
+                "ProtocolVersion");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AP_TITLE,
+                "CalledAPTitle");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AP_INVOCATION_ID,
+                "CalledAPInvocationId");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AE_INVOCATION_ID,
+                "CalledAEInvocationId");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLING_AP_INVOCATION_ID,
+                "CallingApInvocationId");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AE_QUALIFIER,
+                "CalledAEQualifier");
     }
 
     static void getDataTypeTags(final HashMap<Integer, String> list) {

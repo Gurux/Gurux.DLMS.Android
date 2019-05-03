@@ -26,13 +26,15 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
 package gurux.dlms;
+
+import android.content.Context;
 
 import java.security.Signature;
 import java.util.ArrayList;
@@ -62,10 +64,12 @@ import gurux.dlms.enums.Priority;
 import gurux.dlms.enums.RequestTypes;
 import gurux.dlms.enums.ServiceClass;
 import gurux.dlms.enums.SourceDiagnostic;
+import gurux.dlms.enums.Standard;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.internal.GXDataInfo;
 import gurux.dlms.manufacturersettings.GXObisCodeCollection;
 import gurux.dlms.objects.GXDLMSCaptureObject;
+import gurux.dlms.objects.GXDLMSData;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSObjectCollection;
 import gurux.dlms.objects.GXDLMSProfileGeneric;
@@ -76,10 +80,19 @@ import gurux.dlms.secure.GXSecure;
  * GXDLMS implements methods to communicate with DLMS/COSEM metering devices.
  */
 public class GXDLMSClient {
+
+    protected GXDLMSTranslator translator;
+
+    /**
+     * XML client don't throw exceptions. It serializes them as a default. Set
+     * value to true, if exceptions are thrown.
+     */
+    private boolean throwExceptions;
+
     /**
      * DLMS settings.
      */
-    private final GXDLMSSettings settings = new GXDLMSSettings(false);
+    protected final GXDLMSSettings settings = new GXDLMSSettings(false);
     private GXObisCodeCollection obisCodes;
     private static final Logger LOGGER =
             Logger.getLogger(GXDLMSClient.class.getName());
@@ -88,6 +101,11 @@ public class GXDLMSClient {
      * Is authentication required.
      */
     private boolean isAuthenticationRequired = false;
+
+    /**
+     * Auto increase Invoke ID.
+     */
+    private boolean autoIncreaseInvokeID = false;
 
     /**
      * Constructor.
@@ -353,7 +371,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * * Standard says that Time zone is from normal time to UTC in minutes. If
+     * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
      * 
@@ -362,6 +380,25 @@ public class GXDLMSClient {
      */
     public void setUseUtc2NormalTime(final boolean value) {
         settings.setUseUtc2NormalTime(value);
+    }
+
+    /**
+     * Used standard.
+     * 
+     * @return True, if UTC time is used.
+     */
+    public Standard getStandard() {
+        return settings.getStandard();
+    }
+
+    /**
+     * Used standard.
+     * 
+     * @param value
+     *            True, if UTC time is used.
+     */
+    public void setStandard(final Standard value) {
+        settings.setStandard(value);
     }
 
     /**
@@ -483,6 +520,21 @@ public class GXDLMSClient {
     }
 
     /**
+     * @return Auto increase Invoke ID.
+     */
+    public final boolean getAutoIncreaseInvokeID() {
+        return autoIncreaseInvokeID;
+    }
+
+    /**
+     * @param value
+     *            Auto increase Invoke ID.
+     */
+    public final void setAutoIncreaseInvokeID(final boolean value) {
+        autoIncreaseInvokeID = value;
+    }
+
+    /**
      * @return Interface type.
      */
     public final InterfaceType getInterfaceType() {
@@ -502,6 +554,36 @@ public class GXDLMSClient {
      */
     public final GXDLMSLimits getLimits() {
         return settings.getLimits();
+    }
+
+    /**
+     * @return Gateway settings.
+     */
+    public final GXDLMSGateway getGateway() {
+        return settings.getGateway();
+    }
+
+    /**
+     * @param value
+     *            Gateway settings.
+     */
+    public final void setGateway(final GXDLMSGateway value) {
+        settings.setGateway(value);
+    }
+
+    /**
+     * @return Protocol version.
+     */
+    public final String getProtocolVersion() {
+        return settings.getProtocolVersion();
+    }
+
+    /**
+     * @param value
+     *            Protocol version.
+     */
+    public final void setProtocolVersion(final String value) {
+        settings.setProtocolVersion(value);
     }
 
     /**
@@ -531,34 +613,46 @@ public class GXDLMSClient {
         data.setUInt8(0x81); // FromatID
         data.setUInt8(0x80); // GroupID
         data.setUInt8(0); // Length.
+        int maxInfoTX = getLimits().getMaxInfoTX(),
+                maxInfoRX = getLimits().getMaxInfoRX();
+        if (getLimits().isUseFrameSize()) {
+            byte[] primaryAddress, secondaryAddress;
+            primaryAddress =
+                    GXDLMS.getHdlcAddressBytes(settings.getServerAddress(),
+                            settings.getServerAddressSize());
+            secondaryAddress =
+                    GXDLMS.getHdlcAddressBytes(settings.getClientAddress(), 0);
+            maxInfoTX -= (10 + secondaryAddress.length);
+            maxInfoRX -= (10 + primaryAddress.length);
+        }
 
         // If custom HDLC parameters are used.
-        if (GXDLMSLimits.DEFAULT_MAX_INFO_TX != getLimits().getMaxInfoTX()) {
+        if (GXDLMSLimits.DEFAULT_MAX_INFO_TX != getLimits().getMaxInfoTX()
+                || GXDLMSLimits.DEFAULT_MAX_INFO_RX != getLimits()
+                        .getMaxInfoRX()
+                || GXDLMSLimits.DEFAULT_WINDOWS_SIZE_TX != getLimits()
+                        .getWindowSizeTX()
+                || GXDLMSLimits.DEFAULT_WINDOWS_SIZE_RX != getLimits()
+                        .getWindowSizeRX()) {
             data.setUInt8(HDLCInfo.MAX_INFO_TX);
-            GXDLMS.appendHdlcParameter(data, getLimits().getMaxInfoTX());
-        }
-        if (GXDLMSLimits.DEFAULT_MAX_INFO_RX != getLimits().getMaxInfoRX()) {
+            GXDLMS.appendHdlcParameter(data, maxInfoTX);
             data.setUInt8(HDLCInfo.MAX_INFO_RX);
-            GXDLMS.appendHdlcParameter(data, getLimits().getMaxInfoRX());
-        }
-        if (GXDLMSLimits.DEFAULT_WINDOWS_SIZE_TX != getLimits()
-                .getWindowSizeTX()) {
+            GXDLMS.appendHdlcParameter(data, maxInfoRX);
             data.setUInt8(HDLCInfo.WINDOW_SIZE_TX);
             data.setUInt8(4);
             data.setUInt32(getLimits().getWindowSizeTX());
-        }
-        if (GXDLMSLimits.DEFAULT_WINDOWS_SIZE_RX != getLimits()
-                .getWindowSizeRX()) {
             data.setUInt8(HDLCInfo.WINDOW_SIZE_RX);
             data.setUInt8(4);
             data.setUInt32(getLimits().getWindowSizeRX());
         }
         // If default HDLC parameters are not used.
         if (data.size() != 3) {
-            data.setUInt8(2, data.size() - 3); // Length.
+            // Length.
+            data.setUInt8(2, data.size() - 3);
         } else {
             data = null;
         }
+        settings.resetFrameSequence();
         return GXDLMS.getHdlcFrame(settings, (byte) Command.SNRM, data);
     }
 
@@ -570,8 +664,7 @@ public class GXDLMSClient {
      * @see GXDLMSClient#snrmRequest
      */
     public final void parseUAResponse(final byte[] data) {
-        GXDLMS.parseSnrmUaResponse(new GXByteBuffer(data),
-                settings.getLimits());
+        GXDLMS.parseSnrmUaResponse(new GXByteBuffer(data), settings);
         settings.setConnected(ConnectionState.HDLC);
     }
 
@@ -583,7 +676,7 @@ public class GXDLMSClient {
      * @see GXDLMSClient#snrmRequest
      */
     public final void parseUAResponse(final GXByteBuffer data) {
-        GXDLMS.parseSnrmUaResponse(data, settings.getLimits());
+        GXDLMS.parseSnrmUaResponse(data, settings);
     }
 
     /**
@@ -600,6 +693,11 @@ public class GXDLMSClient {
         settings.resetBlockIndex();
         GXDLMS.checkInit(settings);
         settings.setStoCChallenge(null);
+        if (autoIncreaseInvokeID) {
+            settings.setInvokeID(0);
+        } else {
+            settings.setInvokeID(1);
+        }
         // If authentication or ciphering is used.
         if (getAuthentication().ordinal() > Authentication.LOW.ordinal()) {
             settings.setCtoSChallenge(
@@ -611,7 +709,7 @@ public class GXDLMSClient {
         List<byte[]> reply;
         if (settings.getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
-                    Command.AARQ, 0, buff, null, 0xff);
+                    Command.AARQ, 0, buff, null, 0xff, Command.NONE);
             reply = GXDLMS.getLnMessages(p);
         } else {
             GXDLMSSNParameters p = new GXDLMSSNParameters(settings,
@@ -702,7 +800,7 @@ public class GXDLMSClient {
         boolean equals = false;
         byte[] secret;
         long ic = 0;
-        byte[] value = (byte[]) GXCommon.getData(reply, info);
+        byte[] value = (byte[]) GXCommon.getData(settings, reply, info);
         if (value != null) {
             if (settings.getAuthentication() == Authentication.HIGH_ECDSA) {
                 try {
@@ -760,7 +858,7 @@ public class GXDLMSClient {
      */
     public byte[][] releaseRequest() {
         // If connection is not established, there is no need to send
-        // DisconnectRequest.
+        // release request.
         if ((settings.getConnected() & ConnectionState.DLMS) == 0) {
             return null;
         }
@@ -776,16 +874,13 @@ public class GXDLMSClient {
         List<byte[]> reply;
         if (getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
-                    Command.RELEASE_REQUEST, 0, buff, null, 0xff);
+                    Command.RELEASE_REQUEST, 0, buff, null, 0xff, Command.NONE);
             reply = GXDLMS.getLnMessages(p);
         } else {
             reply = GXDLMS.getSnMessages(new GXDLMSSNParameters(settings,
                     Command.RELEASE_REQUEST, 0xFF, 0xFF, null, buff));
         }
-        if (settings.getInterfaceType() == InterfaceType.WRAPPER) {
-            settings.setConnected(
-                    settings.getConnected() & ~ConnectionState.DLMS);
-        }
+        settings.setConnected(settings.getConnected() & ~ConnectionState.DLMS);
         return reply.toArray(new byte[][] {});
     }
 
@@ -878,7 +973,8 @@ public class GXDLMSClient {
             info.setCount(0);
             info.setIndex(0);
             info.setType(DataType.NONE);
-            Object[] objects = (Object[]) GXCommon.getData(buff, info);
+            Object[] objects =
+                    (Object[]) GXCommon.getData(settings, buff, info);
             if (objects.length != 4) {
                 throw new GXDLMSException("Invalid structure format.");
             }
@@ -1009,7 +1105,8 @@ public class GXDLMSClient {
             info.setType(DataType.NONE);
             info.setIndex(0);
             info.setCount(0);
-            Object[] objects = (Object[]) GXCommon.getData(buff, info);
+            Object[] objects =
+                    (Object[]) GXCommon.getData(settings, buff, info);
             if (objects.length != 4) {
                 throw new GXDLMSException("Invalid structure format.");
             }
@@ -1089,7 +1186,26 @@ public class GXDLMSClient {
      */
     public static Object getValue(final GXByteBuffer data) {
         GXDataInfo info = new GXDataInfo();
-        return GXCommon.getData(data, info);
+        return GXCommon.getData(null, data, info);
+    }
+
+    /**
+     * Get Value from byte array received from the meter.
+     * 
+     * @param data
+     *            Byte array received from the meter.
+     * @param useUtc
+     *            Standard says that Time zone is from normal time to UTC in
+     *            minutes. If meter is configured to use UTC time (UTC to normal
+     *            time) set this to true.
+     * @return Received data.
+     */
+    public static Object getValue(final GXByteBuffer data,
+            final boolean useUtc) {
+        GXDataInfo info = new GXDataInfo();
+        GXDLMSSettings settings = new GXDLMSSettings(false);
+        settings.setUseUtc2NormalTime(useUtc);
+        return GXCommon.getData(settings, data, info);
     }
 
     /**
@@ -1144,6 +1260,24 @@ public class GXDLMSClient {
      * @return Value changed by type.
      */
     public static Object changeType(final byte[] value, final DataType type) {
+        return changeType(value, type, false);
+    }
+
+    /**
+     * Changes byte array received from the meter to given type.
+     * 
+     * @param value
+     *            Byte array received from the meter.
+     * @param type
+     *            Wanted type.
+     * @param useUtc
+     *            Standard says that Time zone is from normal time to UTC in
+     *            minutes. If meter is configured to use UTC time (UTC to normal
+     *            time) set this to true.
+     * @return Value changed by type.
+     */
+    public static Object changeType(final byte[] value, final DataType type,
+            final boolean useUtc) {
         if (value == null) {
             return null;
         }
@@ -1164,9 +1298,11 @@ public class GXDLMSClient {
             return new GXTime(new Date(0));
         }
 
+        GXDLMSSettings settings = new GXDLMSSettings(false);
+        settings.setUseUtc2NormalTime(useUtc);
         GXDataInfo info = new GXDataInfo();
         info.setType(type);
-        Object ret = GXCommon.getData(new GXByteBuffer(value), info);
+        Object ret = GXCommon.getData(settings, new GXByteBuffer(value), info);
         if (!info.isComplete()) {
             throw new IllegalArgumentException(
                     "Change type failed. Not enought data.");
@@ -1184,10 +1320,26 @@ public class GXDLMSClient {
      * @return Read request, as byte array.
      */
     public final byte[] getObjectsRequest() {
+        return getObjectsRequest(null);
+    }
+
+    /**
+     * Reads the Association view from the device. This method is used to get
+     * all objects in the device.
+     * 
+     * @param ln
+     *            Logical name of Association view.
+     * @return Read request, as byte array.
+     */
+    public final byte[] getObjectsRequest(final String ln) {
         Object name;
         settings.resetBlockIndex();
         if (getUseLogicalNameReferencing()) {
-            name = "0.0.40.0.0.255";
+            if (ln == null || ln == "") {
+                name = "0.0.40.0.0.255";
+            } else {
+                name = ln;
+            }
         } else {
             name = (short) 0xFA00;
         }
@@ -1234,6 +1386,9 @@ public class GXDLMSClient {
             throw new IllegalArgumentException("Invalid parameter");
         }
         settings.resetBlockIndex();
+        if (autoIncreaseInvokeID) {
+            settings.setInvokeID((byte) ((settings.getInvokeID() + 1) & 0xF));
+        }
         int index = methodIndex;
         DataType type = dataType;
         if (type == DataType.NONE && value != null) {
@@ -1246,7 +1401,7 @@ public class GXDLMSClient {
         List<byte[]> reply;
         GXByteBuffer data = new GXByteBuffer();
         GXByteBuffer attributeDescriptor = new GXByteBuffer();
-        GXCommon.setData(data, type, value);
+        GXCommon.setData(settings, data, type, value);
 
         if (getUseLogicalNameReferencing()) {
             // CI
@@ -1263,7 +1418,7 @@ public class GXDLMSClient {
             }
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
                     Command.METHOD_REQUEST, ActionRequestType.NORMAL,
-                    attributeDescriptor, data, 0xff);
+                    attributeDescriptor, data, 0xff, Command.NONE);
             reply = GXDLMS.getLnMessages(p);
         } else {
             int requestType;
@@ -1342,6 +1497,9 @@ public class GXDLMSClient {
             throw new GXDLMSException("Invalid parameter");
         }
         settings.resetBlockIndex();
+        if (autoIncreaseInvokeID) {
+            settings.setInvokeID((byte) ((settings.getInvokeID() + 1) & 0xF));
+        }
         DataType type = dataType;
         if (type == DataType.NONE && value != null) {
             type = GXDLMSConverter.getDLMSDataType(value);
@@ -1353,7 +1511,7 @@ public class GXDLMSClient {
         List<byte[]> reply;
         GXByteBuffer data = new GXByteBuffer();
         GXByteBuffer attributeDescriptor = new GXByteBuffer();
-        GXCommon.setData(data, type, value);
+        GXCommon.setData(settings, data, type, value);
         if (getUseLogicalNameReferencing()) {
             // Add CI.
             attributeDescriptor.setUInt16(objectType.getValue());
@@ -1365,7 +1523,7 @@ public class GXDLMSClient {
             attributeDescriptor.setUInt8(0);
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
                     Command.SET_REQUEST, SetRequestType.NORMAL,
-                    attributeDescriptor, data, 0xff);
+                    attributeDescriptor, data, 0xff, Command.NONE);
             p.blockIndex = settings.getBlockIndex();
             p.blockNumberAck = settings.getBlockNumberAck();
             p.streaming = false;
@@ -1441,12 +1599,12 @@ public class GXDLMSClient {
                     }
                 }
             }
-            GXCommon.setData(data, type, value);
+            GXCommon.setData(settings, data, type, value);
         }
         if (this.getUseLogicalNameReferencing()) {
-            GXDLMSLNParameters p =
-                    new GXDLMSLNParameters(settings, 0, Command.SET_REQUEST,
-                            SetRequestType.WITH_LIST, bb, data, 0xff);
+            GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
+                    Command.SET_REQUEST, SetRequestType.WITH_LIST, bb, data,
+                    0xff, Command.NONE);
             reply = GXDLMS.getLnMessages(p);
         } else {
             GXDLMSSNParameters p = new GXDLMSSNParameters(settings,
@@ -1493,6 +1651,9 @@ public class GXDLMSClient {
         GXByteBuffer attributeDescriptor = new GXByteBuffer();
         List<byte[]> reply;
         settings.resetBlockIndex();
+        if (autoIncreaseInvokeID) {
+            settings.setInvokeID((byte) ((settings.getInvokeID() + 1) & 0xF));
+        }
         if (this.getUseLogicalNameReferencing()) {
             // CI
             attributeDescriptor.setUInt16(objectType.getValue());
@@ -1509,7 +1670,7 @@ public class GXDLMSClient {
             }
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
                     Command.GET_REQUEST, GetCommandType.NORMAL,
-                    attributeDescriptor, data, 0xFF);
+                    attributeDescriptor, data, 0xFF, Command.NONE);
             reply = GXDLMS.getLnMessages(p);
         } else {
             int requestType;
@@ -1561,9 +1722,9 @@ public class GXDLMSClient {
         GXByteBuffer data = new GXByteBuffer();
         settings.resetBlockIndex();
         if (this.getUseLogicalNameReferencing()) {
-            GXDLMSLNParameters p =
-                    new GXDLMSLNParameters(settings, 0, Command.GET_REQUEST,
-                            GetCommandType.WITH_LIST, data, null, 0xff);
+            GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
+                    Command.GET_REQUEST, GetCommandType.WITH_LIST, data, null,
+                    0xff, Command.NONE);
             // Request service primitive shall always fit in a single APDU.
             int pos = 0, count = (settings.getMaxPduSize() - 12) / 10;
             if (list.size() < count) {
@@ -1664,39 +1825,16 @@ public class GXDLMSClient {
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg,
             final int index, final int count,
             final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns) {
-        if (index < 0) {
-            throw new IllegalArgumentException("index");
-        }
-        if (count < 0) {
-            throw new IllegalArgumentException("count");
-        }
-        GXByteBuffer buff = new GXByteBuffer(19);
-        // Add AccessSelector value
-        buff.setUInt8(0x02);
-        // Add enum tag.
-        buff.setUInt8(DataType.STRUCTURE.getValue());
-        // Add item count
-        buff.setUInt8(0x04);
-        // Add start index
-        GXCommon.setData(buff, DataType.UINT32, index);
-        // Add Count
-        if (count == 0) {
-            GXCommon.setData(buff, DataType.UINT32, count);
-        } else {
-            GXCommon.setData(buff, DataType.UINT32, index + count - 1);
-        }
-
-        int columnIndex = 1;
-        int columnCount = 0;
         int pos = 0;
+        int columnStart = 1, columnEnd = 0;
         // If columns are given find indexes.
         if (columns != null && columns.size() != 0) {
             if (pg.getCaptureObjects() == null
                     || pg.getCaptureObjects().size() == 0) {
                 throw new RuntimeException("Read capture objects first.");
             }
-            columnIndex = pg.getCaptureObjects().size();
-            columnCount = 1;
+            columnStart = pg.getCaptureObjects().size();
+            columnEnd = 1;
             for (Entry<GXDLMSObject, GXDLMSCaptureObject> c : columns) {
                 pos = 0;
                 boolean found = false;
@@ -1712,10 +1850,10 @@ public class GXDLMSClient {
                             && it.getValue().getDataIndex() == c.getValue()
                                     .getDataIndex()) {
                         found = true;
-                        if (pos < columnIndex) {
-                            columnIndex = pos;
+                        if (pos < columnStart) {
+                            columnStart = pos;
                         }
-                        columnCount = pos - columnIndex + 1;
+                        columnEnd = pos;
                         break;
                     }
                 }
@@ -1725,10 +1863,58 @@ public class GXDLMSClient {
                 }
             }
         }
+        return readRowsByEntry(pg, index, count, columnStart, columnEnd);
+    }
 
+    /**
+     * Read rows by entry.
+     * 
+     * @param pg
+     *            Profile generic object to read.
+     * @param index
+     *            One based start index.
+     * @param count
+     *            Rows count to read.
+     * @param columnStart
+     *            One based column start index.
+     * @param columnEnd
+     *            Column end index.
+     * @return Read message as byte array.
+     */
+    public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg,
+            final int index, final int count, final int columnStart,
+            final int columnEnd) {
+        if (index < 0) {
+            throw new IllegalArgumentException("index");
+        }
+        if (count < 0) {
+            throw new IllegalArgumentException("count");
+        }
+        if (columnStart < 1) {
+            throw new IllegalArgumentException("columnStart");
+        }
+        if (columnEnd < 0) {
+            throw new IllegalArgumentException("columnEnd");
+        }
+        GXByteBuffer buff = new GXByteBuffer(19);
+        // Add AccessSelector value
+        buff.setUInt8(0x02);
+        // Add enum tag.
+        buff.setUInt8(DataType.STRUCTURE.getValue());
+        // Add item count
+        buff.setUInt8(0x04);
+        // Add start index
+        GXCommon.setData(settings, buff, DataType.UINT32, index);
+        // Add Count
+        if (count == 0) {
+            GXCommon.setData(settings, buff, DataType.UINT32, count);
+        } else {
+            GXCommon.setData(settings, buff, DataType.UINT32,
+                    index + count - 1);
+        }
         // Select columns to read.
-        GXCommon.setData(buff, DataType.UINT16, columnIndex);
-        GXCommon.setData(buff, DataType.UINT16, columnCount);
+        GXCommon.setData(settings, buff, DataType.UINT16, columnStart);
+        GXCommon.setData(settings, buff, DataType.UINT16, columnEnd);
         return read(pg.getName(), ObjectType.PROFILE_GENERIC, 2, buff);
     }
 
@@ -1863,19 +2049,33 @@ public class GXDLMSClient {
         // Add item count
         buff.setUInt8(0x04);
         // CI
-        GXCommon.setData(buff, DataType.UINT16,
+        GXCommon.setData(settings, buff, DataType.UINT16,
                 sort.getObjectType().getValue());
         // LN
-        GXCommon.setData(buff, DataType.OCTET_STRING,
+        GXCommon.setData(settings, buff, DataType.OCTET_STRING,
                 GXCommon.logicalNameToBytes(sort.getLogicalName()));
         // Add attribute index.
-        GXCommon.setData(buff, DataType.INT8, 2);
+        GXCommon.setData(settings, buff, DataType.INT8, 2);
         // Add version
-        GXCommon.setData(buff, DataType.UINT16, sort.getVersion());
-        // Add start time
-        GXCommon.setData(buff, DataType.OCTET_STRING, s);
-        // Add end time
-        GXCommon.setData(buff, DataType.OCTET_STRING, e);
+        GXCommon.setData(settings, buff, DataType.UINT16, sort.getVersion());
+        // If Unix time is used.
+        if (pg.getCaptureObjects().size() != 0
+                && pg.getCaptureObjects().get(0).getKey() instanceof GXDLMSData
+                && pg.getCaptureObjects().get(0).getKey().getLogicalName()
+                        .equals("0.0.1.1.0.255")) {
+            // Add start time
+            GXCommon.setData(settings, buff, DataType.UINT32,
+                    GXDateTime.toUnixTime(s));
+            // Add end time
+            GXCommon.setData(settings, buff, DataType.UINT32,
+                    GXDateTime.toUnixTime(e));
+        } else {
+            // Add start time
+            GXCommon.setData(settings, buff, DataType.OCTET_STRING, s);
+            // Add end time
+            GXCommon.setData(settings, buff, DataType.OCTET_STRING, e);
+        }
+
         // Add array of read columns.
         buff.setUInt8(DataType.ARRAY.getValue());
         if (columns == null) {
@@ -1888,16 +2088,16 @@ public class GXDLMSClient {
                 // Add items count.
                 buff.setUInt8(4);
                 // CI
-                GXCommon.setData(buff, DataType.UINT16,
+                GXCommon.setData(settings, buff, DataType.UINT16,
                         it.getKey().getObjectType().getValue());
                 // LN
-                GXCommon.setData(buff, DataType.OCTET_STRING, GXCommon
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING, GXCommon
                         .logicalNameToBytes(it.getKey().getLogicalName()));
                 // Add attribute index.
-                GXCommon.setData(buff, DataType.INT8,
+                GXCommon.setData(settings, buff, DataType.INT8,
                         it.getValue().getAttributeIndex());
                 // Add data index.
-                GXCommon.setData(buff, DataType.INT16,
+                GXCommon.setData(settings, buff, DataType.INT16,
                         it.getValue().getDataIndex());
             }
         }
@@ -1937,7 +2137,23 @@ public class GXDLMSClient {
      * @return Is frame complete.
      */
     public final boolean getData(final byte[] reply, final GXReplyData data) {
-        return GXDLMS.getData(settings, new GXByteBuffer(reply), data);
+        return getData(new GXByteBuffer(reply), data, null);
+    }
+
+    /**
+     * Removes the HDLC frame from the packet, and returns COSEM data only.
+     * 
+     * @param reply
+     *            The received data from the device.
+     * @param data
+     *            Information from the received data.
+     * @param notify
+     *            Information from the notify message.
+     * @return Is frame complete.
+     */
+    public final boolean getData(final byte[] reply, final GXReplyData data,
+            final GXReplyData notify) {
+        return getData(new GXByteBuffer(reply), data, notify);
     }
 
     /**
@@ -1947,10 +2163,101 @@ public class GXDLMSClient {
      *            The received data from the device.
      * @param data
      *            The exported reply information.
+     * @return Is frame complete.
      */
-    public final void getData(final GXByteBuffer reply,
+    public final boolean getData(final GXByteBuffer reply,
             final GXReplyData data) {
-        GXDLMS.getData(settings, reply, data);
+        return getData(reply, data, null);
+    }
+
+    /**
+     * Removes the HDLC frame from the packet, and returns COSEM data only.
+     * 
+     * @param reply
+     *            The received data from the device.
+     * @param data
+     *            The exported reply information.
+     * @param notify
+     *            Information from the notify message.
+     * @return Is frame complete.
+     */
+    public final boolean getData(final GXByteBuffer reply,
+            final GXReplyData data, final GXReplyData notify) {
+        data.setXml(null);
+        boolean ret = false;
+        try {
+            ret = GXDLMS.getData(settings, reply, data, notify);
+        } catch (Exception ex) {
+            if (translator == null || throwExceptions) {
+                throw ex;
+            }
+            ret = true;
+        }
+        if (ret && translator != null
+                && data.getMoreData() == RequestTypes.NONE) {
+            if (data.getXml() == null) {
+                data.setXml(new GXDLMSTranslatorStructure(
+                        translator.getOutputType(),
+                        translator.isOmitXmlNameSpace(), translator.isHex(),
+                        translator.getShowStringAsHex(),
+                        translator.isComments(), translator.tags));
+            }
+            int pos = data.getData().position();
+            try {
+                GXByteBuffer data2 = data.getData();
+                if (data.getCommand() == Command.GET_RESPONSE) {
+                    GXByteBuffer tmp =
+                            new GXByteBuffer((4 + data.getData().size()));
+                    tmp.setUInt8(data.getCommand());
+                    tmp.setUInt8(GetCommandType.NORMAL);
+                    tmp.setUInt8((byte) data.getInvokeId());
+                    tmp.setUInt8(0);
+                    tmp.set(data.getData());
+                    data.setData(tmp);
+                } else if (data.getCommand() == Command.METHOD_RESPONSE) {
+                    GXByteBuffer tmp =
+                            new GXByteBuffer((6 + data.getData().size()));
+                    tmp.setUInt8(data.getCommand());
+                    tmp.setUInt8(GetCommandType.NORMAL);
+                    tmp.setUInt8((byte) data.getInvokeId());
+                    tmp.setUInt8(0);
+                    tmp.setUInt8(1);
+                    tmp.setUInt8(0);
+                    tmp.set(data.getData());
+                    data.setData(tmp);
+                } else if (data.getCommand() == Command.READ_RESPONSE) {
+                    GXByteBuffer tmp =
+                            new GXByteBuffer(3 + data.getData().size());
+                    tmp.setUInt8(data.getCommand());
+                    tmp.setUInt8(VariableAccessSpecification.VARIABLE_NAME);
+                    tmp.setUInt8((byte) data.getInvokeId());
+                    tmp.setUInt8(0);
+                    tmp.set(data.getData());
+                    data.setData(tmp);
+                }
+                data.getData().position(0);
+                if (data.getCommand() == Command.SNRM
+                        || data.getCommand() == Command.UA) {
+                    data.getXml().appendStartTag(data.getCommand());
+                    if (data.getData().size() != 0) {
+                        translator.pduToXml(data.getXml(), data.getData(),
+                                translator.isOmitXmlDeclaration(),
+                                translator.isOmitXmlNameSpace(), true);
+                    }
+                    data.getXml().appendEndTag(data.getCommand());
+                } else {
+                    if (data.getData().size() != 0) {
+                        translator.pduToXml(data.getXml(), data.getData(),
+                                translator.isOmitXmlDeclaration(),
+                                translator.isOmitXmlNameSpace(), true);
+                    }
+                    data.setData(data2);
+                }
+            } finally {
+                data.getData().position(pos);
+            }
+        }
+        return ret;
     }
 
     /**
@@ -2067,11 +2374,11 @@ public class GXDLMSClient {
                 if (type == DataType.NONE) {
                     type = GXDLMSConverter.getDLMSDataType(value);
                 }
-                GXCommon.setData(bb, type, value);
+                GXCommon.setData(settings, bb, type, value);
             }
         }
         GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
-                Command.ACCESS_REQUEST, 0xFF, null, bb, 0xff);
+                Command.ACCESS_REQUEST, 0xFF, null, bb, 0xff, Command.NONE);
         if (time != null && time != new Date(0)) {
             p.setTime(new GXDateTime(time));
         }
@@ -2103,7 +2410,7 @@ public class GXDLMSClient {
                 new ArrayList<Map.Entry<Object, ErrorCode>>(cnt);
         for (pos = 0; pos != cnt; ++pos) {
             info.clear();
-            Object value = GXCommon.getData(data, info);
+            Object value = GXCommon.getData(settings, data, info);
             values.add(value);
         }
         // Get status codes.
@@ -2189,5 +2496,99 @@ public class GXDLMSClient {
             throw new IllegalArgumentException(
                     "Invalid command. " + reply.getCommand());
         }
+    }
+
+    /**
+     * Returns collection of push objects.
+     * 
+     * @param data
+     *            Received value.
+     * @return Array of objects and called indexes.
+     */
+    public final List<Entry<GXDLMSObject, Integer>>
+            ParsePushObjects(final Context context, final Object[] data) {
+        List<Entry<GXDLMSObject, Integer>> objects =
+                new ArrayList<Entry<GXDLMSObject, Integer>>();
+        if (data != null) {
+            GXDLMSConverter c = new GXDLMSConverter(getStandard());
+            for (Object it : data) {
+                Object[] tmp = (Object[]) it;
+                int classID = ((Number) (tmp[0])).intValue() & 0xFFFF;
+                if (classID > 0) {
+                    GXDLMSObject comp;
+                    comp = getObjects().findByLN(ObjectType.forValue(classID),
+                            GXCommon.toLogicalName((byte[]) tmp[1]));
+                    if (comp == null) {
+                        comp = GXDLMSClient.createDLMSObject(classID, 0, 0,
+                                tmp[1], null);
+                        settings.getObjects().add(comp);
+                        c.updateOBISCodeInformation(context, comp);
+                    }
+                    if (comp.getClass() != GXDLMSObject.class) {
+                        objects.add(new GXSimpleEntry<GXDLMSObject, Integer>(
+                                comp, ((Number) tmp[2]).intValue()));
+                    } else {
+                        System.out.println("Unknown object: "
+                                + String.valueOf(classID) + " "
+                                + GXCommon.toLogicalName((byte[]) tmp[1]));
+                    }
+                }
+            }
+        }
+        return objects;
+    }
+
+    /**
+     * Get size of the frame.
+     * <p>
+     * When WRAPPER is used this method can be used to check how many bytes we
+     * need to read.
+     * 
+     * @param data
+     *            Received data.
+     * @return Size of received bytes on the frame.
+     */
+    public final int getFrameSize(final GXByteBuffer data) {
+        if (getInterfaceType() == InterfaceType.WRAPPER) {
+            if (data.available() < 8 || data.getUInt16(data.position()) != 1) {
+                return 8 - data.available();
+            }
+            return data.getUInt16(data.position() + 6);
+        }
+        return 1;
+    }
+
+    /**
+     * @return XML client don't throw exceptions. It serializes them as a
+     *         default. Set value to true, if exceptions are thrown.
+     */
+    boolean isThrowExceptions() {
+        return throwExceptions;
+    }
+
+    /**
+     * @param value
+     *            XML client don't throw exceptions. It serializes them as a
+     *            default. Set value to true, if exceptions are thrown.
+     */
+    void setThrowExceptions(final boolean value) {
+        throwExceptions = value;
+    }
+
+    /**
+     * Get HDLC sender and receiver address information.
+     * 
+     * @param reply
+     *            Received data.
+     * @param target
+     *            target (primary) address
+     * @param source
+     *            Source (secondary) address.
+     * @param type
+     *            DLMS frame type.
+     */
+    public static void getHdlcAddressInfo(final GXByteBuffer reply,
+            final int[] target, final int[] source, final short[] type) {
+        GXDLMS.getHdlcAddressInfo(reply, target, source, type);
     }
 }

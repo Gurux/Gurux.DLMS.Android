@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -54,6 +54,11 @@ public class GXReplyData {
      * Received command.
      */
     private int command;
+
+    /**
+     * Received ciphered command.
+     */
+    private int cipheredCommand;
 
     /**
      * Received command type.
@@ -146,6 +151,23 @@ public class GXReplyData {
      * GBT Window size. This is for internal use.
      */
     private byte windowSize;
+
+    /**
+     * Client address of the notification message. Notification message sets
+     * this.
+     */
+    private int clientAddress;
+
+    /**
+     * Server address of the notification message. Notification message sets
+     * this.
+     */
+    private int serverAddress;
+
+    /**
+     * Gateway information.
+     */
+    private GXDLMSGateway gateway;
 
     /**
      * Constructor.
@@ -262,7 +284,7 @@ public class GXReplyData {
      */
     public final void clear() {
         moreData = RequestTypes.NONE;
-        command = Command.NONE;
+        cipheredCommand = command = Command.NONE;
         commandType = 0;
         data.capacity(0);
         complete = false;
@@ -274,6 +296,10 @@ public class GXReplyData {
         dataType = DataType.NONE;
         cipherIndex = 0;
         time = null;
+        if (xml != null) {
+            xml.setXmlLength(0);
+        }
+        invokeId = 0;
     }
 
     /**
@@ -440,7 +466,7 @@ public class GXReplyData {
     /**
      * @return XML settings.
      */
-    public final GXDLMSTranslatorStructure getXml() {
+    final GXDLMSTranslatorStructure getXml() {
         return xml;
     }
 
@@ -448,7 +474,7 @@ public class GXReplyData {
      * @param value
      *            XML settings.
      */
-    public final void setXml(final GXDLMSTranslatorStructure value) {
+    public void setXml(final GXDLMSTranslatorStructure value) {
         xml = value;
     }
 
@@ -544,10 +570,93 @@ public class GXReplyData {
 
     /**
      * @return Is GBT streaming.
+     * @deprecated use {@link #isStreaming} instead.
      */
+    @Deprecated
     public final boolean IsStreaming() {
+        return isStreaming();
+    }
+
+    /**
+     * @return Is GBT streaming.
+     */
+    public final boolean isStreaming() {
         return getStreaming() && (getBlockNumberAck() * getWindowSize())
                 + 1 > getBlockNumber();
     }
 
+    /**
+     * @return Client address of the notification message. Notification message
+     *         sets this.
+     */
+    public final int getClientAddress() {
+        return clientAddress;
+    }
+
+    /**
+     * @param value
+     *            Client address of the notification message. Notification
+     *            message sets this.
+     */
+    public final void setClientAddress(final int value) {
+        clientAddress = value;
+    }
+
+    /**
+     * @return Server address of the notification message. Notification message
+     *         sets this.
+     */
+    public final int getServerAddress() {
+        return serverAddress;
+    }
+
+    /**
+     * @param value
+     *            Server address of the notification message. Notification
+     *            message sets this.
+     */
+    public final void setServerAddress(int value) {
+        serverAddress = value;
+    }
+
+    /**
+     * @return Gateway information.
+     */
+    public final GXDLMSGateway getGateway() {
+        return gateway;
+    }
+
+    /**
+     * @param value
+     *            Gateway information.
+     */
+    public final void setGateway(final GXDLMSGateway value) {
+        gateway = value;
+    }
+
+    @Override
+    public String toString() {
+        if (xml != null) {
+            return xml.toString();
+        }
+        if (data == null) {
+            return "";
+        }
+        return data.toString();
+    }
+
+    /**
+     * @return Received ciphered command.
+     */
+    public int getCipheredCommand() {
+        return cipheredCommand;
+    }
+
+    /**
+     * @param value
+     *            Received ciphered command.
+     */
+    public void setCipheredCommand(final int value) {
+        cipheredCommand = value;
+    }
 }

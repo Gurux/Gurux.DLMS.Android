@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -43,6 +43,7 @@ import gurux.dlms.enums.Conformance;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Priority;
 import gurux.dlms.enums.ServiceClass;
+import gurux.dlms.enums.Standard;
 import gurux.dlms.objects.GXDLMSHdlcSetup;
 import gurux.dlms.objects.GXDLMSObjectCollection;
 import gurux.dlms.objects.GXDLMSTcpUdpSetup;
@@ -114,6 +115,11 @@ public class GXDLMSSettings {
      * Source system title.
      */
     private byte[] sourceSystemTitle;
+
+    /**
+     * Pre-established system title.
+     */
+    private byte[] preEstablishedSystemTitle;
 
     /**
      * Invoke ID.
@@ -191,12 +197,6 @@ public class GXDLMSSettings {
     private byte connected = ConnectionState.NONE;
 
     /**
-     * Can user access meter data anonymously (Without AARQ/AARE messages). In
-     * DLMS standard this is known as Pre-established application associations.
-     */
-    private boolean allowAnonymousAccess = false;
-
-    /**
      * Maximum receivers PDU size.
      */
     private int maxPduSize = MAX_RECEIVE_PDU_SIZE;
@@ -220,12 +220,12 @@ public class GXDLMSSettings {
     /**
      * HDLC sender frame sequence number.
      */
-    private short senderFrame;
+    short senderFrame;
 
     /**
-     * HDLC receiver block sequence number.
+     * HDLC receiver frame sequence number.
      */
-    private short receiverFrame;
+    short receiverFrame;
 
     /**
      * Is this server or client.
@@ -236,6 +236,11 @@ public class GXDLMSSettings {
      * Information from the connection size that server can handle.
      */
     private GXDLMSLimits limits;
+
+    /**
+     * Gateway settings.
+     */
+    private GXDLMSGateway gateway;
 
     private int startingPacketIndex = 1;
 
@@ -276,17 +281,39 @@ public class GXDLMSSettings {
      */
     private boolean useUtc2NormalTime;
 
+    private Standard standard;
+
+    /**
+     * Last executed command.
+     */
+    private int command;
+
+    /**
+     * Last executed command type
+     */
+    private byte commandType;
+
+    /**
+     * Protocol version.
+     */
+    private String protocolVersion = null;
+
     /**
      * Constructor.
      */
     GXDLMSSettings(final boolean isServer) {
         server = isServer;
         objects = new GXDLMSObjectCollection();
-        limits = new GXDLMSLimits();
+        limits = new GXDLMSLimits(this);
+        gateway = null;
         proposedConformance.addAll(GXDLMSClient.getInitialConformance(false));
+        if (isServer) {
+            proposedConformance.add(Conformance.GENERAL_PROTECTION);
+        }
         resetFrameSequence();
         windowSize = 1;
         userId = -1;
+        standard = Standard.DLMS;
     }
 
     /**
@@ -391,14 +418,6 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @return Is connection accepted.
-     */
-    public final boolean acceptConnection() {
-        return connected != ConnectionState.NONE || allowAnonymousAccess
-                || (cipher != null && cipher.getSharedSecret() != null);
-    }
-
-    /**
      * @param value
      *            Is connected to the meter.
      */
@@ -462,8 +481,7 @@ public class GXDLMSSettings {
         }
         System.out.println("Invalid HDLC Frame: " + Long.toString(frame, 16)
                 + " Expected: " + Long.toString(expected, 16));
-        return true;
-        // TODO: unit test must fix first. return false;
+        return false;
     }
 
     /**
@@ -614,6 +632,21 @@ public class GXDLMSSettings {
     }
 
     /**
+     * @return Gateway settings.
+     */
+    public final GXDLMSGateway getGateway() {
+        return gateway;
+    }
+
+    /**
+     * @param value
+     *            Gateway settings.
+     */
+    public final void setGateway(final GXDLMSGateway value) {
+        gateway = value;
+    }
+
+    /**
      * @param value
      *            Information from the frame size that server can handle.
      */
@@ -745,6 +778,9 @@ public class GXDLMSSettings {
             proposedConformance.clear();
             proposedConformance.addAll(GXDLMSClient
                     .getInitialConformance(getUseLogicalNameReferencing()));
+            if (isServer()) {
+                proposedConformance.add(Conformance.GENERAL_PROTECTION);
+            }
         }
     }
 
@@ -787,6 +823,24 @@ public class GXDLMSSettings {
 
     /**
      * @param value
+     *            update invoke ID.
+     */
+    final void updateInvokeId(final short value) {
+        if ((value & 0x80) != 0) {
+            setPriority(Priority.HIGH);
+        } else {
+            setPriority(Priority.NORMAL);
+        }
+        if ((value & 0x40) != 0) {
+            setServiceClass(ServiceClass.CONFIRMED);
+        } else {
+            setServiceClass(ServiceClass.UN_CONFIRMED);
+        }
+        invokeID = (byte) (value & 0xF);
+    }
+
+    /**
+     * @param value
      *            Invoke ID.
      */
     public final void setInvokeID(final int value) {
@@ -808,7 +862,7 @@ public class GXDLMSSettings {
      *            Invoke ID.
      */
     public final void setLongInvokeID(final long value) {
-        if (value > 0xFFFFFF) {
+        if (value < 0) {
             throw new IllegalArgumentException("Invalid InvokeID");
         }
         longInvokeID = value;
@@ -960,21 +1014,6 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @return Can user access meter data anonymously.
-     */
-    public boolean isAllowAnonymousAccess() {
-        return allowAnonymousAccess;
-    }
-
-    /**
-     * @param value
-     *            Can user access meter data anonymously.
-     */
-    public void setAllowAnonymousAccess(final boolean value) {
-        allowAnonymousAccess = value;
-    }
-
-    /**
      * @return HDLC settings.
      */
     public GXDLMSHdlcSetup getHdlc() {
@@ -1055,5 +1094,84 @@ public class GXDLMSSettings {
      */
     public void setUseUtc2NormalTime(final boolean value) {
         useUtc2NormalTime = value;
+    }
+
+    /**
+     * Used standard.
+     * 
+     * @return True, if UTC time is used.
+     */
+    public Standard getStandard() {
+        return standard;
+    }
+
+    /**
+     * Used standard.
+     * 
+     * @param value
+     *            True, if UTC time is used.
+     */
+    public void setStandard(final Standard value) {
+        standard = value;
+    }
+
+    /**
+     * @return Protocol version.
+     */
+    public String getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    /**
+     * @param value
+     *            Protocol version.
+     */
+    public void setProtocolVersion(final String value) {
+        protocolVersion = value;
+    }
+
+    /**
+     * @return Pre-established system title.
+     */
+    public byte[] getPreEstablishedSystemTitle() {
+        return preEstablishedSystemTitle;
+    }
+
+    /**
+     * @param value
+     *            Pre-established system title.
+     */
+    public void setPreEstablishedSystemTitle(final byte[] value) {
+        preEstablishedSystemTitle = value;
+    }
+
+    /**
+     * @return the command
+     */
+    public int getCommand() {
+        return command;
+    }
+
+    /**
+     * @param value
+     *            the command to set
+     */
+    public void setCommand(final int value) {
+        command = value;
+    }
+
+    /**
+     * @return the commandType
+     */
+    public byte getCommandType() {
+        return commandType;
+    }
+
+    /**
+     * @param value
+     *            the commandType to set
+     */
+    public void setCommandType(final byte value) {
+        commandType = value;
     }
 }

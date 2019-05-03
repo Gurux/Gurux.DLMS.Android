@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -42,6 +42,11 @@ public class GXXmlWriterSettings {
      * Are attribute values also serialized.
      */
     private boolean values;
+
+    /**
+     * Are values saved in old way.
+     */
+    private boolean old;
 
     /**
      * Constructor.
@@ -63,5 +68,20 @@ public class GXXmlWriterSettings {
      */
     public final void setValues(final boolean value) {
         values = value;
+    }
+
+    /**
+     * @return Are values saved in old way.
+     */
+    public final boolean getOld() {
+        return old;
+    }
+
+    /**
+     * @param value
+     *            Are Are values saved in old way.
+     */
+    public final void setOld(final boolean value) {
+        old = value;
     }
 }

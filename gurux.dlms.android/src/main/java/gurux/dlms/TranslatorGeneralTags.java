@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -64,7 +64,6 @@ final class TranslatorGeneralTags {
     static final int RESULT_SOURCE_DIAGNOSTIC = 0xA3;
     static final int ACSE_SERVICE_USER = 0xA301;
     static final int RESPONDING_AP_TITLE = 0xA4;
-    static final int RESPONSE_ALLOWED = 0xA4;
     static final int DEDICATED_KEY = 0xA8;
     static final int CALLING_AP_TITLE = 0xA6;
     static final int CALLING_AE_INVOCATION_ID = 0xA9;

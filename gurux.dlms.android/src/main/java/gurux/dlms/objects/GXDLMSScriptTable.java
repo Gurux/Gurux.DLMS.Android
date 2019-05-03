@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -50,7 +50,7 @@ import gurux.dlms.objects.enums.ScriptActionType;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSScriptTable
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSScriptTable
  */
 public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
     private List<GXDLMSScript> scripts;
@@ -64,9 +64,8 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSScriptTable(final String ln) {
         this(ln, 0);
@@ -74,11 +73,9 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSScriptTable(final String ln, final int sn) {
         super(ObjectType.SCRIPT_TABLE, ln, sn);
@@ -91,7 +88,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getScripts() };
+        return new Object[]{getLogicalName(), getScripts()};
     }
 
     /*
@@ -99,15 +96,16 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // Scripts
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -146,7 +144,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -161,7 +159,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
                 // Count
                 data.setUInt8(2);
                 // Script_identifier:
-                GXCommon.setData(data, DataType.UINT16, it.getId());
+                GXCommon.setData(settings, data, DataType.UINT16, it.getId());
                 data.setUInt8(DataType.ARRAY.getValue());
                 // Count
                 data.setUInt8(it.getActions().size());
@@ -169,22 +167,31 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
                     data.setUInt8(DataType.STRUCTURE.getValue());
                     data.setUInt8(5);
                     // service_id
-                    GXCommon.setData(data, DataType.ENUM,
+                    GXCommon.setData(settings, data, DataType.ENUM,
                             new Integer(a.getType().ordinal()));
-                    if (a.getTarget() != null) {
+                    if (a.getTarget() == null) {
                         // class_id
-                        GXCommon.setData(data, DataType.UINT16, new Integer(
-                                a.getTarget().getObjectType().getValue()));
+                        GXCommon.setData(settings, data, DataType.UINT16,
+                                new Integer(a.getObjectType().getValue()));
                         // logical_name
-                        GXCommon.setData(data, DataType.OCTET_STRING,
+                        GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                                GXCommon.logicalNameToBytes(
+                                        a.getLogicalName()));
+                    } else {
+                        // class_id
+                        GXCommon.setData(settings, data, DataType.UINT16,
+                                new Integer(a.getTarget().getObjectType()
+                                        .getValue()));
+                        // logical_name
+                        GXCommon.setData(settings, data, DataType.OCTET_STRING,
                                 GXCommon.logicalNameToBytes(
                                         a.getTarget().getLogicalName()));
                     }
                     // index
-                    GXCommon.setData(data, DataType.INT8,
+                    GXCommon.setData(settings, data, DataType.INT8,
                             new Integer(a.getIndex()));
                     // parameter
-                    GXCommon.setData(data, a.getParameterType(),
+                    GXCommon.setData(settings, data, a.getParameterType(),
                             a.getParameter());
                 }
             }
@@ -200,7 +207,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
@@ -254,7 +261,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
                     GXDLMSScriptAction it = new GXDLMSScriptAction();
                     ScriptActionType type = ScriptActionType
                             .values()[((Number) ((Object[]) arr)[0]).intValue()
-                                    - 1];
+                            - 1];
                     it.setType(type);
                     ObjectType ot = ObjectType.forValue(
                             ((Number) ((Object[]) arr)[1]).intValue());
@@ -278,29 +285,25 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Executes the script specified in parameter data.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param script
-     *            Executed script.
+     *
+     * @param client DLMS client.
+     * @param script Executed script.
      * @return Action bytes.
      */
     public final byte[][] execute(final GXDLMSClient client,
-            final GXDLMSScript script) {
+                                  final GXDLMSScript script) {
         return client.method(this, 1, script.getId(), DataType.UINT16);
     }
 
     /**
      * Executes the script specified in parameter data.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param scriptId
-     *            Executed script ID.
+     *
+     * @param client   DLMS client.
+     * @param scriptId Executed script ID.
      * @return Action bytes.
      */
     public final byte[][] execute(final GXDLMSClient client,
-            final int scriptId) {
+                                  final int scriptId) {
         return client.method(this, 1, scriptId, DataType.UINT16);
     }
 

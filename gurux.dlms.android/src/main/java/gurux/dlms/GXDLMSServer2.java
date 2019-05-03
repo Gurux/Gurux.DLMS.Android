@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -243,21 +243,6 @@ public abstract class GXDLMSServer2 {
      */
     public final void setUseLogicalNameReferencing(final boolean value) {
         base.setUseLogicalNameReferencing(value);
-    }
-
-    /**
-     * @return Can user access meter data anonymously.
-     */
-    public boolean isAllowAnonymousAccess() {
-        return getSettings().isAllowAnonymousAccess();
-    }
-
-    /**
-     * @param value
-     *            Can user access meter data anonymously.
-     */
-    public void setAllowAnonymousAccess(final boolean value) {
-        getSettings().setAllowAnonymousAccess(value);
     }
 
     /**
@@ -658,7 +643,7 @@ public abstract class GXDLMSServer2 {
         if (dt == DataType.NONE && value != null) {
             dt = GXDLMSConverter.getDLMSDataType(value);
         }
-        GXCommon.setData(buff, dt, value);
+        GXCommon.setData(base.getSettings(), buff, dt, value);
     }
 
     /**
@@ -675,7 +660,8 @@ public abstract class GXDLMSServer2 {
         List<byte[]> reply;
         if (getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(getSettings(), 0,
-                    Command.DATA_NOTIFICATION, 0, null, data, 0xff);
+                    Command.DATA_NOTIFICATION, 0, null, data, 0xff,
+                    Command.NONE);
             if (time == null) {
                 p.setTime(null);
             } else {
@@ -718,5 +704,23 @@ public abstract class GXDLMSServer2 {
             addData(it.getKey(), it.getValue().getAttributeIndex(), buff);
         }
         return generateDataNotificationMessages(date, buff);
+    }
+
+    /**
+     * @return Client system title.
+     *         <p>
+     *         Client system title is optional and it's used when
+     *         Pre-established Application Associations is used.
+     */
+    public byte[] getClientSystemTitle() {
+        return getSettings().getPreEstablishedSystemTitle();
+    }
+
+    /**
+     * @param value
+     *            Client system title.
+     */
+    public void setClientSystemTitle(final byte[] value) {
+        getSettings().setPreEstablishedSystemTitle(value);
     }
 }

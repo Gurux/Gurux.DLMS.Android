@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -51,63 +51,63 @@ import gurux.dlms.objects.enums.CreditType;
 
 /**
  * Online help:<br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
  */
 public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Current credit amount. Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private int currentCreditAmount;
     /**
      * Type. Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private CreditType type;
     /**
      * Priority. Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private byte priority;
     /**
      * Warning threshold. Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private int warningThreshold;
 
     /**
      * Limit. Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private int limit;
     /**
      * Credit configuration. Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private java.util.Set<CreditConfiguration> creditConfiguration;
     /**
      * Status. <br>
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private CreditStatus status;
     /**
      * Preset credit amount. <br>
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private int presetCreditAmount;
     /**
      * Credit available threshold.<br>
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private int creditAvailableThreshold;
     /**
      * Period.<br>
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      */
     private GXDateTime period;
 
@@ -281,7 +281,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      * 
      * @return Period
      */
@@ -291,7 +291,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
      * 
      * @param value
      *            Period
@@ -312,51 +312,52 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // CurrentCreditAmount
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(2);
         }
         // Type
-        if (canRead(3)) {
+        if (all || canRead(3)) {
             attributes.add(3);
         }
         // Priority
-        if (canRead(4)) {
+        if (all || canRead(4)) {
             attributes.add(4);
         }
         // WarningThreshold
-        if (canRead(5)) {
+        if (all || canRead(5)) {
             attributes.add(5);
         }
         // Limit
-        if (canRead(6)) {
+        if (all || canRead(6)) {
             attributes.add(6);
         }
         // creditConfiguration
-        if (canRead(7)) {
+        if (all || canRead(7)) {
             attributes.add(7);
         }
         // Status
-        if (canRead(8)) {
+        if (all || canRead(8)) {
             attributes.add(8);
         }
         // PresetCreditAmount
-        if (canRead(9)) {
+        if (all || canRead(9)) {
             attributes.add(9);
         }
         // CreditAvailableThreshold
-        if (canRead(10)) {
+        if (all || canRead(10)) {
             attributes.add(10);
         }
         // Period
-        if (canRead(11)) {
+        if (all || canRead(11)) {
             attributes.add(11);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -472,7 +473,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
             break;
         case 7:
             GXByteBuffer bb = new GXByteBuffer();
-            GXCommon.setBitString(bb, e.getValue());
+            GXCommon.setBitString(bb, e.getValue(), true);
             creditConfiguration = CreditConfiguration.forValue(bb.getUInt8(1));
             break;
         case 8:

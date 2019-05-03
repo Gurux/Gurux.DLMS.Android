@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -36,15 +36,22 @@ package gurux.dlms.objects;
 
 /**
  * Online help:<br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
  */
 public class GXCommodity {
     /**
      * Executed object.<br>
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
      */
     private GXDLMSObject target;
+
+    /**
+     * Attribute index.<br>
+     * Online help:<br>
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
+     */
+    private int index;
 
     /**
      * @return Executed object.
@@ -60,13 +67,6 @@ public class GXCommodity {
     public final void setTarget(GXDLMSObject value) {
         target = value;
     }
-
-    /**
-     * Attribute index.<br>
-     * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     */
-    private int index;
 
     /**
      * @return Attribute index.

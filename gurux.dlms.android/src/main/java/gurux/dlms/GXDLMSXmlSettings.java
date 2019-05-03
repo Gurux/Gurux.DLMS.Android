@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -46,6 +46,12 @@ class GXDLMSXmlSettings {
     private SourceDiagnostic diagnostic = SourceDiagnostic.NONE;
     private byte reason = 0;
     private int command;
+
+    private int gwCommand;
+    // GW newtork ID.
+    private int networkId;
+    private byte[] physicalDeviceAddress;
+
     private int count = 0;
     private int requestType = 0xFF;
     private GXByteBuffer attributeDescriptor = new GXByteBuffer();
@@ -53,6 +59,12 @@ class GXDLMSXmlSettings {
     private GXDLMSSettings settings = new GXDLMSSettings(true);
     private HashMap<String, Integer> tags = new HashMap<String, Integer>();
     private GXDateTime time = null;
+
+    /**
+     * Is xml used as a reply template.
+     */
+    private boolean template;
+
     /**
      * Are numeric values shows as hex.
      */
@@ -253,5 +265,44 @@ class GXDLMSXmlSettings {
      */
     public TranslatorOutputType getOutputType() {
         return outputType;
+    }
+
+    public int getGwCommand() {
+        return gwCommand;
+    }
+
+    public void setGwCommand(final int value) {
+        gwCommand = value;
+    }
+
+    public int getNetworkId() {
+        return networkId;
+    }
+
+    public void setNetworkId(final int value) {
+        networkId = value;
+    }
+
+    public byte[] getPhysicalDeviceAddress() {
+        return physicalDeviceAddress;
+    }
+
+    public void setPhysicalDeviceAddress(final byte[] value) {
+        physicalDeviceAddress = value;
+    }
+
+    /**
+     * @return Is xml used as a reply template.
+     */
+    public boolean isTemplate() {
+        return template;
+    }
+
+    /**
+     * @param template
+     *            Is xml used as a reply template.
+     */
+    public void setTemplate(final boolean template) {
+        this.template = template;
     }
 }

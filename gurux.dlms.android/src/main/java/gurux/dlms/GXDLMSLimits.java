@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -61,10 +61,18 @@ public class GXDLMSLimits {
      */
     private int windowSizeRX;
 
+    private GXDLMSSettings settings;
+
+    /**
+     * Is Max Info TX and RX count for frame size or PDU size.
+     */
+    private boolean useFrameSize = false;
+
     /**
      * Constructor.
      */
-    GXDLMSLimits() {
+    GXDLMSLimits(GXDLMSSettings parent) {
+        settings = parent;
         setMaxInfoTX(DEFAULT_MAX_INFO_TX);
         setMaxInfoRX(DEFAULT_MAX_INFO_RX);
         setWindowSizeTX(DEFAULT_WINDOWS_SIZE_TX);
@@ -131,7 +139,7 @@ public class GXDLMSLimits {
     /**
      * Get the window size in receive. DefaultValue is 1.
      * 
-     * @return The window size in receive..
+     * @return The window size in receive.
      */
     public final int getWindowSizeRX() {
         return windowSizeRX;
@@ -145,5 +153,58 @@ public class GXDLMSLimits {
      */
     public final void setWindowSizeRX(final int value) {
         windowSizeRX = value;
+    }
+
+    /**
+     * Get the HDLC sender frame sequence number.
+     * 
+     * @return sender frame.
+     */
+    public final short getSenderFrame() {
+        return settings.senderFrame;
+    }
+
+    /**
+     * Set the HDLC sender frame sequence number.
+     * 
+     * @param value
+     *            sender frame.
+     */
+    public final void setSenderFrame(final short value) {
+        settings.senderFrame = value;
+    }
+
+    /**
+     * Get the HDLC receiver frame sequence number.
+     * 
+     * @return receiver frame.
+     */
+    public final short getReceiverFrame() {
+        return settings.receiverFrame;
+    }
+
+    /**
+     * Set HDLC receiver frame sequence number.
+     * 
+     * @param value
+     *            receiver frame.
+     */
+    public final void setReceiverFrame(final short value) {
+        settings.receiverFrame = value;
+    }
+
+    /**
+     * @return Is Max Info TX and RX count for frame size or PDU size.
+     */
+    public boolean isUseFrameSize() {
+        return useFrameSize;
+    }
+
+    /**
+     * @param value
+     *            Is Max Info TX and RX count for frame size or PDU size.
+     */
+    public void setUseFrameSize(final boolean value) {
+        useFrameSize = value;
     }
 }

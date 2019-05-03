@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -53,7 +53,7 @@ import gurux.dlms.objects.enums.AutoConnectMode;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAutoConnect
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAutoConnect
  */
 public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
     private AutoConnectMode mode;
@@ -168,31 +168,32 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // Mode
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         // Repetitions
-        if (canRead(3)) {
+        if (all || canRead(3)) {
             attributes.add(new Integer(3));
         }
         // RepetitionDelay
-        if (canRead(4)) {
+        if (all || canRead(4)) {
             attributes.add(new Integer(4));
         }
         // CallingWindow
-        if (canRead(5)) {
+        if (all || canRead(5)) {
             attributes.add(new Integer(5));
         }
         // Destinations
-        if (canRead(6)) {
+        if (all || canRead(6)) {
             attributes.add(new Integer(6));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -268,9 +269,10 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
                     // Count
                     data.setUInt8(2);
                     // Start time
-                    GXCommon.setData(data, DataType.OCTET_STRING, it.getKey());
+                    GXCommon.setData(null, data, DataType.OCTET_STRING,
+                            it.getKey());
                     // End time
-                    GXCommon.setData(data, DataType.OCTET_STRING,
+                    GXCommon.setData(null, data, DataType.OCTET_STRING,
                             it.getValue());
                 }
             }
@@ -287,7 +289,7 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
                 // Add count
                 GXCommon.setObjectCount(cnt, data);
                 for (String it : getDestinations()) {
-                    GXCommon.setData(data, DataType.OCTET_STRING,
+                    GXCommon.setData(null, data, DataType.OCTET_STRING,
                             GXCommon.getBytes(it)); // destination
                 }
             }

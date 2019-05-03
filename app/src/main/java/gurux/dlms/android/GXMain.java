@@ -462,7 +462,7 @@ public class GXMain extends Fragment implements IGXMediaListener, IGXTaskCallbac
      * Read selected object.
      */
     public void read(GXDLMSObject obj) throws Exception {
-        for (int it : ((IGXDLMSBase) obj).getAttributeIndexToRead()) {
+        for (int it : ((IGXDLMSBase) obj).getAttributeIndexToRead(true)) {
             readObject(obj, it);
         }
     }

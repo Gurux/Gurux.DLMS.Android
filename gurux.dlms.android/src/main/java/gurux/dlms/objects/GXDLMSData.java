@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -43,13 +43,13 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help:<br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
  */
 public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Value of data object.<br>
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
      */
     private Object value;
 
@@ -84,7 +84,7 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
      * 
      * @return Value of data object.
      */
@@ -94,7 +94,7 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Online help:<br>
-     * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
+     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
      * 
      * @param forValue
      *            Value of data object.
@@ -113,15 +113,16 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // Value
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);

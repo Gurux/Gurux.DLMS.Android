@@ -120,8 +120,8 @@ public class GXXmlReader implements AutoCloseable {
     /**
      * @return Name of current tag.
      */
-    public String getName()throws XmlPullParserException {
-       throw new UnsupportedOperationException("XML reader is not supported at the moment.");
+    public String getName(){
+       throw new RuntimeException("XML reader is not supported at the moment.");
     }
 
     private void getNext() throws XMLStreamException {

@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -132,6 +132,12 @@ final class GXDLMSChippering {
         if (p.getType() == CountType.PACKET) {
             GXByteBuffer tmp2 = new GXByteBuffer(10 + data.size());
             tmp2.setUInt8(p.getTag());
+            if (p.getTag() == Command.GENERAL_GLO_CIPHERING
+                    || p.getTag() == Command.GENERAL_DED_CIPHERING
+                    || p.getTag() == Command.DATA_NOTIFICATION) {
+                GXCommon.setObjectCount(p.getSystemTitle().length, tmp2);
+                tmp2.set(p.getSystemTitle());
+            }
             gurux.dlms.internal.GXCommon.setObjectCount(data.size(), tmp2);
             tmp2.set(data.getData(), 0, data.size());
             data = tmp2;
@@ -201,6 +207,7 @@ final class GXDLMSChippering {
         int len, cmd = data.getUInt8();
         switch (cmd) {
         case Command.GENERAL_GLO_CIPHERING:
+        case Command.GENERAL_DED_CIPHERING:
             len = GXCommon.getObjectCount(data);
             byte[] title = new byte[len];
             data.get(title);
@@ -220,6 +227,8 @@ final class GXDLMSChippering {
         case Command.GLO_METHOD_REQUEST:
         case Command.GLO_METHOD_RESPONSE:
         case Command.GLO_EVENT_NOTIFICATION_REQUEST:
+        case Command.DED_INITIATE_REQUEST:
+        case Command.DED_INITIATE_RESPONSE:
         case Command.DED_GET_REQUEST:
         case Command.DED_GET_RESPONSE:
         case Command.DED_SET_REQUEST:
@@ -227,6 +236,10 @@ final class GXDLMSChippering {
         case Command.DED_METHOD_REQUEST:
         case Command.DED_METHOD_RESPONSE:
         case Command.DED_EVENT_NOTIFICATION:
+        case Command.DED_READ_REQUEST:
+        case Command.DED_READ_RESPONSE:
+        case Command.DED_WRITE_REQUEST:
+        case Command.DED_WRITE_RESPONSE:
             break;
         default:
             throw new IllegalArgumentException("cryptedData");

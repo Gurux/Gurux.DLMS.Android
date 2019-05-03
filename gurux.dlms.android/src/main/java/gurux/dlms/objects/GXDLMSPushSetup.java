@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -54,7 +54,7 @@ import gurux.dlms.objects.enums.ServiceType;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSPushSetup
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSPushSetup
  */
 public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     private ServiceType service;
@@ -223,35 +223,36 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // PushObjectList
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(new Integer(2));
         }
         // SendDestinationAndMethod
-        if (canRead(3)) {
+        if (all || canRead(3)) {
             attributes.add(new Integer(3));
         }
         // CommunicationWindow
-        if (canRead(4)) {
+        if (all || canRead(4)) {
             attributes.add(new Integer(4));
         }
         // RandomisationStartInterval
-        if (canRead(5)) {
+        if (all || canRead(5)) {
             attributes.add(new Integer(5));
         }
         // NumberOfRetries
-        if (canRead(6)) {
+        if (all || canRead(6)) {
             attributes.add(new Integer(6));
         }
         // RepetitionDelay
-        if (canRead(7)) {
+        if (all || canRead(7)) {
             attributes.add(new Integer(7));
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -316,13 +317,13 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
             for (Entry<GXDLMSObject, GXDLMSCaptureObject> it : pushObjectList) {
                 buff.setUInt8(DataType.STRUCTURE.getValue());
                 buff.setUInt8(4);
-                GXCommon.setData(buff, DataType.UINT16,
+                GXCommon.setData(settings, buff, DataType.UINT16,
                         new Integer(it.getKey().getObjectType().getValue()));
-                GXCommon.setData(buff, DataType.OCTET_STRING, GXCommon
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING, GXCommon
                         .logicalNameToBytes(it.getKey().getLogicalName()));
-                GXCommon.setData(buff, DataType.INT8,
+                GXCommon.setData(settings, buff, DataType.INT8,
                         new Integer(it.getValue().getAttributeIndex()));
-                GXCommon.setData(buff, DataType.UINT16,
+                GXCommon.setData(settings, buff, DataType.UINT16,
                         new Integer(it.getValue().getDataIndex()));
             }
             return buff.array();
@@ -330,15 +331,15 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
         if (e.getIndex() == 3) {
             buff.setUInt8(DataType.STRUCTURE.getValue());
             buff.setUInt8(3);
-            GXCommon.setData(buff, DataType.ENUM, new Integer(
+            GXCommon.setData(settings, buff, DataType.ENUM, new Integer(
                     sendDestinationAndMethod.getService().getValue()));
             if (sendDestinationAndMethod.getDestination() != null) {
-                GXCommon.setData(buff, DataType.OCTET_STRING,
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING,
                         sendDestinationAndMethod.getDestination().getBytes());
             } else {
-                GXCommon.setData(buff, DataType.OCTET_STRING, null);
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING, null);
             }
-            GXCommon.setData(buff, DataType.ENUM,
+            GXCommon.setData(settings, buff, DataType.ENUM,
                     sendDestinationAndMethod.getMessage().getValue());
             return buff.array();
         }
@@ -348,8 +349,10 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
             for (Entry<GXDateTime, GXDateTime> it : communicationWindow) {
                 buff.setUInt8(DataType.STRUCTURE.getValue());
                 buff.setUInt8(2);
-                GXCommon.setData(buff, DataType.OCTET_STRING, it.getKey());
-                GXCommon.setData(buff, DataType.OCTET_STRING, it.getValue());
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING,
+                        it.getKey());
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING,
+                        it.getValue());
             }
             return buff.array();
         }

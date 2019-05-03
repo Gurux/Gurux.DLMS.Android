@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -271,6 +271,51 @@ public final class Command {
     public static final int EVENT_NOTIFICATION = 0xC2;
 
     /**
+     * Ded initiate request.
+     */
+    public static final int DED_INITIATE_REQUEST = 65;
+
+    /**
+     * Ded read request.
+     */
+    public static final int DED_READ_REQUEST = 69;
+
+    /**
+     * Ded write request.
+     */
+    public static final int DED_WRITE_REQUEST = 70;
+
+    /**
+     * Ded initiate response.
+     */
+    public static final int DED_INITIATE_RESPONSE = 72;
+
+    /**
+     * Ded read response.
+     */
+    public static final int DED_READ_RESPONSE = 76;
+
+    /**
+     * Ded write response.
+     */
+    public static final int DED_WRITE_RESPONSE = 77;
+
+    /**
+     * Ded confirmed service error.
+     */
+    public static final int DED_CONFIRMED_SERVICE_ERROR = 78;
+
+    /**
+     * Ded confirmed write request.
+     */
+    public static final int DED_UNCONFIRMED_WRITE_REQUEST = 86;
+
+    /**
+     * Ded information report request.
+     */
+    public static final int DED_INFORMATION_REPORT_REQUEST = 88;
+
+    /**
      * Ded get request.
      */
     public static final int DED_GET_REQUEST = 0xD0;
@@ -303,7 +348,17 @@ public final class Command {
     /**
      * Ded method response.
      */
-    public static final int DED_METHOD_RESPONSE = 0xD6;
+    public static final int DED_METHOD_RESPONSE = 0xD7;
+
+    /**
+     * Request message from client to gateway.
+     */
+    public static final int GATEWAY_REQUEST = 0xE6;
+
+    /**
+     * Response message from gateway to client.
+     */
+    public static final int GATEWAY_RESPONSE = 0xE7;
 
     public static String toString(final int value) {
         String str;
@@ -461,6 +516,12 @@ public final class Command {
         case DED_METHOD_REQUEST:
             str = "DedMethodRequest";
             break;
+        case GATEWAY_REQUEST:
+            str = "GatewayRequest ";
+            break;
+        case GATEWAY_RESPONSE:
+            str = "GatewayResponse ";
+            break;
         default:
             throw new IllegalArgumentException(String.valueOf(value));
         }
@@ -561,6 +622,10 @@ public final class Command {
             ret = Command.INFORMATION_REPORT;
         } else if ("EventNotification".equalsIgnoreCase(value)) {
             ret = Command.EVENT_NOTIFICATION;
+        } else if ("GatewayRequest".equalsIgnoreCase(value)) {
+            ret = Command.GATEWAY_REQUEST;
+        } else if ("GatewayResponse".equalsIgnoreCase(value)) {
+            ret = Command.GATEWAY_RESPONSE;
         } else {
             throw new IllegalArgumentException(value);
         }

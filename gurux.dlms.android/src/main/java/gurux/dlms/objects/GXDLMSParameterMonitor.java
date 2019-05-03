@@ -26,15 +26,13 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
 package gurux.dlms.objects;
-
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +52,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help:<br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSParameterMonitor
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSParameterMonitor
  */
 public class GXDLMSParameterMonitor extends GXDLMSObject
         implements IGXDLMSBase {
@@ -168,11 +166,11 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.getValue());
         bb.setUInt8(3);
-        GXCommon.setData(bb, DataType.UINT16,
+        GXCommon.setData(null, bb, DataType.UINT16,
                 entry.getTarget().getObjectType().getValue());
-        GXCommon.setData(bb, DataType.OCTET_STRING, GXCommon
+        GXCommon.setData(null, bb, DataType.OCTET_STRING, GXCommon
                 .logicalNameToBytes(entry.getTarget().getLogicalName()));
-        GXCommon.setData(bb, DataType.INT8, entry.getAttributeIndex());
+        GXCommon.setData(null, bb, DataType.INT8, entry.getAttributeIndex());
         return client.method(this, 1, bb.array(), DataType.ARRAY);
     }
 
@@ -190,11 +188,11 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.getValue());
         bb.setUInt8(3);
-        GXCommon.setData(bb, DataType.UINT16,
+        GXCommon.setData(null, bb, DataType.UINT16,
                 entry.getTarget().getObjectType());
-        GXCommon.setData(bb, DataType.OCTET_STRING, GXCommon
+        GXCommon.setData(null, bb, DataType.OCTET_STRING, GXCommon
                 .logicalNameToBytes(entry.getTarget().getLogicalName()));
-        GXCommon.setData(bb, DataType.INT8, entry.getAttributeIndex());
+        GXCommon.setData(null, bb, DataType.INT8, entry.getAttributeIndex());
         return client.method(this, 2, bb.array(), DataType.ARRAY);
     }
 
@@ -250,23 +248,24 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // ChangedParameter
-        if (canRead(2)) {
+        if (all || canRead(2)) {
             attributes.add(2);
         }
         // CaptureTime
-        if (canRead(3)) {
+        if (all || canRead(3)) {
             attributes.add(3);
         }
         // Parameters
-        if (canRead(4)) {
+        if (all || canRead(4)) {
             attributes.add(4);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
@@ -319,20 +318,21 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(4);
             if (changedParameter == null) {
-                GXCommon.setData(data, DataType.UINT16, 0);
-                GXCommon.setData(data, DataType.OCTET_STRING,
+                GXCommon.setData(settings, data, DataType.UINT16, 0);
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
                         new byte[] { 0, 0, 0, 0, 0, 0 });
-                GXCommon.setData(data, DataType.INT8, 1);
-                GXCommon.setData(data, DataType.NONE, null);
+                GXCommon.setData(settings, data, DataType.INT8, 1);
+                GXCommon.setData(settings, data, DataType.NONE, null);
             } else {
-                GXCommon.setData(data, DataType.UINT16, changedParameter
-                        .getTarget().getObjectType().getValue());
-                GXCommon.setData(data, DataType.OCTET_STRING,
+                GXCommon.setData(settings, data, DataType.UINT16,
+                        changedParameter.getTarget().getObjectType()
+                                .getValue());
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
                         GXCommon.logicalNameToBytes(
                                 changedParameter.getTarget().getLogicalName()));
-                GXCommon.setData(data, DataType.INT8,
+                GXCommon.setData(settings, data, DataType.INT8,
                         changedParameter.getAttributeIndex());
-                GXCommon.setData(data,
+                GXCommon.setData(settings, data,
                         GXDLMSConverter
                                 .getDLMSDataType(changedParameter.getValue()),
                         changedParameter.getValue());
@@ -351,12 +351,12 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
                 for (GXDLMSTarget it : parameters) {
                     data.setUInt8(DataType.STRUCTURE.getValue());
                     data.setUInt8(3);
-                    GXCommon.setData(data, DataType.UINT16,
+                    GXCommon.setData(settings, data, DataType.UINT16,
                             it.getTarget().getObjectType().getValue());
-                    GXCommon.setData(data, DataType.OCTET_STRING,
+                    GXCommon.setData(settings, data, DataType.OCTET_STRING,
                             GXCommon.logicalNameToBytes(
                                     it.getTarget().getLogicalName()));
-                    GXCommon.setData(data, DataType.INT8,
+                    GXCommon.setData(settings, data, DataType.INT8,
                             it.getAttributeIndex());
                 }
             }
@@ -465,17 +465,12 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
                     .setValue(reader.readElementContentAsObject("Value", null));
             reader.readEndElement("ChangedParameter");
         }
-
-        try {
-            if ("Time".compareToIgnoreCase(reader.getName()) == 0) {
-                captureTime =
-                        new GXDateTime(reader.readElementContentAsString("Time"))
-                                .getMeterCalendar().getTime();
-            } else {
-                captureTime = new Date(0);
-            }
-        } catch (XmlPullParserException e) {
-            throw new RuntimeException(e.getMessage());
+        if ("Time".compareToIgnoreCase(reader.getName()) == 0) {
+            captureTime =
+                    new GXDateTime(reader.readElementContentAsString("Time"))
+                            .getMeterCalendar().getTime();
+        } else {
+            captureTime = new Date(0);
         }
         parameters.clear();
         if (reader.isStartElement("Parameters", true)) {

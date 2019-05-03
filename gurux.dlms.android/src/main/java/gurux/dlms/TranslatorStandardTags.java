@@ -113,7 +113,7 @@ final class TranslatorStandardTags {
                 "x:charstring");
         GXDLMSTranslator.addTag(list, TranslatorGeneralTags.DEDICATED_KEY,
                 "x:dedicated-key");
-        GXDLMSTranslator.addTag(list, TranslatorGeneralTags.RESPONSE_ALLOWED,
+        GXDLMSTranslator.addTag(list, TranslatorTags.RESPONSE_ALLOWED,
                 "x:response-allowed");
         GXDLMSTranslator.addTag(list, TranslatorGeneralTags.USER_INFORMATION,
                 "x:user-information");
@@ -279,6 +279,10 @@ final class TranslatorStandardTags {
         list.put(TranslatorTags.SERVICE, "x:service");
         list.put(TranslatorTags.SERVICE_ERROR, "x:service-error");
         list.put(Command.GENERAL_BLOCK_TRANSFER, "x:general-block-transfer");
+        GXDLMSTranslator.addTag(list, Command.GATEWAY_REQUEST,
+                "x:gateway-request");
+        GXDLMSTranslator.addTag(list, Command.GATEWAY_RESPONSE,
+                "x:gateway-response");
     }
 
     /**
@@ -327,6 +331,10 @@ final class TranslatorStandardTags {
      */
     static void getDedTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
+        GXDLMSTranslator.addTag(list, Command.DED_INITIATE_REQUEST,
+                "x:ded-initiate-request");
+        GXDLMSTranslator.addTag(list, Command.DED_INITIATE_RESPONSE,
+                "x:ded-initiate-response");
         GXDLMSTranslator.addTag(list, Command.DED_GET_REQUEST,
                 "x:ded-get-request");
         GXDLMSTranslator.addTag(list, Command.DED_GET_RESPONSE,
@@ -399,10 +407,10 @@ final class TranslatorStandardTags {
         GXDLMSTranslator.addTag(list, TranslatorTags.ACCESS_PARAMETERS,
                 "x:access-parameters");
         GXDLMSTranslator.addTag(list, TranslatorTags.ATTRIBUTE_DESCRIPTOR_LIST,
-                "AttributeDescriptorList");
+                "x:attribute-descriptor-list");
         GXDLMSTranslator.addTag(list,
                 TranslatorTags.ATTRIBUTE_DESCRIPTOR_WITH_SELECTION,
-                "AttributeDescriptorWithSelection");
+                "x:Cosem-Attribute-Descriptor-With-Selection");
         GXDLMSTranslator.addTag(list, TranslatorTags.READ_DATA_BLOCK_ACCESS,
                 "ReadDataBlockAccess");
         GXDLMSTranslator.addTag(list, TranslatorTags.WRITE_DATA_BLOCK_ACCESS,
@@ -457,7 +465,8 @@ final class TranslatorStandardTags {
                 "WindowSizeRX");
         GXDLMSTranslator.addTag(list, TranslatorTags.WINDOW_SIZE_TX,
                 "WindowSizeTX");
-        GXDLMSTranslator.addTag(list, TranslatorTags.VALUE_LIST, "value-list");
+        GXDLMSTranslator.addTag(list, TranslatorTags.VALUE_LIST,
+                "x:value-list");
         GXDLMSTranslator.addTag(list, TranslatorTags.DATA_ACCESS_RESULT,
                 "x:data-access-result");
         GXDLMSTranslator.addTag(list, TranslatorTags.BLOCK_CONTROL,
@@ -470,6 +479,22 @@ final class TranslatorStandardTags {
                 "x:contents-description");
         GXDLMSTranslator.addTag(list, TranslatorTags.ARRAY_CONTENTS,
                 "x:array-contents");
+        GXDLMSTranslator.addTag(list, TranslatorTags.NETWORK_ID,
+                "x:network-id");
+        GXDLMSTranslator.addTag(list, TranslatorTags.PHYSICAL_DEVICE_ADDRESS,
+                "x:physical-device-address");
+        GXDLMSTranslator.addTag(list, TranslatorTags.PROTOCOL_VERSION,
+                "x:protocol-version");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AP_TITLE,
+                "called-ap-title");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AP_INVOCATION_ID,
+                "called-ap-invocation-id");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AE_INVOCATION_ID,
+                "called-ae-invocation-id");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLING_AP_INVOCATION_ID,
+                "calling-ap-invocation-id");
+        GXDLMSTranslator.addTag(list, TranslatorTags.CALLED_AE_QUALIFIER,
+                "called-ae-qualifier");
     }
 
     static void getDataTypeTags(final HashMap<Integer, String> list) {

@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -56,7 +56,7 @@ import gurux.dlms.secure.GXSecure;
 
 /**
  * Online help: <br>
- * http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAssociationShortName
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAssociationShortName
  */
 public class GXDLMSAssociationShortName extends GXDLMSObject
         implements IGXDLMSBase {
@@ -201,24 +201,25 @@ public class GXDLMSAssociationShortName extends GXDLMSObject
      * already read or device is returned HW error it is not returned.
      */
     @Override
-    public final int[] getAttributeIndexToRead() {
+    public final int[] getAttributeIndexToRead(final boolean all) {
         java.util.ArrayList<Integer> attributes =
                 new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (getLogicalName() == null || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null
+                || getLogicalName().compareTo("") == 0) {
             attributes.add(new Integer(1));
         }
         // ObjectList is static and read only once.
-        if (!isRead(2)) {
+        if (all || !isRead(2)) {
             attributes.add(new Integer(2));
         }
         if (getVersion() > 1) {
             // AccessRightsList is static and read only once.
-            if (!isRead(3)) {
+            if (all || !isRead(3)) {
                 attributes.add(new Integer(3));
             }
             // SecuritySetupReference is static and read only once.
-            if (!isRead(4)) {
+            if (all || !isRead(4)) {
                 attributes.add(new Integer(4));
             }
         }
@@ -245,16 +246,17 @@ public class GXDLMSAssociationShortName extends GXDLMSObject
             final GXByteBuffer data) {
         data.setUInt8((byte) DataType.STRUCTURE.getValue());
         data.setUInt8((byte) 3);
-        GXCommon.setData(data, DataType.UINT16, item.getShortName());
+        GXCommon.setData(null, data, DataType.UINT16, item.getShortName());
         data.setUInt8((byte) DataType.ARRAY.getValue());
         data.setUInt8((byte) item.getAttributes().size());
         for (GXDLMSAttributeSettings att : item.getAttributes()) {
             // attribute_access_item
             data.setUInt8((byte) DataType.STRUCTURE.getValue());
             data.setUInt8((byte) 3);
-            GXCommon.setData(data, DataType.INT8, att.getIndex());
-            GXCommon.setData(data, DataType.ENUM, att.getAccess().getValue());
-            GXCommon.setData(data, DataType.NONE, null);
+            GXCommon.setData(null, data, DataType.INT8, att.getIndex());
+            GXCommon.setData(null, data, DataType.ENUM,
+                    att.getAccess().getValue());
+            GXCommon.setData(null, data, DataType.NONE, null);
         }
         data.setUInt8((byte) DataType.ARRAY.getValue());
         data.setUInt8((byte) item.getMethodAttributes().size());
@@ -262,8 +264,8 @@ public class GXDLMSAssociationShortName extends GXDLMSObject
             // attribute_access_item
             data.setUInt8((byte) DataType.STRUCTURE.getValue());
             data.setUInt8((byte) 2);
-            GXCommon.setData(data, DataType.INT8, it.getIndex());
-            GXCommon.setData(data, DataType.ENUM,
+            GXCommon.setData(null, data, DataType.INT8, it.getIndex());
+            GXCommon.setData(null, data, DataType.ENUM,
                     it.getMethodAccess().getValue());
         }
     }
@@ -307,14 +309,15 @@ public class GXDLMSAssociationShortName extends GXDLMSObject
                     // Count
                     bb.setUInt8((byte) 4);
                     // base address.
-                    GXCommon.setData(bb, DataType.INT16, it.getShortName());
+                    GXCommon.setData(null, bb, DataType.INT16,
+                            it.getShortName());
                     // ClassID
-                    GXCommon.setData(bb, DataType.UINT16,
+                    GXCommon.setData(null, bb, DataType.UINT16,
                             it.getObjectType().getValue());
                     // Version
-                    GXCommon.setData(bb, DataType.UINT8, 0);
+                    GXCommon.setData(null, bb, DataType.UINT8, 0);
                     // LN
-                    GXCommon.setData(bb, DataType.OCTET_STRING,
+                    GXCommon.setData(null, bb, DataType.OCTET_STRING,
                             GXCommon.logicalNameToBytes(it.getLogicalName()));
                     settings.setIndex(settings.getIndex() + 1);
                     if (settings.isServer()) {
