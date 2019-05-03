@@ -34,11 +34,7 @@
 
 package gurux.dlms.android;
 
-import android.content.Context;
 import android.os.AsyncTask;
-
-import gurux.dlms.GXDLMSConverter;
-import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 
 /**
  * This class is used to execute task.

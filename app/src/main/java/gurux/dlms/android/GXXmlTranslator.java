@@ -34,10 +34,8 @@
 
 package gurux.dlms.android;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,7 +128,7 @@ public class GXXmlTranslator extends Fragment {
      */
     void toXml(View v) {
         try {
-          //Mikko  translator.setHex(hexBtn.getValue());
+            //Mikko  translator.setHex(hexBtn.getValue());
             String pdu = removeComments(pduText.getText().toString());
             xmlText.setText(translator.pduToXml(pdu));
         } catch (Exception e) {
