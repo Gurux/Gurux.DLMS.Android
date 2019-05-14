@@ -868,6 +868,10 @@ public class GXDLMSClient {
         buff.setUInt8(0x80);
         buff.setUInt8(01);
         buff.setUInt8(00);
+        if (settings.getCipher() != null && settings.getCipher().isCiphered()) {
+            settings.getCipher().setInvocationCounter(
+                    settings.getCipher().getInvocationCounter() + 1);
+        }
         GXAPDU.generateUserInformation(settings, settings.getCipher(), null,
                 buff);
         buff.setUInt8(0, (byte) (buff.size() - 1));
