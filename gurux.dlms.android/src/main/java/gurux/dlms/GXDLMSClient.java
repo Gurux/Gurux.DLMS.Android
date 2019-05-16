@@ -1171,7 +1171,8 @@ public class GXDLMSClient {
                 target.setUIDataType(attributeIndex, type);
             }
             if (type != DataType.NONE) {
-                val = changeType((byte[]) value, type);
+                val = changeType((byte[]) value, type,
+                        settings.getUseUtc2NormalTime());
             }
         }
         ValueEventArgs e = new ValueEventArgs(settings, target, attributeIndex,
