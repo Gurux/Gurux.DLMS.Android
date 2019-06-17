@@ -73,21 +73,21 @@ final class GXAPDU {
      */
     private static void getAuthenticationString(final GXDLMSSettings settings,
             final GXByteBuffer data) {
+        // Add sender ACSE-requirements field component.
+        data.setUInt8(BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS);
+        data.setUInt8(2);
+        data.setUInt8(BerType.BIT_STRING | BerType.OCTET_STRING);
+        data.setUInt8(0x80);
+
+        data.setUInt8(BerType.CONTEXT | PduType.MECHANISM_NAME);
+        // Len
+        data.setUInt8(7);
+        // OBJECT IDENTIFIER
+        byte[] p = { (byte) 0x60, (byte) 0x85, (byte) 0x74, 0x05, 0x08,
+                0x02, (byte) settings.getAuthentication().getValue() };
+        data.set(p);
         // If authentication is used.
         if (settings.getAuthentication() != Authentication.NONE) {
-            // Add sender ACSE-requirements field component.
-            data.setUInt8(BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS);
-            data.setUInt8(2);
-            data.setUInt8(BerType.BIT_STRING | BerType.OCTET_STRING);
-            data.setUInt8(0x80);
-
-            data.setUInt8(BerType.CONTEXT | PduType.MECHANISM_NAME);
-            // Len
-            data.setUInt8(7);
-            // OBJECT IDENTIFIER
-            byte[] p = { (byte) 0x60, (byte) 0x85, (byte) 0x74, 0x05, 0x08,
-                    0x02, (byte) settings.getAuthentication().getValue() };
-            data.set(p);
             // Add Calling authentication information.
             int len = 0;
             byte[] callingAuthenticationValue = null;
