@@ -113,7 +113,7 @@ public class GXManufacturerCollection
         DateFormat tmFormater = new SimpleDateFormat("MM-dd-yyyy");
         XmlPullParser parser = Xml.newPullParser();
         try (java.io.FileInputStream tmp = context.openFileInput("files.xml")) {
-            URL gurux = new URL("http://www.gurux.fi/obis/files.xml");
+            URL gurux = new URL("https://www.gurux.fi/obis/files.xml");
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(tmp, null);
             int event;
@@ -175,7 +175,7 @@ public class GXManufacturerCollection
         String line, newline;
         try {
             String path = "files.xml";
-            URL url = new URL("http://www.gurux.fi/obis/files.xml");
+            URL url = new URL("https://www.gurux.fi/obis/files.xml");
             URLConnection c = url.openConnection();
             c.setDoInput(true);
             c.setDoOutput(true);

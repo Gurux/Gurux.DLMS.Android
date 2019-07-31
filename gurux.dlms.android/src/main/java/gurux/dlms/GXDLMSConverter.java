@@ -74,7 +74,7 @@ public class GXDLMSConverter {
             String line, newline;
             try {
                 String path = "obiscodes.txt";
-                URL url = new URL("http://www.gurux.fi/obis/obiscodes.txt");
+                URL url = new URL("https://www.gurux.fi/obis/obiscodes.txt");
                 URLConnection c = url.openConnection();
                 try (InputStream io = c.getInputStream()) {
                     try (InputStreamReader r = new InputStreamReader(io, "utf-8")) {
