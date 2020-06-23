@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Gurux.DLMS.Android.iml" filepath="$PROJECT_DIR$/Gurux.DLMS.Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/gurux.dlms.android/gurux.dlms.android.iml" filepath="$PROJECT_DIR$/gurux.dlms.android/gurux.dlms.android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Gurux.DLMS.Android.iml" filepath="$PROJECT_DIR$/Gurux.DLMS.Android.iml" group="Gurux.DLMS.Android" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Gurux.DLMS.Android/app" />
+      <module fileurl="file://$PROJECT_DIR$/gurux.dlms.android/gurux.dlms.android.iml" filepath="$PROJECT_DIR$/gurux.dlms.android/gurux.dlms.android.iml" group="Gurux.DLMS.Android/gurux.dlms.android" />
     </modules>
   </component>
 </project>
