@@ -43,6 +43,8 @@ import gurux.dlms.internal.GXCommon;
  * This class is used internally in GXDLMSTranslator to save generated XML.
  */
 public class GXDLMSTranslatorStructure {
+    // Is comment added already. Nested comments are not allowed in a XML.
+    int commentsIndex = 0;
     private StringBuilder sb = new StringBuilder();
     private HashMap<Integer, String> tags;
 
@@ -51,6 +53,11 @@ public class GXDLMSTranslatorStructure {
      * Are numeric values shows as hex.
      */
     private boolean showNumericsAsHex;
+
+    /**
+     * Name space is omit.
+     */
+    private boolean omitNameSpace;
 
     /**
      * Is string serialized as hex.
@@ -99,18 +106,16 @@ public class GXDLMSTranslatorStructure {
         showStringAsHex = value;
     }
 
-    /**
+    /*
      * Constructor.
-     * 
-     * @param list
-     *            List of tags.
+     * @param list List of tags.
      */
     GXDLMSTranslatorStructure(final TranslatorOutputType type,
-            boolean numericsAshex, final boolean numericshex, final boolean hex,
+            final boolean omitNS, final boolean numericAshex, final boolean hex,
             final boolean addComments, final HashMap<Integer, String> list) {
         outputType = type;
-        numericsAshex = numericshex;
-        showNumericsAsHex = numericsAshex;
+        omitNameSpace = omitNS;
+        showNumericsAsHex = numericAshex;
         setShowStringAsHex(hex);
         tags = list;
         comments = addComments;
@@ -122,7 +127,7 @@ public class GXDLMSTranslatorStructure {
     }
 
     public final String getDataType(final DataType type) {
-        return tags.get(GXDLMS.DATA_TYPE_OFFSET + type.getValue());
+        return getTag(GXDLMS.DATA_TYPE_OFFSET + type.getValue());
     }
 
     /**
@@ -137,6 +142,15 @@ public class GXDLMSTranslatorStructure {
         }
     }
 
+    private String getTag(final int tag) {
+        String tmp = tags.get(tag);
+        if (getOutputType() == TranslatorOutputType.SIMPLE_XML
+                || omitNameSpace) {
+            return tmp;
+        }
+        return "x:" + tmp;
+    }
+
     public final void appendLine(final String str) {
         appendSpaces(sb, 2 * offset);
         sb.append(str);
@@ -146,7 +160,7 @@ public class GXDLMSTranslatorStructure {
 
     public final void appendLine(final int tag, final String name,
             final String value) {
-        String tmp = tags.get(tag);
+        String tmp = getTag(tag);
         if (tmp == null) {
             throw new IllegalArgumentException("Tag");
         }
@@ -209,9 +223,14 @@ public class GXDLMSTranslatorStructure {
     public final void appendComment(final String comment) {
         if (comments) {
             appendSpaces(sb, 2 * offset);
-            sb.append("<!--");
-            sb.append(comment);
-            sb.append("-->");
+            if (commentsIndex == 0) {
+                sb.append("<!-- ");
+                sb.append(comment);
+                sb.append(" -->");
+            } else {
+                sb.append("# ");
+                sb.append(comment);
+            }
             sb.append('\r');
             sb.append('\n');
         }
@@ -226,7 +245,12 @@ public class GXDLMSTranslatorStructure {
     public void startComment(final String comment) {
         if (comments) {
             appendSpaces(sb, 2 * offset);
-            sb.append("<!--");
+            if (commentsIndex == 0) {
+                sb.append("<!-- ");
+            } else {
+                sb.append("# ");
+            }
+            ++commentsIndex;
             sb.append(comment);
             sb.append('\r');
             sb.append('\n');
@@ -240,8 +264,11 @@ public class GXDLMSTranslatorStructure {
     public final void endComment() {
         if (comments) {
             --offset;
-            appendSpaces(sb, 2 * offset);
-            sb.append("-->");
+            --commentsIndex;
+            if (commentsIndex == 0) {
+                appendSpaces(sb, 2 * offset);
+                sb.append("-->");
+            }
             sb.append('\r');
             sb.append('\n');
         }
@@ -258,13 +285,13 @@ public class GXDLMSTranslatorStructure {
         } else {
             sb.append("</");
         }
-        sb.append(tags.get(tag));
+        sb.append(getTag(tag));
         sb.append('>');
     }
 
     public final void appendStartTag(final int tag, final String name,
             final String value) {
-        appendStartTag(tags.get(tag), name, value);
+        appendStartTag(getTag(tag), name, value);
     }
 
     public final void appendStartTag(final String tag, final String name,
@@ -291,7 +318,7 @@ public class GXDLMSTranslatorStructure {
     }
 
     public final void appendStartTag(final int tag, final boolean plain) {
-        String tmp = tags.get(tag);
+        String tmp = getTag(tag);
         if (tmp == null) {
             throw new IllegalArgumentException("appendStartTag");
         }
@@ -315,11 +342,11 @@ public class GXDLMSTranslatorStructure {
     }
 
     public final void appendEndTag(final int tag, final boolean plain) {
-        appendEndTag(tags.get(tag), plain);
+        appendEndTag(getTag(tag), plain);
     }
 
     public final void appendEndTag(final int tag) {
-        appendEndTag(tags.get(tag));
+        appendEndTag(getTag(tag));
     }
 
     public final void appendEndTag(final String tag) {
@@ -339,7 +366,7 @@ public class GXDLMSTranslatorStructure {
     }
 
     public final void appendEmptyTag(final int tag) {
-        appendEmptyTag(tags.get(tag));
+        appendEmptyTag(getTag(tag));
     }
 
     public final void appendEmptyTag(final String tag) {
@@ -403,9 +430,6 @@ public class GXDLMSTranslatorStructure {
         if (forceHex || (showNumericsAsHex
                 && outputType == TranslatorOutputType.SIMPLE_XML)) {
             return GXCommon.integerToHex(value, desimals);
-        }
-        if (desimals != 0) {
-            return String.format("%0" + desimals + "d", value);
         }
         return String.valueOf(value);
     }

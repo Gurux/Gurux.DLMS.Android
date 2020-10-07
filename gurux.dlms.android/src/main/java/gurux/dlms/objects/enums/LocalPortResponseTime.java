@@ -64,7 +64,7 @@ public enum LocalPortResponseTime {
 
     LocalPortResponseTime(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -72,6 +72,11 @@ public enum LocalPortResponseTime {
     }
 
     public static LocalPortResponseTime forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        LocalPortResponseTime ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid local port response time enum value.");
+        }
+        return ret;
     }
 }

@@ -1,10 +1,18 @@
 package gurux.dlms;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.Command;
@@ -14,6 +22,7 @@ import gurux.dlms.enums.MethodAccessMode;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.internal.GXDataInfo;
+import gurux.dlms.objects.GXDLMSAssociationShortName;
 import gurux.dlms.objects.GXDLMSObject;
 
 final class GXDLMSSNCommandHandler {
@@ -31,8 +40,7 @@ final class GXDLMSSNCommandHandler {
     private static void handleRead(final GXDLMSSettings settings,
             final GXDLMSServerBase server, final byte type,
             final GXByteBuffer data, final List<ValueEventArgs> list,
-            final List<ValueEventArgs> reads,
-            final List<ValueEventArgs> actions, final GXByteBuffer replyData,
+            final List<ValueEventArgs> reads, final GXByteBuffer replyData,
             final GXDLMSTranslatorStructure xml, final int cipheredCommand)
             throws Exception {
         // CHECKSTYLE:ON
@@ -101,11 +109,7 @@ final class GXDLMSSNCommandHandler {
                 .notifyGetMethodAccess(e) == MethodAccessMode.NO_ACCESS) {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         } else {
-            if (e.isAction()) {
-                actions.add(e);
-            } else {
-                reads.add(e);
-            }
+            reads.add(e);
         }
     }
 
@@ -200,7 +204,7 @@ final class GXDLMSSNCommandHandler {
      * @return Response type.
      */
     private static byte getReadData(final GXDLMSSettings settings,
-            final ValueEventArgs[] list, final GXByteBuffer data) {
+            final ValueEventArgs[] list, final GXByteBuffer data){
         Object value;
         boolean first = true;
         byte type = SingleReadResponse.DATA;
@@ -252,10 +256,15 @@ final class GXDLMSSNCommandHandler {
             } else {
                 xml.appendStartTag(TranslatorTags.READ_DATA_BLOCK_ACCESS);
             }
-            xml.appendLine("<LastBlock Value=\""
-                    + xml.integerToHex(lastBlock, 2) + "\" />");
-            xml.appendLine("<BlockNumber Value=\""
-                    + xml.integerToHex(blockNumber, 4) + "\" />");
+            if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
+                xml.appendLine(TranslatorTags.LAST_BLOCK, null,
+                        xml.integerToHex(lastBlock, 2));
+            } else {
+                xml.appendLine(TranslatorTags.LAST_BLOCK, null,
+                        lastBlock != 0 ? "true" : "false");
+            }
+            xml.appendLine(TranslatorTags.BLOCK_NUMBER, null,
+                    xml.integerToHex(blockNumber, 4));
             if (command == Command.WRITE_RESPONSE) {
                 xml.appendEndTag(TranslatorTags.WRITE_DATA_BLOCK_ACCESS);
             } else {
@@ -328,11 +337,9 @@ final class GXDLMSSNCommandHandler {
         }
     }
 
-    /**
+    /*
      * Handle read request.
-     * 
-     * @param data
-     *            Received data.
+     * @param data Received data.
      */
     static void handleReadRequest(final GXDLMSSettings settings,
             final GXDLMSServerBase server, final GXByteBuffer data,
@@ -355,7 +362,6 @@ final class GXDLMSSNCommandHandler {
         } else {
             cnt = GXCommon.getObjectCount(data);
             List<ValueEventArgs> reads = new ArrayList<ValueEventArgs>();
-            List<ValueEventArgs> actions = new ArrayList<ValueEventArgs>();
             if (xml != null) {
                 xml.appendStartTag(Command.READ_REQUEST, "Qty",
                         xml.integerToHex(cnt, 2));
@@ -366,7 +372,7 @@ final class GXDLMSSNCommandHandler {
                 case VariableAccessSpecification.VARIABLE_NAME:
                 case VariableAccessSpecification.PARAMETERISED_ACCESS:
                     handleRead(settings, server, type, data, list, reads,
-                            actions, replyData, xml, cipheredCommand);
+                            replyData, xml, cipheredCommand);
                     break;
                 case VariableAccessSpecification.BLOCK_NUMBER_ACCESS:
                     handleReadBlockNumberAccess(settings, server, data,
@@ -393,10 +399,6 @@ final class GXDLMSSNCommandHandler {
                 server.notifyRead(
                         reads.toArray(new ValueEventArgs[reads.size()]));
             }
-            if (actions.size() != 0) {
-                server.notifyAction(
-                        actions.toArray(new ValueEventArgs[actions.size()]));
-            }
         }
         if (xml != null) {
             xml.appendEndTag(Command.READ_REQUEST);
@@ -413,7 +415,7 @@ final class GXDLMSSNCommandHandler {
             for (ValueEventArgs it : list) {
                 reads.add(it);
             }
-            if (reads.size() != 0) {
+            if (!reads.isEmpty()) {
                 server.notifyPostRead(
                         reads.toArray(new ValueEventArgs[reads.size()]));
             }
@@ -422,13 +424,11 @@ final class GXDLMSSNCommandHandler {
                     Command.READ_REQUEST, bb));
         } else if (server.getTransaction() != null) {
             replyData.set(bb);
-            return;
         }
     }
 
     private static void returnSNError(final GXDLMSSettings settings,
-            final int cmd, final ErrorCode error,
-            final GXByteBuffer replyData) {
+            final int cmd, final ErrorCode error, final GXByteBuffer replyData){
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(error.getValue());
         GXDLMS.getSNPdu(
@@ -474,25 +474,15 @@ final class GXDLMSSNCommandHandler {
         return i;
     }
 
-    /**
+    /*
      * Handle write request.
-     * 
-     * @param Reply
-     *            Received data from the client.
+     * @param Reply Received data from the client.
      * @return Reply.
      */
     static void handleWriteRequest(final GXDLMSSettings settings,
             final GXDLMSServerBase server, final GXByteBuffer data,
             final GXByteBuffer replyData, final GXDLMSTranslatorStructure xml,
             final int cipheredCommand) throws Exception {
-        // Return error if connection is not established.
-        if (xml == null && (settings.getConnected() & ConnectionState.DLMS) == 0
-                && cipheredCommand == Command.NONE) {
-            replyData.set(GXDLMSServerBase.generateConfirmedServiceError(
-                    ConfirmedServiceError.INITIATE_ERROR, ServiceError.SERVICE,
-                    Service.UNSUPPORTED.getValue()));
-            return;
-        }
         short type;
         Object value;
         // Get object count.
@@ -515,10 +505,8 @@ final class GXDLMSSNCommandHandler {
             case VariableAccessSpecification.VARIABLE_NAME:
                 int sn = data.getUInt16();
                 if (xml != null) {
-                    xml.appendLine(
-                            Command.WRITE_REQUEST << 8
-                                    | VariableAccessSpecification.VARIABLE_NAME,
-                            "Value", xml.integerToHex(sn, 4));
+                    xml.appendLine(Command.WRITE_REQUEST << 8 | type, "Value",
+                            xml.integerToHex(sn, 4));
                 } else {
                     GXSNInfo i = findSNObject(server, server.getSettings(), sn);
                     targets.add(i);
@@ -578,32 +566,76 @@ final class GXDLMSSNCommandHandler {
                             | SingleReadResponse.DATA);
                 }
             } else if (results.getUInt8(pos) == 0) {
+                boolean access = true;
                 // If object has found.
                 GXSNInfo target = targets.get(pos);
                 value = GXCommon.getData(settings, data, di);
-                if (value instanceof byte[]) {
-                    DataType dt =
-                            target.getItem().getDataType(target.getIndex());
-                    if (dt != DataType.NONE && dt != DataType.OCTET_STRING) {
-                        value = GXDLMSClient.changeType((byte[]) value, dt);
-                    }
-                }
                 ValueEventArgs e = new ValueEventArgs(server, target.getItem(),
                         target.getIndex(), 0, null);
-                AccessMode am = server.notifyGetAttributeAccess(e);
-                // If write is denied.
-                if (am != AccessMode.WRITE && am != AccessMode.READ_WRITE) {
+                if (target.isAction()) {
+                    MethodAccessMode am = server.notifyGetMethodAccess(e);
+                    // If action is denied.
+                    if (am != MethodAccessMode.ACCESS) {
+                        access = false;
+                    }
+                } else {
+                    if (value instanceof byte[]) {
+                        DataType dt =
+                                target.getItem().getDataType(target.getIndex());
+                        if (dt != DataType.NONE
+                                && dt != DataType.OCTET_STRING) {
+                            boolean useUtc;
+                            if (settings != null) {
+                                useUtc = settings.getUseUtc2NormalTime();
+                            } else {
+                                useUtc = false;
+                            }
+                            value = GXDLMSClient.changeType((byte[]) value, dt,
+                                    useUtc);
+                        }
+                    }
+                    AccessMode am = server.notifyGetAttributeAccess(e);
+                    // If write is denied.
+                    if (am != AccessMode.WRITE && am != AccessMode.READ_WRITE) {
+                        access = false;
+                    }
+                }
+
+                if (access) {
+                    if (target.isAction()) {
+                        e.setParameters(value);
+                        ValueEventArgs[] actions = new ValueEventArgs[] { e };
+                        server.notifyAction(actions);
+                        if (!e.getHandled()) {
+                            byte[] reply = target.getItem().invoke(settings, e);
+                            server.notifyPostAction(actions);
+                            if (target
+                                    .getItem() instanceof GXDLMSAssociationShortName
+                                    && target.getIndex() == 8
+                                    && reply != null) {
+                                GXByteBuffer bb = new GXByteBuffer();
+                                bb.setUInt8(DataType.OCTET_STRING.getValue());
+                                bb.setUInt8(reply.length);
+                                bb.set(reply);
+                                GXDLMSSNParameters p = new GXDLMSSNParameters(
+                                        settings, Command.READ_RESPONSE, 1, 0,
+                                        null, bb);
+                                GXDLMS.getSNPdu(p, replyData);
+                            }
+                        }
+                    } else {
+                        e.setValue(value);
+                        server.notifyWrite(new ValueEventArgs[] { e });
+                        if (e.getError() != ErrorCode.OK) {
+                            results.setUInt8(pos, e.getError().getValue());
+                        } else if (!e.getHandled()) {
+                            target.getItem().setValue(settings, e);
+                        }
+                        server.notifyPostWrite(new ValueEventArgs[] { e });
+                    }
+                } else {
                     results.setUInt8(pos,
                             ErrorCode.READ_WRITE_DENIED.getValue());
-                } else {
-                    e.setValue(value);
-                    server.notifyWrite(new ValueEventArgs[] { e });
-                    if (e.getError() != ErrorCode.OK) {
-                        results.setUInt8(pos, e.getError().getValue());
-                    } else if (!e.getHandled()) {
-                        target.getItem().setValue(settings, e);
-                    }
-                    server.notifyPostWrite(new ValueEventArgs[] { e });
                 }
             }
         }
@@ -627,15 +659,11 @@ final class GXDLMSSNCommandHandler {
         GXDLMS.getSNPdu(p, replyData);
     }
 
-    /**
+    /*
      * Handle information report.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param reply
-     *            Received data.
-     * @param list
-     *            Received information report objects.
+     * @param settings DLMS settings.
+     * @param reply Received data.
+     * @param list Received information report objects.
      */
     static void handleInformationReport(final GXDLMSSettings settings,
             final GXReplyData reply,
@@ -645,10 +673,16 @@ final class GXDLMSSNCommandHandler {
         byte[] tmp = null;
         // If date time is given.
         if (len != 0) {
+            boolean useUtc;
+            if (settings != null) {
+                useUtc = settings.getUseUtc2NormalTime();
+            } else {
+                useUtc = false;
+            }
             tmp = new byte[len];
             reply.getData().get(tmp);
             reply.setTime((GXDateTime) GXDLMSClient.changeType(tmp,
-                    DataType.DATETIME));
+                    DataType.DATETIME, useUtc));
         }
         short type;
         TranslatorOutputType ot = TranslatorOutputType.SIMPLE_XML;

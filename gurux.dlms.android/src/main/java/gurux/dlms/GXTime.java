@@ -34,14 +34,10 @@
 
 package gurux.dlms;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 
 import gurux.dlms.enums.DateTimeSkips;
-import gurux.dlms.internal.GXCommon;
 
 public class GXTime extends GXDateTime {
     /**
@@ -82,6 +78,7 @@ public class GXTime extends GXDateTime {
         getSkip().add(DateTimeSkips.MONTH);
         getSkip().add(DateTimeSkips.DAY);
         getSkip().add(DateTimeSkips.DAY_OF_WEEK);
+        getExtra().addAll(forvalue.getExtra());
     }
 
     /**
@@ -108,10 +105,22 @@ public class GXTime extends GXDateTime {
      *            Date time value as a string.
      */
     public GXTime(final String value) {
-        super(value);
+        this(value, null);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param value
+     *            Date time value as a string.
+     * @param locale
+     *            Used locale.
+     */
+    public GXTime(final String value, final Locale locale) {
+        super(value, locale);
         getSkip().add(DateTimeSkips.YEAR);
         getSkip().add(DateTimeSkips.MONTH);
         getSkip().add(DateTimeSkips.DAY);
         getSkip().add(DateTimeSkips.DAY_OF_WEEK);
-   }
+    }
 }

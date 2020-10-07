@@ -34,15 +34,23 @@
 
 package gurux.dlms;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.Command;
 import gurux.dlms.enums.Conformance;
 import gurux.dlms.enums.DataType;
+import gurux.dlms.enums.DateTimeSkips;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.MethodAccessMode;
 import gurux.dlms.enums.ObjectType;
@@ -65,6 +73,20 @@ import gurux.dlms.objects.GXDLMSTcpUdpSetup;
 public abstract class GXDLMSServer2 {
 
     private final GXDLMSServerBase base;
+
+    /**
+     * Constructor for logical name referencing.
+     * 
+     * @param logicalNameReferencing
+     *            Is logical name referencing used.
+     * @param type
+     *            Interface type.
+     */
+    public GXDLMSServer2(final boolean logicalNameReferencing,
+            final InterfaceType type) {
+        base = new GXDLMSServerBase(this, true, type);
+        getSettings().setUseLogicalNameReferencing(logicalNameReferencing);
+    }
 
     /**
      * Constructor for logical name referencing.
@@ -162,10 +184,41 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
+     * @return Server is using push client address when sending push messages.
+     *         Client address is used if PushAddress is zero.
+     */
+    public int getPushClientAddress() {
+        return getSettings().getPushClientAddress();
+    }
+
+    /**
+     * @param value
+     *            Server is using push client address when sending push
+     *            messages. Client address is used if PushAddress is zero.
+     */
+    public void setPushClientAddress(final int value) {
+        getSettings().setPushClientAddress(value);
+    }
+
+    /**
+     * @return Client connection state.
+     */
+    public byte getConnectionState() {
+        return getSettings().getConnected();
+    }
+
+    /**
      * @return List of objects that meter supports.
      */
     public final GXDLMSObjectCollection getItems() {
         return base.getItems();
+    }
+
+    /**
+     * @return Used authentication.
+     */
+    public final Authentication getAuthentication() {
+        return getSettings().getAuthentication();
     }
 
     /**
@@ -202,6 +255,46 @@ public abstract class GXDLMSServer2 {
      */
     public final GXDLMSLimits getLimits() {
         return base.getLimits();
+    }
+
+    /**
+     * Standard says that Time zone is from normal time to UTC in minutes. If
+     * meter is configured to use UTC time (UTC to normal time) set this to
+     * true.
+     * 
+     * @return True, if UTC time is used.
+     */
+    public boolean getUseUtc2NormalTime() {
+        return base.getUseUtc2NormalTime();
+    }
+
+    /**
+     * Standard says that Time zone is from normal time to UTC in minutes. If
+     * meter is configured to use UTC time (UTC to normal time) set this to
+     * true.
+     * 
+     * @param value
+     *            True, if UTC time is used.
+     */
+    public void setUseUtc2NormalTime(final boolean value) {
+        base.setUseUtc2NormalTime(value);
+    }
+
+    /**
+     * @return Skipped date time fields. This value can be used if meter can't
+     *         handle deviation or status.
+     */
+    public java.util.Set<DateTimeSkips> getDateTimeSkips() {
+        return base.getDateTimeSkips();
+    }
+
+    /**
+     * @param value
+     *            Skipped date time fields. This value can be used if meter
+     *            can't handle deviation or status.
+     */
+    public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
+        base.setDateTimeSkips(value);
     }
 
     /**
@@ -403,8 +496,23 @@ public abstract class GXDLMSServer2 {
      *            Received data from the client.
      * @return Response to the request. Response is null if request packet is
      *         not complete.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final byte[] handleRequest(final byte[] buff) {
+    public final byte[] handleRequest(final byte[] buff)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         return handleRequest(buff, new GXDLMSConnectionEventArgs());
     }
 
@@ -417,9 +525,24 @@ public abstract class GXDLMSServer2 {
      *            Connection info.
      * @return Response to the request. Response is null if request packet is
      *         not complete.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
     public final byte[] handleRequest(final byte[] buff,
-            final GXDLMSConnectionEventArgs connectionInfo) {
+            final GXDLMSConnectionEventArgs connectionInfo)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         GXServerReply sr = new GXServerReply(buff);
         sr.setConnectionInfo(connectionInfo);
         base.handleRequest(sr);
@@ -431,8 +554,23 @@ public abstract class GXDLMSServer2 {
      * 
      * @param sr
      *            Server reply.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final void handleRequest(GXServerReply sr) {
+    public final void handleRequest(GXServerReply sr)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         base.handleRequest(sr);
     }
 
@@ -654,9 +792,24 @@ public abstract class GXDLMSServer2 {
      * @param data
      *            Notification body.
      * @return Generated data notification message(s).
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
     public final byte[][] generateDataNotificationMessages(final Date time,
-            final GXByteBuffer data) {
+            final GXByteBuffer data)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         List<byte[]> reply;
         if (getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(getSettings(), 0,
@@ -690,9 +843,24 @@ public abstract class GXDLMSServer2 {
      * @param push
      *            Target Push object.
      * @return Generated data notification message(s).
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
     public final byte[][] generatePushSetupMessages(final Date date,
-            final GXDLMSPushSetup push) {
+            final GXDLMSPushSetup push)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         if (push == null) {
             throw new IllegalArgumentException("push");
         }

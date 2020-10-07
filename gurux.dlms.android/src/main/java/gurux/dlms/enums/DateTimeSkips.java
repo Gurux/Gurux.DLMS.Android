@@ -42,11 +42,6 @@ import java.util.Set;
  */
 public enum DateTimeSkips {
     /**
-     * Nothing is skipped from date time.
-     */
-    NONE(0),
-
-    /**
      * Year part of date time is skipped.
      */
     YEAR(1),
@@ -116,7 +111,7 @@ public enum DateTimeSkips {
      * @return Get enumeration constant values.
      */
     private static DateTimeSkips[] getEnumConstants() {
-        return new DateTimeSkips[] { NONE, YEAR, MONTH, DAY, DAY_OF_WEEK, HOUR,
+        return new DateTimeSkips[] { YEAR, MONTH, DAY, DAY_OF_WEEK, HOUR,
                 MINUTE, SECOND, MILLISECOND, DEVITATION, STATUS };
 
     }

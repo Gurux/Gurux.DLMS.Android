@@ -35,8 +35,8 @@
 package gurux.dlms.enums;
 
 /**
-* Enumerable units.
-*/
+ * Enumerable units.
+ */
 public enum Unit {
     /**
      * No Unit.
@@ -330,7 +330,7 @@ public enum Unit {
 
     Unit(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     /*
@@ -344,7 +344,7 @@ public enum Unit {
      * Convert integer for enum value.
      */
     public static Unit forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        return getMappings().get(value);
     }
 
     // CHECKSTYLE:OFF
@@ -446,7 +446,7 @@ public enum Unit {
             str = "ActiveEnergy";
             break;
         case 31: // APPARENT_ENERGY
-            str = "ApparentEenergy";
+            str = "ApparentEnergy";
             break;
         case 32: // REACTIVE_ENERGY
             str = "ReactiveEnergy";

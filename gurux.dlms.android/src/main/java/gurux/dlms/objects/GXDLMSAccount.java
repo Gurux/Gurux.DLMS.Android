@@ -1168,7 +1168,8 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
                 writer.writeElementString("Credit", it.getCreditReference());
                 writer.writeElementString("Charge", it.getChargeReference());
                 writer.writeElementString("Configuration",
-                        it.getCollectionConfiguration().getValue());
+                        CreditCollectionConfiguration
+                                .toInteger(it.getCollectionConfiguration()));
                 writer.writeEndElement();
             }
             writer.writeEndElement();

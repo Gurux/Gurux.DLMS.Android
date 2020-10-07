@@ -1,14 +1,22 @@
 package gurux.dlms;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.AcseServiceProvider;
 import gurux.dlms.enums.AssociationResult;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.Command;
+import gurux.dlms.enums.DateTimeSkips;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.Initiate;
 import gurux.dlms.enums.InterfaceType;
@@ -201,6 +209,46 @@ public class GXDLMSServerBase {
         return settings.getLimits();
     }
 
+    /**
+     * Standard says that Time zone is from normal time to UTC in minutes. If
+     * meter is configured to use UTC time (UTC to normal time) set this to
+     * true.
+     * 
+     * @return True, if UTC time is used.
+     */
+    public boolean getUseUtc2NormalTime() {
+        return settings.getUseUtc2NormalTime();
+    }
+
+    /**
+     * Standard says that Time zone is from normal time to UTC in minutes. If
+     * meter is configured to use UTC time (UTC to normal time) set this to
+     * true.
+     * 
+     * @param value
+     *            True, if UTC time is used.
+     */
+    public void setUseUtc2NormalTime(final boolean value) {
+        settings.setUseUtc2NormalTime(value);
+    }
+
+    /**
+     * @return Skipped date time fields. This value can be used if meter can't
+     *         handle deviation or status.
+     */
+    public java.util.Set<DateTimeSkips> getDateTimeSkips() {
+        return settings.getDateTimeSkips();
+    }
+
+    /**
+     * @param value
+     *            Skipped date time fields. This value can be used if meter
+     *            can't handle deviation or status.
+     */
+    public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
+        settings.setDateTimeSkips(value);
+    }
+
     /*
      * Retrieves the maximum size of received PDU. PDU size tells maximum size
      * of PDU packet. Value can be from 0 to 0xFFFF. By default the value is
@@ -272,7 +320,7 @@ public class GXDLMSServerBase {
             if (it instanceof GXDLMSAssociationShortName
                     && !this.getUseLogicalNameReferencing()) {
                 if (((GXDLMSAssociationShortName) it).getObjectList()
-                        .size() == 0) {
+                        .isEmpty()) {
                     ((GXDLMSAssociationShortName) it).getObjectList()
                             .addAll(getItems());
                 }
@@ -281,14 +329,20 @@ public class GXDLMSServerBase {
                     && this.getUseLogicalNameReferencing()) {
                 GXDLMSAssociationLogicalName ln =
                         (GXDLMSAssociationLogicalName) it;
-                if (ln.getObjectList().size() == 0) {
+                if (ln.getObjectList().isEmpty()) {
                     ln.getObjectList().addAll(getItems());
                 }
                 associationObject = it;
-                ln.getXDLMSContextInfo()
-                        .setMaxReceivePduSize(settings.getMaxServerPDUSize());
-                ln.getXDLMSContextInfo()
-                        .setMaxSendPduSize(settings.getMaxServerPDUSize());
+                if (settings.getMaxServerPDUSize() != 0) {
+                    ln.getXDLMSContextInfo().setMaxReceivePduSize(
+                            settings.getMaxServerPDUSize());
+                    ln.getXDLMSContextInfo()
+                            .setMaxSendPduSize(settings.getMaxServerPDUSize());
+                }
+                if (!settings.getProposedConformance().isEmpty()) {
+                    ln.getXDLMSContextInfo()
+                            .setConformance(settings.getProposedConformance());
+                }
 
             } else if (!(it instanceof IGXDLMSBase)) {
                 // Remove unsupported items.
@@ -372,7 +426,7 @@ public class GXDLMSServerBase {
         try {
             ret = GXAPDU.parsePDU(settings, settings.getCipher(), data, null);
             if (!(ret instanceof AcseServiceProvider)) {
-                if (settings.getNegotiatedConformance().size() == 0) {
+                if (settings.getNegotiatedConformance().isEmpty()) {
                     result = AssociationResult.PERMANENT_REJECTED;
                     ret = SourceDiagnostic.NO_REASON_GIVEN;
                     error = new GXByteBuffer();
@@ -516,8 +570,19 @@ public class GXDLMSServerBase {
      * @param connectionInfo
      *            Connection info.
      */
+    @SuppressWarnings("squid:S1172")
     private void handleReleaseRequest(final GXByteBuffer data,
-            final GXDLMSConnectionEventArgs connectionInfo) {
+            final GXDLMSConnectionEventArgs connectionInfo)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        // Return error if connection is not established.
+        if ((settings.getConnected() & ConnectionState.DLMS) == 0) {
+            replyData.set(GXDLMSServerBase.generateConfirmedServiceError(
+                    ConfirmedServiceError.INITIATE_ERROR, ServiceError.SERVICE,
+                    Service.UNSUPPORTED.getValue()));
+            return;
+        }
         if (getSettings().getInterfaceType() == InterfaceType.HDLC) {
             replyData.set(0, GXCommon.LLC_REPLY_BYTES);
         }
@@ -662,8 +727,25 @@ public class GXDLMSServerBase {
      * 
      * @param sr
      *            Server reply.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final void handleRequest(GXServerReply sr) {
+    @SuppressWarnings({ "squid:S00112", "squid:S1193", "squid:S1066",
+            "squid:S1141" })
+    public final void handleRequest(GXServerReply sr)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         if (!sr.isStreaming()
                 && (sr.getData() == null || sr.getData().length == 0)) {
             return;
@@ -692,15 +774,6 @@ public class GXDLMSServerBase {
                 receivedData.clear();
                 if (info.getCommand() == Command.DISCONNECT_REQUEST
                         && (settings.getConnected() == ConnectionState.NONE)) {
-                    sr.setReply(GXDLMS.getHdlcFrame(settings,
-                            Command.DISCONNECT_MODE, replyData));
-                    info.clear();
-                    return;
-                }
-
-                if (first || info.getCommand() == Command.SNRM
-                        || (settings.getInterfaceType() == InterfaceType.WRAPPER
-                                && info.getCommand() == Command.AARQ)) {
                     if (owner instanceof GXDLMSServer) {
                         GXDLMSServer b = (GXDLMSServer) owner;
                         // Check is data send to this server.
@@ -718,12 +791,40 @@ public class GXDLMSServerBase {
                             return;
                         }
                     }
+                    sr.setReply(GXDLMS.getHdlcFrame(settings,
+                            Command.DISCONNECT_MODE, replyData));
+                    info.clear();
+                    return;
+                }
+
+                if (first || info.getCommand() == Command.SNRM
+                        || (settings.getInterfaceType() == InterfaceType.WRAPPER
+                                && info.getCommand() == Command.AARQ)) {
+                    if (owner instanceof GXDLMSServer) {
+                        GXDLMSServer b = (GXDLMSServer) owner;
+                        // Check is data send to this server.
+                        if (!b.isTarget(settings.getServerAddress(),
+                                settings.getClientAddress())) {
+                            info.clear();
+                            settings.setClientAddress(0);
+                            settings.setServerAddress(0);
+                            return;
+                        }
+                    } else {
+                        GXDLMSServer2 b = (GXDLMSServer2) owner;
+                        // Check is data send to this server.
+                        if (!b.isTarget(settings.getServerAddress(),
+                                settings.getClientAddress())) {
+                            info.clear();
+                            settings.setClientAddress(0);
+                            settings.setServerAddress(0);
+                            return;
+                        }
+                    }
                 }
 
                 // If client want next frame.
-                if ((info.getMoreData().getValue()
-                        & RequestTypes.FRAME.getValue()) == RequestTypes.FRAME
-                                .getValue()) {
+                if (info.getMoreData().contains(RequestTypes.FRAME)) {
                     dataReceived = Calendar.getInstance().getTimeInMillis();
                     sr.setReply(GXDLMS.getHdlcFrame(settings,
                             settings.getReceiverReady(), replyData));
@@ -802,7 +903,6 @@ public class GXDLMSServerBase {
                 settings.setIndex(0);
                 info.clear();
                 receivedData.clear();
-                return;
             } else {
                 reset();
                 if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
@@ -816,10 +916,10 @@ public class GXDLMSServerBase {
                         try {
                             b.onDisconnected(sr.getConnectionInfo());
                         } catch (Exception ex) {
+                            // It's OK if this fails.
                         }
                     }
                 }
-                return;
             }
         }
     }
@@ -836,13 +936,17 @@ public class GXDLMSServerBase {
         replyData.setUInt8(e.getServiceError().getValue());
         replyData.setUInt8(e.getServiceErrorValue());
         if (settings.getInterfaceType() == InterfaceType.WRAPPER) {
-            return GXDLMS.getWrapperFrame(settings, replyData);
+            return GXDLMS.getWrapperFrame(settings,
+                    Command.CONFIRMED_SERVICE_ERROR, replyData);
         } else {
             return GXDLMS.getHdlcFrame(settings, (byte) 0, replyData);
         }
     }
 
-    private byte[] reportError(final int command, final ErrorCode error) {
+    private byte[] reportError(final int command, final ErrorCode error)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         short cmd;
         switch (command) {
         case Command.READ_REQUEST:
@@ -877,7 +981,7 @@ public class GXDLMSServerBase {
             GXDLMS.getSNPdu(p, replyData);
         }
         if (settings.getInterfaceType() == InterfaceType.WRAPPER) {
-            return GXDLMS.getWrapperFrame(settings, replyData);
+            return GXDLMS.getWrapperFrame(settings, cmd, replyData);
         } else {
             return GXDLMS.getHdlcFrame(settings, (byte) 0, replyData);
         }
@@ -890,6 +994,7 @@ public class GXDLMSServerBase {
      * @param connectionInfo Connection info.
      * @return Response for the client.
      */
+    @SuppressWarnings("squid:S1168")
     private byte[] handleCommand(final int cmd, final GXByteBuffer data,
             final GXServerReply sr, final int cipheredCommand)
             throws Exception {
@@ -971,11 +1076,12 @@ public class GXDLMSServerBase {
             // Client wants to get next block.
             break;
         default:
-            throw new Exception("Invalid command: " + String.valueOf(cmd));
+            throw new IllegalArgumentException(
+                    "Invalid command: " + String.valueOf(cmd));
         }
         byte[] reply;
         if (settings.getInterfaceType() == InterfaceType.WRAPPER) {
-            reply = GXDLMS.getWrapperFrame(settings, replyData);
+            reply = GXDLMS.getWrapperFrame(settings, cmd, replyData);
         } else {
             reply = GXDLMS.getHdlcFrame(settings, frame, replyData);
         }
@@ -1047,7 +1153,8 @@ public class GXDLMSServerBase {
             }
         } else {
             // BlockControl
-            short bc = data.getUInt8();
+            // short bc =
+            data.getUInt8();
             // Block number.
             int blockNumber = data.getUInt16();
             // Block number acknowledged.

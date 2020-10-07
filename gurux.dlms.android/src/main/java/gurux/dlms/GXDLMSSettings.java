@@ -40,6 +40,7 @@ import java.util.Set;
 
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.Conformance;
+import gurux.dlms.enums.DateTimeSkips;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Priority;
 import gurux.dlms.enums.ServiceClass;
@@ -54,6 +55,11 @@ import gurux.dlms.objects.GXDLMSTcpUdpSetup;
  * @author Gurux Ltd.
  */
 public class GXDLMSSettings {
+
+    /**
+     * The version can be used for backward compatibility.
+     */
+    private int version = 4;
 
     /**
      * HDLC settings.
@@ -77,12 +83,12 @@ public class GXDLMSSettings {
     /**
      * Server receiver frame sequence starting number.
      */
-    static final short SERVER_START_RECEIVER_FRAME_SEQUENCE = 0xEE;
+    static final short SERVER_START_RECEIVER_FRAME_SEQUENCE = 0xFE;
 
     /**
      * Client sender frame sequence starting number.
      */
-    static final short CLIENT_START_SENDER_FRAME_SEQUENCE = 0x10;
+    static final short CLIENT_START_SENDER_FRAME_SEQUENCE = 0xFE;
 
     /**
      * Client receiver frame sequence starting number.
@@ -146,6 +152,11 @@ public class GXDLMSSettings {
      * Server address.
      */
     private int serverAddress;
+    /**
+     * Server is using push client address when sending push messages. Client
+     * address is used if PushAddress is zero.
+     */
+    private int pushClientAddress;
 
     /**
      * Server address side.
@@ -286,6 +297,18 @@ public class GXDLMSSettings {
      */
     private boolean useUtc2NormalTime;
 
+    /**
+     * Some meters expect that Invocation Counter is increased for
+     * Authentication when connection is established.
+     */
+    private boolean increaseInvocationCounterForGMacAuthentication;
+
+    /**
+     * Skipped fields.
+     */
+    private java.util.Set<DateTimeSkips> dateTimeSkips =
+            new HashSet<DateTimeSkips>();
+
     private Standard standard;
 
     /**
@@ -304,6 +327,11 @@ public class GXDLMSSettings {
     private String protocolVersion = null;
 
     /**
+     * Auto increase Invoke ID.
+     */
+    private boolean autoIncreaseInvokeID = false;
+
+    /*
      * Constructor.
      */
     GXDLMSSettings(final boolean isServer) {
@@ -371,7 +399,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @return Gets used authentication.
+     * @return Used authentication.
      */
     public final Authentication getAuthentication() {
         return authentication;
@@ -512,7 +540,6 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @return Generates I-frame.
      * @param first
      *            Is this first packet.
      * @return Generated I-frame
@@ -1102,19 +1129,50 @@ public class GXDLMSSettings {
     }
 
     /**
-     * Used standard.
-     * 
-     * @return True, if UTC time is used.
+     * @return Some meters expect that Invocation Counter is increased for
+     *         Authentication when connection is established.
+     */
+    public boolean getIncreaseInvocationCounterForGMacAuthentication() {
+        return increaseInvocationCounterForGMacAuthentication;
+    }
+
+    /**
+     * @param value
+     *            Some meters expect that Invocation Counter is increased for
+     *            Authentication when connection is established.
+     */
+    public void setIncreaseInvocationCounterForGMacAuthentication(
+            final boolean value) {
+        increaseInvocationCounterForGMacAuthentication = value;
+    }
+
+    /**
+     * @return Skipped date time fields. This value can be used if meter can't
+     *         handle deviation or status.
+     */
+    public java.util.Set<DateTimeSkips> getDateTimeSkips() {
+        return dateTimeSkips;
+    }
+
+    /**
+     * @param value
+     *            Skipped date time fields. This value can be used if meter
+     *            can't handle deviation or status.
+     */
+    public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
+        dateTimeSkips = value;
+    }
+
+    /**
+     * @return Used standard.
      */
     public Standard getStandard() {
         return standard;
     }
 
     /**
-     * Used standard.
-     * 
      * @param value
-     *            True, if UTC time is used.
+     *            Used standard.
      */
     public void setStandard(final Standard value) {
         standard = value;
@@ -1193,5 +1251,55 @@ public class GXDLMSSettings {
      */
     public void setQualityOfService(final byte value) {
         qualityOfService = value;
+    }
+
+    /**
+     * @return Auto increase Invoke ID.
+     */
+    public final boolean getAutoIncreaseInvokeID() {
+        return autoIncreaseInvokeID;
+    }
+
+    /**
+     * @param value
+     *            Auto increase Invoke ID.
+     */
+    public final void setAutoIncreaseInvokeID(final boolean value) {
+        autoIncreaseInvokeID = value;
+    }
+
+    /**
+     * @return The version can be used for backward compatibility.
+     */
+    public int getVersion() {
+        return version;
+    }
+
+    /**
+     * @param value
+     *            The version can be used for backward compatibility.
+     */
+    public void setVersion(final int value) {
+        if (value != 3 && value != 4) {
+            throw new IllegalArgumentException("Invalid version.");
+        }
+        version = value;
+    }
+
+    /**
+     * @return Server is using push client address when sending push messages.
+     *         Client address is used if PushAddress is zero.
+     */
+    public int getPushClientAddress() {
+        return pushClientAddress;
+    }
+
+    /**
+     * @param value
+     *            Server is using push client address when sending push
+     *            messages. Client address is used if PushAddress is zero.
+     */
+    public void setPushClientAddress(final int value) {
+        pushClientAddress = value;
     }
 }

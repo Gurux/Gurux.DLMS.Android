@@ -97,14 +97,13 @@ class GXStandardObisCodeCollection
             return true;
         }
         return GXCommon.split(it.getInterfaces(), ',')
-                .contains((new Integer(ic)).toString());
+                .contains(String.valueOf(ic));
     }
 
     /**
      * Check OBIS codes.
      */
     private static boolean equalsMask(final String obis, final int ic) {
-        boolean number = true;
         if (obis.indexOf(',') != -1) {
             List<String> tmp = GXCommon.split(obis, ',');
             for (String it : tmp) {
@@ -118,18 +117,14 @@ class GXStandardObisCodeCollection
             }
             return false;
         } else if (obis.indexOf('-') != -1) {
-            number = false;
             List<String> tmp = GXCommon.split(obis, '-');
             return ic >= Integer.parseInt(tmp.get(0))
                     && ic <= Integer.parseInt(tmp.get(1));
         }
-        if (number) {
-            if (obis.equals("&")) {
-                return ic == 0 || ic == 1 || ic == 7;
-            }
-            return Integer.parseInt(obis) == ic;
+        if (obis.equals("&")) {
+            return ic == 0 || ic == 1 || ic == 7;
         }
-        return false;
+        return Integer.parseInt(obis) == ic;
     }
 
     public static boolean equalsMask(final String obisMask, final String ln) {
@@ -201,6 +196,8 @@ class GXStandardObisCodeCollection
         case 49:
             tmp = "Density of air";
             break;
+        default:
+            throw new IllegalArgumentException("Invalid value.");
         }
         return tmp;
     }
@@ -390,7 +387,7 @@ class GXStandardObisCodeCollection
         case 89:
             return "Sum Li V2h QI+QII+QIII+QIV";
         case 90:
-            return "SLi current (algebraic sum of the – unsigned – value of the currents in all phases)";
+            return "SLi current (algebraic sum of the - unsigned - value of the currents in all phases)";
         case 91:
             return "Lo Current (neutral)";
         case 92:
@@ -417,7 +414,7 @@ class GXStandardObisCodeCollection
         return (String.valueOf(value + Integer.parseInt(formula.substring(1))));
     }
 
-    /**
+    /*
      * Find Standard OBIS Code description.
      */
     public final GXStandardObisCode[] find(final int[] obisCode, final int ic) {
@@ -430,6 +427,7 @@ class GXStandardObisCodeCollection
                     && equalsObisCode(it.getOBIS(), obisCode)) {
                 tmp = new GXStandardObisCode(it.getOBIS(), it.getDescription(),
                         it.getInterfaces(), it.getDataType());
+                tmp.setUIDataType(it.getUIDataType());
                 list.add(tmp);
                 List<String> tmp2 = GXCommon.split(it.getDescription(), ';');
                 if (tmp2.size() > 1) {
@@ -511,8 +509,8 @@ class GXStandardObisCodeCollection
         }
         // If invalid OBIS code.
         if (list.size() == 0) {
-            tmp = new GXStandardObisCode(null, "Invalid",
-                    (new Integer(ic)).toString(), "");
+            tmp = new GXStandardObisCode(null, "Invalid", String.valueOf(ic),
+                    "");
             String[] obis = tmp.getOBIS();
             obis[0] = Integer.toString(obisCode[0]);
             obis[1] = Integer.toString(obisCode[1]);

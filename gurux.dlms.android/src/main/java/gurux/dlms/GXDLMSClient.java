@@ -49,6 +49,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import gurux.dlms.asn.GXAsn1Converter;
+import gurux.dlms.asn.GXAsn1Integer;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.AccessServiceCommandType;
 import gurux.dlms.enums.Authentication;
@@ -81,6 +83,8 @@ import gurux.dlms.secure.GXSecure;
  */
 public class GXDLMSClient {
 
+    private boolean useProtectedRelease = false;
+
     protected GXDLMSTranslator translator;
 
     /**
@@ -101,11 +105,6 @@ public class GXDLMSClient {
      * Is authentication required.
      */
     private boolean isAuthenticationRequired = false;
-
-    /**
-     * Auto increase Invoke ID.
-     */
-    private boolean autoIncreaseInvokeID = false;
 
     /**
      * Constructor.
@@ -151,6 +150,21 @@ public class GXDLMSClient {
         setAuthentication(forAuthentication);
         setPassword(GXCommon.getBytes(password));
         setInterfaceType(interfaceType);
+    }
+
+    /**
+     * @return The version can be used for backward compatibility.
+     */
+    public int getVersion() {
+        return settings.getVersion();
+    }
+
+    /**
+     * @param value
+     *            The version can be used for backward compatibility.
+     */
+    public void setVersion(final int value) {
+        settings.setVersion(value);
     }
 
     /**
@@ -273,6 +287,16 @@ public class GXDLMSClient {
     }
 
     /**
+     * Meter returns system title when ciphered connection is made or GMAC
+     * authentication is used.
+     * 
+     * @return Source system title.
+     */
+    public byte[] getSourceSystemTitle() {
+        return settings.getSourceSystemTitle();
+    }
+
+    /**
      * @return GBT window size.
      */
     public final int getWindowSize() {
@@ -383,19 +407,32 @@ public class GXDLMSClient {
     }
 
     /**
-     * Used standard.
-     * 
-     * @return True, if UTC time is used.
+     * @return Skipped date time fields. This value can be used if meter can't
+     *         handle deviation or status.
+     */
+    public java.util.Set<DateTimeSkips> getDateTimeSkips() {
+        return settings.getDateTimeSkips();
+    }
+
+    /**
+     * @param value
+     *            Skipped date time fields. This value can be used if meter
+     *            can't handle deviation or status.
+     */
+    public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
+        settings.setDateTimeSkips(value);
+    }
+
+    /**
+     * @return Used standard.
      */
     public Standard getStandard() {
         return settings.getStandard();
     }
 
     /**
-     * Used standard.
-     * 
      * @param value
-     *            True, if UTC time is used.
+     *            Used standard.
      */
     public void setStandard(final Standard value) {
         settings.setStandard(value);
@@ -523,7 +560,7 @@ public class GXDLMSClient {
      * @return Auto increase Invoke ID.
      */
     public final boolean getAutoIncreaseInvokeID() {
-        return autoIncreaseInvokeID;
+        return settings.getAutoIncreaseInvokeID();
     }
 
     /**
@@ -531,7 +568,7 @@ public class GXDLMSClient {
      *            Auto increase Invoke ID.
      */
     public final void setAutoIncreaseInvokeID(final boolean value) {
-        autoIncreaseInvokeID = value;
+        settings.setAutoIncreaseInvokeID(value);
     }
 
     /**
@@ -603,6 +640,28 @@ public class GXDLMSClient {
      * @return SNRM request as byte array.
      */
     public final byte[] snrmRequest() {
+        return snrmRequest(false);
+    }
+
+    /**
+     * Generates SNRM request. his method is used to generate send SNRMRequest.
+     * Before the SNRM request can be generated, at least the following
+     * properties must be set:
+     * <ul>
+     * <li>ClientAddress</li>
+     * <li>ServerAddress</li>
+     * </ul>
+     * <b>Note! </b>According to IEC 62056-47: when communicating using TCP/IP,
+     * the SNRM request is not send.
+     * 
+     * @param forceParameters
+     *            Are HDLC parameters forced. Some meters require this.
+     * @see GXDLMSClient#getClientAddress
+     * @see GXDLMSClient#getServerAddress
+     * @see GXDLMSClient#parseUAResponse
+     * @return SNRM request as byte array.
+     */
+    public final byte[] snrmRequest(final boolean forceParameters) {
         settings.setConnected(ConnectionState.NONE);
         isAuthenticationRequired = false;
         // SNRM request is not used in network connections.
@@ -627,7 +686,9 @@ public class GXDLMSClient {
         }
 
         // If custom HDLC parameters are used.
-        if (GXDLMSLimits.DEFAULT_MAX_INFO_TX != getLimits().getMaxInfoTX()
+        if (forceParameters
+                || GXDLMSLimits.DEFAULT_MAX_INFO_TX != getLimits()
+                        .getMaxInfoTX()
                 || GXDLMSLimits.DEFAULT_MAX_INFO_RX != getLimits()
                         .getMaxInfoRX()
                 || GXDLMSLimits.DEFAULT_WINDOWS_SIZE_TX != getLimits()
@@ -693,7 +754,7 @@ public class GXDLMSClient {
         settings.resetBlockIndex();
         GXDLMS.checkInit(settings);
         settings.setStoCChallenge(null);
-        if (autoIncreaseInvokeID) {
+        if (getAutoIncreaseInvokeID()) {
             settings.setInvokeID(0);
         } else {
             settings.setInvokeID(1);
@@ -760,7 +821,8 @@ public class GXDLMSClient {
     /**
      * @return Get challenge request if HLS authentication is used.
      */
-    public final byte[][] getApplicationAssociationRequest() {
+    public final byte[][] getApplicationAssociationRequest()
+    {
         if (settings.getAuthentication() != Authentication.HIGH_ECDSA
                 && settings.getAuthentication() != Authentication.HIGH_GMAC
                 && (settings.getPassword() == null
@@ -771,12 +833,22 @@ public class GXDLMSClient {
         byte[] pw;
         if (settings.getAuthentication() == Authentication.HIGH_GMAC) {
             pw = settings.getCipher().getSystemTitle();
+        } else if (settings.getAuthentication() == Authentication.HIGH_SHA256) {
+            GXByteBuffer tmp = new GXByteBuffer();
+            tmp.set(settings.getPassword());
+            tmp.set(settings.getCipher().getSystemTitle());
+            tmp.set(settings.getSourceSystemTitle());
+            tmp.set(settings.getStoCChallenge());
+            tmp.set(settings.getCtoSChallenge());
+            pw = tmp.array();
         } else {
             pw = settings.getPassword();
         }
-        long ic = 0;
-        if (settings.getCipher() != null) {
-            ic = settings.getCipher().getInvocationCounter();
+        long ic = settings.getCipher().getInvocationCounter();
+        if (settings.getCipher() != null && settings
+                .getIncreaseInvocationCounterForGMacAuthentication()) {
+            ++ic;
+            settings.getCipher().setInvocationCounter(ic);
         }
         byte[] challenge = GXSecure.secure(settings, settings.getCipher(), ic,
                 settings.getStoCChallenge(), pw);
@@ -794,8 +866,9 @@ public class GXDLMSClient {
      * @param reply
      *            Received reply from the server.
      */
-    public final void
-            parseApplicationAssociationResponse(final GXByteBuffer reply) {
+    @SuppressWarnings("squid:S00112")
+    public final void parseApplicationAssociationResponse(
+            final GXByteBuffer reply) {
         GXDataInfo info = new GXDataInfo();
         boolean equals = false;
         byte[] secret;
@@ -813,6 +886,11 @@ public class GXDLMSClient {
                     bb.set(settings.getCtoSChallenge());
                     bb.set(settings.getStoCChallenge());
                     ver.update(bb.array());
+                    bb.size(0);
+                    bb.set(value);
+                    value = GXAsn1Converter.toByteArray(new Object[] {
+                            new GXAsn1Integer(bb.subArray(0, 32)),
+                            new GXAsn1Integer(bb.subArray(32, 32)) });
                     equals = ver.verify(value);
 
                 } catch (Exception ex) {
@@ -824,6 +902,15 @@ public class GXDLMSClient {
                     GXByteBuffer bb = new GXByteBuffer(value);
                     bb.getUInt8();
                     ic = bb.getUInt32();
+                } else if (settings
+                        .getAuthentication() == Authentication.HIGH_SHA256) {
+                    GXByteBuffer tmp2 = new GXByteBuffer();
+                    tmp2.set(settings.getPassword());
+                    tmp2.set(settings.getSourceSystemTitle());
+                    tmp2.set(settings.getCipher().getSystemTitle());
+                    tmp2.set(settings.getCtoSChallenge());
+                    tmp2.set(settings.getStoCChallenge());
+                    secret = tmp2.array();
                 } else {
                     secret = settings.getPassword();
                 }
@@ -832,9 +919,9 @@ public class GXDLMSClient {
                 GXByteBuffer challenge = new GXByteBuffer(tmp);
                 equals = challenge.compare(value);
                 if (!equals) {
-                    LOGGER.log(Level.INFO,
-                            "Invalid StoC:" + GXCommon.toHex(value, true) + "-"
-                                    + GXCommon.toHex(tmp, true));
+                    String str = "Invalid StoC:" + GXCommon.toHex(value, true)
+                            + "-" + GXCommon.toHex(tmp, true);
+                    LOGGER.log(Level.INFO, str);
                 }
             }
         } else {
@@ -852,29 +939,36 @@ public class GXDLMSClient {
     }
 
     /**
-     * Generates a release request.
-     * 
      * @return Release request, as byte array.
      */
-    public byte[][] releaseRequest() {
+    public byte[][] releaseRequest()
+{
         // If connection is not established, there is no need to send
         // release request.
         if ((settings.getConnected() & ConnectionState.DLMS) == 0) {
             return null;
         }
         GXByteBuffer buff = new GXByteBuffer();
-        // Length.
-        buff.setUInt8(0);
-        buff.setUInt8(0x80);
-        buff.setUInt8(01);
-        buff.setUInt8(00);
-        if (settings.getCipher() != null && settings.getCipher().isCiphered()) {
-            settings.getCipher().setInvocationCounter(
-                    settings.getCipher().getInvocationCounter() + 1);
+        if (!useProtectedRelease) {
+            buff.setUInt8(3);
+            buff.setUInt8(0x80);
+            buff.setUInt8(1);
+            buff.setUInt8(0);
+        } else {
+            // Length.
+            buff.setUInt8(0);
+            buff.setUInt8(0x80);
+            buff.setUInt8(01);
+            buff.setUInt8(00);
+            if (settings.getCipher() != null
+                    && settings.getCipher().isCiphered()) {
+                settings.getCipher().setInvocationCounter(
+                        settings.getCipher().getInvocationCounter() + 1);
+            }
+            GXAPDU.generateUserInformation(settings, settings.getCipher(), null,
+                    buff);
+            buff.setUInt8(0, (byte) (buff.size() - 1));
         }
-        GXAPDU.generateUserInformation(settings, settings.getCipher(), null,
-                buff);
-        buff.setUInt8(0, (byte) (buff.size() - 1));
         List<byte[]> reply;
         if (getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
@@ -893,7 +987,8 @@ public class GXDLMSClient {
      * 
      * @return Disconnected request, as byte array.
      */
-    public final byte[] disconnectRequest() {
+    public final byte[] disconnectRequest()
+{
         return disconnectRequest(false);
     }
 
@@ -904,23 +999,24 @@ public class GXDLMSClient {
      *            Is disconnect method called always.
      * @return Disconnected request, as byte array.
      */
-    public final byte[] disconnectRequest(final boolean force) {
-        settings.setMaxPduSize(0xFFFF);
+    public final byte[] disconnectRequest(final boolean force)
+{
         // If connection is not established, there is no need to send
         // DisconnectRequest.
-        if (!force && settings.getConnected() == ConnectionState.NONE) {
-            return null;
+        byte[] reply = null;
+        if (force || settings.getConnected() != ConnectionState.NONE) {
+            if (this.getInterfaceType() == InterfaceType.HDLC) {
+                settings.setConnected(ConnectionState.NONE);
+                reply = GXDLMS.getHdlcFrame(settings,
+                        Command.DISCONNECT_REQUEST, null);
+            } else if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
+                reply = releaseRequest()[0];
+            }
         }
-        if (this.getInterfaceType() == InterfaceType.HDLC) {
-            settings.setConnected(ConnectionState.NONE);
-            return GXDLMS.getHdlcFrame(settings, Command.DISCONNECT_REQUEST,
-                    null);
-        }
-        byte[][] reply = releaseRequest();
-        if (reply == null) {
-            return null;
-        }
-        return reply[0];
+        settings.setMaxPduSize(0xFFFF);
+        settings.setConnected(ConnectionState.NONE);
+        settings.resetFrameSequence();
+        return reply;
     }
 
     /**
@@ -955,10 +1051,13 @@ public class GXDLMSClient {
      *            Byte stream where objects are parsed.
      * @param onlyKnownObjects
      *            Only known objects are parsed.
+     * @param ignoreInactiveObjects
+     *            Inactive objects are ignored.
      * @return Collection of COSEM objects.
      */
     private GXDLMSObjectCollection parseSNObjects(final GXByteBuffer buff,
-            final boolean onlyKnownObjects) {
+            final boolean onlyKnownObjects,
+            final boolean ignoreInactiveObjects) {
         // Get array tag.
         buff.position(0);
         short size = buff.getUInt8();
@@ -977,71 +1076,78 @@ public class GXDLMSClient {
             info.setCount(0);
             info.setIndex(0);
             info.setType(DataType.NONE);
-            Object[] objects =
-                    (Object[]) GXCommon.getData(settings, buff, info);
-            if (objects.length != 4) {
+            List<?> objects = (List<?>) GXCommon.getData(settings, buff, info);
+            if (objects.size() != 4) {
                 throw new GXDLMSException("Invalid structure format.");
             }
-            int classID = ((Number) (objects[1])).intValue() & 0xFFFF;
-            int baseName = ((Number) (objects[0])).intValue() & 0xFFFF;
+            int classID = ((Number) (objects.get(1))).intValue() & 0xFFFF;
+            int baseName = ((Number) (objects.get(0))).intValue() & 0xFFFF;
             if (baseName > 0) {
-                GXDLMSObject comp = createDLMSObject(classID, objects[2],
-                        baseName, objects[3], null);
+                GXDLMSObject comp = createDLMSObject(classID, objects.get(2),
+                        baseName, objects.get(3), null);
                 if (!onlyKnownObjects
                         || comp.getClass() != GXDLMSObject.class) {
-                    items.add(comp);
+                    if ((!ignoreInactiveObjects || !"0.0.127.0.0.0"
+                            .equals(comp.getLogicalName()))) {
+                        items.add(comp);
+                    } else {
+                        String str =
+                                "Inactive object : " + String.valueOf(classID)
+                                        + " " + String.valueOf(baseName);
+                        LOGGER.log(Level.INFO, str);
+                    }
                 } else {
-                    System.out.println(
-                            "Unknown object : " + String.valueOf(classID) + " "
-                                    + String.valueOf(baseName));
+                    String str = "Unknown object : " + String.valueOf(classID)
+                            + " " + String.valueOf(baseName);
+                    LOGGER.log(Level.INFO, str);
                 }
             }
         }
         return items;
     }
 
-    /**
+    /*
      * Reserved for internal use.
-     * 
      * @param objectType
      * @param version
      * @param baseName
      * @param logicalName
      * @param accessRights
      */
-    static void updateObjectData(final GXDLMSObject obj,
+    private static void updateObjectData(final GXDLMSObject obj,
             final ObjectType objectType, final Object version,
             final Object baseName, final byte[] logicalName,
             final Object accessRights) {
         obj.setObjectType(objectType);
         // Check access rights.
-        if (accessRights instanceof Object[]
-                && ((Object[]) accessRights).length == 2) {
+        if (accessRights instanceof List<?>
+                && ((List<?>) accessRights).size() == 2) {
             // access_rights: access_right
-            Object[] access = (Object[]) accessRights;
-            for (Object attributeAccess : (Object[]) access[0]) {
-                int id = ((Number) ((Object[]) attributeAccess)[0]).intValue();
+            List<?> access = (List<?>) accessRights;
+            for (Object attributeAccess : (List<?>) access.get(0)) {
+                int id = ((Number) ((List<?>) attributeAccess).get(0))
+                        .intValue();
                 // Kamstrup is returning -1 here.
                 if (id > 0) {
-                    int tmp = ((Number) ((Object[]) attributeAccess)[1])
+                    int tmp = ((Number) ((List<?>) attributeAccess).get(1))
                             .intValue();
                     AccessMode mode = AccessMode.forValue(tmp);
                     obj.setAccess(id, mode);
                 }
             }
-            for (Object methodAccess : (Object[]) access[1]) {
-                int id = ((Number) ((Object[]) methodAccess)[0]).intValue();
+            for (Object methodAccess : (List<?>) access.get(1)) {
+                int id = ((Number) ((List<?>) methodAccess).get(0)).intValue();
                 int tmp;
                 // If version is 0
-                if (((Object[]) methodAccess)[1] instanceof Boolean) {
-                    if ((Boolean) ((Object[]) methodAccess)[1]) {
+                if (((List<?>) methodAccess).get(1) instanceof Boolean) {
+                    if ((Boolean) ((List<?>) methodAccess).get(1)) {
                         tmp = 1;
                     } else {
                         tmp = 0;
                     }
                 } else {
                     // If version is 1.
-                    tmp = ((Number) ((Object[]) methodAccess)[1]).intValue();
+                    tmp = ((Number) ((List<?>) methodAccess).get(1)).intValue();
                 }
                 MethodAccessMode mode = MethodAccessMode.forValue(tmp);
                 obj.setMethodAccess(id, mode);
@@ -1067,16 +1173,60 @@ public class GXDLMSClient {
      */
     public final GXDLMSObjectCollection parseObjects(final GXByteBuffer data,
             final boolean onlyKnownObjects) {
+        return parseObjects(data, onlyKnownObjects, true);
+    }
+
+    /**
+     * Parses the COSEM objects of the received data.
+     * 
+     * @param data
+     *            Received data, from the device, as byte array.
+     * @param onlyKnownObjects
+     *            Only known objects are parsed.
+     * @param ignoreInactiveObjects
+     *            Inactive objects are ignored.
+     * @return Collection of COSEM objects.
+     */
+    public final GXDLMSObjectCollection parseObjects(final GXByteBuffer data,
+            final boolean onlyKnownObjects,
+            final boolean ignoreInactiveObjects) {
+        GXDLMSConverter converter = new GXDLMSConverter(getStandard());
+        return parseObjects(data, onlyKnownObjects, ignoreInactiveObjects,
+                converter);
+    }
+
+    /**
+     * Parses the COSEM objects of the received data.
+     * 
+     * @param data
+     *            Received data, from the device, as byte array.
+     * @param onlyKnownObjects
+     *            Only known objects are parsed.
+     * @param ignoreInactiveObjects
+     *            Inactive objects are ignored.
+     * @param converter
+     *            Converter used to update OBIS code descriptions.
+     * @return Collection of COSEM objects.
+     */
+    public final GXDLMSObjectCollection parseObjects(final GXByteBuffer data,
+            final boolean onlyKnownObjects, final boolean ignoreInactiveObjects,
+            final GXDLMSConverter converter) {
         if (data == null) {
             throw new GXDLMSException("Invalid parameter.");
         }
         GXDLMSObjectCollection objects;
         if (getUseLogicalNameReferencing()) {
-            objects = parseLNObjects(data, onlyKnownObjects);
+            objects = parseLNObjects(data, onlyKnownObjects,
+                    ignoreInactiveObjects);
         } else {
-            objects = parseSNObjects(data, onlyKnownObjects);
+            objects = parseSNObjects(data, onlyKnownObjects,
+                    ignoreInactiveObjects);
         }
         settings.getObjects().addAll(objects);
+        // Update description of the objects.
+        if (converter != null) {
+            converter.updateOBISCodeInformation(null, objects);
+        }
         return objects;
     }
 
@@ -1087,10 +1237,13 @@ public class GXDLMSClient {
      *            Byte stream where objects are parsed.
      * @param onlyKnownObjects
      *            Only known objects are parsed.
+     * @param ignoreInactiveObjects
+     *            Inactive objects are ignored.
      * @return Collection of COSEM objects.
      */
     private GXDLMSObjectCollection parseLNObjects(final GXByteBuffer buff,
-            final boolean onlyKnownObjects) {
+            final boolean onlyKnownObjects,
+            final boolean ignoreInactiveObjects) {
         // Get array tag.
         byte size = buff.getInt8();
         // Check that data is in the array
@@ -1109,22 +1262,30 @@ public class GXDLMSClient {
             info.setType(DataType.NONE);
             info.setIndex(0);
             info.setCount(0);
-            Object[] objects =
-                    (Object[]) GXCommon.getData(settings, buff, info);
-            if (objects.length != 4) {
+            List<?> objects = (List<?>) GXCommon.getData(settings, buff, info);
+            if (objects.size() != 4) {
                 throw new GXDLMSException("Invalid structure format.");
             }
-            int classID = ((Number) (objects[0])).intValue() & 0xFFFF;
+            int classID = ((Number) (objects.get(0))).intValue() & 0xFFFF;
             if (classID > 0) {
-                GXDLMSObject comp = createDLMSObject(classID, objects[1], 0,
-                        objects[2], objects[3]);
+                GXDLMSObject comp = createDLMSObject(classID, objects.get(1), 0,
+                        objects.get(2), objects.get(3));
                 if (!onlyKnownObjects
                         || comp.getClass() != GXDLMSObject.class) {
-                    items.add(comp);
+                    if ((!ignoreInactiveObjects || !"0.0.127.0.0.0"
+                            .equals(comp.getLogicalName()))) {
+                        items.add(comp);
+                    } else {
+                        String str =
+                                "Inactive object : " + String.valueOf(classID)
+                                        + " " + comp.getLogicalName();
+                        LOGGER.log(Level.INFO, str);
+                    }
                 } else {
-                    System.out.println("Unknown object : "
-                            + String.valueOf(classID) + " "
-                            + GXCommon.toLogicalName((byte[]) objects[2]));
+                    String str = "Unknown object : " + String.valueOf(classID)
+                            + " "
+                            + GXCommon.toLogicalName((byte[]) objects.get(2));
+                    LOGGER.log(Level.INFO, str);
                 }
             }
         }
@@ -1223,28 +1384,7 @@ public class GXDLMSClient {
      */
     public final void updateValues(
             final List<Entry<GXDLMSObject, Integer>> list,
-            final Object[] values) {
-        int pos = 0;
-        for (Entry<GXDLMSObject, Integer> it : list) {
-            ValueEventArgs e = new ValueEventArgs(settings, it.getKey(),
-                    it.getValue(), 0, null);
-            e.setValue(values[pos]);
-            it.getKey().setValue(settings, e);
-            ++pos;
-        }
-    }
-
-    /**
-     * Update list of values.
-     * 
-     * @param list
-     *            read objects.
-     * @param values
-     *            Received values.
-     */
-    public final void updateValues(
-            final List<Entry<GXDLMSObject, Integer>> list,
-            final List<Object> values) {
+            final List<?> values) {
         int pos = 0;
         for (Entry<GXDLMSObject, Integer> it : list) {
             ValueEventArgs e = new ValueEventArgs(settings, it.getKey(),
@@ -1289,6 +1429,12 @@ public class GXDLMSClient {
         if (type == DataType.NONE) {
             return GXCommon.toHex(value, true);
         }
+        if (type == DataType.OCTET_STRING && value instanceof byte[]) {
+            return new GXByteBuffer(value);
+        }
+        if (type == DataType.STRING && !GXByteBuffer.isAsciiString(value)) {
+            return new GXByteBuffer(value);
+        }
         if (value.length == 0
                 && (type == DataType.STRING || type == DataType.OCTET_STRING)) {
             return "";
@@ -1311,9 +1457,6 @@ public class GXDLMSClient {
         if (!info.isComplete()) {
             throw new IllegalArgumentException(
                     "Change type failed. Not enought data.");
-        }
-        if (type == DataType.OCTET_STRING && ret instanceof byte[]) {
-            return GXCommon.toHex((byte[]) ret);
         }
         return ret;
     }
@@ -1340,7 +1483,7 @@ public class GXDLMSClient {
         Object name;
         settings.resetBlockIndex();
         if (getUseLogicalNameReferencing()) {
-            if (ln == null || ln == "") {
+            if (ln == null || ln.isEmpty()) {
                 name = "0.0.40.0.0.255";
             } else {
                 name = ln;
@@ -1365,7 +1508,8 @@ public class GXDLMSClient {
      * @return DLMS action message.
      */
     public final byte[][] method(final GXDLMSObject item, final int index,
-            final Object data, final DataType type) {
+            final Object data, final DataType type)
+{
         return method(item.getName(), item.getObjectType(), index, data, type);
     }
 
@@ -1385,15 +1529,12 @@ public class GXDLMSClient {
      * @return DLMS action message.
      */
     public final byte[][] method(final Object name, final ObjectType objectType,
-            final int methodIndex, final Object value,
-            final DataType dataType) {
+            final int methodIndex, final Object value, final DataType dataType)
+{
         if (name == null || methodIndex < 1) {
             throw new IllegalArgumentException("Invalid parameter");
         }
         settings.resetBlockIndex();
-        if (autoIncreaseInvokeID) {
-            settings.setInvokeID((byte) ((settings.getInvokeID() + 1) & 0xF));
-        }
         int index = methodIndex;
         DataType type = dataType;
         if (type == DataType.NONE && value != null) {
@@ -1426,12 +1567,6 @@ public class GXDLMSClient {
                     attributeDescriptor, data, 0xff, Command.NONE);
             reply = GXDLMS.getLnMessages(p);
         } else {
-            int requestType;
-            if (type == DataType.NONE) {
-                requestType = VariableAccessSpecification.VARIABLE_NAME;
-            } else {
-                requestType = VariableAccessSpecification.PARAMETERISED_ACCESS;
-            }
             int[] ind = new int[1], count = new int[1];
             GXDLMS.getActionInfo(objectType, ind, count);
             if (index > count[0]) {
@@ -1450,8 +1585,9 @@ public class GXDLMSClient {
                 attributeDescriptor.setUInt8(0);
             }
             GXDLMSSNParameters p =
-                    new GXDLMSSNParameters(settings, Command.READ_REQUEST, 1,
-                            requestType, attributeDescriptor, data);
+                    new GXDLMSSNParameters(settings, Command.WRITE_REQUEST, 1,
+                            VariableAccessSpecification.VARIABLE_NAME,
+                            attributeDescriptor, data);
             reply = GXDLMS.getSnMessages(p);
         }
         return reply.toArray(new byte[][] {});
@@ -1466,7 +1602,8 @@ public class GXDLMSClient {
      *            Attribute index.
      * @return Generated write message(s).
      */
-    public final byte[][] write(final GXDLMSObject item, final int index) {
+    public final byte[][] write(final GXDLMSObject item, final int index)
+{
         ValueEventArgs e = new ValueEventArgs(settings, item, index, 0, null);
         Object value = item.getValue(settings, e);
         DataType type = item.getDataType(index);
@@ -1497,14 +1634,12 @@ public class GXDLMSClient {
      */
     public final byte[][] write(final Object name, final Object value,
             final DataType dataType, final ObjectType objectType,
-            final int index) {
+            final int index)
+{
         if (index < 1) {
             throw new GXDLMSException("Invalid parameter");
         }
         settings.resetBlockIndex();
-        if (autoIncreaseInvokeID) {
-            settings.setInvokeID((byte) ((settings.getInvokeID() + 1) & 0xF));
-        }
         DataType type = dataType;
         if (type == DataType.NONE && value != null) {
             type = GXDLMSConverter.getDLMSDataType(value);
@@ -1555,8 +1690,10 @@ public class GXDLMSClient {
      * @param list
      *            DLMS objects to write.
      * @return Write request as byte array.
+     * @deprecated use {@link writeList} instead.
      */
-    public final byte[][] writeList(final List<GXWriteItem> list) {
+    public final byte[][] writeList2(final List<GXWriteItem> list)
+{
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("Invalid parameter.");
         }
@@ -1620,6 +1757,80 @@ public class GXDLMSClient {
     }
 
     /**
+     * Write list of COSEM objects.
+     * 
+     * @param list
+     *            DLMS objects to write.
+     * @return Write request as byte array.
+     */
+    public final byte[][]
+            writeList(final List<Entry<GXDLMSObject, Integer>> list)
+{
+        if (!getNegotiatedConformance()
+                .contains(Conformance.MULTIPLE_REFERENCES)) {
+            throw new IllegalArgumentException(
+                    "Meter doesn't support multiple objects writing with one request.");
+        }
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("Invalid parameter.");
+        }
+        Object value;
+        List<byte[]> reply;
+        settings.resetBlockIndex();
+        GXByteBuffer data = new GXByteBuffer();
+        GXByteBuffer bb = new GXByteBuffer();
+        if (this.getUseLogicalNameReferencing()) {
+            // Add length.
+            bb.setUInt8(list.size());
+            for (Entry<GXDLMSObject, Integer> it : list) {
+                // CI.
+                bb.setUInt16(it.getKey().getObjectType().getValue());
+                bb.set(GXCommon
+                        .logicalNameToBytes(it.getKey().getLogicalName()));
+                // Attribute ID.
+                bb.setUInt8(it.getValue());
+                // Attribute selector is not used.
+                bb.setUInt8(0);
+            }
+        } else {
+            for (Entry<GXDLMSObject, Integer> it : list) {
+                // Add variable type.
+                bb.setUInt8(2);
+                int sn = GXCommon.intValue(it.getKey().getShortName());
+                sn += (it.getValue() - 1) * 8;
+                bb.setUInt16(sn);
+            }
+        }
+        // Write values.
+        GXCommon.setObjectCount(list.size(), bb);
+        for (Entry<GXDLMSObject, Integer> it : list) {
+            ValueEventArgs e = new ValueEventArgs(settings, it.getKey(),
+                    it.getValue(), 0, null);
+            value = it.getKey().getValue(settings, e);
+            DataType type = it.getKey().getDataType(it.getValue());
+            if ((type == null || type == DataType.NONE) && value != null) {
+                type = GXDLMSConverter.getDLMSDataType(value);
+                if (type == DataType.NONE) {
+                    throw new GXDLMSException("Invalid parameter. "
+                            + " In java value type must give.");
+                }
+            }
+            GXCommon.setData(settings, data, type, value);
+        }
+        if (this.getUseLogicalNameReferencing()) {
+            GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
+                    Command.SET_REQUEST, SetRequestType.WITH_LIST, bb, data,
+                    0xff, Command.NONE);
+            reply = GXDLMS.getLnMessages(p);
+        } else {
+            GXDLMSSNParameters p = new GXDLMSSNParameters(settings,
+                    Command.WRITE_REQUEST, list.size(), 4, bb, data);
+            reply = GXDLMS.getSnMessages(p);
+        }
+        return reply.toArray(new byte[0][0]);
+    }
+
+    /**
      * Generates a read message.
      * 
      * @param name
@@ -1631,7 +1842,8 @@ public class GXDLMSClient {
      * @return Generated read message(s).
      */
     public final byte[][] read(final Object name, final ObjectType objectType,
-            final int attributeOrdinal) {
+            final int attributeOrdinal)
+{
         return read(name, objectType, attributeOrdinal, null);
     }
 
@@ -1649,16 +1861,14 @@ public class GXDLMSClient {
      * @return Generated read message(s).
      */
     private byte[][] read(final Object name, final ObjectType objectType,
-            final int attributeOrdinal, final GXByteBuffer data) {
+            final int attributeOrdinal, final GXByteBuffer data)
+{
         if ((attributeOrdinal < 1)) {
             throw new IllegalArgumentException("Invalid parameter");
         }
         GXByteBuffer attributeDescriptor = new GXByteBuffer();
         List<byte[]> reply;
         settings.resetBlockIndex();
-        if (autoIncreaseInvokeID) {
-            settings.setInvokeID((byte) ((settings.getInvokeID() + 1) & 0xF));
-        }
         if (this.getUseLogicalNameReferencing()) {
             // CI
             attributeDescriptor.setUInt16(objectType.getValue());
@@ -1707,7 +1917,8 @@ public class GXDLMSClient {
      * @return Read request as byte array.
      */
     public final byte[][] read(final GXDLMSObject item,
-            final int attributeOrdinal) {
+            final int attributeOrdinal)
+{
         return read(item.getName(), item.getObjectType(), attributeOrdinal);
     }
 
@@ -1719,9 +1930,15 @@ public class GXDLMSClient {
      * @return Read request as byte array.
      */
     public final byte[][]
-            readList(final List<Entry<GXDLMSObject, Integer>> list) {
+            readList(final List<Entry<GXDLMSObject, Integer>> list)
+{
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("Invalid parameter.");
+        }
+        if (!getNegotiatedConformance()
+                .contains(Conformance.MULTIPLE_REFERENCES)) {
+            throw new IllegalArgumentException(
+                    "Meter doesn't support multiple objects reading with one request.");
         }
         List<byte[]> messages = new ArrayList<byte[]>();
         GXByteBuffer data = new GXByteBuffer();
@@ -1810,7 +2027,8 @@ public class GXDLMSClient {
      * @return Read message as byte array.
      */
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg,
-            final int index, final int count) {
+            final int index, final int count)
+{
         return readRowsByEntry(pg, index, count, null);
     }
 
@@ -1829,14 +2047,16 @@ public class GXDLMSClient {
      */
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg,
             final int index, final int count,
-            final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns) {
+            final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
+{
         int pos = 0;
         int columnStart = 1, columnEnd = 0;
         // If columns are given find indexes.
-        if (columns != null && columns.size() != 0) {
+        if (columns != null && !columns.isEmpty()) {
             if (pg.getCaptureObjects() == null
-                    || pg.getCaptureObjects().size() == 0) {
-                throw new RuntimeException("Read capture objects first.");
+                    || pg.getCaptureObjects().isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Read capture objects first.");
             }
             columnStart = pg.getCaptureObjects().size();
             columnEnd = 1;
@@ -1863,7 +2083,7 @@ public class GXDLMSClient {
                     }
                 }
                 if (!found) {
-                    throw new RuntimeException(
+                    throw new IllegalArgumentException(
                             "Invalid column: " + c.getKey().getLogicalName());
                 }
             }
@@ -1889,6 +2109,9 @@ public class GXDLMSClient {
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg,
             final int index, final int count, final int columnStart,
             final int columnEnd) {
+        if (pg.getCaptureObjects().isEmpty()) {
+            throw new RuntimeException("Capture objects not read.");
+        }
         if (index < 0) {
             throw new IllegalArgumentException("index");
         }
@@ -1901,6 +2124,7 @@ public class GXDLMSClient {
         if (columnEnd < 0) {
             throw new IllegalArgumentException("columnEnd");
         }
+        pg.clearBuffer();
         GXByteBuffer buff = new GXByteBuffer(19);
         // Add AccessSelector value
         buff.setUInt8(0x02);
@@ -2029,18 +2253,17 @@ public class GXDLMSClient {
     private byte[][] readByRange(final GXDLMSProfileGeneric pg,
             final Object start, final Object end,
             final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns) {
+
+        if (pg.getCaptureObjects().isEmpty()) {
+            throw new RuntimeException("Capture objects not read.");
+        }
+        pg.clearBuffer();
         settings.resetBlockIndex();
         GXDateTime s = GXCommon.getDateTime(start);
         GXDateTime e = GXCommon.getDateTime(end);
-        s.getSkip().add(DateTimeSkips.DAY_OF_WEEK);
-        e.getSkip().add(DateTimeSkips.DAY_OF_WEEK);
         GXDLMSObject sort = pg.getSortObject();
-        if (sort == null && pg.getCaptureObjects().size() != 0) {
+        if (sort == null) {
             sort = pg.getCaptureObjects().get(0).getKey();
-        }
-        // If sort object is not found or it is not clock object read all.
-        if (sort == null || sort.getObjectType() != ObjectType.CLOCK) {
-            return read(pg, 2);
         }
         GXByteBuffer buff = new GXByteBuffer(51);
         // Add AccessSelector value.
@@ -2064,10 +2287,8 @@ public class GXDLMSClient {
         // Add version
         GXCommon.setData(settings, buff, DataType.UINT16, sort.getVersion());
         // If Unix time is used.
-        if (pg.getCaptureObjects().size() != 0
-                && pg.getCaptureObjects().get(0).getKey() instanceof GXDLMSData
-                && pg.getCaptureObjects().get(0).getKey().getLogicalName()
-                        .equals("0.0.1.1.0.255")) {
+        if (sort instanceof GXDLMSData
+                && sort.getLogicalName().equals("0.0.1.1.0.255")) {
             // Add start time
             GXCommon.setData(settings, buff, DataType.UINT32,
                     GXDateTime.toUnixTime(s));
@@ -2130,6 +2351,34 @@ public class GXDLMSClient {
      */
     public final byte[] receiverReady(final RequestTypes type) {
         return GXDLMS.receiverReady(settings, type);
+    }
+
+    /**
+     * Generates an acknowledgment message, with which the server is informed to
+     * send next packets.
+     * 
+     * @param type
+     *            Frame type
+     * @return Acknowledgment message as byte array.
+     */
+    public final byte[] receiverReady(final java.util.Set<RequestTypes> type) {
+        return GXDLMS.receiverReady(settings, type);
+    }
+
+    /**
+     * Generates an acknowledgment message, with which the server is informed to
+     * send next packets.
+     * 
+     * @param reply
+     *            Received data.
+     * @return Acknowledgment message as byte array.
+     */
+    public final byte[] receiverReady(final GXReplyData reply) {
+        try {
+            return GXDLMS.receiverReady(settings, reply);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -2198,8 +2447,7 @@ public class GXDLMSClient {
             }
             ret = true;
         }
-        if (ret && translator != null
-                && data.getMoreData() == RequestTypes.NONE) {
+        if (ret && translator != null && data.getMoreData().isEmpty()) {
             if (data.getXml() == null) {
                 data.setXml(new GXDLMSTranslatorStructure(
                         translator.getOutputType(),
@@ -2349,7 +2597,7 @@ public class GXDLMSClient {
      * @return Read request as byte array. {@link parseAccessResponse}
      */
     public final byte[][] accessRequest(final Date time,
-            final ArrayList<GXDLMSAccessItem> list) {
+            final List<GXDLMSAccessItem> list){
         GXByteBuffer bb = new GXByteBuffer();
         GXCommon.setObjectCount(list.size(), bb);
         for (GXDLMSAccessItem it : list) {
@@ -2456,19 +2704,17 @@ public class GXDLMSClient {
             getInitialConformance(final boolean useLogicalNameReferencing) {
         Set<Conformance> list = new HashSet<Conformance>();
         if (useLogicalNameReferencing) {
-            list.addAll(Arrays.asList(
-                    new Conformance[] { Conformance.BLOCK_TRANSFER_WITH_ACTION,
-                            Conformance.BLOCK_TRANSFER_WITH_SET_OR_WRITE,
-                            Conformance.BLOCK_TRANSFER_WITH_GET_OR_READ,
-                            Conformance.SET, Conformance.SELECTIVE_ACCESS,
-                            Conformance.ACTION, Conformance.MULTIPLE_REFERENCES,
-                            Conformance.GET }));
+            list.addAll(Arrays.asList(Conformance.BLOCK_TRANSFER_WITH_ACTION,
+                    Conformance.BLOCK_TRANSFER_WITH_SET_OR_WRITE,
+                    Conformance.BLOCK_TRANSFER_WITH_GET_OR_READ,
+                    Conformance.SET, Conformance.SELECTIVE_ACCESS,
+                    Conformance.ACTION, Conformance.MULTIPLE_REFERENCES,
+                    Conformance.GET));
         } else {
-            list.addAll(Arrays
-                    .asList(new Conformance[] { Conformance.INFORMATION_REPORT,
-                            Conformance.READ, Conformance.UN_CONFIRMED_WRITE,
-                            Conformance.WRITE, Conformance.PARAMETERIZED_ACCESS,
-                            Conformance.MULTIPLE_REFERENCES }));
+            list.addAll(Arrays.asList(Conformance.INFORMATION_REPORT,
+                    Conformance.READ, Conformance.UN_CONFIRMED_WRITE,
+                    Conformance.WRITE, Conformance.PARAMETERIZED_ACCESS,
+                    Conformance.MULTIPLE_REFERENCES));
         }
         return list;
     }
@@ -2511,31 +2757,32 @@ public class GXDLMSClient {
      * @return Array of objects and called indexes.
      */
     public final List<Entry<GXDLMSObject, Integer>>
-            ParsePushObjects(final Context context, final Object[] data) {
+            parsePushObjects(final List<?> data) {
         List<Entry<GXDLMSObject, Integer>> objects =
                 new ArrayList<Entry<GXDLMSObject, Integer>>();
         if (data != null) {
             GXDLMSConverter c = new GXDLMSConverter(getStandard());
             for (Object it : data) {
-                Object[] tmp = (Object[]) it;
-                int classID = ((Number) (tmp[0])).intValue() & 0xFFFF;
+                List<?> tmp = (List<?>) it;
+                int classID = ((Number) (tmp.get(0))).intValue() & 0xFFFF;
                 if (classID > 0) {
                     GXDLMSObject comp;
                     comp = getObjects().findByLN(ObjectType.forValue(classID),
-                            GXCommon.toLogicalName((byte[]) tmp[1]));
+                            GXCommon.toLogicalName((byte[]) tmp.get(1)));
                     if (comp == null) {
                         comp = GXDLMSClient.createDLMSObject(classID, 0, 0,
-                                tmp[1], null);
+                                tmp.get(1), null);
                         settings.getObjects().add(comp);
-                        c.updateOBISCodeInformation(context, comp);
+                        c.updateOBISCodeInformation(null, comp);
                     }
                     if (comp.getClass() != GXDLMSObject.class) {
                         objects.add(new GXSimpleEntry<GXDLMSObject, Integer>(
-                                comp, ((Number) tmp[2]).intValue()));
+                                comp, ((Number) tmp.get(2)).intValue()));
                     } else {
-                        System.out.println("Unknown object: "
+                        String str = "Unknown object: "
                                 + String.valueOf(classID) + " "
-                                + GXCommon.toLogicalName((byte[]) tmp[1]));
+                                + GXCommon.toLogicalName((byte[]) tmp.get(1));
+                        LOGGER.log(Level.INFO, str);
                     }
                 }
             }
@@ -2595,5 +2842,24 @@ public class GXDLMSClient {
     public static void getHdlcAddressInfo(final GXByteBuffer reply,
             final int[] target, final int[] source, final short[] type) {
         GXDLMS.getHdlcAddressInfo(reply, target, source, type);
+    }
+
+    /**
+     * If protected release is used, release is including a ciphered xDLMS
+     * Initiate request.
+     *
+     * @param protectedRelease
+     *            Use Protected Release
+     */
+    public void setUseProtectedRelease(boolean protectedRelease) {
+        useProtectedRelease = protectedRelease;
+    }
+
+    /**
+     * @return If protected release is used, release is including a ciphered
+     *         xDLMS Initiate request.
+     */
+    public boolean getUseProtectedRelease() {
+        return useProtectedRelease;
     }
 }

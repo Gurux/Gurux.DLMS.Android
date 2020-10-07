@@ -36,9 +36,7 @@ package gurux.dlms;
 
 import gurux.dlms.enums.AcseServiceProvider;
 import gurux.dlms.enums.AssociationResult;
-import gurux.dlms.enums.ExceptionServiceError;
 import gurux.dlms.enums.SourceDiagnostic;
-import gurux.dlms.enums.StateError;
 
 /**
  * DLMS specific exception class that has error description available from
@@ -52,8 +50,6 @@ public class GXDLMSException extends RuntimeException {
     private AssociationResult result = AssociationResult.ACCEPTED;
     private int diagnostic = 0;
     private int errorCode;
-    private StateError stateError;
-    private ExceptionServiceError exceptionServiceError;
 
     public GXDLMSException(final int errCode) {
         super(GXDLMS.getDescription(errCode));
@@ -64,7 +60,7 @@ public class GXDLMSException extends RuntimeException {
         super(message);
     }
 
-    /**
+    /*
      * Constructor for AARE error.
      */
     GXDLMSException(final AssociationResult forResult,
@@ -75,7 +71,7 @@ public class GXDLMSException extends RuntimeException {
         diagnostic = forDiagnostic.getValue();
     }
 
-    /**
+    /*
      * Constructor for AARE error.
      */
     GXDLMSException(final AssociationResult forResult,
@@ -84,59 +80,6 @@ public class GXDLMSException extends RuntimeException {
                 + getDiagnostic(forDiagnostic));
         result = forResult;
         diagnostic = forDiagnostic.getValue();
-    }
-
-    /**
-     * @param stateErr
-     *            State error.
-     * @param serviceErr
-     *            Service error.
-     */
-    GXDLMSException(final StateError stateErr,
-            final ExceptionServiceError serviceErr) {
-        super("Meter returns " + getStateError(stateErr) + " exception. "
-                + getServiceError(serviceErr));
-        stateError = stateErr;
-        exceptionServiceError = serviceErr;
-    }
-
-    /**
-     * Gets state error description.
-     * 
-     * @param stateError
-     *            State error enumerator value.
-     * @return State error as an string.
-     */
-    private static String getStateError(final StateError stateError) {
-        switch (stateError) {
-        case SERVICE_NOT_ALLOWED:
-            return "Service not allowed";
-        case SERVICE_UNKNOWN:
-            return "Service unknown";
-        default:
-        }
-        return "";
-    }
-
-    /**
-     * Gets service error description.
-     * 
-     * @param serviceError
-     *            Service error enumerator value.
-     * @return Service error as an string.
-     */
-    private static String
-            getServiceError(final ExceptionServiceError serviceError) {
-        switch (serviceError) {
-        case OPERATION_NOT_POSSIBLE:
-            return "Operation not possible";
-        case SERVICE_NOT_SUPPORTED:
-            return "Service not supported";
-        case OTHER_REASON:
-            return "Other reason";
-        default:
-        }
-        return "";
     }
 
     /**
@@ -234,19 +177,5 @@ public class GXDLMSException extends RuntimeException {
      */
     public final int getDiagnostic() {
         return diagnostic;
-    }
-
-    /**
-     * @return State error.
-     */
-    public final StateError getStateError() {
-        return stateError;
-    }
-
-    /**
-     * @return Service error.
-     */
-    public final ExceptionServiceError getExceptionServiceError() {
-        return exceptionServiceError;
     }
 }

@@ -37,9 +37,8 @@ package gurux.dlms.enums;
 import java.util.HashMap;
 
 /**
- * Enumerated DLMS error codes.
- * 
- * @author Gurux Ltd.
+ * Enumerated all DLMS error codes. <br>
+ * https://www.gurux.fi/Gurux.DLMS.ErrorCodes
  */
 public enum ErrorCode {
 
@@ -174,7 +173,7 @@ public enum ErrorCode {
     ErrorCode(final int value) {
         intValue = value;
         synchronized (ErrorCode.class) {
-            getMappings().put(new Integer(value), this);
+            getMappings().put(value, this);
         }
     }
 
@@ -195,6 +194,6 @@ public enum ErrorCode {
      * @return Enumerator value.
      */
     public static ErrorCode forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        return getMappings().get(value);
     }
 }

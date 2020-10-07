@@ -132,7 +132,7 @@ public enum Authentication {
     }
 
     public static Authentication valueOfString(final String value) {
-        Authentication v = Authentication.NONE;
+        Authentication v;
         if ("None".equalsIgnoreCase(value)) {
             v = Authentication.NONE;
         } else if ("Low".equalsIgnoreCase(value)) {
@@ -147,6 +147,8 @@ public enum Authentication {
             v = Authentication.HIGH_SHA256;
         } else if ("HighGMac".equalsIgnoreCase(value)) {
             v = Authentication.HIGH_GMAC;
+        } else if ("HighECDSA".equalsIgnoreCase(value)) {
+            v = Authentication.HIGH_ECDSA;
         } else {
             throw new IllegalArgumentException(value);
         }

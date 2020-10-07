@@ -35,10 +35,10 @@
 package gurux.dlms;
 
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-
 import gurux.dlms.asn.GXAsn1Converter;
 import gurux.dlms.enums.Command;
 import gurux.dlms.enums.Conformance;
@@ -72,7 +72,7 @@ import gurux.dlms.objects.GXDLMSExtendedRegister;
 import gurux.dlms.objects.GXDLMSGSMDiagnostic;
 import gurux.dlms.objects.GXDLMSGprsSetup;
 import gurux.dlms.objects.GXDLMSHdlcSetup;
-import gurux.dlms.objects.GXDLMSIECOpticalPortSetup;
+import gurux.dlms.objects.GXDLMSIECLocalPortSetup;
 import gurux.dlms.objects.GXDLMSIecTwistedPairSetup;
 import gurux.dlms.objects.GXDLMSImageTransfer;
 import gurux.dlms.objects.GXDLMSIp4Setup;
@@ -105,11 +105,16 @@ import gurux.dlms.secure.AesGcmParameter;
 import gurux.dlms.secure.CountType;
 import gurux.dlms.secure.GXASymmetric;
 import gurux.dlms.secure.GXCiphering;
+import gurux.dlms.secure.GXSecure;
 
 /**
  * GXDLMS implements methods to communicate with DLMS/COSEM metering devices.
  */
 abstract class GXDLMS {
+    /*
+     * HDLC frame start and end character.
+     */
+    private static final byte HDLC_FRAME_START_END = 0x7E;
     static final byte CIPHERING_HEADER_SIZE = 7 + 12 + 3;
     static final int DATA_TYPE_OFFSET = 0xFF0000;
 
@@ -120,13 +125,17 @@ abstract class GXDLMS {
 
     }
 
-    static byte getInvokeIDPriority(final GXDLMSSettings settings) {
+    static byte getInvokeIDPriority(final GXDLMSSettings settings,
+            final boolean increase) {
         byte value = 0;
         if (settings.getPriority() == Priority.HIGH) {
             value |= 0x80;
         }
         if (settings.getServiceClass() == ServiceClass.CONFIRMED) {
             value |= 0x40;
+        }
+        if (increase) {
+            settings.setInvokeID(((settings.getInvokeID() + 1) & 0xF));
         }
         value |= settings.getInvokeID();
         return value;
@@ -185,7 +194,7 @@ abstract class GXDLMS {
         case IEC_HDLC_SETUP:
             return new GXDLMSHdlcSetup();
         case IEC_LOCAL_PORT_SETUP:
-            return new GXDLMSIECOpticalPortSetup();
+            return new GXDLMSIECLocalPortSetup();
         case IEC_TWISTED_PAIR_SETUP:
             return new GXDLMSIecTwistedPairSetup();
         case IP4_SETUP:
@@ -265,18 +274,62 @@ abstract class GXDLMS {
      * Generates an acknowledgment message, with which the server is informed to
      * send next packets.
      * 
+     * @param settings
+     *            DLMS settings.
      * @param type
      *            Frame type.
      * @return Acknowledgment message as byte array.
      */
     public static byte[] receiverReady(final GXDLMSSettings settings,
             final RequestTypes type) {
-        if (type == RequestTypes.NONE) {
+        java.util.Set<RequestTypes> tmp = new HashSet<RequestTypes>();
+        tmp.add(type);
+        try {
+            return receiverReady(settings, tmp);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Generates an acknowledgment message, with which the server is informed to
+     * send next packets.
+     * 
+     * @param settings
+     *            DLMS settings.
+     * @param type
+     *            Frame type.
+     * @return Acknowledgment message as byte array.
+     */
+    public static byte[] receiverReady(final GXDLMSSettings settings,
+            final java.util.Set<RequestTypes> type) {
+        GXReplyData reply = new GXReplyData();
+        reply.getMoreData().addAll(type);
+        reply.setWindowSize(settings.getWindowSize());
+        reply.setBlockNumberAck(settings.getBlockNumberAck());
+        reply.setBlockNumber(settings.getBlockIndex());
+        try {
+            return receiverReady(settings, reply);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /*
+     * Generates an acknowledgment message, with which the server is informed to
+     * send next packets.
+     * @param settings DLMS settings.
+     * @param reply Received data.
+     * @return Acknowledgment message as byte array.
+     */
+    public static byte[] receiverReady(final GXDLMSSettings settings,
+            final GXReplyData reply) {
+        if (reply.getMoreData().isEmpty()) {
             throw new IllegalArgumentException(
                     "Invalid receiverReady RequestTypes parameter.");
         }
         // Get next frame.
-        if ((type.getValue() & RequestTypes.FRAME.getValue()) != 0) {
+        if (reply.getMoreData().contains(RequestTypes.FRAME)) {
             byte id = settings.getReceiverReady();
             return getHdlcFrame(settings, id, null);
         }
@@ -295,91 +348,108 @@ abstract class GXDLMS {
             }
         }
         // Get next block.
-        List<byte[]> reply;
-        GXByteBuffer bb = new GXByteBuffer(6);
-
-        if (settings.getUseLogicalNameReferencing()) {
-            bb.setUInt32(settings.getBlockIndex());
-        } else {
-            bb.setUInt16(settings.getBlockIndex());
-        }
-        settings.increaseBlockIndex();
-        if (settings.getUseLogicalNameReferencing()) {
-            GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0, cmd,
-                    GetCommandType.NEXT_DATA_BLOCK, bb, null, 0xff,
+        List<byte[]> data;
+        if (reply.getMoreData().contains(RequestTypes.GBT)) {
+            GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0,
+                    Command.GENERAL_BLOCK_TRANSFER, 0, null, null, 0xff,
                     Command.NONE);
-            reply = getLnMessages(p);
+            p.setWindowSize(reply.getWindowSize());
+            p.setBlockNumberAck(reply.getBlockNumberAck());
+            p.setBlockIndex(reply.getBlockNumber());
+            p.setStreaming(false);
+            data = GXDLMS.getLnMessages(p);
         } else {
-            GXDLMSSNParameters p = new GXDLMSSNParameters(settings, cmd, 1,
-                    VariableAccessSpecification.BLOCK_NUMBER_ACCESS, bb, null);
-            reply = getSnMessages(p);
+            GXByteBuffer bb = new GXByteBuffer(6);
+            if (settings.getUseLogicalNameReferencing()) {
+                bb.setUInt32(settings.getBlockIndex());
+            } else {
+                bb.setUInt16(settings.getBlockIndex());
+            }
+            settings.increaseBlockIndex();
+            if (settings.getUseLogicalNameReferencing()) {
+                GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0, cmd,
+                        GetCommandType.NEXT_DATA_BLOCK, bb, null, 0xff,
+                        Command.NONE);
+                data = getLnMessages(p);
+            } else {
+                GXDLMSSNParameters p = new GXDLMSSNParameters(settings, cmd, 1,
+                        VariableAccessSpecification.BLOCK_NUMBER_ACCESS, bb,
+                        null);
+                data = getSnMessages(p);
+            }
         }
-        return reply.get(0);
+        return data.get(0);
     }
 
     static String getDescription(final int errCode) {
         String str;
-        switch (ErrorCode.forValue(errCode)) {
-        case REJECTED:
-            str = "Rejected";
-            break;
-        case OK:
-            str = "";
-            break;
-        case HARDWARE_FAULT:
-            str = "Access Error : Device reports a hardware fault.";
-            break;
-        case TEMPORARY_FAILURE:
-            str = "Access Error : Device reports a temporary failure.";
-            break;
-        case READ_WRITE_DENIED:
-            str = "Access Error : Device reports Read-Write denied.";
-            break;
-        case UNDEFINED_OBJECT:
-            str = "Access Error : Device reports a undefined object.";
-            break;
-        case INCONSISTENT_CLASS:
-            str = "Access Error : "
-                    + "Device reports a inconsistent Class or object.";
-            break;
-        case UNAVAILABLE_OBJECT:
-            str = "Access Error : Device reports a unavailable object.";
-            break;
-        case UNMATCHED_TYPE:
-            str = "Access Error : Device reports a unmatched type.";
-            break;
-        case ACCESS_VIOLATED:
-            str = "Access Error : Device reports scope of access violated.";
-            break;
-        case DATA_BLOCK_UNAVAILABLE:
-            str = "Access Error : Data Block Unavailable.";
-            break;
-        case LONG_GET_OR_READ_ABORTED:
-            str = "Access Error : Long Get Or Read Aborted.";
-            break;
-        case NO_LONG_GET_OR_READ_IN_PROGRESS:
-            str = "Access Error : No Long Get Or Read In Progress.";
-            break;
-        case LONG_SET_OR_WRITE_ABORTED:
-            str = "Access Error : Long Set Or Write Aborted.";
-            break;
-        case NO_LONG_SET_OR_WRITE_IN_PROGRESS:
-            str = "Access Error : No Long Set Or Write In Progress.";
-            break;
-        case DATA_BLOCK_NUMBER_INVALID:
-            str = "Access Error : Data Block Number Invalid.";
-            break;
-        case OTHER_REASON:
-            str = "Access Error : Other Reason.";
-            break;
-        default:
-            str = "Access Error : Unknown error.";
-            break;
+        ErrorCode errorCode = ErrorCode.forValue(errCode);
+        if (errorCode != null) {
+            switch (errorCode) {
+            case REJECTED:
+                str = "Rejected";
+                break;
+            case OK:
+                str = "";
+                break;
+            case HARDWARE_FAULT:
+                str = "Access Error : Device reports a hardware fault.";
+                break;
+            case TEMPORARY_FAILURE:
+                str = "Access Error : Device reports a temporary failure.";
+                break;
+            case READ_WRITE_DENIED:
+                str = "Access Error : Device reports Read-Write denied.";
+                break;
+            case UNDEFINED_OBJECT:
+                str = "Access Error : Device reports a undefined object.";
+                break;
+            case INCONSISTENT_CLASS:
+                str = "Access Error : "
+                        + "Device reports a inconsistent Class or object.";
+                break;
+            case UNAVAILABLE_OBJECT:
+                str = "Access Error : Device reports a unavailable object.";
+                break;
+            case UNMATCHED_TYPE:
+                str = "Access Error : Device reports a unmatched type.";
+                break;
+            case ACCESS_VIOLATED:
+                str = "Access Error : Device reports scope of access violated.";
+                break;
+            case DATA_BLOCK_UNAVAILABLE:
+                str = "Access Error : Data Block Unavailable.";
+                break;
+            case LONG_GET_OR_READ_ABORTED:
+                str = "Access Error : Long Get Or Read Aborted.";
+                break;
+            case NO_LONG_GET_OR_READ_IN_PROGRESS:
+                str = "Access Error : No Long Get Or Read In Progress.";
+                break;
+            case LONG_SET_OR_WRITE_ABORTED:
+                str = "Access Error : Long Set Or Write Aborted.";
+                break;
+            case NO_LONG_SET_OR_WRITE_IN_PROGRESS:
+                str = "Access Error : No Long Set Or Write In Progress.";
+                break;
+            case DATA_BLOCK_NUMBER_INVALID:
+                str = "Access Error : Data Block Number Invalid.";
+                break;
+            case OTHER_REASON:
+                str = "Access Error : Other Reason.";
+                break;
+            default:
+                str = "Access Error : Unknown error.";
+                break;
+            }
+        } else {
+            str = "Access Error : Invalid error code "
+                    + String.valueOf(errCode);
         }
         return str;
     }
 
-    /**
+    /*
      * Reserved for internal use.
      */
     static void checkInit(final GXDLMSSettings settings) {
@@ -396,11 +466,9 @@ abstract class GXDLMS {
 
         DataType tp = obj.getDataType(index);
         if (tp == DataType.ARRAY) {
-            if (value instanceof byte[]) {
-                if (tp != DataType.OCTET_STRING) {
-                    bb.set((byte[]) value);
-                    return;
-                }
+            if (value instanceof byte[] && tp != DataType.OCTET_STRING) {
+                bb.set((byte[]) value);
+                return;
             }
         } else {
             if (tp == DataType.NONE) {
@@ -479,7 +547,7 @@ abstract class GXDLMS {
     /**
      * Get used ded message.
      * 
-     * @param cmd
+     * @param command
      *            Executed command.
      * @return Integer value of ded message.
      */
@@ -539,14 +607,12 @@ abstract class GXDLMS {
         data.set(tmp);
     }
 
-    /**
+    /*
      * Check is all data fit to one data block.
-     * 
-     * @param p
-     *            LN parameters.
-     * @param reply
-     *            Generated reply.
+     * @param p LN parameters.
+     * @param reply Generated reply.
      */
+    @SuppressWarnings("squid:S1940")
     static void multipleBlocks(final GXDLMSLNParameters p,
             final GXByteBuffer reply, final boolean ciphering) {
         // Check is all data fit to one message if data is given.
@@ -577,16 +643,12 @@ abstract class GXDLMS {
         }
     }
 
-    /**
+    /*
      * Get next logical name PDU.
-     * 
-     * @param p
-     *            LN parameters.
-     * @param reply
-     *            Generated message.
-     * @throws NoSuchAlgorithmExceptionp
-     * @throws InvalidKeyException
+     * @param p LN parameters.
+     * @param reply Generated message.
      */
+    @SuppressWarnings("squid:S1066")
     public static void getLNPdu(final GXDLMSLNParameters p,
             final GXByteBuffer reply) {
         boolean ciphering = p.getCommand() != Command.AARQ
@@ -629,11 +691,14 @@ abstract class GXDLMS {
                 if (p.getTime() == null) {
                     reply.setUInt8(DataType.NONE.getValue());
                 } else {
-                    // Data is send in octet string. Remove data type.
+                    // Data is send in octet string.
+                    // Remove data type except from event Notification.
                     int pos = reply.size();
                     GXCommon.setData(null, reply, DataType.OCTET_STRING,
                             p.getTime());
-                    reply.move(pos + 1, pos, reply.size() - pos - 1);
+                    if (p.getCommand() != Command.EVENT_NOTIFICATION) {
+                        reply.move(pos + 1, pos, reply.size() - pos - 1);
+                    }
                 }
                 multipleBlocks(p, reply, ciphering);
             } else if (p.getCommand() != Command.RELEASE_REQUEST) {
@@ -672,7 +737,8 @@ abstract class GXDLMS {
                     if (p.getInvokeId() != 0) {
                         reply.setUInt8((byte) p.getInvokeId());
                     } else {
-                        reply.setUInt8(getInvokeIDPriority(p.getSettings()));
+                        reply.setUInt8(getInvokeIDPriority(p.getSettings(),
+                                p.getSettings().getAutoIncreaseInvokeID()));
                     }
                 }
             }
@@ -782,6 +848,7 @@ abstract class GXDLMS {
                             if (7 + len > p.getSettings().getMaxPduSize()) {
                                 len = p.getSettings().getMaxPduSize() - 7;
                             }
+                            ciphering = false;
                         }
                     } else if (p.getCommand() != Command.GET_REQUEST && len
                             + reply.size() > p.getSettings().getMaxPduSize()) {
@@ -813,10 +880,10 @@ abstract class GXDLMS {
                     reply.set(tmp);
                 }
             }
-            if (ciphering
+            if (ciphering && reply.size() != 0
+                    && p.getCommand() != Command.RELEASE_REQUEST
                     && !p.getSettings().getNegotiatedConformance()
-                            .contains(Conformance.GENERAL_BLOCK_TRANSFER)
-                    && p.getCommand() != Command.RELEASE_REQUEST) {
+                            .contains(Conformance.GENERAL_BLOCK_TRANSFER)) {
                 // GBT ciphering is done for all the data, not just block.
                 byte[] tmp;
                 if (p.getSettings().getCipher()
@@ -872,8 +939,8 @@ abstract class GXDLMS {
                         + p.getSettings().getGateway()
                                 .getPhysicalDeviceAddress().length > p
                                         .getSettings().getMaxPduSize()) {
-                    len -= (3 + p.getSettings().getGateway()
-                            .getPhysicalDeviceAddress().length);
+                    // len -= (3 + p.getSettings().getGateway()
+                    // .getPhysicalDeviceAddress().length);
                 }
                 GXByteBuffer tmp = new GXByteBuffer(reply);
                 reply.size(0);
@@ -896,7 +963,7 @@ abstract class GXDLMS {
      * 
      * @param p
      *            LN settings.
-     * @param reply
+     * @param data
      *            Data to encrypt.
      */
     private static byte[] cipher1(final GXDLMSLNParameters p,
@@ -912,7 +979,7 @@ abstract class GXDLMS {
         if (keyid == 0) {
             return data;
         }
-        byte sc = 0;
+        byte sc;
         GXICipher c = p.getSettings().getCipher();
         if (c.getRecipientSystemTitle() == null) {
             throw new IllegalArgumentException(
@@ -1045,13 +1112,10 @@ abstract class GXDLMS {
                 || cmd == Command.GLO_METHOD_REQUEST;
     }
 
-    /**
+    /*
      * Cipher using security suite 0.
-     * 
-     * @param p
-     *            LN settings.
-     * @param reply
-     *            Data to encrypt.
+     * @param p LN settings.
+     * @param data Data to encrypt.
      */
     static byte[] cipher0(final GXDLMSLNParameters p, final byte[] data) {
         int cmd;
@@ -1059,12 +1123,20 @@ abstract class GXDLMS {
         GXICipher cipher = p.getSettings().getCipher();
         // If client.
         if (p.getCipheredCommand() == Command.NONE) {
-            if (!p.getSettings().getProposedConformance()
-                    .contains(Conformance.GENERAL_PROTECTION)
-                    && !p.getSettings().getNegotiatedConformance()
-                            .contains(Conformance.GENERAL_PROTECTION)) {
-                if ((p.getSettings().getConnected() & ConnectionState.DLMS) != 0
-                        && cipher.getDedicatedKey() != null) {
+            if (((p.getSettings().getConnected() & ConnectionState.DLMS) == 0
+                    || !p.getSettings().getNegotiatedConformance()
+                            .contains(Conformance.GENERAL_PROTECTION))
+                    // General protection can be used with pre-established
+                    // connections.
+                    && ((p.getSettings().getPreEstablishedSystemTitle() == null
+                            || p.getSettings()
+                                    .getPreEstablishedSystemTitle().length == 0
+                            || !p.getSettings().getProposedConformance()
+                                    .contains(
+                                            Conformance.GENERAL_PROTECTION)))) {
+                if (cipher.getDedicatedKey() != null
+                        && (p.getSettings().getConnected()
+                                & ConnectionState.DLMS) != 0) {
                     cmd = getDedMessage(p.command);
                     key = cipher.getDedicatedKey();
                 } else {
@@ -1101,24 +1173,20 @@ abstract class GXDLMS {
                 cipher.getInvocationCounter(), cipher.getSystemTitle(), key,
                 cipher.getAuthenticationKey());
         byte[] tmp = GXCiphering.encrypt(s, data);
-        cipher.setInvocationCounter(cipher.getInvocationCounter() + 1);
+        cipher.setInvocationCounter(1 + cipher.getInvocationCounter());
         return tmp;
     }
 
-    /**
+    /*
      * Get all Logical name messages. Client uses this to generate messages.
-     * 
-     * @param p
-     *            LN settings.
+     * @param p LN settings.
      * @return Generated messages.
      */
     public static List<byte[]> getLnMessages(final GXDLMSLNParameters p) {
         GXByteBuffer reply = new GXByteBuffer();
         java.util.ArrayList<byte[]> messages = new ArrayList<byte[]>();
         byte frame = 0;
-        if (p.getCommand() == Command.AARQ) {
-            frame = 0x10;
-        } else if (p.getCommand() == Command.DATA_NOTIFICATION
+        if (p.getCommand() == Command.DATA_NOTIFICATION
                 || p.getCommand() == Command.EVENT_NOTIFICATION) {
             frame = 0x13;
         }
@@ -1128,14 +1196,11 @@ abstract class GXDLMS {
             if (p.getAttributeDescriptor() == null) {
                 p.getSettings().increaseBlockIndex();
             }
-            if (p.getCommand() == Command.AARQ
-                    && p.getCommand() == Command.GET_REQUEST) {
-                assert (!(p.getSettings().getMaxPduSize() < reply.size()));
-            }
             while (reply.position() != reply.size()) {
                 if (p.getSettings()
                         .getInterfaceType() == InterfaceType.WRAPPER) {
-                    messages.add(getWrapperFrame(p.getSettings(), reply));
+                    messages.add(getWrapperFrame(p.getSettings(),
+                            p.getCommand(), reply));
                 } else if (p.getSettings()
                         .getInterfaceType() == InterfaceType.HDLC) {
                     messages.add(
@@ -1146,57 +1211,45 @@ abstract class GXDLMS {
                 } else if (p.getSettings()
                         .getInterfaceType() == InterfaceType.PDU) {
                     messages.add(reply.array());
-                    frame = 0;
                     break;
                 } else {
                     throw new IllegalArgumentException("InterfaceType");
                 }
             }
             reply.clear();
+            frame = 0;
         } while (p.getData() != null
                 && p.getData().position() != p.getData().size());
         return messages;
     }
 
-    /**
+    /*
      * Get all Short Name messages. Client uses this to generate messages.
-     * 
-     * @param p
-     *            DLMS SN parameters.
+     * @param p DLMS SN parameters.
      * @return Generated SN messages.
      */
     public static List<byte[]> getSnMessages(final GXDLMSSNParameters p) {
         GXByteBuffer reply = new GXByteBuffer();
         java.util.ArrayList<byte[]> messages =
-                new java.util.ArrayList<byte[]>();
+                new java.util.ArrayList<>();
         byte frame = 0x0;
-        if (p.getCommand() == Command.AARQ) {
-            frame = 0x10;
-        } else if (p.getCommand() == Command.INFORMATION_REPORT) {
+        if (p.getCommand() == Command.INFORMATION_REPORT
+                || p.getCommand() == Command.DATA_NOTIFICATION) {
             frame = 0x13;
-        } else if (p.getCommand() == Command.NONE) {
-            frame = p.getSettings().getNextSend(true);
         }
         do {
             getSNPdu(p, reply);
-            if (p.getCommand() != Command.AARQ
-                    && p.getCommand() != Command.AARE) {
-                assert !(p.getSettings().getMaxPduSize() < reply.size());
-            }
             // Command is not add to next PDUs.
             while (reply.position() != reply.size()) {
                 if (p.getSettings()
                         .getInterfaceType() == InterfaceType.WRAPPER) {
-                    messages.add(getWrapperFrame(p.getSettings(), reply));
+                    messages.add(getWrapperFrame(p.getSettings(),
+                            p.getCommand(), reply));
                 } else if (p.getSettings()
                         .getInterfaceType() == InterfaceType.HDLC) {
                     messages.add(getHdlcFrame(p.getSettings(), frame, reply));
                     if (reply.position() != reply.size()) {
-                        if (p.getSettings().isServer()) {
-                            frame = 0;
-                        } else {
-                            frame = p.getSettings().getNextSend(false);
-                        }
+                        frame = p.getSettings().getNextSend(false);
                     }
                 } else if (p.getSettings()
                         .getInterfaceType() == InterfaceType.PDU) {
@@ -1207,6 +1260,7 @@ abstract class GXDLMS {
                 }
             }
             reply.clear();
+            frame = 0;
         } while (p.getData() != null
                 && p.getData().position() != p.getData().size());
         return messages;
@@ -1253,7 +1307,7 @@ abstract class GXDLMS {
         return maxSize;
     }
 
-    /**
+    /*
      * @param p
      * @param reply
      */
@@ -1359,7 +1413,6 @@ abstract class GXDLMS {
                     cipher.getInvocationCounter(), cipher.getSystemTitle(),
                     cipher.getBlockCipherKey(), cipher.getAuthenticationKey());
             byte[] tmp = GXCiphering.encrypt(s, reply.array());
-            assert !(p.getSettings().getMaxPduSize() < tmp.length);
             reply.size(0);
             if (p.getSettings().getInterfaceType() == InterfaceType.HDLC) {
                 if (p.getSettings().isServer()) {
@@ -1374,23 +1427,21 @@ abstract class GXDLMS {
 
     static Object getAddress(final long value, final int size) {
         if (size < 2 && value < 0x80) {
-            return new Byte((byte) (value << 1 | 1));
+            return (byte) (value << 1 | 1);
         }
         if (size < 4 && value < 0x4000) {
-            return new Short(
-                    (short) ((value & 0x3F80) << 2 | (value & 0x7F) << 1 | 1));
+            return (short) ((value & 0x3F80) << 2 | (value & 0x7F) << 1 | 1);
         }
         if (value < 0x10000000) {
-            return new Integer(
-                    (int) ((value & 0xFE00000) << 4 | (value & 0x1FC000) << 3
-                            | (value & 0x3F80) << 2 | (value & 0x7F) << 1 | 1));
+            return (int) ((value & 0xFE00000) << 4 | (value & 0x1FC000) << 3
+                    | (value & 0x3F80) << 2 | (value & 0x7F) << 1 | 1);
         }
         throw new IllegalArgumentException("Invalid address.");
     }
 
     /**
      * @param value
-     * @param bb
+     * @param size
      */
     private static byte[] getAddressBytes(final int value, final int size) {
         Object tmp = getAddress(value, size);
@@ -1401,6 +1452,12 @@ abstract class GXDLMS {
             bb.setUInt16(((Short) tmp).intValue());
         } else if (tmp instanceof Integer) {
             bb.setUInt32(((Integer) tmp).intValue());
+        } else if (tmp instanceof GXUInt8) {
+            bb.setUInt8(((GXUInt8) tmp).byteValue());
+        } else if (tmp instanceof GXUInt16) {
+            bb.setUInt16(((GXUInt16) tmp).intValue());
+        } else if (tmp instanceof GXUInt32) {
+            bb.setUInt32(((GXUInt32) tmp).intValue());
         } else {
             throw new IllegalArgumentException("Invalid address type.");
         }
@@ -1412,18 +1469,26 @@ abstract class GXDLMS {
      * 
      * @param settings
      *            DLMS settings.
+     * @param command
+     *            DLMS command.
      * @param data
      *            Wrapped data.
      * @return Wrapper frames.
      */
     static byte[] getWrapperFrame(final GXDLMSSettings settings,
-            final GXByteBuffer data) {
+            final int command, final GXByteBuffer data) {
         GXByteBuffer bb = new GXByteBuffer();
         // Add version.
         bb.setUInt16(1);
         if (settings.isServer()) {
             bb.setUInt16(settings.getServerAddress());
-            bb.setUInt16(settings.getClientAddress());
+            if (settings.getPushClientAddress() != 0
+                    && (command == Command.DATA_NOTIFICATION
+                            || command == Command.EVENT_NOTIFICATION)) {
+                bb.setUInt16(settings.getPushClientAddress());
+            } else {
+                bb.setUInt16(settings.getClientAddress());
+            }
         } else {
             bb.setUInt16(settings.getClientAddress());
             bb.setUInt16(settings.getServerAddress());
@@ -1438,7 +1503,7 @@ abstract class GXDLMS {
             bb.set(data);
         }
         // Remove sent data in server side.
-        if (settings.isServer()) {
+        if (settings.isServer() && data != null) {
             if (data.size() == data.position()) {
                 data.clear();
             } else {
@@ -1463,10 +1528,16 @@ abstract class GXDLMS {
     static byte[] getHdlcFrame(final GXDLMSSettings settings, final int frame,
             final GXByteBuffer data) {
         GXByteBuffer bb = new GXByteBuffer();
-        int frameSize, len = 0;
+        int frameSize, len;
         byte[] primaryAddress, secondaryAddress;
         if (settings.isServer()) {
-            primaryAddress = getAddressBytes(settings.getClientAddress(), 0);
+            if (frame == 0x13 && settings.getPushClientAddress() != 0) {
+                primaryAddress =
+                        getAddressBytes(settings.getPushClientAddress(), 0);
+            } else {
+                primaryAddress =
+                        getAddressBytes(settings.getClientAddress(), 0);
+            }
             secondaryAddress = getAddressBytes(settings.getServerAddress(),
                     settings.getServerAddressSize());
             len = secondaryAddress.length;
@@ -1477,7 +1548,7 @@ abstract class GXDLMS {
             len = primaryAddress.length;
         }
         // Add BOP
-        bb.setUInt8(GXCommon.HDLC_FRAME_START_END);
+        bb.setUInt8(HDLC_FRAME_START_END);
         frameSize = settings.getLimits().getMaxInfoTX();
 
         // Remove BOP, type, len, primaryAddress, secondaryAddress, frame,
@@ -1502,7 +1573,8 @@ abstract class GXDLMS {
         } else {
             len = frameSize;
             // More data to left.
-            bb.setUInt8(0xA8 | ((len >> 8) & 0x7));
+            bb.setUInt8(0xA8 | ((7 + primaryAddress.length
+                    + secondaryAddress.length + len >> 8) & 0x7));
         }
         // Frame len.
         if (len == 0) {
@@ -1534,17 +1606,14 @@ abstract class GXDLMS {
             bb.setUInt16(crc);
         }
         // Add EOP
-        bb.setUInt8(GXCommon.HDLC_FRAME_START_END);
+        bb.setUInt8(HDLC_FRAME_START_END);
         // Remove sent data in server side.
-        if (settings.isServer()) {
-            if (data != null) {
-                if (data.size() == data.position()) {
-                    data.clear();
-                } else {
-                    data.move(data.position(), 0,
-                            data.size() - data.position());
-                    data.position(0);
-                }
+        if (settings.isServer() && data != null) {
+            if (data.size() == data.position()) {
+                data.clear();
+            } else {
+                data.move(data.position(), 0, data.size() - data.position());
+                data.position(0);
             }
         }
         return bb.array();
@@ -1595,7 +1664,7 @@ abstract class GXDLMS {
             // Find start of HDLC frame.
             for (pos = reply.position(); pos < reply.size(); ++pos) {
                 ch = reply.getUInt8();
-                if (ch == GXCommon.HDLC_FRAME_START_END) {
+                if (ch == HDLC_FRAME_START_END) {
                     packetStartID = pos;
                     break;
                 }
@@ -1621,8 +1690,8 @@ abstract class GXDLMS {
             }
             int eopPos = frameLen + packetStartID + 1;
             ch = reply.getUInt8(eopPos);
-            if (ch != GXCommon.HDLC_FRAME_START_END) {
-                throw new RuntimeException("Invalid data format.");
+            if (ch != HDLC_FRAME_START_END) {
+                throw new IllegalArgumentException("Invalid data format.");
             }
             // Get address.
             target[0] = GXCommon.getHDLCAddress(reply);
@@ -1652,7 +1721,7 @@ abstract class GXDLMS {
         // Find start of HDLC frame.
         for (pos = reply.position(); pos < reply.size(); ++pos) {
             ch = reply.getUInt8();
-            if (ch == GXCommon.HDLC_FRAME_START_END) {
+            if (ch == HDLC_FRAME_START_END) {
                 packetStartID = pos;
                 break;
             }
@@ -1684,7 +1753,7 @@ abstract class GXDLMS {
         }
         int eopPos = frameLen + packetStartID + 1;
         ch = reply.getUInt8(eopPos);
-        if (ch != GXCommon.HDLC_FRAME_START_END) {
+        if (ch != HDLC_FRAME_START_END) {
             reply.position(reply.position() - 2);
             return getHdlcData(server, settings, reply, data, notify);
         }
@@ -1712,29 +1781,29 @@ abstract class GXDLMS {
         }
 
         // Is there more data available.
-        if ((frame & 0x8) != 0) {
+        boolean moreData = (frame & 0x8) != 0;
+        // Get frame type.
+        frame = reply.getUInt8();
+        // If server is using same client and server address for notifications.
+        if (frame == 0x13 && !isNotify && notify != null) {
+            isNotify = true;
+            notify.setClientAddress(addresses[1]);
+            notify.setServerAddress(addresses[0]);
+        }
+        // Is there more data available.
+        if (moreData) {
             if (isNotify) {
-                notify.setMoreData(
-                        RequestTypes.forValue(notify.getMoreData().getValue()
-                                | RequestTypes.FRAME.getValue()));
+                notify.getMoreData().add(RequestTypes.FRAME);
             } else {
-                data.setMoreData(
-                        RequestTypes.forValue(data.getMoreData().getValue()
-                                | RequestTypes.FRAME.getValue()));
+                data.getMoreData().add(RequestTypes.FRAME);
             }
         } else {
             if (isNotify) {
-                notify.setMoreData(
-                        RequestTypes.forValue(notify.getMoreData().getValue()
-                                & ~RequestTypes.FRAME.getValue()));
+                notify.getMoreData().remove(RequestTypes.FRAME);
             } else {
-                data.setMoreData(
-                        RequestTypes.forValue(data.getMoreData().getValue()
-                                & ~RequestTypes.FRAME.getValue()));
+                data.getMoreData().remove(RequestTypes.FRAME);
             }
         }
-        // Get frame type.
-        frame = reply.getUInt8();
         if (data.getXml() == null && !settings.checkFrame(frame)) {
             reply.position(eopPos + 1);
             return getHdlcData(server, settings, reply, data, notify);
@@ -1811,7 +1880,7 @@ abstract class GXDLMS {
                 // Get EOP.
                 reply.getUInt8();
                 if ((frame & 0x1) == 0x1) {
-                    data.setMoreData(RequestTypes.FRAME);
+                    data.getMoreData().add(RequestTypes.FRAME);
                 }
             } else {
                 if (!getLLCBytes(server, reply) && data.getXml() != null) {
@@ -1852,6 +1921,7 @@ abstract class GXDLMS {
      *            HDLC address size. This is optional.
      * @return HDLC address.
      */
+    @SuppressWarnings("squid:S1905")
     public static Object getHdlcAddress(int value, int size) {
         if (size < 2 && value < 0x80) {
             return (byte) (value << 1 | 1);
@@ -1866,12 +1936,10 @@ abstract class GXDLMS {
         throw new IllegalArgumentException("Invalid address.");
     }
 
-    /**
+    /*
      * Convert HDLC address to bytes.
-     * 
      * @param value
-     * @param size
-     *            Address size in bytes.
+     * @param size Address size in bytes.
      * @return
      */
     public static byte[] getHdlcAddressBytes(int value, int size) {
@@ -1904,7 +1972,7 @@ abstract class GXDLMS {
      */
     private static boolean checkHdlcAddress(final boolean server,
             final GXDLMSSettings settings, final GXByteBuffer reply,
-            final int index, final int addresses[]) {
+            final int index, final int[] addresses) {
         int source, target;
         // Get destination and source addresses.
         target = GXCommon.getHDLCAddress(reply);
@@ -1961,7 +2029,10 @@ abstract class GXDLMS {
                                 + ".");
             }
             // Check that server addresses match.
-            if (settings.getServerAddress() != source) {
+            if (settings.getServerAddress() != source &&
+            // If All-station (Broadcast).
+                    settings.getServerAddress() != 0x7F
+                    && settings.getServerAddress() != 0x3FFF) {
                 // Check logical and physical address separately.
                 // This is done because some meters might send four bytes
                 // when only two bytes is needed.
@@ -1984,16 +2055,13 @@ abstract class GXDLMS {
         return true;
     }
 
-    /**
+    /*
      * Get data from TCP/IP frame.
-     * 
-     * @param settings
-     *            DLMS settigns.
-     * @param buff
-     *            Received data.
-     * @param target
-     *            Reply information.
+     * @param settings DLMS settigns.
+     * @param buff Received data.
+     * @param target Reply information.
      */
+    @SuppressWarnings({ "squid:S1940", "squid:S106" })
     static boolean getTcpData(final GXDLMSSettings settings,
             final GXByteBuffer buff, final GXReplyData data,
             final GXReplyData notify) {
@@ -2006,34 +2074,47 @@ abstract class GXDLMS {
         boolean isData = true;
         int pos = buff.position();
         int value;
+        target.setComplete(false);
+        if (notify != null) {
+            notify.setComplete(false);
+        }
         while (buff.position() < buff.size() - 1) {
             // Get version
             value = buff.getUInt16();
             if (value == 1) {
+                if (buff.available() < 6) {
+                    isData = false;
+                    break;
+                }
                 // Check TCP/IP addresses.
                 if (!checkWrapperAddress(settings, buff, target)) {
-                    target = notify;
+                    if (notify != null) {
+                        target = notify;
+                    }
                     isData = false;
                 }
                 // Get length.
                 value = buff.getUInt16();
-                boolean compleate = !((buff.size() - buff.position()) < value);
-                if (compleate && (buff.size() - buff.position()) != value) {
-                    System.out.println("Data length is " + String.valueOf(value)
-                            + "and there are "
-                            + String.valueOf(buff.size() - buff.position())
-                            + " bytes.");
+                boolean complete = !((buff.size() - buff.position()) < value);
+                if (complete && (buff.size() - buff.position()) != value
+                        && data.getXml() != null) {
+                    data.getXml()
+                            .appendComment("Data length is "
+                                    + String.valueOf(value) + " and there are "
+                                    + String.valueOf(
+                                            buff.size() - buff.position())
+                                    + " bytes.");
                 }
-                target.setComplete(compleate);
-                if (!compleate) {
+                target.setComplete(complete);
+                if (!complete) {
                     buff.position(pos);
                 } else {
                     target.setPacketLength(buff.position() + value);
                 }
+                break;
             } else {
                 buff.position(buff.position() - 1);
             }
-            break;
         }
         return isData;
     }
@@ -2045,6 +2126,7 @@ abstract class GXDLMS {
      *            3 letter Flag name.
      * @return Encrypted Flag name.
      */
+    @SuppressWarnings("unused")
     private static int encryptManufacturer(final String flagName) {
         if (flagName.length() != 3) {
             throw new IllegalArgumentException("Invalid Flag name.");
@@ -2105,15 +2187,18 @@ abstract class GXDLMS {
             int manufacturerID = buff.getUInt16();
             String man = decryptManufacturer(manufacturerID);
             // A-Field.
-            long id = buff.getUInt32();
+            // long id =
+            buff.getUInt32();
             short meterVersion = buff.getUInt8();
             MBusMeterType type = MBusMeterType.forValue(buff.getUInt8());
             // CI-Field
             MBusControlInfo ci = MBusControlInfo.forValue(buff.getUInt8());
             // Access number.
-            short frameId = buff.getUInt8();
+            // short frameId =
+            buff.getUInt8();
             // State of the meter
-            short state = buff.getUInt8();
+            // short state =
+            buff.getUInt8();
             // Configuration word.
             int configurationWord = buff.getUInt16();
             // byte encryptedBlocks = (byte) (configurationWord >> 12);
@@ -2145,11 +2230,8 @@ abstract class GXDLMS {
         }
         MBusCommand cmd =
                 MBusCommand.forValue(buff.getUInt8(buff.position() + 1));
-        if (!(cmd == MBusCommand.SND_NR || cmd == MBusCommand.SND_UD2
-                || cmd == MBusCommand.RSP_UD)) {
-            return false;
-        }
-        return true;
+        return (cmd == MBusCommand.SND_NR || cmd == MBusCommand.SND_UD2
+                || cmd == MBusCommand.RSP_UD);
     }
 
     private static boolean checkWrapperAddress(final GXDLMSSettings settings,
@@ -2222,16 +2304,13 @@ abstract class GXDLMS {
         return ret;
     }
 
-    /**
+    /*
      * Handle read response data block result.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param reply
-     *            Received reply.
-     * @param index
-     *            Starting index.
+     * @param settings DLMS settings.
+     * @param reply Received reply.
+     * @param index Starting index.
      */
+    @java.lang.SuppressWarnings("squid:S1192")
     static boolean readResponseDataBlockResult(final GXDLMSSettings settings,
             final GXReplyData reply, final int index) {
         reply.setError(0);
@@ -2241,13 +2320,9 @@ abstract class GXDLMS {
         int blockLength = GXCommon.getObjectCount(reply.getData());
         // Is not Last block.
         if (lastBlock == 0) {
-            reply.setMoreData(
-                    RequestTypes.forValue(reply.getMoreData().getValue()
-                            | RequestTypes.DATABLOCK.getValue()));
+            reply.getMoreData().add(RequestTypes.DATABLOCK);
         } else {
-            reply.setMoreData(
-                    RequestTypes.forValue(reply.getMoreData().getValue()
-                            & ~RequestTypes.DATABLOCK.getValue()));
+            reply.getMoreData().remove(RequestTypes.DATABLOCK);
         }
         // If meter's block index is zero based.
         if (number != 1 && settings.getBlockIndex() == 1) {
@@ -2255,12 +2330,12 @@ abstract class GXDLMS {
         }
         int expectedIndex = settings.getBlockIndex();
         if (number != expectedIndex) {
+            // NOSONAR
             throw new GXDLMSException("Invalid Block number. It is " + number
                     + " and it should be " + expectedIndex + ".");
         }
         // If whole block is not read.
-        if ((reply.getMoreData().getValue()
-                & RequestTypes.FRAME.getValue()) != 0) {
+        if (reply.getMoreData().contains(RequestTypes.FRAME)) {
             getDataFromBlock(reply.getData(), index);
             return false;
         }
@@ -2287,23 +2362,23 @@ abstract class GXDLMS {
         getDataFromBlock(reply.getData(), index);
         reply.setTotalCount(0);
         // If last packet and data is not try to peek.
-        if (reply.getMoreData() == RequestTypes.NONE) {
+        if (reply.getMoreData().isEmpty()) {
             settings.resetBlockIndex();
         }
         return true;
     }
 
-    /**
+    /*
      * Handle read response and get data from block and/or update error status.
-     * 
-     * @param data
-     *            Received data from the client.
+     * @param settings DLMS settings.
+     * @param data Received data from the client.
      */
+    @SuppressWarnings("squid:S3034")
     static boolean handleReadResponse(final GXDLMSSettings settings,
             final GXReplyData reply, final int index) {
         int pos, cnt = reply.getTotalCount();
         // If we are reading value first time or block is handed.
-        boolean first = reply.getTotalCount() == 0 || reply
+        boolean first = cnt == 0 || reply
                 .getCommandType() == SingleReadResponse.DATA_BLOCK_RESULT;
         if (first) {
             cnt = GXCommon.getObjectCount(reply.getData());
@@ -2312,9 +2387,18 @@ abstract class GXDLMS {
         int type;
         List<Object> values = null;
         if (cnt != 1) {
+            // Parse data after all data is received when readlist is used.
+            if (reply.isMoreData()) {
+                getDataFromBlock(reply.getData(), 0);
+                // reply.setCommandType(SingleReadResponse.DATA_BLOCK_RESULT);
+                return false;
+            }
+            if (!first) {
+                reply.getData().position(0);
+            }
             values = new ArrayList<Object>();
-            if (reply.getValue() instanceof Object[]) {
-                values.addAll(Arrays.asList((Object[]) reply.getValue()));
+            if (reply.getValue() instanceof List<?>) {
+                values.addAll((List<?>) reply.getValue());
             }
             reply.setValue(null);
         }
@@ -2324,22 +2408,13 @@ abstract class GXDLMS {
                     reply.getXml().integerToHex(cnt, 2));
         }
         for (pos = 0; pos != cnt; ++pos) {
-            if (reply.getData().available() == 0) {
-                if (cnt != 1) {
-                    getDataFromBlock(reply.getData(), 0);
-                    reply.setValue(values.toArray());
-                    reply.setReadPosition(reply.getData().position());
-                }
-                return false;
-            }
-            // Get status code. Status code is begin of each PDU.
+            // Get response type code.
             if (first) {
                 type = reply.getData().getUInt8();
                 reply.setCommandType(type);
             } else {
                 type = reply.getCommandType();
             }
-
             boolean standardXml = reply.getXml() != null && reply.getXml()
                     .getOutputType() == TranslatorOutputType.STANDARD_XML;
             switch (type) {
@@ -2366,21 +2441,6 @@ abstract class GXDLMS {
                     // If read multiple items.
                     reply.setReadPosition(reply.getData().position());
                     getValueFromData(settings, reply);
-                    if (reply.getData().position() == reply.getReadPosition()) {
-                        int index2 = index;
-                        // If multiple values remove command.
-                        if (cnt != 1 && reply.getTotalCount() == 0) {
-                            ++index2;
-                        }
-                        reply.setTotalCount(0);
-                        reply.getData().position(index2);
-                        getDataFromBlock(reply.getData(), 0);
-                        reply.setValue(null);
-                        // Ask that data is parsed after last block is received.
-                        reply.setCommandType(
-                                SingleReadResponse.DATA_BLOCK_RESULT);
-                        return false;
-                    }
                     reply.getData().position(reply.getReadPosition());
                     values.add(reply.getValue());
                     reply.setValue(null);
@@ -2424,9 +2484,7 @@ abstract class GXDLMS {
                             + settings.getBlockIndex() + ".");
                 }
                 settings.increaseBlockIndex();
-                reply.setMoreData(
-                        RequestTypes.forValue(reply.getMoreData().getValue()
-                                | RequestTypes.DATABLOCK.getValue()));
+                reply.getMoreData().add(RequestTypes.DATABLOCK);
                 break;
             default:
                 throw new GXDLMSException(
@@ -2438,17 +2496,87 @@ abstract class GXDLMS {
             return true;
         }
         if (values != null) {
-            reply.setValue(values.toArray(new Object[values.size()]));
+            reply.setValue(values);
         }
         return cnt == 1;
     }
 
-    /**
+    private static void handleActionResponseNormal(GXDLMSSettings settings,
+            GXReplyData data) {
+        boolean standardXml = data.getXml() != null && data.getXml()
+                .getOutputType() == TranslatorOutputType.STANDARD_XML;
+        // Get Action-Result
+        short ret = data.getData().getUInt8();
+        if (ret != 0) {
+            data.setError(ret);
+        }
+        if (data.getXml() != null) {
+            if (standardXml) {
+                data.getXml().appendStartTag(TranslatorTags.SINGLE_RESPONSE);
+            }
+            data.getXml().appendLine(TranslatorTags.RESULT, null,
+                    GXDLMSTranslator.errorCodeToString(
+                            data.getXml().getOutputType(),
+                            ErrorCode.forValue(data.getError())));
+        }
+        // Action-Response-Normal. Get data if exists. All meters do not
+        // return data here.
+        if (ret == 0 && data.getData().position() < data.getData().size()) {
+            // Get-Data-Result
+            ret = data.getData().getUInt8();
+            if (ret == 0) {
+                getDataFromBlock(data.getData(), 0);
+            } else if (ret == 1) {
+                // Get Data-Access-Result.
+                ret = (byte) data.getData().getUInt8();
+                if (ret != 0) {
+                    data.setError(data.getData().getUInt8());
+                    // Handle Texas Instrument missing byte here.
+                    if (ret == 9 && data.getError() == 16) {
+                        data.getData().position(data.getData().position() - 2);
+                        getDataFromBlock(data.getData(), 0);
+                        data.setError(0);
+                        ret = 0;
+                    }
+
+                } else {
+                    getDataFromBlock(data.getData(), 0);
+                }
+            } else {
+                throw new GXDLMSException(
+                        "HandleActionResponseNormal failed. " + "Invalid tag.");
+            }
+            if (data.getXml() != null && (ret != 0
+                    || data.getData().position() < data.getData().size())) {
+                data.getXml().appendStartTag(TranslatorTags.RETURN_PARAMETERS);
+                if (ret != 0) {
+                    data.getXml().appendLine(TranslatorTags.DATA_ACCESS_ERROR,
+                            null,
+                            GXDLMSTranslator.errorCodeToString(
+                                    data.getXml().getOutputType(),
+                                    ErrorCode.forValue(data.getError())));
+
+                } else {
+                    data.getXml().appendStartTag(Command.READ_RESPONSE,
+                            SingleReadResponse.DATA);
+                    GXDataInfo di = new GXDataInfo();
+                    di.setXml(data.getXml());
+                    GXCommon.getData(settings, data.getData(), di);
+                    data.getXml().appendEndTag(Command.READ_RESPONSE,
+                            SingleReadResponse.DATA);
+                }
+                data.getXml().appendEndTag(TranslatorTags.RETURN_PARAMETERS);
+                if (standardXml) {
+                    data.getXml().appendEndTag(TranslatorTags.SINGLE_RESPONSE);
+                }
+            }
+        }
+    }
+
+    /*
      * Handle method response and get data from block and/or update error
      * status.
-     * 
-     * @param data
-     *            Received data from the client.
+     * @param data Received data from the client.
      */
     static void handleMethodResponse(final GXDLMSSettings settings,
             final GXReplyData data) {
@@ -2456,88 +2584,16 @@ abstract class GXDLMS {
         // Get type.
         byte type = (byte) data.getData().getUInt8();
         // Get invoke ID and priority.
-        short invoke = data.getData().getUInt8();
+        data.setInvokeId(data.getData().getUInt8());
+        verifyInvokeId(settings, data);
         if (data.getXml() != null) {
             data.getXml().appendStartTag(Command.METHOD_RESPONSE);
             data.getXml().appendStartTag(Command.METHOD_RESPONSE, type);
             // InvokeIdAndPriority
-            data.getXml().appendInvokeId(invoke);
+            data.getXml().appendInvokeId((short) data.getInvokeId());
         }
-        boolean standardXml = data.getXml() != null && data.getXml()
-                .getOutputType() == TranslatorOutputType.STANDARD_XML;
         if (type == 1) {
-            // Get Action-Result
-            short ret = data.getData().getUInt8();
-            if (ret != 0) {
-                data.setError(ret);
-            }
-            if (data.getXml() != null) {
-                if (standardXml) {
-                    data.getXml()
-                            .appendStartTag(TranslatorTags.SINGLE_RESPONSE);
-                }
-                data.getXml().appendLine(TranslatorTags.RESULT, null,
-                        GXDLMSTranslator.errorCodeToString(
-                                data.getXml().getOutputType(),
-                                ErrorCode.forValue(data.getError())));
-            }
-            // Action-Response-Normal. Get data if exists. All meters do not
-            // return data here.
-            if (data.getData().position() < data.getData().size()) {
-                // Get-Data-Result
-                ret = data.getData().getUInt8();
-                if (ret == 0) {
-                    getDataFromBlock(data.getData(), 0);
-                } else if (ret == 1) {
-                    // Get Data-Access-Result.
-                    ret = (byte) data.getData().getUInt8();
-                    if (ret != 0) {
-                        data.setError(data.getData().getUInt8());
-                        // Handle Texas Instrument missing byte here.
-                        if (ret == 9 && data.getError() == 16) {
-                            data.getData()
-                                    .position(data.getData().position() - 2);
-                            getDataFromBlock(data.getData(), 0);
-                            data.setError(0);
-                            ret = 0;
-                        }
-
-                    } else {
-                        getDataFromBlock(data.getData(), 0);
-                    }
-                } else if (ret == 0) {
-                    throw new GXDLMSException(
-                            "HandleActionResponseNormal failed. "
-                                    + "Invalid tag.");
-                }
-                if (data.getXml() != null && (ret != 0
-                        || data.getData().position() < data.getData().size())) {
-                    data.getXml()
-                            .appendStartTag(TranslatorTags.RETURN_PARAMETERS);
-                    if (ret != 0) {
-                        data.getXml().appendLine(
-                                TranslatorTags.DATA_ACCESS_ERROR, null,
-                                GXDLMSTranslator.errorCodeToString(
-                                        data.getXml().getOutputType(),
-                                        ErrorCode.forValue(data.getError())));
-
-                    } else {
-                        data.getXml().appendStartTag(Command.READ_RESPONSE,
-                                SingleReadResponse.DATA);
-                        GXDataInfo di = new GXDataInfo();
-                        di.setXml(data.getXml());
-                        GXCommon.getData(settings, data.getData(), di);
-                        data.getXml().appendEndTag(Command.READ_RESPONSE,
-                                SingleReadResponse.DATA);
-                    }
-                    data.getXml()
-                            .appendEndTag(TranslatorTags.RETURN_PARAMETERS);
-                    if (standardXml) {
-                        data.getXml()
-                                .appendEndTag(TranslatorTags.SINGLE_RESPONSE);
-                    }
-                }
-            }
+            handleActionResponseNormal(settings, data);
         } else if (type == 2) {
             // Action-Response-With-Pblock
             throw new IllegalArgumentException("Invalid Command.");
@@ -2568,14 +2624,9 @@ abstract class GXDLMS {
         // Is last block
         int last = reply.getData().getUInt8();
         if ((last & 0x80) == 0) {
-            reply.setMoreData(
-                    RequestTypes.forValue(reply.getMoreData().getValue()
-                            | RequestTypes.DATABLOCK.getValue()));
+            reply.getMoreData().add(RequestTypes.DATABLOCK);
         } else {
-            reply.setMoreData(
-                    RequestTypes.forValue(reply.getMoreData().getValue()
-                            & ~RequestTypes.DATABLOCK.getValue()));
-
+            reply.getMoreData().remove(RequestTypes.DATABLOCK);
         }
         // Get block number sent.
         reply.getData().getUInt8();
@@ -2587,7 +2638,7 @@ abstract class GXDLMS {
         reply.getData().getUInt8();
         // Data-Notification
         if ((reply.getData().getUInt8() & 0x0F) == 0) {
-            throw new RuntimeException("Invalid data.");
+            throw new IllegalArgumentException("Invalid data.");
         }
         // Long-Invoke-Id-And-Priority
         reply.getData().getUInt32();
@@ -2609,8 +2660,14 @@ abstract class GXDLMS {
         if (len != 0) {
             tmp = new byte[len];
             reply.getData().get(tmp);
+            boolean useUtc;
+            if (settings != null) {
+                useUtc = settings.getUseUtc2NormalTime();
+            } else {
+                useUtc = false;
+            }
             reply.setTime(((GXDateTime) GXDLMSClient.changeType(tmp,
-                    DataType.DATETIME)));
+                    DataType.DATETIME, useUtc)));
         }
         if (reply.getXml() != null) {
             reply.getXml().appendStartTag(Command.ACCESS_RESPONSE);
@@ -2737,22 +2794,22 @@ abstract class GXDLMS {
         }
     }
 
-    /**
+    /*
      * Handle set response and update error status.
-     * 
-     * @param reply
-     *            Received data from the client.
+     * @param settings DLMS settings.
+     * @param reply Received data from the client.
      */
     static void handleSetResponse(final GXDLMSSettings settings,
             final GXReplyData data) {
         byte type = (byte) data.getData().getUInt8();
         // Invoke ID and priority.
-        short invokeId = data.getData().getUInt8();
+        data.setInvokeId(data.getData().getUInt8());
+        verifyInvokeId(settings, data);
         if (data.getXml() != null) {
             data.getXml().appendStartTag(Command.SET_RESPONSE);
             data.getXml().appendStartTag(Command.SET_RESPONSE, type);
             // InvokeIdAndPriority
-            data.getXml().appendInvokeId(invokeId);
+            data.getXml().appendInvokeId((short) data.getInvokeId());
         }
 
         // SetResponseNormal
@@ -2822,6 +2879,8 @@ abstract class GXDLMS {
      */
     static void handleWriteResponse(final GXReplyData data) {
         int cnt = GXCommon.getObjectCount(data.getData());
+        boolean standardXml = data.getXml() != null && data.getXml()
+                .getOutputType() == TranslatorOutputType.STANDARD_XML;
         short ret;
         if (data.getXml() != null) {
             data.getXml().appendStartTag(Command.WRITE_RESPONSE, "Qty",
@@ -2829,22 +2888,37 @@ abstract class GXDLMS {
         }
         for (int pos = 0; pos != cnt; ++pos) {
             ret = data.getData().getUInt8();
-            if (ret != 0) {
-                data.setError(data.getData().getUInt8());
+            if (standardXml) {
+                data.getXml().appendStartTag(TranslatorTags.CHOICE);
             }
-            if (data.getXml() != null) {
-                if (ret == 0) {
+            if (ret == SingleWriteResponse.SUCCESS) {
+                if (data.getXml() != null) {
                     data.getXml().appendLine("<" + GXDLMSTranslator
                             .errorCodeToString(data.getXml().getOutputType(),
                                     ErrorCode.forValue(ret))
                             + " />");
-                } else {
+                }
+            } else if (ret == SingleWriteResponse.DATA_ACCESS_ERROR) {
+                ret = data.getData().getUInt8();
+                if (data.getXml() != null) {
                     data.getXml().appendLine(TranslatorTags.DATA_ACCESS_ERROR,
                             null,
                             GXDLMSTranslator.errorCodeToString(
                                     data.getXml().getOutputType(),
-                                    ErrorCode.forValue(data.getError())));
+                                    ErrorCode.forValue(ret)));
+                } else {
+                    data.setError(ret);
                 }
+            } else if (ret == SingleWriteResponse.BLOCK_NUMBER) {
+                data.setBlockNumber(data.getData().getUInt16());
+                if (data.getXml() != null) {
+                    data.getXml().appendLine(TranslatorTags.BLOCK_NUMBER, null,
+                            data.getXml().integerToHex(data.getBlockNumber(),
+                                    4));
+                }
+            }
+            if (standardXml) {
+                data.getXml().appendEndTag(TranslatorTags.CHOICE);
             }
         }
         if (data.getXml() != null) {
@@ -2852,15 +2926,11 @@ abstract class GXDLMS {
         }
     }
 
-    /**
+    /*
      * Handle get response and get data from block and/or update error status.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param reply
-     *            Received data from the client.
-     * @param index
-     *            Block index number.
+     * @param settings DLMS settings.
+     * @param reply Received data from the client.
+     * @param index Block index number.
      */
     static void handleGetResponseWithList(final GXDLMSSettings settings,
             final GXReplyData reply) {
@@ -2868,7 +2938,7 @@ abstract class GXDLMS {
         GXByteBuffer data = reply.getData();
         // Get object count.
         int cnt = GXCommon.getObjectCount(data);
-        Object[] values = new Object[cnt];
+        List<Object> values = new ArrayList<Object>(cnt);
         if (reply.getXml() != null) {
             // Result start tag.
             reply.getXml().appendStartTag(TranslatorTags.RESULT, "Qty",
@@ -2893,9 +2963,7 @@ abstract class GXDLMS {
                     reply.setReadPosition(reply.getData().position());
                     getValueFromData(settings, reply);
                     reply.getData().position(reply.getReadPosition());
-                    if (values != null) {
-                        values[pos] = reply.getValue();
-                    }
+                    values.add(reply.getValue());
                     reply.setValue(null);
                 }
             }
@@ -2903,33 +2971,42 @@ abstract class GXDLMS {
         reply.setValue(values);
     }
 
-    /**
+    private static void verifyInvokeId(GXDLMSSettings settings,
+            GXReplyData reply) {
+        if (reply.getXml() == null && settings.getAutoIncreaseInvokeID()
+                && (byte) reply.getInvokeId() != getInvokeIDPriority(settings,
+                        false)) {
+            throw new RuntimeException(
+                    String.format("Invalid invoke ID. Expected: %s Actual: %s",
+                            Integer.toHexString(
+                                    getInvokeIDPriority(settings, false)),
+                            Long.toHexString(reply.getInvokeId())));
+        }
+    }
+
+    /*
      * Handle get response and get data from block and/or update error status.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param reply
-     *            Received data from the client.
-     * @param index
-     *            Block index number.
+     * @param settings DLMS settings.
+     * @param reply Received data from the client.
+     * @param index Block index number.
      */
+    @SuppressWarnings("squid:S1066")
     static boolean handleGetResponse(final GXDLMSSettings settings,
             final GXReplyData reply, final int index) {
         long number;
         boolean ret = true;
         short ch = 0;
         GXByteBuffer data = reply.getData();
-
         // Get type.
         byte type = (byte) data.getUInt8();
         // Get invoke ID and priority.
-        ch = data.getUInt8();
-
+        reply.setInvokeId(data.getUInt8());
+        verifyInvokeId(settings, reply);
         if (reply.getXml() != null) {
             reply.getXml().appendStartTag(Command.GET_RESPONSE);
             reply.getXml().appendStartTag(Command.GET_RESPONSE, type);
             // InvokeIdAndPriority
-            reply.getXml().appendInvokeId(ch);
+            reply.getXml().appendInvokeId((int) reply.getInvokeId());
         }
         // Response normal
         if (type == GetCommandType.NORMAL) {
@@ -2969,13 +3046,9 @@ abstract class GXDLMS {
                         reply.getXml().integerToHex(ch, 2));
             }
             if (ch == 0) {
-                reply.setMoreData(
-                        RequestTypes.forValue(reply.getMoreData().getValue()
-                                | RequestTypes.DATABLOCK.getValue()));
+                reply.getMoreData().add(RequestTypes.DATABLOCK);
             } else {
-                reply.setMoreData(
-                        RequestTypes.forValue(reply.getMoreData().getValue()
-                                & ~RequestTypes.DATABLOCK.getValue()));
+                reply.getMoreData().remove(RequestTypes.DATABLOCK);
             }
             // Get Block number.
             number = data.getUInt32();
@@ -3014,8 +3087,7 @@ abstract class GXDLMS {
                     // Get data size.
                     int blockLength = GXCommon.getObjectCount(data);
                     // if whole block is read.
-                    if ((reply.getMoreData().getValue()
-                            & RequestTypes.FRAME.getValue()) == 0) {
+                    if (!reply.getMoreData().contains(RequestTypes.FRAME)) {
                         // Check Block length.
                         if (blockLength > data.size() - data.position()) {
                             reply.getXml()
@@ -3036,8 +3108,7 @@ abstract class GXDLMS {
                 // Get data size.
                 int blockLength = GXCommon.getObjectCount(data);
                 // if whole block is read.
-                if ((reply.getMoreData().getValue()
-                        & RequestTypes.FRAME.getValue()) == 0) {
+                if (!(reply.getMoreData().contains(RequestTypes.FRAME))) {
                     // Check Block length.
                     if (blockLength > data.size() - data.position()) {
                         throw new IllegalArgumentException(
@@ -3052,14 +3123,14 @@ abstract class GXDLMS {
                     getDataFromBlock(data, index);
                 }
                 // If last packet and data is not try to peek.
-                if (reply.getMoreData() == RequestTypes.NONE) {
+                if (reply.getMoreData().isEmpty()) {
                     if (!reply.getPeek()) {
                         data.position(0);
                         settings.resetBlockIndex();
                     }
                 }
             }
-            if (reply.getMoreData() == RequestTypes.NONE && settings != null
+            if (reply.getMoreData().isEmpty() && settings != null
                     && settings.getCommand() == Command.GET_REQUEST
                     && settings.getCommandType() == GetCommandType.WITH_LIST) {
                 handleGetResponseWithList(settings, reply);
@@ -3087,6 +3158,7 @@ abstract class GXDLMS {
      * @param data
      *            received data.
      */
+    @SuppressWarnings("squid:S106")
     private static void handleGbt(final GXDLMSSettings settings,
             final GXReplyData data) {
         int index = data.getData().position() - 1;
@@ -3098,9 +3170,23 @@ abstract class GXDLMS {
         // GBT Window size.
         byte windowSize = (byte) (bc & 0x3F);
         // Block number.
-        data.setBlockNumber(data.getData().getUInt16());
+        int bn = data.getData().getUInt16();
         // Block number acknowledged.
-        data.setBlockNumberAck(data.getData().getUInt16());
+        int bna = data.getData().getUInt16();
+        if (data.getXml() == null) {
+            // Remove existing data when first block is received.
+            if (bn == 1) {
+                index = 0;
+            } else if (bna != settings.getBlockIndex() - 1) {
+                // If this block is already received.
+                data.getData().size(index);
+                data.setCommand(Command.NONE);
+                return;
+            }
+        }
+        data.setBlockNumber(bn);
+        // Block number acknowledged.
+        data.setBlockNumberAck(bna);
         settings.setBlockNumberAck(data.getBlockNumber());
         data.setCommand(Command.NONE);
         int len = GXCommon.getObjectCount(data.getData());
@@ -3113,7 +3199,7 @@ abstract class GXDLMS {
             if ((data.getData().size() - data.getData().position()) != len) {
                 data.getXml()
                         .appendComment("Data length is " + String.valueOf(len)
-                                + "and there are "
+                                + " and there are "
                                 + String.valueOf(data.getData().size()
                                         - data.getData().position())
                                 + " bytes.");
@@ -3134,7 +3220,8 @@ abstract class GXDLMS {
                     data.getXml().integerToHex(data.getBlockNumberAck(), 4));
 
             // If last block and comments.
-            if ((bc & 0x80) != 0 && data.getXml().isComments()) {
+            if ((bc & 0x80) != 0 && data.getXml().isComments()
+                    && data.getData().available() != 0) {
                 int pos = data.getData().position();
                 int len2 = data.getXml().getXmlLength();
                 try {
@@ -3150,7 +3237,6 @@ abstract class GXDLMS {
                 }
                 data.getData().position(pos);
             }
-
             data.getXml().appendLine(TranslatorTags.BLOCK_DATA, null,
                     GXCommon.toHex(data.getData().getData(), false,
                             data.getData().position(), len));
@@ -3160,11 +3246,9 @@ abstract class GXDLMS {
         getDataFromBlock(data.getData(), index);
         // Is Last block.
         if ((bc & 0x80) == 0) {
-            data.setMoreData(RequestTypes.forValue(data.getMoreData().getValue()
-                    | RequestTypes.DATABLOCK.getValue()));
+            data.getMoreData().add(RequestTypes.GBT);
         } else {
-            data.setMoreData(RequestTypes.forValue(data.getMoreData().getValue()
-                    & ~RequestTypes.DATABLOCK.getValue()));
+            data.getMoreData().remove(RequestTypes.GBT);
             if (data.getData().size() != 0) {
                 data.getData().position(0);
                 getPdu(settings, data);
@@ -3173,21 +3257,17 @@ abstract class GXDLMS {
             if (data.getData().position() != data.getData().size()
                     && (data.getCommand() == Command.READ_RESPONSE
                             || data.getCommand() == Command.GET_RESPONSE)
-                    && (data.getMoreData() == RequestTypes.NONE
-                            || data.getPeek())) {
+                    && (data.getMoreData().isEmpty() || data.getPeek())) {
                 data.getData().position(0);
                 getValueFromData(settings, data);
             }
         }
     }
 
-    /**
+    /*
      * Get PDU from the packet.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param data
-     *            received data.
+     * @param settings DLMS settings.
+     * @param data received data.
      */
     public static void getPdu(final GXDLMSSettings settings,
             final GXReplyData data) {
@@ -3227,8 +3307,7 @@ abstract class GXDLMS {
                 break;
             case Command.GENERAL_BLOCK_TRANSFER:
                 if (data.getXml() != null || (!settings.isServer()
-                        && (data.getMoreData().getValue()
-                                & RequestTypes.FRAME.getValue()) == 0)) {
+                        && !data.getMoreData().contains(RequestTypes.FRAME))) {
                     handleGbt(settings, data);
                 }
                 break;
@@ -3252,8 +3331,7 @@ abstract class GXDLMS {
             case Command.METHOD_REQUEST:
             case Command.RELEASE_REQUEST:
                 // Server handles this.
-                if ((data.getMoreData().getValue()
-                        & RequestTypes.FRAME.getValue()) != 0) {
+                if (data.getMoreData().contains(RequestTypes.FRAME)) {
                     break;
                 }
                 break;
@@ -3313,11 +3391,10 @@ abstract class GXDLMS {
             default:
                 throw new IllegalArgumentException("Invalid Command.");
             }
-        } else if ((data.getMoreData().getValue()
-                & RequestTypes.FRAME.getValue()) == 0) {
+        } else if (!data.getMoreData().contains(RequestTypes.FRAME)) {
             // Is whole block is read and if last packet and data is not try to
             // peek.
-            if (!data.getPeek() && data.getMoreData() == RequestTypes.NONE) {
+            if (!data.getPeek() && data.getMoreData().isEmpty()) {
                 if (data.getCommand() == Command.AARE
                         || data.getCommand() == Command.AARQ) {
                     data.getData().position(0);
@@ -3326,9 +3403,9 @@ abstract class GXDLMS {
                 }
             }
             if (cmd == Command.GENERAL_BLOCK_TRANSFER) {
-                if (!data.isMoreData()) {
-                    handleGbt(settings, data);
-                }
+                data.getData().position(data.getCipherIndex() + 1);
+                handleGbt(settings, data);
+                data.setCipherIndex(data.getData().size());
                 data.setCommand(Command.NONE);
             } else if (settings.isServer()) {
                 // Get command if operating as a server.
@@ -3372,32 +3449,29 @@ abstract class GXDLMS {
                 default:
                     break;
                 }
+                if (cmd == Command.READ_RESPONSE && data.getTotalCount() > 1) {
+                    if (!handleReadResponse(settings, data, 0)) {
+                        return;
+                    }
+                }
             }
         }
 
         // Get data only blocks if SN is used. This is faster.
         if (cmd == Command.READ_RESPONSE
                 && data.getCommandType() == SingleReadResponse.DATA_BLOCK_RESULT
-                && (data.getMoreData().getValue()
-                        & RequestTypes.FRAME.getValue()) != 0) {
+                && data.getMoreData().contains(RequestTypes.FRAME)) {
             return;
         }
         // Get data if all data is read or we want to peek data.
-        if (data.getXml() == null
+        if (data.getError() == 0 && data.getXml() == null
                 && data.getData().position() != data.getData().size()
                 && (cmd == Command.READ_RESPONSE || cmd == Command.GET_RESPONSE
                         || cmd == Command.METHOD_RESPONSE
                         || cmd == Command.DATA_NOTIFICATION)
-                && (data.getMoreData() == RequestTypes.NONE
-                        || data.getPeek())) {
+                && (data.getMoreData().isEmpty() || data.getPeek())) {
             getValueFromData(settings, data);
         }
-    }
-
-    private static void handleExceptionResponse(final GXReplyData data) {
-        throw new GXDLMSException(
-                StateError.values()[data.getData().getUInt8() - 1],
-                ExceptionServiceError.values()[data.getData().getUInt8() - 1]);
     }
 
     static void handleConfirmedServiceError(final GXReplyData data) {
@@ -3438,18 +3512,48 @@ abstract class GXDLMS {
         }
     }
 
+    static void handleExceptionResponse(final GXReplyData data) {
+        StateError state = StateError.forValue(data.getData().getUInt8());
+        ExceptionServiceError error =
+                ExceptionServiceError.forValue(data.getData().getUInt8());
+        Object value = null;
+        if (error == ExceptionServiceError.INVOCATION_COUNTER_ERROR
+                && data.getData().available() > 3) {
+            value = data.getData().getUInt32();
+        }
+        if (data.getXml() != null) {
+            data.getXml().appendStartTag(Command.EXCEPTION_RESPONSE);
+            if (data.getXml()
+                    .getOutputType() == TranslatorOutputType.STANDARD_XML) {
+                data.getXml().appendLine(TranslatorTags.STATE_ERROR, null,
+                        TranslatorStandardTags.stateErrorToString(state));
+                data.getXml().appendLine(TranslatorTags.SERVICE_ERROR, null,
+                        TranslatorStandardTags
+                                .exceptionServiceErrorToString(error));
+            } else {
+                data.getXml().appendLine(TranslatorTags.STATE_ERROR, null,
+                        TranslatorSimpleTags.stateErrorToString(state));
+                data.getXml().appendLine(TranslatorTags.SERVICE_ERROR, null,
+                        TranslatorSimpleTags
+                                .exceptionServiceErrorToString(error));
+            }
+            data.getXml().appendEndTag(Command.EXCEPTION_RESPONSE);
+        } else {
+            throw new GXDLMSExceptionResponse(state, error, value);
+        }
+    }
+
     private static void handleGloDedRequest(final GXDLMSSettings settings,
             final GXReplyData data) {
         if (data.getXml() != null) {
             data.getData().position(data.getData().position() - 1);
         } else {
             if (settings.getCipher() == null) {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                         "Secure connection is not supported.");
             }
             // If all frames are read.
-            if ((data.getMoreData().getValue()
-                    & RequestTypes.FRAME.getValue()) == 0) {
+            if (!data.getMoreData().contains(RequestTypes.FRAME)) {
                 data.getData().position(data.getData().position() - 1);
                 AesGcmParameter p;
                 GXICipher cipher = settings.getCipher();
@@ -3497,12 +3601,11 @@ abstract class GXDLMS {
             data.getData().position(data.getData().position() - 1);
         } else {
             if (settings.getCipher() == null) {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                         "Secure connection is not supported.");
             }
             // If all frames are read.
-            if ((data.getMoreData().getValue()
-                    & RequestTypes.FRAME.getValue()) == 0) {
+            if (!data.getMoreData().contains(RequestTypes.FRAME)) {
                 data.getData().position(data.getData().position() - 1);
                 GXByteBuffer bb = new GXByteBuffer(data.getData());
                 data.getData().position(index);
@@ -3543,11 +3646,11 @@ abstract class GXDLMS {
     private static void handleGeneralCiphering(final GXDLMSSettings settings,
             final GXReplyData data) {
         if (settings.getCipher() == null) {
-            throw new RuntimeException("Secure connection is not supported.");
+            throw new IllegalArgumentException(
+                    "Secure connection is not supported.");
         }
         // If all frames are read.
-        if ((data.getMoreData().getValue()
-                & RequestTypes.FRAME.getValue()) == 0) {
+        if (!data.getMoreData().contains(RequestTypes.FRAME)) {
             data.getData().position(data.getData().position() - 1);
 
             AesGcmParameter p =
@@ -3602,17 +3705,17 @@ abstract class GXDLMS {
         }
     }
 
-    /**
+    /*
      * Get value from data.
-     * 
-     * @param reply
-     *            Received data.
+     * @param settings DLMS settings.
+     * @param reply Received data.
      */
+    @SuppressWarnings("unchecked")
     static void getValueFromData(final GXDLMSSettings settings,
             final GXReplyData reply) {
         GXByteBuffer data = reply.getData();
         GXDataInfo info = new GXDataInfo();
-        if (reply.getValue() instanceof Object[]) {
+        if (reply.getValue() instanceof List<?>) {
             info.setType(DataType.ARRAY);
             info.setCount(reply.getTotalCount());
             info.setIndex(reply.getCount());
@@ -3622,21 +3725,19 @@ abstract class GXDLMS {
         try {
             Object value = GXCommon.getData(settings, data, info);
             if (value != null) { // If new data.
-                if (!(value instanceof Object[])) {
+                if (!(value instanceof List<?>)) {
                     reply.setValueType(info.getType());
                     reply.setValue(value);
                     reply.setTotalCount(0);
                     reply.setReadPosition(data.position());
                 } else {
-                    if (((Object[]) value).length != 0) {
+                    if (!((List<?>) value).isEmpty()) {
                         if (reply.getValue() == null) {
                             reply.setValue(value);
                         } else {
                             // Add items to collection.
-                            List<Object> list = new ArrayList<Object>();
-                            GXCommon.addAll(list, (Object[]) reply.getValue());
-                            GXCommon.addAll(list, (Object[]) value);
-                            reply.setValue(list.toArray());
+                            ((List<Object>) reply.getValue())
+                                    .addAll((List<?>) value);
                         }
                     }
                     reply.setReadPosition(data.position());
@@ -3654,7 +3755,7 @@ abstract class GXDLMS {
 
         // If last data frame of the data block is read.
         if (reply.getCommand() != Command.DATA_NOTIFICATION && info.isComplete()
-                && reply.getMoreData() == RequestTypes.NONE) {
+                && reply.getMoreData().isEmpty()) {
             // If all blocks are read.
             if (settings != null) {
                 settings.resetBlockIndex();
@@ -3680,8 +3781,10 @@ abstract class GXDLMS {
             target.setFrameId(frame);
         } else if (settings.getInterfaceType() == InterfaceType.WRAPPER) {
             if (!getTcpData(settings, reply, target, notify)) {
-                target = notify;
-                isNotify = true;
+                if (notify != null) {
+                    target = notify;
+                    isNotify = true;
+                }
             }
         } else if (settings.getInterfaceType() == InterfaceType.WIRELESS_MBUS) {
             getMBusData(settings, reply, target);
@@ -3704,10 +3807,27 @@ abstract class GXDLMS {
             return true;
         }
         getPdu(settings, target);
-        if (isNotify) {
-            return false;
+        if (notify != null && !isNotify) {
+            // Check command to make sure it's not notify message.
+            switch (target.getCommand()) {
+            case Command.DATA_NOTIFICATION:
+            case Command.GLO_EVENT_NOTIFICATION_REQUEST:
+            case Command.INFORMATION_REPORT:
+            case Command.EVENT_NOTIFICATION:
+            case Command.DED_EVENT_NOTIFICATION:
+                isNotify = true;
+                notify.setCommand(data.getCommand());
+                data.setCommand(Command.NONE);
+                notify.setTime(data.getTime());
+                data.setTime(null);
+                notify.getData().set(data.getData());
+                data.getData().trim();
+                break;
+            default:
+                break;
+            }
         }
-        return true;
+        return !isNotify;
     }
 
     /**
@@ -3770,6 +3890,7 @@ abstract class GXDLMS {
      * @param count
      *            Count of action methods.
      */
+    @SuppressWarnings("squid:S1871")
     static void getActionInfo(final ObjectType objectType, final int[] value,
             final int[] count) {
         switch (objectType) {

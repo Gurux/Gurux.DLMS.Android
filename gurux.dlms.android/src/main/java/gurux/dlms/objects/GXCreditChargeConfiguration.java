@@ -34,6 +34,9 @@
 
 package gurux.dlms.objects;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import gurux.dlms.objects.enums.CreditCollectionConfiguration;
 
 /**
@@ -61,13 +64,13 @@ public class GXCreditChargeConfiguration {
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
      */
-    private CreditCollectionConfiguration collectionConfiguration;
+    private Set<CreditCollectionConfiguration> collectionConfiguration;
 
     /**
      * Constructor.
      */
     public GXCreditChargeConfiguration() {
-        collectionConfiguration = CreditCollectionConfiguration.NONE;
+        collectionConfiguration = new HashSet<CreditCollectionConfiguration>();
     }
 
     /**
@@ -118,7 +121,7 @@ public class GXCreditChargeConfiguration {
      * 
      * @return Collection configuration.
      */
-    public final CreditCollectionConfiguration getCollectionConfiguration() {
+    public final Set<CreditCollectionConfiguration> getCollectionConfiguration() {
         return collectionConfiguration;
     }
 
@@ -130,7 +133,7 @@ public class GXCreditChargeConfiguration {
      *            Collection configuration.
      */
     public final void setCollectionConfiguration(
-            final CreditCollectionConfiguration value) {
+            final Set<CreditCollectionConfiguration> value) {
         collectionConfiguration = value;
     }
 }

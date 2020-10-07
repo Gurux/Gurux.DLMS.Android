@@ -70,7 +70,7 @@ public enum PppAuthenticationType {
 
     PppAuthenticationType(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -78,6 +78,11 @@ public enum PppAuthenticationType {
     }
 
     public static PppAuthenticationType forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        PppAuthenticationType ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid PPP authentication type enum value.");
+        }
+        return ret;
     }
 }

@@ -12,9 +12,11 @@ import gurux.dlms.enums.Conformance;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.Definition;
 import gurux.dlms.enums.ErrorCode;
+import gurux.dlms.enums.ExceptionServiceError;
 import gurux.dlms.enums.HardwareResource;
 import gurux.dlms.enums.Initiate;
 import gurux.dlms.enums.LoadDataSet;
+import gurux.dlms.enums.StateError;
 import gurux.dlms.enums.Task;
 import gurux.dlms.enums.VdeStateError;
 
@@ -26,11 +28,8 @@ final class TranslatorSimpleTags {
 
     }
 
-    /**
+    /*
      * Get general tags.
-     * 
-     * @param type
-     * @param list
      */
     static void getGeneralTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
@@ -117,19 +116,23 @@ final class TranslatorSimpleTags {
                 "RespondingAPTitle");
         GXDLMSTranslator.addTag(list, TranslatorGeneralTags.DEDICATED_KEY,
                 "DedicatedKey");
+        GXDLMSTranslator.addTag(list, TranslatorGeneralTags.USER_INFORMATION,
+                "UserInformation");
         GXDLMSTranslator.addTag(list, Command.CONFIRMED_SERVICE_ERROR,
                 "ConfirmedServiceError");
         GXDLMSTranslator.addTag(list, Command.INFORMATION_REPORT,
                 "InformationReportRequest");
         GXDLMSTranslator.addTag(list, Command.EVENT_NOTIFICATION,
                 "EventNotificationRequest");
+        GXDLMSTranslator.addTag(list, Command.EXCEPTION_RESPONSE,
+                "ExceptionResponse");
+        GXDLMSTranslator.addTag(list, TranslatorTags.STATE_ERROR, "StateError");
+        GXDLMSTranslator.addTag(list, TranslatorTags.SERVICE_ERROR,
+                "ServiceError");
     }
 
-    /**
+    /*
      * Get SN tags.
-     * 
-     * @param type
-     * @param list
      */
     static void getSnTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
@@ -166,11 +169,8 @@ final class TranslatorSimpleTags {
                 "DataAccessError");
     }
 
-    /**
+    /*
      * Get LN tags.
-     * 
-     * @param type
-     * @param list
      */
     static void getLnTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
@@ -276,11 +276,8 @@ final class TranslatorSimpleTags {
                 "GatewayResponse");
     }
 
-    /**
+    /*
      * Get glo tags.
-     * 
-     * @param type
-     * @param list
      */
     static void getGloTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
@@ -310,16 +307,14 @@ final class TranslatorSimpleTags {
                 "glo_WriteResponse");
         GXDLMSTranslator.addTag(list, Command.GENERAL_GLO_CIPHERING,
                 "GeneralGloCiphering");
-
         GXDLMSTranslator.addTag(list, Command.GENERAL_CIPHERING,
                 "GeneralCiphering");
+        GXDLMSTranslator.addTag(list, Command.GLO_CONFIRMED_SERVICE_ERROR,
+                "glo_ConfirmedServiceError");
     }
 
-    /**
+    /*
      * Get ded tags.
-     * 
-     * @param type
-     * @param list
      */
     static void getDedTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
@@ -341,13 +336,12 @@ final class TranslatorSimpleTags {
                 "ded_ActionResponse");
         GXDLMSTranslator.addTag(list, Command.GENERAL_DED_CIPHERING,
                 "GeneralDedCiphering");
+        GXDLMSTranslator.addTag(list, Command.DED_CONFIRMED_SERVICE_ERROR,
+                "ded_ConfirmedServiceError");
     }
 
-    /**
+    /*
      * Get translator tags.
-     * 
-     * @param type
-     * @param list
      */
     static void getTranslatorTags(final TranslatorOutputType type,
             final HashMap<Integer, String> list) {
@@ -772,6 +766,95 @@ final class TranslatorSimpleTags {
     }
 
     /**
+     * Gets state error description.
+     * 
+     * @param error
+     *            State error enumerator value.
+     * @return State error as an string.
+     */
+    static String stateErrorToString(final StateError error) {
+        switch (error) {
+        case SERVICE_NOT_ALLOWED:
+            return "ServiceNotAllowed";
+        case SERVICE_UNKNOWN:
+            return "ServiceUnknown";
+        default:
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Gets service error description.
+     * 
+     * @param error
+     *            Service error enumerator value.
+     * @return Service error as an string.
+     */
+    static String
+            exceptionServiceErrorToString(final ExceptionServiceError error) {
+        switch (error) {
+        case OPERATION_NOT_POSSIBLE:
+            return "OperationNotPossible";
+        case SERVICE_NOT_SUPPORTED:
+            return "ServiceNotSupported";
+        case OTHER_REASON:
+            return "OtherReason";
+        case PDU_TOO_LONG:
+            return "PduTooLong";
+        case DECIPHERING_ERROR:
+            return "DecipheringError";
+        case INVOCATION_COUNTER_ERROR:
+            return "InvocationCounterError";
+        default:
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * @param value
+     *            State error string value.
+     * @return State error enum value.
+     */
+    static StateError valueofStateError(final String value) {
+        if ("ServiceNotAllowed".equalsIgnoreCase(value)) {
+            return StateError.SERVICE_NOT_ALLOWED;
+        }
+        if ("ServiceUnknown".equalsIgnoreCase(value)) {
+            return StateError.SERVICE_UNKNOWN;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
+     * @param value
+     *            Service error string value.
+     * @return Service error enum value.
+     */
+    static ExceptionServiceError
+            valueOfExceptionServiceError(final String value) {
+
+        if ("OperationNotPossible".equalsIgnoreCase(value)) {
+            return ExceptionServiceError.OPERATION_NOT_POSSIBLE;
+        }
+        if ("ServiceNotSupported".equalsIgnoreCase(value)) {
+            return ExceptionServiceError.SERVICE_NOT_SUPPORTED;
+        }
+        if ("OtherReason".equalsIgnoreCase(value)) {
+            return ExceptionServiceError.OTHER_REASON;
+        }
+        if ("PduTooLong".equalsIgnoreCase(value)) {
+            return ExceptionServiceError.PDU_TOO_LONG;
+        }
+        if ("DecipheringError".equalsIgnoreCase(value)) {
+            return ExceptionServiceError.DECIPHERING_ERROR;
+        }
+        if ("InvocationCounterError".equalsIgnoreCase(value)) {
+            return ExceptionServiceError.INVOCATION_COUNTER_ERROR;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
      * @param value
      *            Service error simple XML tag.
      * @return Service error enumeration value.
@@ -876,7 +959,7 @@ final class TranslatorSimpleTags {
         return ret;
     }
 
-    private static int getInitiate(final String value) {
+    static int getInitiate(final String value) {
         int ret = -1;
         for (Entry<Initiate, String> it : getInitiate().entrySet()) {
             if (value.compareTo(it.getValue()) == 0) {

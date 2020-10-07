@@ -377,7 +377,7 @@ public class GXDLMSNotify {
      * @return Array of objects and called indexes.
      */
     public final List<Entry<GXDLMSObject, Integer>>
-            parsePush(final Context context, final Object[] data) {
+            parsePush(final Context context, final List<?> data) {
         GXDLMSObject obj;
         int index;
         DataType dt;
@@ -386,37 +386,44 @@ public class GXDLMSNotify {
                 new ArrayList<Entry<GXDLMSObject, Integer>>();
         if (data != null) {
             GXDLMSConverter c = new GXDLMSConverter();
-            for (Object it : (Object[]) data[0]) {
-                Object[] tmp = (Object[]) it;
-                int classID = ((Number) (tmp[0])).intValue() & 0xFFFF;
+            for (Object it : (List<?>) data.get(0)) {
+                List<?> tmp = (List<?>) it;
+                int classID = ((Number) (tmp.get(0))).intValue() & 0xFFFF;
                 if (classID > 0) {
                     GXDLMSObject comp;
                     comp = getObjects().findByLN(ObjectType.forValue(classID),
-                            GXCommon.toLogicalName((byte[]) tmp[1]));
+                            GXCommon.toLogicalName((byte[]) tmp.get(1)));
                     if (comp == null) {
                         comp = GXDLMSClient.createDLMSObject(classID, 0, 0,
-                                tmp[1], null);
+                                tmp.get(1), null);
                         settings.getObjects().add(comp);
                         c.updateOBISCodeInformation(context, comp);
                     }
                     if (comp.getClass() != GXDLMSObject.class) {
                         items.add(new GXSimpleEntry<GXDLMSObject, Integer>(comp,
-                                ((Number) tmp[2]).intValue()));
+                                ((Number) tmp.get(2)).intValue()));
                     } else {
                         System.out.println("Unknown object: "
                                 + String.valueOf(classID) + " "
-                                + GXCommon.toLogicalName((byte[]) tmp[1]));
+                                + GXCommon.toLogicalName((byte[]) tmp.get(1)));
                     }
                 }
             }
-            for (int pos = 0; pos < data.length; ++pos) {
-                obj = (GXDLMSObject) items.get(pos).getKey();
-                value = data[pos];
+            boolean useUtc;
+            if (settings != null) {
+                useUtc = settings.getUseUtc2NormalTime();
+            } else {
+                useUtc = false;
+            }
+            for (int pos = 0; pos < data.size(); ++pos) {
+                obj = items.get(pos).getKey();
+                value = data.get(pos);
                 index = items.get(pos).getValue();
                 if (value instanceof byte[]) {
                     dt = obj.getUIDataType(index);
                     if (dt != DataType.NONE) {
-                        value = GXDLMSClient.changeType((byte[]) value, dt);
+                        value = GXDLMSClient.changeType((byte[]) value, dt,
+                                useUtc);
                     }
                 }
                 ValueEventArgs e =
@@ -427,7 +434,7 @@ public class GXDLMSNotify {
 
                 e = new ValueEventArgs(settings, items.get(pos).getKey(),
                         items.get(pos).getValue(), 0, null);
-                e.setValue(data[pos]);
+                e.setValue(data.get(pos));
                 items.get(pos).getKey().setValue(settings, e);
             }
         }
@@ -444,7 +451,7 @@ public class GXDLMSNotify {
      */
     public final void parsePush(
             final List<Entry<GXDLMSObject, Integer>> objects,
-            final Object[] data) {
+            final List<?> data) {
         GXDLMSObject obj;
         int index;
         DataType dt;
@@ -452,17 +459,18 @@ public class GXDLMSNotify {
         if (data == null) {
             throw new IllegalArgumentException("Invalid push message.");
         }
-        if (data.length != objects.size()) {
+        if (data.size() != objects.size()) {
             throw new IllegalArgumentException("Push arguments do not match.");
         }
-        for (int pos = 0; pos < data.length; ++pos) {
-            obj = (GXDLMSObject) objects.get(pos).getKey();
-            value = data[pos];
+        for (int pos = 0; pos < data.size(); ++pos) {
+            obj = objects.get(pos).getKey();
+            value = data.get(pos);
             index = objects.get(pos).getValue();
             if (value instanceof byte[]) {
                 dt = obj.getUIDataType(index);
                 if (dt != DataType.NONE) {
-                    value = GXDLMSClient.changeType((byte[]) value, dt);
+                    value = GXDLMSClient.changeType((byte[]) value, dt,
+                            settings.getUseUtc2NormalTime());
                 }
             }
             ValueEventArgs e =
@@ -483,7 +491,7 @@ public class GXDLMSNotify {
      * @return Report request as byte array.
      */
     public byte[][] generateReport(final GXDateTime time,
-            final List<Entry<GXDLMSObject, Integer>> list) {
+            final List<Entry<GXDLMSObject, Integer>> list){
         if (list == null || list.size() == 0) {
             throw new IllegalArgumentException("list");
         }

@@ -34,7 +34,11 @@
 
 package gurux.dlms.objects;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import gurux.dlms.GXDateTime;
+import gurux.dlms.objects.enums.Weekdays;
 
 /**
  * Executed scripts.
@@ -42,6 +46,10 @@ import gurux.dlms.GXDateTime;
  * @author Gurux Ltd.
  */
 public class GXDLMSScheduleEntry {
+
+    public GXDLMSScheduleEntry() {
+        execWeekdays = new HashSet<Weekdays>();
+    }
 
     /**
      * Schedule entry index.
@@ -77,7 +85,7 @@ public class GXDLMSScheduleEntry {
     /**
      * Days of the week on which the entry is valid.
      */
-    private String execWeekdays;
+    private Set<Weekdays> execWeekdays;
 
     /**
      * Perform the link to the IC Special days table, day_id.
@@ -205,7 +213,7 @@ public class GXDLMSScheduleEntry {
      * 
      * @return Bit array of valid week days.
      */
-    public final String getExecWeekdays() {
+    public final Set<Weekdays> getExecWeekdays() {
         return execWeekdays;
     }
 
@@ -215,7 +223,7 @@ public class GXDLMSScheduleEntry {
      * @param value
      *            Bit array of valid week days.
      */
-    public final void setExecWeekdays(final String value) {
+    public final void setExecWeekdays(final Set<Weekdays> value) {
         execWeekdays = value;
     }
 

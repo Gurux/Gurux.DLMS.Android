@@ -82,7 +82,7 @@ public enum SortMethod {
 
     SortMethod(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -90,6 +90,11 @@ public enum SortMethod {
     }
 
     public static SortMethod forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        SortMethod ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid sort method enum value.");
+        }
+        return ret;
     }
 }

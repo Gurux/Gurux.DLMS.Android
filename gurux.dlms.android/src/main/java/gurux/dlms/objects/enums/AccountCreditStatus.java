@@ -46,42 +46,42 @@ public enum AccountCreditStatus {
     /**
      * In credit.
      */
-    IN_CREDIT(0x80),
+    IN_CREDIT(0x1),
 
     /**
      * Low credit.
      */
-    LOW_CREDIT(0x40),
+    LOW_CREDIT(0x2),
 
     /**
      * Next credit enabled.
      */
-    NEXT_CREDIT_ENABLED(0x20),
+    NEXT_CREDIT_ENABLED(0x4),
 
     /**
      * Next credit selectable.
      */
-    NEXT_CREDIT_SELECTABLE(0x10),
+    NEXT_CREDIT_SELECTABLE(0x8),
 
     /**
      * Credit reference list.
      */
-    CREDIT_REFERENCE_LIST(0x8),
+    CREDIT_REFERENCE_LIST(0x10),
 
     /**
      * Selectable credit in use.
      */
-    SELECTABLE_CREDIT_IN_USE(0x4),
+    SELECTABLE_CREDIT_IN_USE(0x20),
 
     /**
      * Out of credit.
      */
-    OUT_OF_CREDIT(0x2),
+    OUT_OF_CREDIT(0x40),
 
     /**
      * Reserved.
      */
-    RESERVED(0x1);
+    RESERVED(0x80);
 
     /**
      * Integer value of enumerator.
@@ -115,7 +115,7 @@ public enum AccountCreditStatus {
      */
     AccountCreditStatus(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     /**
@@ -135,6 +135,11 @@ public enum AccountCreditStatus {
      * @return Enumeration value.
      */
     public static AccountCreditStatus forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        AccountCreditStatus ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid account credit status enum value.");
+        }
+        return ret;
     }
 }

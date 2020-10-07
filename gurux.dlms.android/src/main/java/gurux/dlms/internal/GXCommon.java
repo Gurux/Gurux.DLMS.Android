@@ -35,7 +35,8 @@
 package gurux.dlms.internal;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.DateFormat;
@@ -52,6 +53,7 @@ import java.util.TimeZone;
 
 import javax.crypto.KeyAgreement;
 
+import gurux.dlms.GXArray;
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -59,11 +61,18 @@ import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDate;
 import gurux.dlms.GXDateTime;
+import gurux.dlms.GXEnum;
 import gurux.dlms.GXICipher;
+import gurux.dlms.GXStructure;
 import gurux.dlms.GXTime;
+import gurux.dlms.GXUInt16;
+import gurux.dlms.GXUInt32;
+import gurux.dlms.GXUInt64;
+import gurux.dlms.GXUInt8;
 import gurux.dlms.TranslatorOutputType;
 import gurux.dlms.enums.ClockStatus;
 import gurux.dlms.enums.DataType;
+import gurux.dlms.enums.DateTimeExtraInfo;
 import gurux.dlms.enums.DateTimeSkips;
 import gurux.dlms.objects.enums.CertificateType;
 
@@ -90,21 +99,10 @@ public final class GXCommon {
 
     }
 
-    /*
-     * HDLC frame start and end character.
-     */
-    public static final byte HDLC_FRAME_START_END = 0x7E;
-    public static final byte[] LOGICAL_NAME_OBJECT_ID =
-            { 0x60, (byte) 0x85, 0x74, 0x05, 0x08, 0x01, 0x01 };
-    public static final byte[] SHORT_NAME_OBJECT_ID =
-            { 0x60, (byte) 0x85, 0x74, 0x05, 0x08, 0x01, 0x02 };
-    public static final byte[] LOGICAL_NAME_OBJECT_ID_WITH_CIPHERING =
-            { 0x60, (byte) 0x85, 0x74, 0x05, 0x08, 0x01, 0x03 };
-    public static final byte[] SHORT_NAME_OBJECT_ID_WITH_CIPHERING =
-            { 0x60, (byte) 0x85, 0x74, 0x05, 0x08, 0x01, 0x04 };
-
+    @SuppressWarnings("squid:S2386")
     public static final byte[] LLC_SEND_BYTES =
             { (byte) 0xE6, (byte) 0xE6, 0x00 };
+    @SuppressWarnings("squid:S2386")
     public static final byte[] LLC_REPLY_BYTES =
             { (byte) 0xE6, (byte) 0xE7, 0x00 };
 
@@ -367,7 +365,7 @@ public final class GXCommon {
      * @return Converted byte array.
      */
     public static byte[] fromBase64(final String input) {
-        String tmp = input.replace("\r\n", "");
+        String tmp = input.replace("\r\n", "").replace("\n", "");
         if (tmp.length() % 4 != 0) {
             throw new IllegalArgumentException("Invalid base64 input");
         }
@@ -420,7 +418,7 @@ public final class GXCommon {
                 return data.getUInt8();
             } else if (cnt == 0x82) {
                 return data.getUInt16();
-            }  else if (cnt == 0x83) {
+            } else if (cnt == 0x83) {
                 return data.getUInt24();
             } else if (cnt == 0x84) {
                 return (int) data.getUInt32();
@@ -585,7 +583,7 @@ public final class GXCommon {
             value = getInt32(data, info);
             break;
         case UINT32:
-            value = getUInt32(data, info);
+            value = getUInt32(settings, data, info);
             break;
         case STRING:
             value = getString(data, info, knownType);
@@ -594,10 +592,10 @@ public final class GXCommon {
             value = getUtfString(data, info, knownType);
             break;
         case OCTET_STRING:
-            value = getOctetString(data, info, knownType);
+            value = getOctetString(settings, data, info, knownType);
             break;
         case BCD:
-            value = getBcd(data, info, knownType);
+            value = getBcd(data, info);
             break;
         case INT8:
             value = getInt8(data, info);
@@ -606,10 +604,10 @@ public final class GXCommon {
             value = getInt16(data, info);
             break;
         case UINT8:
-            value = getUInt8(data, info);
+            value = getUInt8(settings, data, info);
             break;
         case UINT16:
-            value = getUInt16(data, info);
+            value = getUInt16(settings, data, info);
             break;
         case COMPACT_ARRAY:
             value = getCompactArray(settings, data, info);
@@ -618,7 +616,7 @@ public final class GXCommon {
             value = getInt64(data, info);
             break;
         case UINT64:
-            value = getUInt64(data, info);
+            value = getUInt64(settings, data, info);
             break;
         case ENUM:
             value = getEnum(data, info);
@@ -639,7 +637,7 @@ public final class GXCommon {
             value = getTime(data, info);
             break;
         default:
-            throw new RuntimeException("Invalid data type.");
+            throw new IllegalArgumentException("Invalid data type.");
         }
         return value;
     }
@@ -658,6 +656,12 @@ public final class GXCommon {
             tmp = ((Short) value).shortValue() & 0xFFFF;
         } else if (value instanceof Long) {
             tmp = ((Long) value).longValue() & 0xFFFFFFFF;
+        } else if (value instanceof GXUInt8) {
+            tmp = ((GXUInt8) value).byteValue() & 0xFF;
+        } else if (value instanceof GXUInt16) {
+            tmp = ((GXUInt16) value).shortValue() & 0xFFFF;
+        } else if (value instanceof GXUInt32) {
+            tmp = ((GXUInt32) value).longValue() & 0xFFFFFFFF;
         } else {
             tmp = ((Number) value).longValue();
         }
@@ -695,7 +699,6 @@ public final class GXCommon {
      */
     private static Object getArray(final GXDLMSSettings settings,
             final GXByteBuffer buff, final GXDataInfo info, final int index) {
-        Object value;
         if (info.getCount() == 0) {
             info.setCount(GXCommon.getObjectCount(buff));
         }
@@ -710,7 +713,12 @@ public final class GXCommon {
             return null;
         }
         int startIndex = index;
-        java.util.ArrayList<Object> arr = new java.util.ArrayList<Object>();
+        java.util.ArrayList<Object> arr;
+        if (info.getType() == DataType.ARRAY) {
+            arr = new GXArray();
+        } else {
+            arr = new GXStructure();
+        }
         // Position where last row was found. Cache uses this info.
         int pos = info.getIndex();
         for (; pos != info.getCount(); ++pos) {
@@ -733,8 +741,7 @@ public final class GXCommon {
                     .appendEndTag(info.getXml().getDataType(info.getType()));
         }
         info.setIndex(pos);
-        value = arr.toArray();
-        return value;
+        return arr;
     }
 
     /**
@@ -812,10 +819,41 @@ public final class GXCommon {
             int year = buff.getUInt16();
             // Get month
             int month = buff.getUInt8();
+
+            java.util.Set<DateTimeExtraInfo> extra =
+                    new HashSet<DateTimeExtraInfo>();
+            java.util.Set<DateTimeSkips> skip = new HashSet<DateTimeSkips>();
+            if (month == 0 || month == 0xFF) {
+                month = 1;
+                skip.add(DateTimeSkips.MONTH);
+            } else if (month == 0xFE) {
+                // Daylight savings begin.
+                month = 1;
+                extra.add(DateTimeExtraInfo.DST_BEGIN);
+            } else if (month == 0xFD) {
+                // Daylight savings end.
+                month = 1;
+                extra.add(DateTimeExtraInfo.DST_END);
+            }
             // Get day
             int day = buff.getUInt8();
+            if (day == 0xFD) {
+                // 2nd last day of month.
+                day = 1;
+                extra.add(DateTimeExtraInfo.LAST_DAY2);
+            } else if (day == 0xFE) {
+                // Last day of month
+                day = 1;
+                extra.add(DateTimeExtraInfo.LAST_DAY);
+            } else if (day < 1 || day == 0xFF) {
+                day = 1;
+                skip.add(DateTimeSkips.DAY);
+            }
+
             GXDate dt = new GXDate(year, month, day);
             value = dt;
+            dt.setExtra(extra);
+            dt.getSkip().addAll(skip);
             // Skip week day
             if (buff.getUInt8() == 0xFF) {
                 dt.getSkip().add(DateTimeSkips.DAY_OF_WEEK);
@@ -879,11 +917,34 @@ public final class GXCommon {
             int year = buff.getUInt16();
             // Get month
             int month = buff.getUInt8();
+            if (month == 0 || month == 0xFF) {
+                month = 1;
+                skip.add(DateTimeSkips.MONTH);
+            } else if (month == 0xFE) {
+                // Daylight savings begin.
+                month = 1;
+                dt.getExtra().add(DateTimeExtraInfo.DST_BEGIN);
+            } else if (month == 0xFD) {
+                // Daylight savings end.
+                month = 1;
+                dt.getExtra().add(DateTimeExtraInfo.DST_END);
+            }
             // Get day
             int day = buff.getUInt8();
+            if (day == 0xFD) {
+                // 2nd last day of month.
+                day = 1;
+                dt.getExtra().add(DateTimeExtraInfo.LAST_DAY2);
+            } else if (day == 0xFE) {
+                // Last day of month
+                day = 1;
+                dt.getExtra().add(DateTimeExtraInfo.LAST_DAY);
+            } else if (day < 1 || day == 0xFF) {
+                day = 1;
+                skip.add(DateTimeSkips.DAY);
+            }
             // Skip week day
             int dayOfWeek = buff.getUInt8();
-
             if (dayOfWeek == 0xFF) {
                 skip.add(DateTimeSkips.DAY_OF_WEEK);
             } else {
@@ -901,7 +962,6 @@ public final class GXCommon {
             }
             int deviation = buff.getInt16();
             if (deviation == -32768) {
-                deviation = 0x8000;
                 skip.add(DateTimeSkips.DEVITATION);
             }
             int status = buff.getUInt8();
@@ -911,20 +971,19 @@ public final class GXCommon {
                 java.util.Calendar tm = java.util.Calendar.getInstance();
                 year = tm.get(Calendar.YEAR);
             }
-            dt.setDaylightSavingsBegin(month == 0xFE);
-            dt.setDaylightSavingsEnd(month == 0xFD);
-            if (month < 1 || month > 12) {
-                skip.add(DateTimeSkips.MONTH);
-                month = 0;
-            } else {
-                month -= 1;
+            if (month != 0xFE && month != 0xFD) {
+                if (month < 1 || month > 12) {
+                    skip.add(DateTimeSkips.MONTH);
+                    month = 0;
+                } else {
+                    month -= 1;
+                }
             }
-            if (day == -1 || day == 0 || day > 31) {
-                skip.add(DateTimeSkips.DAY);
-                day = 1;
-            } else if (day < 0) {
-                Calendar cal = Calendar.getInstance();
-                day = cal.getActualMaximum(Calendar.DATE) + day + 3;
+            if (day != 0xFE && day != 0xFD) {
+                if (day == -1 || day == 0 || day > 31) {
+                    skip.add(DateTimeSkips.DAY);
+                    day = 1;
+                }
             }
             if (hour < 0 || hour > 24) {
                 skip.add(DateTimeSkips.HOUR);
@@ -948,7 +1007,7 @@ public final class GXCommon {
                 deviation = -deviation;
             }
             java.util.Calendar tm;
-            if (deviation == 0x8000) {
+            if (deviation == -32768) {
                 tm = Calendar.getInstance();
             } else {
                 TimeZone tz = GXDateTime.getTimeZone(-deviation, dt.getStatus()
@@ -956,11 +1015,13 @@ public final class GXCommon {
                 tm = Calendar.getInstance(tz);
             }
             tm.set(year, month, day, hour, minute, second);
-            if (ms != 0xFF) {
+            if (skip.contains(DateTimeSkips.MILLISECOND)) {
+                tm.set(Calendar.MILLISECOND, 0);
+            } else {
                 tm.set(Calendar.MILLISECOND, ms);
             }
             dt.setMeterCalendar(tm);
-            dt.setSkip(skip);
+            dt.getSkip().addAll(skip);
             value = dt;
         } catch (Exception ex) {
             if (info.getXml() == null) {
@@ -994,7 +1055,7 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        value = new Double(buff.getDouble());
+        value = buff.getDouble();
         if (info.getXml() != null) {
             if (info.getXml().isComments()) {
                 info.getXml().appendComment(String.format("%.2f", value));
@@ -1026,7 +1087,7 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        value = new Float(buff.getFloat());
+        value = buff.getFloat();
         if (info.getXml() != null) {
 
             if (info.getXml().isComments()) {
@@ -1059,12 +1120,12 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        value = new Short(buff.getUInt8());
+        value = buff.getUInt8();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 2));
         }
-        return value;
+        return new GXEnum((short) value);
     }
 
     /**
@@ -1076,20 +1137,23 @@ public final class GXCommon {
      *            Data info.
      * @return parsed UInt64 value.
      */
-    private static Object getUInt64(final GXByteBuffer buff,
-            final GXDataInfo info) {
-        Object value;
+    private static Object getUInt64(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final GXDataInfo info) {
         // If there is not enough data available.
         if (buff.size() - buff.position() < 8) {
             info.setComplete(false);
             return null;
         }
-        value = buff.getUInt64();
+        BigInteger value = buff.getUInt64();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 16));
         }
-        return value;
+        // Return old value.
+        if (settings == null || settings.getVersion() == 3) {
+            return value;
+        }
+        return new GXUInt64(value);
     }
 
     /**
@@ -1109,7 +1173,7 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        value = new Long(buff.getInt64());
+        value = buff.getInt64();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 16));
@@ -1126,31 +1190,36 @@ public final class GXCommon {
      *            Data info.
      * @return parsed UInt16 value.
      */
-    private static Object getUInt16(final GXByteBuffer buff,
-            final GXDataInfo info) {
+    private static Object getUInt16(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final GXDataInfo info) {
         Object value;
         // If there is not enough data available.
         if (buff.size() - buff.position() < 2) {
             info.setComplete(false);
             return null;
         }
-        value = new Integer(buff.getUInt16());
+        value = buff.getUInt16();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 4));
 
         }
-        return value;
+        // Return old value.
+        if (settings == null || settings.getVersion() == 3) {
+            return value;
+        }
+        return new GXUInt16((int) value);
     }
 
+    @SuppressWarnings("squid:S1172")
     private static void getCompactArrayItem(final GXDLMSSettings settings,
-            GXByteBuffer buff, Object[] dt, List<Object> list, int len) {
+            GXByteBuffer buff, List<?> dt, List<Object> list, int len) {
         List<Object> tmp2 = new ArrayList<Object>();
         for (Object it : dt) {
             if (it instanceof DataType) {
                 getCompactArrayItem(settings, buff, (DataType) it, tmp2, 1);
             } else {
-                getCompactArrayItem(settings, buff, (Object[]) it, tmp2, 1);
+                getCompactArrayItem(settings, buff, (List<?>) it, tmp2, 1);
             }
         }
         list.add(tmp2.toArray());
@@ -1175,7 +1244,7 @@ public final class GXCommon {
             while (buff.position() - start < len) {
                 tmp.clear();
                 tmp.setType(dt);
-                list.add(getOctetString(buff, tmp, false));
+                list.add(getOctetString(settings, buff, tmp, false));
                 if (!tmp.isComplete()) {
                     break;
                 }
@@ -1222,23 +1291,23 @@ public final class GXCommon {
         }
     }
 
-    private static void appendDataTypeAsXml(Object[] cols, GXDataInfo info) {
+    private static void appendDataTypeAsXml(List<?> cols, GXDataInfo info) {
         for (Object it : cols) {
             if (it instanceof DataType) {
                 info.getXml().appendEmptyTag(
                         info.getXml().getDataType((DataType) it));
-            } else if (it instanceof Object[]) {
+            } else if (it instanceof GXStructure) {
                 info.getXml().appendStartTag(
                         DATA_TYPE_OFFSET + DataType.STRUCTURE.getValue(), null,
                         null);
-                appendDataTypeAsXml((Object[]) it, info);
+                appendDataTypeAsXml((List<?>) it, info);
                 info.getXml().appendEndTag(
                         DATA_TYPE_OFFSET + DataType.STRUCTURE.getValue());
-            } else if (it instanceof List<?>) {
+            } else if (it instanceof GXArray) {
                 info.getXml().appendStartTag(
                         DATA_TYPE_OFFSET + DataType.ARRAY.getValue(), null,
                         null);
-                appendDataTypeAsXml(((List<?>) it).toArray(), info);
+                appendDataTypeAsXml(((List<?>) it), info);
                 info.getXml().appendEndTag(
                         DATA_TYPE_OFFSET + DataType.ARRAY.getValue());
             }
@@ -1271,7 +1340,7 @@ public final class GXCommon {
 
         if (dt == DataType.STRUCTURE) {
             // Get data types.
-            List<Object> cols = new ArrayList<Object>();
+            GXStructure cols = new GXStructure();
             getDataTypes(buff, cols, len);
             len = GXCommon.getObjectCount(buff);
             if (info.getXml() != null) {
@@ -1279,8 +1348,7 @@ public final class GXCommon {
                         info.getXml().getDataType(DataType.COMPACT_ARRAY), null,
                         null);
                 info.getXml().appendStartTag(CONTENTS_DESCRIPTION);
-                appendDataTypeAsXml(cols.toArray(new Object[cols.size()]),
-                        info);
+                appendDataTypeAsXml(cols, info);
                 info.getXml().appendEndTag(CONTENTS_DESCRIPTION);
                 if (info.getXml()
                         .getOutputType() == TranslatorOutputType.STANDARD_XML) {
@@ -1297,14 +1365,14 @@ public final class GXCommon {
             while (buff.position() - start < len) {
                 List<Object> row = new ArrayList<Object>();
                 for (int pos = 0; pos != cols.size(); ++pos) {
-                    if (cols.get(pos) instanceof Object[]) {
+                    if (cols.get(pos) instanceof GXStructure) {
                         getCompactArrayItem(settings, buff,
-                                (Object[]) cols.get(pos), row, 1);
-                    } else if (cols.get(pos) instanceof List<?>) {
+                                (List<?>) cols.get(pos), row, 1);
+                    } else if (cols.get(pos) instanceof GXArray) {
                         List<Object> tmp2 = new ArrayList<Object>();
                         getCompactArrayItem(settings, buff,
-                                ((List<?>) cols.get(pos)).toArray(), tmp2, 1);
-                        row.add(Arrays.asList((Object[]) tmp2.get(0)));
+                                ((List<?>) cols.get(pos)), tmp2, 1);
+                        row.add((List<?>) tmp2.get(0));
                     } else {
                         getCompactArrayItem(settings, buff,
                                 (DataType) cols.get(pos), row, 1);
@@ -1315,7 +1383,7 @@ public final class GXCommon {
                 }
                 // If all columns are read.
                 if (row.size() >= cols.size()) {
-                    list.add(row.toArray(new Object[cols.size()]));
+                    list.add(row);
                 } else {
                     break;
                 }
@@ -1324,11 +1392,11 @@ public final class GXCommon {
                     .getOutputType() == TranslatorOutputType.SIMPLE_XML) {
                 StringBuilder sb = new StringBuilder();
                 for (Object row : list) {
-                    for (Object it : (Object[]) row) {
+                    for (Object it : (List<?>) row) {
                         if (it instanceof byte[]) {
                             sb.append(GXCommon.toHex((byte[]) it));
-                        } else if (it instanceof Object[]) {
-                            for (Object it2 : (Object[]) it) {
+                        } else if (it instanceof List<?>) {
+                            for (Object it2 : (List<?>) it) {
                                 if (it2 instanceof byte[]) {
                                     sb.append(GXCommon.toHex((byte[]) it2));
                                 } else {
@@ -1336,7 +1404,7 @@ public final class GXCommon {
                                 }
                                 sb.append(";");
                             }
-                            if (((Object[]) it).length != 0) {
+                            if (!((List<?>) it).isEmpty()) {
                                 sb.setLength(sb.length() - 1);
                             }
                         } else {
@@ -1357,7 +1425,7 @@ public final class GXCommon {
                 info.getXml().appendEndTag(
                         info.getXml().getDataType(DataType.COMPACT_ARRAY));
             }
-            return list.toArray(new Object[list.size()]);
+            return list;
         } else {
             if (info.getXml() != null) {
                 info.getXml().appendStartTag(
@@ -1386,7 +1454,7 @@ public final class GXCommon {
                     }
                     info.getXml().append(";");
                 }
-                if (list.size() != 0) {
+                if (!list.isEmpty()) {
                     info.getXml()
                             .setXmlLength(info.getXml().getXmlLength() - 1);
                 }
@@ -1395,7 +1463,7 @@ public final class GXCommon {
                         info.getXml().getDataType(DataType.COMPACT_ARRAY));
             }
         }
-        return list.toArray(new Object[list.size()]);
+        return list;
     }
 
     /**
@@ -1407,21 +1475,25 @@ public final class GXCommon {
      *            Data info.
      * @return parsed UInt8 value.
      */
-    private static Object getUInt8(final GXByteBuffer buff,
-            final GXDataInfo info) {
-        Object value;
+    private static Object getUInt8(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final GXDataInfo info) {
+        int value;
         // If there is not enough data available.
         if (buff.size() - buff.position() < 1) {
             info.setComplete(false);
             return null;
         }
-        value = new Integer(buff.getUInt8() & 0xFF);
+        value = buff.getUInt8() & 0xFF;
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 2));
 
         }
-        return value;
+        // Return old value.
+        if (settings == null || settings.getVersion() == 3) {
+            return value;
+        }
+        return new GXUInt8((short) value);
     }
 
     /**
@@ -1441,7 +1513,7 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        value = new Short(buff.getInt16());
+        value = buff.getInt16();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 4));
@@ -1466,7 +1538,7 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        value = new Byte(buff.getInt8());
+        value = buff.getInt8();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 2));
@@ -1483,8 +1555,8 @@ public final class GXCommon {
      *            Data info.
      * @return parsed BCD value.
      */
-    private static Object getBcd(final GXByteBuffer buff, final GXDataInfo info,
-            final boolean knownType) {
+    private static Object getBcd(final GXByteBuffer buff,
+            final GXDataInfo info) {
         // If there is not enough data available.
         if (buff.size() - buff.position() < 1) {
             info.setComplete(false);
@@ -1523,6 +1595,7 @@ public final class GXCommon {
         }
         if (len > 0) {
             value = buff.getString(buff.position(), len, "UTF-8");
+            buff.position(buff.position() + len);
         } else {
             value = "";
         }
@@ -1550,8 +1623,9 @@ public final class GXCommon {
      *            Data info.
      * @return parsed octet string value.
      */
-    private static Object getOctetString(final GXByteBuffer buff,
-            final GXDataInfo info, final boolean knownType) {
+    private static Object getOctetString(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final GXDataInfo info,
+            final boolean knownType) {
         Object value;
         int len;
         if (knownType) {
@@ -1574,7 +1648,7 @@ public final class GXCommon {
                     info.getXml().appendComment(toLogicalName(tmp));
                 } else {
                     boolean isString = true;
-                    // Try to move octect string to DateTie, Date or time.
+                    // Try to move octet string to DateTime, Date or time.
                     if (tmp.length == 12 || tmp.length == 5
                             || tmp.length == 4) {
                         try {
@@ -1586,8 +1660,14 @@ public final class GXCommon {
                             } else {
                                 type = DataType.TIME;
                             }
+                            boolean useUtc;
+                            if (settings != null) {
+                                useUtc = settings.getUseUtc2NormalTime();
+                            } else {
+                                useUtc = false;
+                            }
                             GXDateTime dt = (GXDateTime) GXDLMSClient
-                                    .changeType(tmp, type);
+                                    .changeType(tmp, type, useUtc);
                             int year = dt.getMeterCalendar().get(Calendar.YEAR);
                             if (year > 1970 && year < 2100) {
                                 info.getXml().appendComment(dt.toString());
@@ -1652,8 +1732,7 @@ public final class GXCommon {
                                 buff.position() - len, len));
             } else {
                 info.getXml().appendLine(
-                        info.getXml().getDataType(info.getType()), null,
-                        value.toString());
+                        info.getXml().getDataType(info.getType()), null, value);
             }
         }
         return value;
@@ -1668,8 +1747,8 @@ public final class GXCommon {
      *            Data info.
      * @return parsed UInt32 value.
      */
-    private static Object getUInt32(final GXByteBuffer buff,
-            final GXDataInfo info) {
+    private static Object getUInt32(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final GXDataInfo info) {
         // If there is not enough data available.
         if (buff.size() - buff.position() < 4) {
             info.setComplete(false);
@@ -1680,7 +1759,11 @@ public final class GXCommon {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 8));
         }
-        return value;
+        // Return old value.
+        if (settings == null || settings.getVersion() == 3) {
+            return value;
+        }
+        return new GXUInt32(value);
     }
 
     /**
@@ -1699,7 +1782,7 @@ public final class GXCommon {
             info.setComplete(false);
             return null;
         }
-        Integer value = new Integer(buff.getInt32());
+        Integer value = buff.getInt32();
         if (info.getXml() != null) {
             info.getXml().appendLine(info.getXml().getDataType(info.getType()),
                     null, info.getXml().integerToHex(value, 8));
@@ -1808,7 +1891,7 @@ public final class GXCommon {
             final Object value) {
         // If value is enum get integer value.
         if (value instanceof Enum) {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "Value can't be enum. Give integer value.");
         }
         if ((dataType == DataType.ARRAY || dataType == DataType.STRUCTURE)
@@ -1865,11 +1948,11 @@ public final class GXCommon {
             if (value instanceof GXDate) {
                 // Add size
                 buff.setUInt8(5);
-                setDate(buff, value);
+                setDate(settings, buff, value);
             } else if (value instanceof GXTime) {
                 // Add size
                 buff.setUInt8(4);
-                setTime(buff, value);
+                setTime(settings, buff, value);
             } else if (value instanceof GXDateTime
                     || value instanceof java.util.Date
                     || value instanceof java.util.Calendar) {
@@ -1890,30 +1973,33 @@ public final class GXCommon {
         case COMPACT_ARRAY:
             // Compact array is not work with java because we don't know data
             // types of each element. Java is not support unsigned values.
-            throw new RuntimeException("Invalid data type.");
+            throw new IllegalArgumentException("Invalid data type.");
         case DATETIME:
             setDateTime(settings, buff, value);
             break;
         case DATE:
-            setDate(buff, value);
+            setDate(settings, buff, value);
             break;
         case TIME:
-            setTime(buff, value);
+            setTime(settings, buff, value);
             break;
         default:
-            throw new RuntimeException("Invalid data type.");
+            throw new IllegalArgumentException("Invalid data type.");
         }
     }
 
     /**
      * Convert time to DLMS bytes.
      * 
+     * @param settings
+     *            DLMS settings.
      * @param buff
      *            Byte buffer where data is write.
      * @param value
      *            Added value.
      */
-    private static void setTime(final GXByteBuffer buff, final Object value) {
+    private static void setTime(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final Object value) {
         java.util.Set<DateTimeSkips> skip = new HashSet<DateTimeSkips>();
         java.util.Calendar tm = java.util.Calendar.getInstance();
         if (value instanceof GXDateTime) {
@@ -1929,11 +2015,15 @@ public final class GXCommon {
             try {
                 tm.setTime(f.parse(value.toString()));
             } catch (ParseException e) {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                         "Invalid date time value.\r\n" + e.getMessage());
             }
         } else {
-            throw new RuntimeException("Invalid date format.");
+            throw new IllegalArgumentException("Invalid date format.");
+        }
+        // Add additional date time skips.
+        if (settings != null && !settings.getDateTimeSkips().isEmpty()) {
+            skip.addAll(settings.getDateTimeSkips());
         }
         // Add time.
         if (skip.contains(DateTimeSkips.HOUR)) {
@@ -1962,12 +2052,15 @@ public final class GXCommon {
     /**
      * Convert date to DLMS bytes.
      * 
+     * @param settings
+     *            DLMS settings.
      * @param buff
      *            Byte buffer where data is write.
      * @param value
      *            Added value.
      */
-    private static void setDate(final GXByteBuffer buff, final Object value) {
+    private static void setDate(final GXDLMSSettings settings,
+            final GXByteBuffer buff, final Object value) {
         GXDateTime dt;
         if (value instanceof GXDateTime) {
             dt = (GXDateTime) value;
@@ -1980,13 +2073,17 @@ public final class GXCommon {
             try {
                 dt = new GXDateTime(f.parse(String.valueOf(value)));
             } catch (ParseException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         } else {
-            throw new RuntimeException("Invalid date format.");
+            throw new IllegalArgumentException("Invalid date format.");
         }
         java.util.Calendar tm = java.util.Calendar.getInstance();
         tm.setTime(dt.getMeterCalendar().getTime());
+        // Add additional date time skips.
+        if (settings != null && !settings.getDateTimeSkips().isEmpty()) {
+            dt.getSkip().addAll(settings.getDateTimeSkips());
+        }
         // Add year.
         if (dt.getSkip().contains(DateTimeSkips.YEAR)) {
             buff.setUInt16(0xFFFF);
@@ -1994,9 +2091,9 @@ public final class GXCommon {
             buff.setUInt16(tm.get(java.util.Calendar.YEAR));
         }
         // Add month
-        if (dt.getDaylightSavingsBegin()) {
+        if (dt.getExtra().contains(DateTimeExtraInfo.DST_BEGIN)) {
             buff.setUInt8(0xFE);
-        } else if (dt.getDaylightSavingsEnd()) {
+        } else if (dt.getExtra().contains(DateTimeExtraInfo.DST_END)) {
             buff.setUInt8(0xFD);
         } else if (dt.getSkip().contains(DateTimeSkips.MONTH)) {
             buff.setUInt8(0xFF);
@@ -2004,7 +2101,11 @@ public final class GXCommon {
             buff.setUInt8((tm.get(java.util.Calendar.MONTH) + 1));
         }
         // Add day
-        if (dt.getSkip().contains(DateTimeSkips.DAY)) {
+        if (dt.getExtra().contains(DateTimeExtraInfo.LAST_DAY)) {
+            buff.setUInt8(0xFE);
+        } else if (dt.getExtra().contains(DateTimeExtraInfo.LAST_DAY2)) {
+            buff.setUInt8(0xFD);
+        } else if (dt.getSkip().contains(DateTimeSkips.DAY)) {
             buff.setUInt8(0xFF);
         } else {
             buff.setUInt8(tm.get(java.util.Calendar.DATE));
@@ -2037,11 +2138,11 @@ public final class GXCommon {
                 dt = new GXDateTime(f.parse(value.toString()));
                 dt.getSkip().add(DateTimeSkips.MILLISECOND);
             } catch (ParseException e) {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                         "Invalid date time value." + e.getMessage());
             }
         } else {
-            throw new RuntimeException("Invalid date format.");
+            throw new IllegalArgumentException("Invalid date format.");
         }
         return dt;
     }
@@ -2058,6 +2159,10 @@ public final class GXCommon {
             final GXByteBuffer buff, final Object value) {
         GXDateTime dt = getDateTime(value);
         java.util.Calendar tm = dt.getMeterCalendar();
+        // Add additional date time skips.
+        if (settings != null && !settings.getDateTimeSkips().isEmpty()) {
+            dt.getSkip().addAll(settings.getDateTimeSkips());
+        }
         // Add year.
         if (dt.getSkip().contains(DateTimeSkips.YEAR)) {
             buff.setUInt16(0xFFFF);
@@ -2065,17 +2170,21 @@ public final class GXCommon {
             buff.setUInt16(tm.get(java.util.Calendar.YEAR));
         }
         // Add month
-        if (dt.getDaylightSavingsEnd()) {
-            buff.setUInt8(0xFD);
-        } else if (dt.getDaylightSavingsBegin()) {
+        if (dt.getExtra().contains(DateTimeExtraInfo.DST_BEGIN)) {
             buff.setUInt8(0xFE);
+        } else if (dt.getExtra().contains(DateTimeExtraInfo.DST_END)) {
+            buff.setUInt8(0xFD);
         } else if (dt.getSkip().contains(DateTimeSkips.MONTH)) {
             buff.setUInt8(0xFF);
         } else {
             buff.setUInt8((tm.get(java.util.Calendar.MONTH) + 1));
         }
         // Add day
-        if (dt.getSkip().contains(DateTimeSkips.DAY)) {
+        if (dt.getExtra().contains(DateTimeExtraInfo.LAST_DAY)) {
+            buff.setUInt8(0xFE);
+        } else if (dt.getExtra().contains(DateTimeExtraInfo.LAST_DAY2)) {
+            buff.setUInt8(0xFD);
+        } else if (dt.getSkip().contains(DateTimeSkips.DAY)) {
             buff.setUInt8(0xFF);
         } else {
             buff.setUInt8(tm.get(java.util.Calendar.DATE));
@@ -2125,12 +2234,12 @@ public final class GXCommon {
         if (dt.getSkip().contains(DateTimeSkips.DEVITATION)) {
             buff.setUInt16(0x8000);
         } else {
-            // Add devitation.
-            int deviation = dt.getDeviation();
+            int deviation = (dt.getMeterCalendar().get(Calendar.ZONE_OFFSET)
+                    + dt.getMeterCalendar().get(Calendar.DST_OFFSET)) / 60000;
             if (settings != null && settings.getUseUtc2NormalTime()) {
-                buff.setUInt16(-deviation);
-            } else {
                 buff.setUInt16(deviation);
+            } else {
+                buff.setUInt16(-deviation);
             }
         }
         // Add clock_status
@@ -2174,11 +2283,17 @@ public final class GXCommon {
     private static void setArray(final GXDLMSSettings settings,
             final GXByteBuffer buff, final Object value) {
         if (value != null) {
-            Object[] arr = ((Object[]) value);
-            int len = arr.length;
+            List<?> arr;
+            if (value instanceof List<?>) {
+                arr = ((List<?>) value);
+            } else {
+                List<Object> tmp = new ArrayList<Object>();
+                tmp.addAll(Arrays.asList((Object[]) value));
+                arr = tmp;
+            }
+            int len = arr.size();
             setObjectCount(len, buff);
-            for (int pos = 0; pos != len; ++pos) {
-                Object it = arr[pos];
+            for (Object it : arr) {
                 setData(settings, buff, GXDLMSConverter.getDLMSDataType(it),
                         it);
             }
@@ -2286,7 +2401,7 @@ public final class GXCommon {
         } else if (value == null) {
             setObjectCount(0, buff);
         } else {
-            throw new RuntimeException("Invalid data type.");
+            throw new IllegalArgumentException("Invalid data type.");
         }
     }
 
@@ -2301,13 +2416,9 @@ public final class GXCommon {
     private static void setUtfString(final GXByteBuffer buff,
             final Object value) {
         if (value != null) {
-            try {
-                byte[] tmp = String.valueOf(value).getBytes("UTF-8");
-                setObjectCount(tmp.length, buff);
-                buff.set(tmp);
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            byte[] tmp = String.valueOf(value).getBytes(StandardCharsets.UTF_8);
+            setObjectCount(tmp.length, buff);
+            buff.set(tmp);
         } else {
             buff.setUInt8(0);
         }
@@ -2360,7 +2471,7 @@ public final class GXCommon {
                 if (it == '1') {
                     val |= (byte) (1 << index);
                 } else if (it != '0') {
-                    throw new RuntimeException("Not a bit string.");
+                    throw new IllegalArgumentException("Not a bit string.");
                 }
                 --index;
                 if (index == -1) {
@@ -2382,7 +2493,8 @@ public final class GXCommon {
         } else if (value == null) {
             buff.setUInt8(0);
         } else {
-            throw new RuntimeException("BitString must give as string.");
+            throw new IllegalArgumentException(
+                    "BitString must give as string.");
         }
     }
 
@@ -2462,10 +2574,11 @@ public final class GXCommon {
      *            Certificate type.
      * @return Shared secret.
      */
+    @SuppressWarnings("squid:S00112")
     public static byte[] getSharedSecret(final GXICipher c,
             final CertificateType type) {
         try {
-            PrivateKey p = null;
+            PrivateKey p;
             if (type == CertificateType.KEY_AGREEMENT) {
                 p = c.getKeyAgreementKeyPair().getPrivate();
             } else if (type == CertificateType.DIGITAL_SIGNATURE) {
@@ -2486,9 +2599,7 @@ public final class GXCommon {
             KeyAgreement ka = KeyAgreement.getInstance("ECDH");
             ka.init(p);
             ka.doPhase(pk, true);
-            byte[] sharedSecret = ka.generateSecret();
-            System.out.println("Shared secret:" + GXCommon.toHex(sharedSecret));
-            return sharedSecret;
+            return ka.generateSecret();
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -2504,7 +2615,7 @@ public final class GXCommon {
     public static String toLogicalName(final Object value) {
         if (value instanceof byte[]) {
             byte[] buff = (byte[]) value;
-            if (buff == null || buff.length == 0) {
+            if (buff.length == 0) {
                 buff = new byte[6];
             }
             if (buff.length == 6) {
@@ -2557,7 +2668,24 @@ public final class GXCommon {
         int[] ret = new int[list.size()];
         int pos = 0;
         for (Integer it : list) {
-            ret[pos] = it.intValue();
+            ret[pos] = it;
+            ++pos;
+        }
+        return ret;
+    }
+
+    /**
+     * Convert short list to array.
+     * 
+     * @param list
+     *            Integer list to convert.
+     * @return Integer array.
+     */
+    public static short[] toShortArray(final List<Short> list) {
+        short[] ret = new short[list.size()];
+        int pos = 0;
+        for (Short it : list) {
+            ret[pos] = it.shortValue();
             ++pos;
         }
         return ret;
@@ -2597,14 +2725,9 @@ public final class GXCommon {
     }
 
     public static String generalizedTime(final GXDateTime date) {
-        Calendar calendar = date.getMeterCalendar();
-        calendar.add(Calendar.MINUTE, date.getDeviation());
-        // If summer time
-        if (date.getMeterCalendar().getTimeZone()
-                .inDaylightTime(date.getMeterCalendar().getTime())) {
-            calendar.add(Calendar.MINUTE, -60);
-        }
-        StringBuffer sb = new StringBuffer();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.setTimeInMillis(date.getMeterCalendar().getTimeInMillis());
+        StringBuilder sb = new StringBuilder();
         sb.append(GXCommon.integerString(calendar.get(Calendar.YEAR), 4));
         sb.append(GXCommon.integerString(1 + calendar.get(Calendar.MONTH), 2));
         sb.append(
@@ -2626,6 +2749,16 @@ public final class GXCommon {
      * @return Is ASCII string
      */
     public static boolean isAscii(final String value) {
-        return Charset.forName("US-ASCII").newEncoder().canEncode(value);
+        return StandardCharsets.US_ASCII.newEncoder().canEncode(value);
+    }
+
+    // Reserved for internal use.
+    public static short swapBits(short value) {
+        short ret = 0;
+        for (int pos = 0; pos != 8; ++pos) {
+            ret = (short) ((ret << 1) | (value & 0x01));
+            value = (short) (value >> 1);
+        }
+        return ret;
     }
 }

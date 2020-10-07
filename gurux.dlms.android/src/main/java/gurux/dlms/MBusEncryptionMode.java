@@ -73,7 +73,7 @@ public enum MBusEncryptionMode {
      */
     MBusEncryptionMode(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     /**
@@ -93,6 +93,11 @@ public enum MBusEncryptionMode {
      * @return Enumeration value.
      */
     public static MBusEncryptionMode forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        MBusEncryptionMode ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid MBus encryption mode enum value.");
+        }
+        return ret;
     }
 }

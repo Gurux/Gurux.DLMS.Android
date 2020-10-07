@@ -77,7 +77,7 @@ public enum SingleActionScheduleType {
 
     SingleActionScheduleType(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -85,6 +85,11 @@ public enum SingleActionScheduleType {
     }
 
     public static SingleActionScheduleType forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        SingleActionScheduleType ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid single action schedule type enum value.");
+        }
+        return ret;
     }
 }

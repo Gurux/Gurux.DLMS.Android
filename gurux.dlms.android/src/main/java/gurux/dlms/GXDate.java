@@ -35,6 +35,7 @@
 package gurux.dlms;
 
 import java.util.Date;
+import java.util.Locale;
 
 import gurux.dlms.enums.DateTimeSkips;
 
@@ -77,6 +78,7 @@ public class GXDate extends GXDateTime {
         getSkip().add(DateTimeSkips.MINUTE);
         getSkip().add(DateTimeSkips.SECOND);
         getSkip().add(DateTimeSkips.MILLISECOND);
+        getExtra().addAll(forvalue.getExtra());
     }
 
     /**
@@ -100,7 +102,19 @@ public class GXDate extends GXDateTime {
      *            Date time value as a string.
      */
     public GXDate(final String value) {
-        super(value);
+        this(value, null);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param value
+     *            Date time value as a string.
+     * @param locale
+     *            Used locale.
+     */
+    public GXDate(final String value, final Locale locale) {
+        super(value, locale);
         getSkip().add(DateTimeSkips.HOUR);
         getSkip().add(DateTimeSkips.MINUTE);
         getSkip().add(DateTimeSkips.SECOND);

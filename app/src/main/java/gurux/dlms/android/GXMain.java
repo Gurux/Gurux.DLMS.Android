@@ -588,7 +588,7 @@ public class GXMain extends Fragment implements IGXMediaListener, IGXTaskCallbac
      * @throws Exception
      */
     void readDataBlock(byte[] data, GXReplyData reply) throws Exception {
-        RequestTypes rt;
+        java.util.Set<RequestTypes> rt;
         if (data.length != 0) {
             readDLMSPacket(data, reply);
             while (reply.isMoreData()) {

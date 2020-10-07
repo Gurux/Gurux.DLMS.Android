@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -110,38 +111,45 @@ public class GXDLMSConverter {
 
     /**
      * Get OBIS code description.
-     *
-     * @param logicalName Logical name (OBIS code).
-     * @param description Description filter.
+     * 
+     * @param logicalName
+     *            Logical name (OBIS code).
+     * @param description
+     *            Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
     public final String[] getDescription(final String logicalName,
-                                         final String description) {
+            final String description) {
         return getDescription(logicalName, ObjectType.NONE, description);
     }
 
     /**
      * Get OBIS code description.
-     *
-     * @param logicalName Logical name (OBIS code).
-     * @param type        Object type.
+     * 
+     * @param logicalName
+     *            Logical name (OBIS code).
+     * @param type
+     *            Object type.
      * @return Array of descriptions that match given OBIS code.
      */
     public final String[] getDescription(final String logicalName,
-                                         final ObjectType type) {
+            final ObjectType type) {
         return getDescription(logicalName, type, null);
     }
 
     /**
      * Get OBIS code description.
-     *
-     * @param logicalName Logical name (OBIS code).
-     * @param type        Object type.
-     * @param description Description filter.
+     * 
+     * @param logicalName
+     *            Logical name (OBIS code).
+     * @param type
+     *            Object type.
+     * @param description
+     *            Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
     public final String[] getDescription(final String logicalName,
-                                         final ObjectType type, final String description) {
+            final ObjectType type, final String description) {
         if (codes.size() == 0) {
             throw new RuntimeException("Read OBIS codes first.");
         }
@@ -150,7 +158,7 @@ public class GXDLMSConverter {
         for (GXStandardObisCode it : codes.find(logicalName, type)) {
             if (description != null && !description.isEmpty()
                     && !it.getDescription().toLowerCase()
-                    .contains(description.toLowerCase())) {
+                            .contains(description.toLowerCase())) {
                 continue;
             }
             if (all) {
@@ -167,84 +175,108 @@ public class GXDLMSConverter {
 
     /**
      * Update OBIS code information.
-     *
-     * @param it COSEM object.
+     * 
+     * @param codes
+     *            COSEM objects.
+     * @param it
+     *            COSEM object.
+     * @param it
+     *            used DLMS standard.
      */
     private static void updateOBISCodeInfo(
-            final GXStandardObisCodeCollection codes, final GXDLMSObject it) {
-        if (!(it.getDescription() == null || it.getDescription().equals(""))) {
-            return;
-        }
+            final GXStandardObisCodeCollection codes, final GXDLMSObject it,
+            final Standard standard) {
         String ln = it.getLogicalName();
-        GXStandardObisCode code = codes.find(ln, it.getObjectType())[0];
+        GXStandardObisCode[] list = codes.find(ln, it.getObjectType());
+        GXStandardObisCode code = list[0];
         if (code != null) {
-            it.setDescription(code.getDescription());
-            // If string is used
-            if (code.getDataType().contains("10")) {
-                code.setDataType("10");
-            } else if (code.getDataType().contains("25")
-                    || code.getDataType().contains("26")) {
-                // If date time is used.
-                code.setDataType("25");
-            } else if (code.getDataType().contains("9")) {
-                // Time stamps of the billing periods objects (first
-                // scheme
-                // if there are two)
-                if ((GXStandardObisCodeCollection
-                        .equalsMask("0.0-64.96.7.10-14.255", ln)
-                        // Time stamps of the billing periods objects
-                        // (second scheme)
-                        || GXStandardObisCodeCollection
-                        .equalsMask("0.0-64.0.1.5.0-99,255", ln)
-                        // Time of power failure
-                        || GXStandardObisCodeCollection
-                        .equalsMask("0.0-64.0.1.2.0-99,255", ln)
-                        // Time stamps of the billing periods
-                        // objects (first
-                        // scheme if there are two)
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.1.2.0-99,255", ln)
-                        // Time stamps of the billing periods
-                        // objects
-                        // (second scheme)
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.1.5.0-99,255", ln)
-                        // Time expired since last end of
-                        // billing
-                        // period
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.0.255", ln)
-                        // Time of last reset
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.6.255", ln)
-                        // Date of last reset
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.7.255", ln)
-                        // Time expired since last end of
-                        // billing
-                        // period
-                        // (Second billing period scheme)
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.13.255", ln)
-                        // Time of last reset (Second billing
-                        // period
-                        // scheme)
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.14.255", ln)
-                        // Date of last reset (Second billing
-                        // period
-                        // scheme)
-                        || GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.15.255", ln))) {
-                    code.setDataType("25");
-                } else if (GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.1.255", ln)) {
-                    // Local time
-                    code.setDataType("27");
-                } else if (GXStandardObisCodeCollection
-                        .equalsMask("1.0-64.0.9.2.255", ln)) {
-                    // Local date
-                    code.setDataType("26");
+            if (it.getDescription() == null || it.getDescription().equals("")) {
+                it.setDescription(code.getDescription());
+            }
+            // Update data type from DLMS standard.
+            if (standard != Standard.DLMS) {
+                GXStandardObisCode d = list[list.length - 1];
+                code.setDataType(d.getDataType());
+            }
+            if (code.getUIDataType() == null) {
+                // If string is used
+                if (code.getDataType().contains("10")) {
+                    code.setUIDataType("10");
+                } else if (code.getDataType().contains("25")
+                        || code.getDataType().contains("26")) {
+                    // If date time is used.
+                    code.setUIDataType("25");
+                } else if (code.getDataType().contains("9")) {
+                    // Time stamps of the billing periods objects (first
+                    // scheme
+                    // if there are two)
+                    if ((GXStandardObisCodeCollection
+                            .equalsMask("0.0-64.96.7.10-14.255", ln)
+                            // Time stamps of the billing periods objects
+                            // (second scheme)
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("0.0-64.0.1.5.0-99,255", ln)
+                            // Time of power failure
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("0.0-64.0.1.2.0-99,255", ln)
+                            // Time stamps of the billing periods
+                            // objects (first
+                            // scheme if there are two)
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.1.2.0-99,255", ln)
+                            // Time stamps of the billing periods
+                            // objects
+                            // (second scheme)
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.1.5.0-99,255", ln)
+                            // Time expired since last end of
+                            // billing
+                            // period
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.9.0.255", ln)
+                            // Time of last reset
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.9.6.255", ln)
+                            // Date of last reset
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.9.7.255", ln)
+                            // Time expired since last end of
+                            // billing
+                            // period
+                            // (Second billing period scheme)
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.9.13.255", ln)
+                            // Time of last reset (Second billing
+                            // period
+                            // scheme)
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.9.14.255", ln)
+                            // Date of last reset (Second billing
+                            // period
+                            // scheme)
+                            || GXStandardObisCodeCollection
+                                    .equalsMask("1.0-64.0.9.15.255", ln))) {
+                        code.setUIDataType("25");
+                    } else if (GXStandardObisCodeCollection
+                            .equalsMask("1.0-64.0.9.1.255", ln)) {
+                        // Local time
+                        code.setUIDataType("27");
+                    } else if (GXStandardObisCodeCollection
+                            .equalsMask("1.0-64.0.9.2.255", ln)) {
+                        // Local date
+                        code.setUIDataType("26");
+                    }
+                    // Active firmware identifier
+                    else if (GXStandardObisCodeCollection
+                            .equalsMask("1.0.0.2.0.255", ln)) {
+                        code.setUIDataType("10");
+                    }
+                }
+                // Unix time
+                else if (it.getObjectType() == ObjectType.DATA
+                        && GXStandardObisCodeCollection
+                                .equalsMask("0.0.1.1.0.255", ln)) {
+                    code.setUIDataType("25");
                 }
             }
             if (!code.getDataType().equals("*")
@@ -252,6 +284,18 @@ public class GXDLMSConverter {
                     && !code.getDataType().contains(",")) {
                 DataType type =
                         DataType.forValue(Integer.parseInt(code.getDataType()));
+                ObjectType objectType = it.getObjectType();
+                if (objectType == ObjectType.DATA
+                        || objectType == ObjectType.REGISTER
+                        || objectType == ObjectType.REGISTER_ACTIVATION
+                        || objectType == ObjectType.EXTENDED_REGISTER) {
+                    it.setDataType(2, type);
+                }
+            }
+            if (code.getUIDataType() != null
+                    && !code.getUIDataType().isEmpty()) {
+                DataType type = DataType
+                        .forValue(Integer.parseInt(code.getUIDataType()));
                 ObjectType objectType = it.getObjectType();
                 if (objectType == ObjectType.DATA
                         || objectType == ObjectType.REGISTER
@@ -276,7 +320,7 @@ public class GXDLMSConverter {
             if (codes.size() == 0) {
                 readStandardObisInfo(context, codes);
             }
-            updateOBISCodeInfo(codes, object);
+            updateOBISCodeInfo(codes, object, standard);
         }
     }
 
@@ -295,7 +339,7 @@ public class GXDLMSConverter {
                 readStandardObisInfo(context, codes);
             }
             for (GXDLMSObject it : objects) {
-                updateOBISCodeInfo(codes, it);
+                updateOBISCodeInfo(codes, it, standard);
             }
         }
     }
@@ -352,7 +396,7 @@ public class GXDLMSConverter {
             return byte[].class;
         }
         if (value == DataType.ENUM) {
-            return Enum.class;
+            return GXEnum.class;
         }
         if (value == DataType.INT8) {
             return Byte.class;
@@ -365,6 +409,18 @@ public class GXDLMSConverter {
         }
         if (value == DataType.INT64) {
             return Long.class;
+        }
+        if (value == DataType.UINT8) {
+            return GXUInt8.class;
+        }
+        if (value == DataType.UINT16) {
+            return GXUInt16.class;
+        }
+        if (value == DataType.UINT32) {
+            return GXUInt32.class;
+        }
+        if (value == DataType.UINT64) {
+            return GXUInt64.class;
         }
         if (value == DataType.TIME) {
             return GXTime.class;
@@ -389,6 +445,12 @@ public class GXDLMSConverter {
         }
         if (value == DataType.FLOAT64) {
             return Double.class;
+        }
+        if (value == DataType.ENUM) {
+            return GXEnum.class;
+        }
+        if (value == DataType.BITSTRING) {
+            return GXBitString.class;
         }
         throw new IllegalArgumentException("Invalid value.");
     }
@@ -415,13 +477,15 @@ public class GXDLMSConverter {
         if (value instanceof Long) {
             return DataType.INT64;
         }
+        if (value instanceof GXDateTimeOS) {
+            return DataType.OCTET_STRING;
+        }
         if (value instanceof GXTime) {
             return DataType.TIME;
         }
         if (value instanceof GXDate) {
             return DataType.DATE;
         }
-
         if (value instanceof java.util.Date || value instanceof GXDateTime) {
             return DataType.DATETIME;
         }
@@ -439,6 +503,36 @@ public class GXDLMSConverter {
         }
         if (value instanceof Double) {
             return DataType.FLOAT64;
+        }
+        if (value instanceof BigInteger) {
+            return DataType.UINT64;
+        }
+        if (value instanceof GXArray) {
+            return DataType.ARRAY;
+        }
+        if (value instanceof GXStructure) {
+            return DataType.STRUCTURE;
+        }
+        if (value instanceof GXBitString) {
+            return DataType.BITSTRING;
+        }
+        if (value instanceof GXEnum) {
+            return DataType.ENUM;
+        }
+        if (value instanceof GXByteBuffer) {
+            return DataType.OCTET_STRING;
+        }
+        if (value instanceof GXUInt8) {
+            return DataType.UINT8;
+        }
+        if (value instanceof GXUInt16) {
+            return DataType.UINT16;
+        }
+        if (value instanceof GXUInt32) {
+            return DataType.UINT32;
+        }
+        if (value instanceof GXUInt64) {
+            return DataType.UINT64;
         }
         throw new IllegalArgumentException("Invalid value.");
     }
@@ -465,16 +559,27 @@ public class GXDLMSConverter {
         case DATETIME:
             return new GXDateTime((String) value);
         case ENUM:
-            throw new IllegalArgumentException(
-                    "Can't change enumeration types.");
+            if (value instanceof String) {
+                return new GXEnum(Short.parseShort((String) value));
+            }
+            return new GXEnum((byte) value);
         case FLOAT32:
             if (value instanceof String) {
-                return Float.parseFloat((String) value);
+                try {
+                    return Float.parseFloat((String) value);
+                } catch (NumberFormatException e) {
+                    return Float.parseFloat(((String) value).replace(",", "."));
+                }
             }
             return ((Number) value).floatValue();
         case FLOAT64:
             if (value instanceof String) {
-                return Double.parseDouble((String) value);
+                try {
+                    return Double.parseDouble((String) value);
+                } catch (NumberFormatException e) {
+                    return Double
+                            .parseDouble(((String) value).replace(",", "."));
+                }
             }
             return ((Number) value).doubleValue();
         case INT16:
@@ -496,7 +601,7 @@ public class GXDLMSConverter {
             if (value instanceof String) {
                 return Byte.parseByte((String) value);
             }
-            return ((Number) value).byteValue();
+            return (char) ((Number) value).byteValue();
         case NONE:
             return null;
         case OCTET_STRING:
@@ -504,37 +609,37 @@ public class GXDLMSConverter {
                 return GXCommon.hexToBytes((String) value);
             }
             throw new IllegalArgumentException(
-                    "Can't change octect string type.");
+                    "Can't change octet string type.");
         case STRING:
-        case BITSTRING:
             return String.valueOf(value);
+        case BITSTRING:
+            return new GXBitString((String) value);
         case STRING_UTF8:
             return String.valueOf(value);
         case STRUCTURE:
             throw new IllegalArgumentException("Can't change structure types.");
         case TIME:
             return new GXTime((String) value);
-        case UINT16:
-            if (value instanceof String) {
-                return Integer.parseInt((String) value);
-            }
-            return ((Number) value).intValue();
-        case UINT32:
-            if (value instanceof String) {
-                return Long.parseLong((String) value);
-            }
-            return ((Number) value).longValue();
-        case UINT64:
-            if (value instanceof String) {
-                return Long.parseLong((String) value);
-            }
-            return ((Number) value).longValue();
         case UINT8:
             if (value instanceof String) {
-                return new Short(
-                        (short) (Short.parseShort((String) value) & 0xFF));
+                return new GXUInt8(Short.parseShort((String) value));
             }
-            return ((Number) value).byteValue();
+            return new GXUInt8(((Number) value).shortValue());
+        case UINT16:
+            if (value instanceof String) {
+                return new GXUInt16(Integer.parseInt((String) value));
+            }
+            return new GXUInt16(((Number) value).intValue());
+        case UINT32:
+            if (value instanceof String) {
+                return new GXUInt32(Long.parseLong((String) value));
+            }
+            return new GXUInt32(((Number) value).longValue());
+        case UINT64:
+            if (value instanceof String) {
+                return BigInteger.valueOf(Long.parseLong((String) value));
+            }
+            return BigInteger.valueOf(((Number) value).longValue());
         default:
             break;
         }

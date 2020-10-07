@@ -73,7 +73,7 @@ public enum OpticalProtocolMode {
 
     OpticalProtocolMode(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -81,6 +81,11 @@ public enum OpticalProtocolMode {
     }
 
     public static OpticalProtocolMode forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        OpticalProtocolMode ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid optical protocol mode enum value.");
+        }
+        return ret;
     }
 }

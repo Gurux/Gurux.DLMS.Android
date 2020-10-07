@@ -60,8 +60,7 @@ public enum PppSetupLcpOptionType {
         if (mappings == null) {
             synchronized (PppSetupLcpOptionType.class) {
                 if (mappings == null) {
-                    mappings =
-                            new HashMap<Integer, PppSetupLcpOptionType>();
+                    mappings = new HashMap<Integer, PppSetupLcpOptionType>();
                 }
             }
         }
@@ -70,7 +69,7 @@ public enum PppSetupLcpOptionType {
 
     PppSetupLcpOptionType(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -78,6 +77,11 @@ public enum PppSetupLcpOptionType {
     }
 
     public static PppSetupLcpOptionType forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        PppSetupLcpOptionType ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid PPP setup LCP option type enum value.");
+        }
+        return ret;
     }
 }

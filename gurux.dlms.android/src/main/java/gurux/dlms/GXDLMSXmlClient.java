@@ -35,9 +35,16 @@ package gurux.dlms;
 
 import java.io.File;
 import java.io.StringReader;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -90,6 +97,7 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
      *            XML client don't throw exceptions. It serializes them as a
      *            default. Set value to true, if exceptions are thrown.
      */
+    @Override
     public final void setThrowExceptions(boolean value) {
         throwExceptions = value;
     }
@@ -128,12 +136,15 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
      *            Load settings.
      * @return Loaded XML objects.
      */
+    @SuppressWarnings("squid:S00112")
     public List<GXDLMSXmlPdu> load(final File file, final GXXmlLoadSettings s) {
         DocumentBuilder docBuilder;
         Document doc;
         DocumentBuilderFactory docBuilderFactory =
                 DocumentBuilderFactory.newInstance();
         try {
+            docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,
+                    true);
             docBuilder = docBuilderFactory.newDocumentBuilder();
             doc = docBuilder.parse(file);
         } catch (Exception e) {
@@ -151,6 +162,7 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
      *            Load settings.
      * @return Loaded XML objects.
      */
+    @SuppressWarnings("squid:S00112")
     public List<GXDLMSXmlPdu> load(final String xml,
             final GXXmlLoadSettings s) {
         DocumentBuilder docBuilder;
@@ -158,6 +170,8 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
         DocumentBuilderFactory docBuilderFactory =
                 DocumentBuilderFactory.newInstance();
         try {
+            docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,
+                    true);
             docBuilder = docBuilderFactory.newDocumentBuilder();
             doc = docBuilder.parse(new InputSource(new StringReader(xml)));
         } catch (Exception e) {
@@ -175,6 +189,7 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
      *            Load settings.
      * @return Loaded XML objects.
      */
+    @SuppressWarnings({ "squid:S00112", "squid:S1066", "squid:S135" })
     private List<GXDLMSXmlPdu> load(final Document doc,
             final GXXmlLoadSettings loadSettings) {
         // Remove comments.
@@ -313,7 +328,6 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
                                 translator.getOutputType(), translator.isHex(),
                                 translator.getShowStringAsHex(),
                                 translator.tagsByName);
-                        ;
                         s.getSettings()
                                 .setClientAddress(settings.getClientAddress());
                         s.getSettings()
@@ -325,18 +339,10 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
                         } catch (Exception ex) {
                             throw new RuntimeException(ex.getMessage());
                         }
-                        if (s.getCommand() == Command.SNRM
-                                && !s.getSettings().isServer()) {
-                            settings.getLimits().setMaxInfoTX(
-                                    s.getSettings().getLimits().getMaxInfoTX());
-                            settings.getLimits().setMaxInfoRX(
-                                    s.getSettings().getLimits().getMaxInfoRX());
-                            settings.getLimits().setWindowSizeRX(s.getSettings()
-                                    .getLimits().getWindowSizeRX());
-                            settings.getLimits().setWindowSizeTX(s.getSettings()
-                                    .getLimits().getWindowSizeTX());
-                        } else if (s.getCommand() == Command.UA
-                                && s.getSettings().isServer()) {
+                        if ((s.getCommand() == Command.SNRM
+                                && !s.getSettings().isServer())
+                                || (s.getCommand() == Command.UA
+                                        && s.getSettings().isServer())) {
                             settings.getLimits().setMaxInfoTX(
                                     s.getSettings().getLimits().getMaxInfoTX());
                             settings.getLimits().setMaxInfoRX(
@@ -377,8 +383,23 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
      * @param pdu
      *            Parsed PDU.
      * @return Generated messages (frames).
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final byte[][] pduToMessages(final GXDLMSXmlPdu pdu) {
+    public final byte[][] pduToMessages(final GXDLMSXmlPdu pdu)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         List<byte[]> messages = new ArrayList<byte[]>();
         if (pdu.getCommand() == Command.SNRM) {
             messages.add(pdu.getData());
@@ -418,7 +439,8 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
             byte frame = 0;
             while (reply.position() != reply.size()) {
                 if (settings.getInterfaceType() == InterfaceType.WRAPPER) {
-                    messages.add(GXDLMS.getWrapperFrame(settings, reply));
+                    messages.add(GXDLMS.getWrapperFrame(settings,
+                            pdu.getCommand(), reply));
                 } else if (settings.getInterfaceType() == InterfaceType.HDLC) {
                     if (pdu.getCommand() == Command.AARQ) {
                         frame = 0x10;

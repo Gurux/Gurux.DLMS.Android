@@ -54,7 +54,7 @@ public enum MessageType {
 
     MessageType(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -62,6 +62,11 @@ public enum MessageType {
     }
 
     public static MessageType forValue(final int value) {
-        return getMappings().get(new Integer(value));
+        MessageType ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException(
+                    "Invalid message type enum value.");
+        }
+        return ret;
     }
 }

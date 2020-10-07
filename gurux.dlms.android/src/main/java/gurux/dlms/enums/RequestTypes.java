@@ -38,16 +38,14 @@
 
 package gurux.dlms.enums;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * RequestTypes enumerates the replies of the server to a client's request,
  * indicating the request type.
  */
 public enum RequestTypes {
-    /**
-     * No more data is available for the request.
-     */
-    NONE(0),
-
     /**
      * More data blocks are available for the request.
      */
@@ -59,9 +57,9 @@ public enum RequestTypes {
     FRAME(2),
 
     /**
-     * More data frames and data blocks are available for the request.
+     * More data is available for GBT.
      */
-    BOTH(3);
+    GBT(4);
 
     /**
      * Integer value of enumerator.
@@ -97,7 +95,7 @@ public enum RequestTypes {
      */
     RequestTypes(final int value) {
         intValue = value;
-        getMappings().put(new Integer(value), this);
+        getMappings().put(value, this);
     }
 
     /**
@@ -110,13 +108,43 @@ public enum RequestTypes {
     }
 
     /**
+     * @return Get enumeration constant values.
+     */
+    private static RequestTypes[] getEnumConstants() {
+        return new RequestTypes[] { DATABLOCK, FRAME, GBT };
+
+    }
+
+    /**
      * Returns enumerator value from an integer value.
      * 
      * @param value
      *            Integer value.
      * @return Enumeration value.
      */
-    public static RequestTypes forValue(final int value) {
-        return getMappings().get(new Integer(value));
+    public static java.util.Set<RequestTypes> forValue(final int value) {
+        Set<RequestTypes> types = new HashSet<RequestTypes>();
+        RequestTypes[] enums = getEnumConstants();
+        for (int pos = 0; pos != enums.length; ++pos) {
+            if ((enums[pos].intValue & value) == enums[pos].intValue) {
+                types.add(enums[pos]);
+            }
+        }
+        return types;
+    }
+
+    /**
+     * Converts the enumerated value to integer value.
+     * 
+     * @param value
+     *            The enumerated value.
+     * @return The integer value.
+     */
+    public static int toInteger(final Set<RequestTypes> value) {
+        int tmp = 0;
+        for (RequestTypes it : value) {
+            tmp |= it.getValue();
+        }
+        return tmp;
     }
 }
