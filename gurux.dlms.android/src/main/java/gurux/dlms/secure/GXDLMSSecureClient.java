@@ -207,8 +207,7 @@ public class GXDLMSSecureClient extends GXDLMSClient {
      */
     public final byte[][] getServerCertificate(final GXDLMSSecuritySetup ss,
             final CertificateType type) {
-        return ss.exportCertificateByEntity(this, CertificateEntity.SERVER,
-                type, getSettings().getSourceSystemTitle());
+        throw new UnsupportedOperationException("Security setup 1 is not supported at the moment.");
     }
 
     public final void parseServerCertificate(final byte[] data,

@@ -34,7 +34,6 @@
 
 package gurux.dlms.objects;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -113,11 +112,11 @@ public class GXDLMSSapAssignment extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // SapAssignmentList
         if (all || !isRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -195,18 +194,24 @@ public class GXDLMSSapAssignment extends GXDLMSObject implements IGXDLMSBase {
         } else if (e.getIndex() == 2) {
             sapAssignmentList.clear();
             if (e.getValue() != null) {
-                for (Object item : (Object[]) e.getValue()) {
+                boolean useUtc;
+                if (e.getSettings() != null) {
+                    useUtc = e.getSettings().getUseUtc2NormalTime();
+                } else {
+                    useUtc = false;
+                }
+                for (Object item : (List<?>) e.getValue()) {
                     String str;
-                    Object tmp = Array.get(item, 1);
+                    Object tmp = ((List<?>) item).get(1);
                     if (tmp instanceof byte[]) {
-                        str = GXDLMSClient
-                                .changeType((byte[]) tmp, DataType.STRING)
-                                .toString();
+                        str = GXDLMSClient.changeType((byte[]) tmp,
+                                DataType.STRING, useUtc).toString();
                     } else {
                         str = tmp.toString();
                     }
                     sapAssignmentList.add(new GXSimpleEntry<Integer, String>(
-                            ((Number) Array.get(item, 0)).intValue(), str));
+                            ((Number) ((List<?>) item).get(0)).intValue(),
+                            str));
                 }
             }
         } else {

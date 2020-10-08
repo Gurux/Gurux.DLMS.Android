@@ -55,14 +55,14 @@ import gurux.dlms.objects.enums.Ip4SetupIpOptionType;
  */
 public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
     private String dataLinkLayerReference;
-    private String ipAddress;
-    private int[] multicastIPAddress;
+    private InetAddress ipAddress;
+    private InetAddress[] multicastIPAddress;
     private GXDLMSIp4SetupIpOption[] ipOptions;
     private String subnetMask;
-    private String gatewayIPAddress;
+    private InetAddress gatewayIPAddress;
     private boolean useDHCP;
-    private String primaryDNSAddress;
-    private String secondaryDNSAddress;
+    private InetAddress primaryDNSAddress;
+    private InetAddress secondaryDNSAddress;
 
     /**
      * Constructor.
@@ -101,19 +101,19 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
         dataLinkLayerReference = value;
     }
 
-    public final String getIPAddress() {
+    public final InetAddress getIPAddress() {
         return ipAddress;
     }
 
-    public final void setIPAddress(final String value) {
+    public final void setIPAddress(final InetAddress value) {
         ipAddress = value;
     }
 
-    public final int[] getMulticastIPAddress() {
+    public final InetAddress[] getMulticastIPAddress() {
         return multicastIPAddress;
     }
 
-    public final void setMulticastIPAddress(final int[] value) {
+    public final void setMulticastIPAddress(final InetAddress[] value) {
         multicastIPAddress = value;
     }
 
@@ -133,11 +133,11 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
         subnetMask = value;
     }
 
-    public final String getGatewayIPAddress() {
+    public final InetAddress getGatewayIPAddress() {
         return gatewayIPAddress;
     }
 
-    public final void setGatewayIPAddress(final String value) {
+    public final void setGatewayIPAddress(final InetAddress value) {
         gatewayIPAddress = value;
     }
 
@@ -149,19 +149,19 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
         useDHCP = value;
     }
 
-    public final String getPrimaryDNSAddress() {
+    public final InetAddress getPrimaryDNSAddress() {
         return primaryDNSAddress;
     }
 
-    public final void setPrimaryDNSAddress(final String value) {
+    public final void setPrimaryDNSAddress(final InetAddress value) {
         primaryDNSAddress = value;
     }
 
-    public final String getSecondaryDNSAddress() {
+    public final InetAddress getSecondaryDNSAddress() {
         return secondaryDNSAddress;
     }
 
-    public final void setSecondaryDNSAddress(final String value) {
+    public final void setSecondaryDNSAddress(final InetAddress value) {
         secondaryDNSAddress = value;
     }
 
@@ -169,9 +169,8 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
     public final Object[] getValues() {
         return new Object[] { getLogicalName(), getDataLinkLayerReference(),
                 getIPAddress(), getMulticastIPAddress(), getIPOptions(),
-                getSubnetMask(), getGatewayIPAddress(),
-                new Boolean(getUseDHCP()), getPrimaryDNSAddress(),
-                getSecondaryDNSAddress() };
+                getSubnetMask(), getGatewayIPAddress(), getUseDHCP(),
+                getPrimaryDNSAddress(), getSecondaryDNSAddress() };
     }
 
     /*
@@ -185,43 +184,43 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // DataLinkLayerReference
         if (all || !isRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // IPAddress
         if (all || canRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // MulticastIPAddress
         if (all || canRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // IPOptions
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // SubnetMask
         if (all || canRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         // GatewayIPAddress
         if (all || canRead(7)) {
-            attributes.add(new Integer(7));
+            attributes.add(7);
         }
         // UseDHCP
         if (all || !isRead(8)) {
-            attributes.add(new Integer(8));
+            attributes.add(8);
         }
         // PrimaryDNSAddress
         if (all || canRead(9)) {
-            attributes.add(new Integer(9));
+            attributes.add(9);
         }
         // SecondaryDNSAddress
         if (all || canRead(10)) {
-            attributes.add(new Integer(10));
+            attributes.add(10);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -292,15 +291,11 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
             return GXCommon.logicalNameToBytes(getDataLinkLayerReference());
         }
         if (e.getIndex() == 3) {
-            if (getIPAddress() == null || getIPAddress().isEmpty()) {
+            if (getIPAddress() == null) {
                 return 0;
             }
-            try {
-                bb.set(InetAddress.getByName(getIPAddress()).getAddress());
-                return new Long(bb.getUInt32());
-            } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid IP address.");
-            }
+            bb.set(getIPAddress().getAddress());
+            return bb.getUInt32();
         }
         if (e.getIndex() == 4) {
             GXByteBuffer data = new GXByteBuffer();
@@ -309,8 +304,9 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
                 GXCommon.setObjectCount(0, data);
             } else {
                 GXCommon.setObjectCount(getMulticastIPAddress().length, data);
-                for (long it : getMulticastIPAddress()) {
-                    GXCommon.setData(settings, data, DataType.UINT16, it);
+                for (InetAddress it : getMulticastIPAddress()) {
+                    bb.setUInt8(DataType.UINT16.ordinal());
+                    bb.set(it.getAddress());
                 }
             }
             return data.array();
@@ -328,7 +324,7 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
                     GXCommon.setData(settings, data, DataType.UINT8,
                             it.getType());
                     GXCommon.setData(settings, data, DataType.UINT8,
-                            new Integer(it.getLength()));
+                            it.getLength());
                     GXCommon.setData(settings, data, DataType.OCTET_STRING,
                             it.getData());
                 }
@@ -341,52 +337,34 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
             }
             try {
                 bb.set(InetAddress.getByName(getSubnetMask()).getAddress());
-                return new Long(bb.getUInt32());
+                return bb.getUInt32();
             } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid subnet mask.");
+                throw new IllegalArgumentException("Invalid subnet mask.");
             }
         }
         if (e.getIndex() == 7) {
-            if (getGatewayIPAddress() == null
-                    || getGatewayIPAddress().isEmpty()) {
+            if (getGatewayIPAddress() == null) {
                 return 0;
             }
-            try {
-                bb.set(InetAddress.getByName(getGatewayIPAddress())
-                        .getAddress());
-                return new Long(bb.getUInt32());
-            } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid gateway IP address.");
-            }
+            bb.set(getGatewayIPAddress().getAddress());
+            return bb.getUInt32();
         }
         if (e.getIndex() == 8) {
-            return new Boolean(this.getUseDHCP());
+            return this.getUseDHCP();
         }
         if (e.getIndex() == 9) {
-            if (getPrimaryDNSAddress() == null
-                    || getPrimaryDNSAddress().isEmpty()) {
+            if (getPrimaryDNSAddress() == null) {
                 return 0;
             }
-            try {
-                bb.set(InetAddress.getByName(getPrimaryDNSAddress())
-                        .getAddress());
-                return new Long(bb.getUInt32());
-            } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid primary DNS address.");
-            }
+            bb.set(getPrimaryDNSAddress().getAddress());
+            return bb.getUInt32();
         }
         if (e.getIndex() == 10) {
-            if (getSecondaryDNSAddress() == null
-                    || getSecondaryDNSAddress().isEmpty()) {
+            if (getSecondaryDNSAddress() == null) {
                 return 0;
             }
-            try {
-                bb.set(InetAddress.getByName(getSecondaryDNSAddress())
-                        .getAddress());
-                return new Long(bb.getUInt32());
-            } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid secondary DNS address.");
-            }
+            bb.set(getSecondaryDNSAddress().getAddress());
+            return bb.getUInt32();
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
@@ -410,31 +388,38 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
         } else if (e.getIndex() == 3) {
             bb.setUInt32(((Number) e.getValue()).intValue());
             try {
-                setIPAddress(InetAddress.getByAddress(bb.array())
-                        .getCanonicalHostName());
+                setIPAddress(InetAddress.getByAddress(bb.array()));
             } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid IP address.");
+                throw new IllegalArgumentException(
+                        "Invalid primary DNS address.");
             }
         } else if (e.getIndex() == 4) {
-            java.util.ArrayList<Integer> data =
-                    new java.util.ArrayList<Integer>();
+            java.util.ArrayList<InetAddress> data =
+                    new java.util.ArrayList<InetAddress>();
             if (e.getValue() != null) {
-                for (Object it : (Object[]) e.getValue()) {
-                    data.add(new Integer(((Number) it).intValue()));
+                for (Object it : (List<?>) e.getValue()) {
+                    bb.setUInt32(((Number) it).intValue());
+                    try {
+                        data.add(InetAddress.getByAddress(bb.array()));
+                    } catch (UnknownHostException e1) {
+                        throw new IllegalArgumentException(
+                                "Invalid IP address.");
+                    }
+                    bb.clear();
                 }
             }
-            setMulticastIPAddress(GXDLMSObjectHelpers.toIntArray(data));
+            setMulticastIPAddress(data.toArray(new InetAddress[0]));
         } else if (e.getIndex() == 5) {
             java.util.ArrayList<GXDLMSIp4SetupIpOption> data =
                     new java.util.ArrayList<GXDLMSIp4SetupIpOption>();
             if (e.getValue() != null) {
-                for (Object it : (Object[]) e.getValue()) {
+                for (Object it : (List<?>) e.getValue()) {
                     GXDLMSIp4SetupIpOption item = new GXDLMSIp4SetupIpOption();
                     item.setType(Ip4SetupIpOptionType.forValue(
-                            ((Number) ((Object[]) it)[0]).intValue()));
+                            ((Number) ((List<?>) it).get(0)).intValue()));
                     item.setLength(
-                            ((Number) (((Object[]) it)[1])).shortValue());
-                    item.setData((byte[]) ((Object[]) it)[2]);
+                            ((Number) (((List<?>) it).get(1))).shortValue());
+                    item.setData((byte[]) ((List<?>) it).get(2));
                     data.add(item);
                 }
             }
@@ -445,33 +430,32 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
                 setSubnetMask(
                         InetAddress.getByAddress(bb.array()).getHostName());
             } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid IP address.");
+                throw new IllegalArgumentException("Invalid IP address.");
             }
         } else if (e.getIndex() == 7) {
             bb.setUInt32(((Number) e.getValue()).intValue());
             try {
-                setGatewayIPAddress(
-                        InetAddress.getByAddress(bb.array()).getHostName());
+                setGatewayIPAddress(InetAddress.getByAddress(bb.array()));
             } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid IP address.");
+                throw new IllegalArgumentException(
+                        "Invalid Gateway IP address.");
             }
         } else if (e.getIndex() == 8) {
             setUseDHCP(((Boolean) e.getValue()).booleanValue());
         } else if (e.getIndex() == 9) {
             bb.setUInt32(((Number) e.getValue()).intValue());
             try {
-                setPrimaryDNSAddress(
-                        InetAddress.getByAddress(bb.array()).getHostName());
+                setPrimaryDNSAddress(InetAddress.getByAddress(bb.array()));
             } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid IP address.");
+                throw new IllegalArgumentException(
+                        "Invalid primary DNS address.");
             }
         } else if (e.getIndex() == 10) {
             bb.setUInt32(((Number) e.getValue()).intValue());
             try {
-                setSecondaryDNSAddress(
-                        InetAddress.getByAddress(bb.array()).getHostName());
+                setSecondaryDNSAddress(InetAddress.getByAddress(bb.array()));
             } catch (UnknownHostException e1) {
-                throw new RuntimeException("Invalid IP address.");
+                throw new IllegalArgumentException("Invalid IP address.");
             }
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
@@ -480,59 +464,78 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
-        dataLinkLayerReference =
-                reader.readElementContentAsString("DataLinkLayerReference");
-        ipAddress = reader.readElementContentAsString("IPAddress");
-        List<Integer> list = new ArrayList<Integer>();
-        if (reader.isStartElement("MulticastIPAddress", true)) {
-            while (reader.isStartElement("Value", false)) {
-                list.add(reader.readElementContentAsInt("Value"));
+        try {
+            dataLinkLayerReference =
+                    reader.readElementContentAsString("DataLinkLayerReference");
+            ipAddress = InetAddress
+                    .getByName(reader.readElementContentAsString("IPAddress"));
+            List<InetAddress> list = new ArrayList<InetAddress>();
+            if (reader.isStartElement("MulticastIPAddress", true)) {
+                while (reader.isStartElement("Value", false)) {
+                    list.add(InetAddress.getByName(
+                            reader.readElementContentAsString("Value")));
+                }
+                reader.readEndElement("MulticastIPAddress");
             }
-            reader.readEndElement("MulticastIPAddress");
-        }
-        multicastIPAddress = GXCommon.toIntArray(list);
-
-        List<GXDLMSIp4SetupIpOption> tmp =
-                new ArrayList<GXDLMSIp4SetupIpOption>();
-        if (reader.isStartElement("IPOptions", true)) {
-            while (reader.isStartElement("IPOptions", true)) {
-                GXDLMSIp4SetupIpOption it = new GXDLMSIp4SetupIpOption();
-                it.setType(Ip4SetupIpOptionType
-                        .forValue(reader.readElementContentAsInt("Type")));
-                it.setLength((short) reader.readElementContentAsInt("Length"));
-                it.setData(GXDLMSTranslator
-                        .hexToBytes(reader.readElementContentAsString("Data")));
-                tmp.add(it);
+            multicastIPAddress = list.toArray(new InetAddress[0]);
+            List<GXDLMSIp4SetupIpOption> tmp =
+                    new ArrayList<GXDLMSIp4SetupIpOption>();
+            if (reader.isStartElement("IPOptions", true)) {
+                while (reader.isStartElement("IPOption", true)) {
+                    GXDLMSIp4SetupIpOption it = new GXDLMSIp4SetupIpOption();
+                    it.setType(Ip4SetupIpOptionType
+                            .forValue(reader.readElementContentAsInt("Type")));
+                    it.setLength(
+                            (short) reader.readElementContentAsInt("Length"));
+                    it.setData(GXDLMSTranslator.hexToBytes(
+                            reader.readElementContentAsString("Data")));
+                    tmp.add(it);
+                }
+                // OLD. This can remove in the future.
+                while (reader.isStartElement("IPOptions", true)) {
+                    GXDLMSIp4SetupIpOption it = new GXDLMSIp4SetupIpOption();
+                    it.setType(Ip4SetupIpOptionType
+                            .forValue(reader.readElementContentAsInt("Type")));
+                    it.setLength(
+                            (short) reader.readElementContentAsInt("Length"));
+                    it.setData(GXDLMSTranslator.hexToBytes(
+                            reader.readElementContentAsString("Data")));
+                    tmp.add(it);
+                }
+                reader.readEndElement("IPOptions");
             }
-            reader.readEndElement("IPOptions");
+            ipOptions = tmp.toArray(new GXDLMSIp4SetupIpOption[tmp.size()]);
+            subnetMask = reader.readElementContentAsString("SubnetMask");
+            gatewayIPAddress = InetAddress.getByName(
+                    reader.readElementContentAsString("GatewayIPAddress"));
+            useDHCP = reader.readElementContentAsInt("UseDHCP") != 0;
+            primaryDNSAddress = InetAddress.getByName(
+                    reader.readElementContentAsString("PrimaryDNSAddress"));
+            secondaryDNSAddress = InetAddress.getByName(
+                    reader.readElementContentAsString("SecondaryDNSAddress"));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
         }
-        ipOptions = tmp.toArray(new GXDLMSIp4SetupIpOption[tmp.size()]);
-        subnetMask = reader.readElementContentAsString("SubnetMask");
-        gatewayIPAddress =
-                reader.readElementContentAsString("GatewayIPAddress");
-        useDHCP = reader.readElementContentAsInt("UseDHCP") != 0;
-        primaryDNSAddress =
-                reader.readElementContentAsString("PrimaryDNSAddress");
-        secondaryDNSAddress =
-                reader.readElementContentAsString("SecondaryDNSAddress");
     }
 
     @Override
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
         writer.writeElementString("DataLinkLayerReference",
                 dataLinkLayerReference);
-        writer.writeElementString("IPAddress", ipAddress);
+        if (ipAddress != null) {
+            writer.writeElementString("IPAddress", ipAddress.getHostAddress());
+        }
         if (multicastIPAddress != null) {
             writer.writeStartElement("MulticastIPAddress");
-            for (int it : multicastIPAddress) {
-                writer.writeElementString("Value", it);
+            for (InetAddress it : multicastIPAddress) {
+                writer.writeElementString("Value", it.getHostAddress());
             }
             writer.writeEndElement();
         }
         if (ipOptions != null) {
             writer.writeStartElement("IPOptions");
             for (GXDLMSIp4SetupIpOption it : ipOptions) {
-                writer.writeStartElement("IPOptions");
+                writer.writeStartElement("IPOption");
                 writer.writeElementString("Type", it.getType().ordinal());
                 writer.writeElementString("Length", it.getLength());
                 writer.writeElementString("Data",
@@ -542,13 +545,23 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
             writer.writeEndElement();
         }
         writer.writeElementString("SubnetMask", subnetMask);
-        writer.writeElementString("GatewayIPAddress", gatewayIPAddress);
+        if (gatewayIPAddress != null) {
+            writer.writeElementString("GatewayIPAddress",
+                    gatewayIPAddress.getHostAddress());
+        }
         writer.writeElementString("UseDHCP", useDHCP);
-        writer.writeElementString("PrimaryDNSAddress", primaryDNSAddress);
-        writer.writeElementString("SecondaryDNSAddress", secondaryDNSAddress);
+        if (primaryDNSAddress != null) {
+            writer.writeElementString("PrimaryDNSAddress",
+                    primaryDNSAddress.getHostAddress());
+        }
+        if (secondaryDNSAddress != null) {
+            writer.writeElementString("SecondaryDNSAddress",
+                    secondaryDNSAddress.getHostAddress());
+        }
     }
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

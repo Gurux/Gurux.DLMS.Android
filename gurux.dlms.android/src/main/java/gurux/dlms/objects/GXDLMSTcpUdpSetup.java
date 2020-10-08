@@ -56,7 +56,7 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
      * Constructor.
      */
     public GXDLMSTcpUdpSetup() {
-        this("0.0.25.0.0.255", (short) 0);
+        this("0.0.25.0.0.255");
     }
 
     /**
@@ -66,7 +66,7 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
      *            Logical Name of the object.
      */
     public GXDLMSTcpUdpSetup(final String ln) {
-        this(ln, (short) 0);
+        this(ln, 0);
     }
 
     /**
@@ -133,10 +133,9 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), new Integer(getPort()),
-                getIPReference(), new Integer(getMaximumSegmentSize()),
-                new Integer(getMaximumSimultaneousConnections()),
-                new Integer(getInactivityTimeout()) };
+        return new Object[] { getLogicalName(), getPort(), getIPReference(),
+                getMaximumSegmentSize(), getMaximumSimultaneousConnections(),
+                getInactivityTimeout() };
     }
 
     /*
@@ -150,27 +149,27 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Port
         if (all || !isRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // IPReference
         if (all || !isRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // MaximumSegmentSize
         if (all || !isRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // MaximumSimultaneousConnections
         if (all || !isRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // InactivityTimeout
         if (all || !isRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -222,19 +221,19 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
         if (e.getIndex() == 2) {
-            return new Integer(getPort());
+            return getPort();
         }
         if (e.getIndex() == 3) {
             return GXCommon.logicalNameToBytes(getIPReference());
         }
         if (e.getIndex() == 4) {
-            return new Integer(getMaximumSegmentSize());
+            return getMaximumSegmentSize();
         }
         if (e.getIndex() == 5) {
-            return new Integer(getMaximumSimultaneousConnections());
+            return getMaximumSimultaneousConnections();
         }
         if (e.getIndex() == 6) {
-            return new Integer(getInactivityTimeout());
+            return getInactivityTimeout();
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
@@ -311,5 +310,6 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

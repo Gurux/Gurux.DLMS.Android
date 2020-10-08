@@ -26,7 +26,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 // See the GNU General Public License for more details.
 //
-// More information of Gurux products: http://www.gurux.org
+// More information of Gurux products: https://www.gurux.org
 //
 // This code is licensed under the GNU General Public License v2. 
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -36,17 +36,45 @@ package gurux.dlms.objects;
 
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSTranslator;
+import gurux.dlms.GXDateOS;
 import gurux.dlms.GXDateTime;
+import gurux.dlms.GXDateTimeOS;
+import gurux.dlms.GXSimpleEntry;
+import gurux.dlms.GXTimeOS;
 import gurux.dlms.enums.DataType;
 
 /**
  * Save COSEM object to the file.
  */
 public class GXXmlWriter implements AutoCloseable{
+
+    private int indenting = 0;
+    private GXXmlWriterSettings settings;
+
+    public boolean isSkipDefaults() {
+        if (settings == null) {
+            return false;
+        }
+        return settings.isIgnoreDefaultValues();
+    }
+
+    /**
+     * @return GXDateTime values are serialised using meter time, not local
+     *         time.
+     */
+    public boolean isUseMeterTime() {
+        if (settings == null) {
+            return false;
+        }
+        return settings.isUseMeterTime();
+    }
 
     /**
      * Constructor.
@@ -103,10 +131,15 @@ public class GXXmlWriter implements AutoCloseable{
         throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
+    public final void writeElementString(final String name, final Date value)
+            throws XMLStreamException {
+        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
+    }
+
     public final void writeElementString(final String name, final long value)
             throws XMLStreamException {
-        if (value != 0) {
-            writeElementString(name, value, 0);
+        if (!isSkipDefaults() || value != 0) {
+            writeElementString(name, String.valueOf(value));
         }
     }
 
@@ -117,14 +150,12 @@ public class GXXmlWriter implements AutoCloseable{
 
     public final void writeElementString(final String name, final double value,
             final double defaultValue) throws XMLStreamException {
-        if (value != defaultValue) {
-            writeElementString(name, String.valueOf(value));
-        }
+        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     public final void writeElementString(final String name, final int value)
             throws XMLStreamException {
-        if (value != 0) {
+        if (!isSkipDefaults() || value != 0) {
             writeElementString(name, String.valueOf(value));
         }
     }
@@ -136,70 +167,40 @@ public class GXXmlWriter implements AutoCloseable{
 
     public final void writeElementString(final String name, final boolean value)
             throws XMLStreamException {
-        if (value) {
-            writeElementString(name, "1");
+        if (!isSkipDefaults() || value) {
+            writeElementString(name, value ? "1" : "0");
         }
     }
 
     public final void writeElementString(final String name,
             final GXDateTime value) throws XMLStreamException {
-        if (value != null && value.getMeterCalendar()
-                .getTime() != new java.util.Date(0)) {
-            writeElementString(name, value.toFormatString());
-        }
-    }
-
-    public final void writeElementString(final String name,
-                                         final Date value) throws XMLStreamException {
-        if (value != null && value.compareTo(new java.util.Date(0)) != 0) {
-            writeElementString(name, value.toString());
-        }
+        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     private void writeArray(final Object data) throws XMLStreamException {
-        if (data instanceof Object[]) {
-            Object[] arr = (Object[]) data;
-            for (int pos = 0; pos != arr.length; ++pos) {
-                Object tmp = arr[pos];
-                if (tmp instanceof byte[]) {
-                    writeElementObject("Item", tmp, false);
-                } else if (tmp instanceof Object[]) {
-                    writeStartElement("Item", "Type",
-                            String.valueOf(DataType.ARRAY.getValue()), true);
-                    writeArray(tmp);
-                    writeEndElement();
-                } else {
-                    writeElementObject("Item", tmp);
-                }
-            }
-        }
+        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     public final void writeElementObject(final String name, final Object value)
             throws XMLStreamException {
-        writeElementObject(name, value, true);
+        writeElementObject(name, value, isSkipDefaults());
     }
 
+    /**
+     * Write object value to file.
+     * 
+     * @param name
+     *            Object name.
+     * @param value
+     *            Object value.
+     * @param dt
+     *            Data type of serialized value.
+     * @param uiType
+     *            UI data type of serialized value.
+     */
     public final void writeElementObject(final String name, final Object value,
-            final DataType type, final DataType uiType)
-            throws XMLStreamException {
-        if (type != DataType.NONE && value instanceof String) {
-            if (type == DataType.OCTET_STRING) {
-                if (uiType == DataType.STRING) {
-                    writeElementObject(name, ((String) value).getBytes(), true);
-                    return;
-                } else if (uiType == DataType.OCTET_STRING) {
-                    writeElementObject(name,
-                            GXDLMSTranslator.hexToBytes((String) value), true);
-                    return;
-                }
-            } else if (!(value instanceof GXDateTime)) {
-                writeElementObject(name,
-                        GXDLMSConverter.changeType(value, type), true);
-                return;
-            }
-        }
-        writeElementObject(name, value, true);
+            final DataType dt, final DataType uiType){
+        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     /**
@@ -216,12 +217,34 @@ public class GXXmlWriter implements AutoCloseable{
      */
     public final void writeElementObject(final String name, final Object value,
             final boolean skipDefaultValue) throws XMLStreamException {
-        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
+        if (value != null || !skipDefaultValue) {
+            if (skipDefaultValue && value instanceof java.util.Date
+                    && (((java.util.Date) value)
+                            .compareTo(new java.util.Date(0))) == 0) {
+                return;
+            }
+            if (value instanceof GXDateTimeOS) {
+                writeElementObject(name, value, DataType.OCTET_STRING,
+                        DataType.DATETIME);
+            } else if (value instanceof GXDateOS) {
+                writeElementObject(name, value, DataType.OCTET_STRING,
+                        DataType.DATE);
+            } else if (value instanceof GXTimeOS) {
+                writeElementObject(name, value, DataType.OCTET_STRING,
+                        DataType.TIME);
+            } else {
+                DataType dt = GXDLMSConverter.getDLMSDataType(value);
+                writeElementObject(name, value, dt, DataType.NONE);
+            }
+        }
     }
 
     private void writeEndElement(final boolean addSpaces)
             throws XMLStreamException {
-        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
+        --indenting;
+        if (addSpaces) {
+            appendSpaces();
+        }
     }
 
     /**
@@ -241,7 +264,6 @@ public class GXXmlWriter implements AutoCloseable{
      *             Invalid XML stream.
      */
     public final void writeEndDocument() throws XMLStreamException {
-        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     /**
@@ -251,6 +273,5 @@ public class GXXmlWriter implements AutoCloseable{
      *             Invalid XML stream.
      */
     public final void flush() throws XMLStreamException {
-        throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 }

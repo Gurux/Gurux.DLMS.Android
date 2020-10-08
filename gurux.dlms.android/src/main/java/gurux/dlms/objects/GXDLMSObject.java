@@ -34,9 +34,16 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.GXDLMSException;
 import gurux.dlms.GXDLMSServerBase;
@@ -95,6 +102,16 @@ public class GXDLMSObject {
             }
         }
         logicalName = ln;
+    }
+
+    /**
+     * Validate logical name.
+     * 
+     * @param value
+     *            Logical Name.
+     */
+    public static void validateLogicalName(final String value) {
+        GXCommon.logicalNameToBytes(value);
     }
 
     protected static byte[] toByteArray(final List<Byte> list) {
@@ -420,8 +437,10 @@ public class GXDLMSObject {
      * @param e Value event parameters.
      */
     // CHECKSTYLE:OFF
-    public byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e)
+            throws InvalidKeyException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException,
+            BadPaddingException, SignatureException {
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
     }

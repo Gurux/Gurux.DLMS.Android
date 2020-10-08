@@ -115,7 +115,7 @@ public class GXXmlTranslator extends Fragment {
      */
     void toPdu(View v) {
         try {
-            //Mikko translator.setHex(hexBtn.getValue());
+            //TODO: translator.setHex(hexBtn.getValue());
             String xml = removeComments(xmlText.getText().toString());
             pduText.setText(translator.xmlToHexPdu(xml, true));
         } catch (Exception e) {
@@ -128,7 +128,7 @@ public class GXXmlTranslator extends Fragment {
      */
     void toXml(View v) {
         try {
-            //Mikko  translator.setHex(hexBtn.getValue());
+            //TODO:  translator.setHex(hexBtn.getValue());
             String pdu = removeComments(pduText.getText().toString());
             xmlText.setText(translator.pduToXml(pdu));
         } catch (Exception e) {

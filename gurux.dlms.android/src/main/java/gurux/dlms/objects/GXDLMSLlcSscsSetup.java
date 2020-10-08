@@ -34,6 +34,15 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
@@ -43,24 +52,17 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help:<br>
- * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSUtilityTables
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSLlcSscsSetup
  */
-public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
-    /**
-     * Table Id.<br>
-     */
-    private int tableId;
-
-    /**
-     * Contents of the table.
-     */
-    private byte[] buffer;
+public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
+    private int serviceNodeAddress;
+    private int baseNodeAddress;
 
     /**
      * Constructor.
      */
-    public GXDLMSUtilityTables() {
-        this("0.0.65.0.0.255", 0);
+    public GXDLMSLlcSscsSetup() {
+        this("0.0.28.0.0.255", 0);
     }
 
     /**
@@ -69,7 +71,7 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
      * @param ln
      *            Logical Name of the object.
      */
-    public GXDLMSUtilityTables(final String ln) {
+    public GXDLMSLlcSscsSetup(final String ln) {
         this(ln, 0);
     }
 
@@ -81,59 +83,85 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
      * @param sn
      *            Short Name of the object.
      */
-    public GXDLMSUtilityTables(final String ln, final int sn) {
-        super(ObjectType.UTILITY_TABLES, ln, sn);
+    public GXDLMSLlcSscsSetup(final String ln, final int sn) {
+        super(ObjectType.LLC_SSCS_SETUP, ln, sn);
     }
 
     /**
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSUtilityTables
-     * 
-     * @return Table Id.
+     * @return Address assigned to the service node during its registration by
+     *         the base node.
      */
-    public final int getTableId() {
-        return tableId;
+    public final int getServiceNodeAddress() {
+        return serviceNodeAddress;
     }
 
     /**
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSUtilityTables
-     * 
      * @param value
-     *            Table Id.
+     *            Address assigned to the service node during its registration
+     *            by the base node.
      */
-    public final void setTableId(final int value) {
-        tableId = value;
+    public final void setServiceNodeAddress(final int value) {
+        serviceNodeAddress = value;
     }
 
     /**
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSUtilityTables
-     * 
-     * @return Contents of the table.
+     * @return Base node address to which the service node is registered.
      */
-    public final byte[] getBuffer() {
-        return buffer;
+    public final int getBaseNodeAddress() {
+        return baseNodeAddress;
     }
 
     /**
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSUtilityTables
-     * 
      * @param value
-     *            Contents of the table.
+     *            Base node address to which the service node is registered.
      */
-    public final void setBuffer(final byte[] value) {
-        buffer = value;
+    public final void setBaseNodeAddress(final int value) {
+        baseNodeAddress = value;
+    }
+
+    /**
+     * Deallocating the service node address. The value of the
+     * ServiceNodeAddress becomes NEW and the value of the BaseNodeAddress
+     * becomes 0.
+     * 
+     * @param client
+     *            DLMS client.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     */
+    public final byte[][] reset(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(this, 1, 0, DataType.INT8);
+    }
+
+    @Override
+    public final byte[] invoke(GXDLMSSettings settings, ValueEventArgs e) {
+        if (e.getIndex() == 1) {
+            serviceNodeAddress = 0xFFE;
+            baseNodeAddress = 0;
+        } else {
+            e.setError(ErrorCode.READ_WRITE_DENIED);
+        }
+        return null;
     }
 
     @Override
     public final Object[] getValues() {
-        int len = 0;
-        if (buffer != null) {
-            len = buffer.length;
-        }
-        return new Object[] { getLogicalName(), tableId, len, buffer };
+        return new Object[] { getLogicalName(), serviceNodeAddress,
+                baseNodeAddress };
     }
 
     /*
@@ -149,17 +177,13 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
                 || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
-        // TableId
+        // ServiceNodeAddress
         if (all || canRead(2)) {
             attributes.add(2);
         }
-        // Length
+        // BaseNodeAddress
         if (all || canRead(3)) {
             attributes.add(3);
-        }
-        // Buffer
-        if (all || canRead(4)) {
-            attributes.add(4);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -169,7 +193,7 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int getAttributeCount() {
-        return 4;
+        return 3;
     }
 
     /*
@@ -177,7 +201,7 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int getMethodCount() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -186,14 +210,11 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
         case 1:
             return DataType.OCTET_STRING;
         case 2:
-            return DataType.UINT16;
         case 3:
-            return DataType.UINT32;
-        case 4:
-            return DataType.OCTET_STRING;
+            return DataType.UINT16;
         default:
             throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+                    "GetDataType failed. Invalid attribute index.");
         }
     }
 
@@ -207,11 +228,9 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
         case 1:
             return GXCommon.logicalNameToBytes(getLogicalName());
         case 2:
-            return tableId;
+            return serviceNodeAddress;
         case 3:
-            return buffer == null ? 0 : buffer.length;
-        case 4:
-            return buffer;
+            return baseNodeAddress;
         default:
             e.setError(ErrorCode.READ_WRITE_DENIED);
             break;
@@ -225,40 +244,29 @@ public class GXDLMSUtilityTables extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void setValue(final GXDLMSSettings settings,
             final ValueEventArgs e) {
-        switch (e.getIndex()) {
-        case 1:
+        if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            tableId = ((Number) e.getValue()).intValue();
-            break;
-        case 3:
-            // Skip len.
-            break;
-        case 4:
-            if (e.getValue() instanceof String) {
-                buffer = GXCommon.hexToBytes((String) e.getValue());
-            } else {
-                buffer = (byte[]) e.getValue();
-            }
-            break;
-        default:
+        } else if (e.getIndex() == 2) {
+            serviceNodeAddress = ((Number) e.getValue()).intValue();
+        } else if (e.getIndex() == 3) {
+            baseNodeAddress = ((Number) e.getValue()).intValue();
+        } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
         }
     }
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
-        tableId = reader.readElementContentAsInt("Value", 0);
-        buffer = GXCommon
-                .hexToBytes(reader.readElementContentAsString("Value", null));
+        serviceNodeAddress =
+                reader.readElementContentAsInt("ServiceNodeAddress");
+        baseNodeAddress = reader.readElementContentAsInt("BaseNodeAddress");
     }
 
     @Override
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
-        writer.writeElementString("Id", tableId);
-        writer.writeElementString("Buffer", GXCommon.toHex(buffer, true));
+        writer.writeElementString("ServiceNodeAddress", serviceNodeAddress);
+        writer.writeElementString("BaseNodeAddress", baseNodeAddress);
+
     }
 
     @Override

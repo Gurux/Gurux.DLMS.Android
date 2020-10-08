@@ -39,6 +39,7 @@ import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ObjectType;
+import gurux.dlms.internal.GXCommon;
 import gurux.dlms.objects.enums.BaudRate;
 
 /**
@@ -108,11 +109,11 @@ public class GXDLMSMBusMasterPortSetup extends GXDLMSObject
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // CommSpeed
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -155,7 +156,7 @@ public class GXDLMSMBusMasterPortSetup extends GXDLMSObject
             return getLogicalName();
         }
         if (e.getIndex() == 2) {
-            return new Integer(commSpeed.ordinal());
+            return commSpeed.ordinal();
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
@@ -168,7 +169,7 @@ public class GXDLMSMBusMasterPortSetup extends GXDLMSObject
     public final void setValue(final GXDLMSSettings settings,
             final ValueEventArgs e) {
         if (e.getIndex() == 1) {
-            super.setValue(settings, e);
+            setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
             commSpeed = BaudRate.values()[((Number) e.getValue()).intValue()];
         } else {
@@ -191,5 +192,6 @@ public class GXDLMSMBusMasterPortSetup extends GXDLMSObject
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

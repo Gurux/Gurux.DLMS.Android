@@ -272,7 +272,7 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Token
         if (all || canRead(2)) {
@@ -392,13 +392,19 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
             token = (byte[]) e.getValue();
             break;
         case 3:
+            boolean useUtc;
+            if (e.getSettings() != null) {
+                useUtc = e.getSettings().getUseUtc2NormalTime();
+            } else {
+                useUtc = false;
+            }
             time = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                    DataType.DATETIME);
+                    DataType.DATETIME, useUtc);
             break;
         case 4:
             descriptions.clear();
             if (e.getValue() != null) {
-                for (Object it : (Object[]) e.getValue()) {
+                for (Object it : (List<?>) e.getValue()) {
                     descriptions.add(new String((byte[]) it));
                 }
             }
@@ -409,8 +415,8 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
             break;
         case 6:
             statusCode = TokenStatusCode.forValue(
-                    ((Number) ((Object[]) e.getValue())[0]).intValue());
-            dataValue = String.valueOf(((Object[]) e.getValue())[1]);
+                    ((Number) ((List<?>) e.getValue()).get(0)).intValue());
+            dataValue = String.valueOf(((List<?>) e.getValue()).get(1));
             break;
         default:
             e.setError(ErrorCode.READ_WRITE_DENIED);
@@ -421,10 +427,7 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
         token = GXCommon.hexToBytes(reader.readElementContentAsString("Token"));
-        String tmp = reader.readElementContentAsString("Time");
-        if (tmp != null) {
-            time = new GXDateTime(tmp);
-        }
+        time = reader.readElementContentAsDateTime("Time");
         descriptions.clear();
         if (reader.isStartElement("Descriptions", true)) {
             while (reader.isStartElement("Item", true)) {

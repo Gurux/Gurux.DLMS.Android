@@ -127,19 +127,19 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Thresholds
         if (all || !isRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // MonitoredValue
         if (all || !isRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // Actions
         if (all || !isRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -196,13 +196,13 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
             bb.setUInt8(3);
             // ClassID
             GXCommon.setData(settings, bb, DataType.UINT16,
-                    new Integer(monitoredValue.getObjectType().getValue()));
+                    monitoredValue.getObjectType().getValue());
             // LN.
             GXCommon.setData(settings, bb, DataType.OCTET_STRING, GXCommon
                     .logicalNameToBytes(monitoredValue.getLogicalName()));
             // Attribute index.
             GXCommon.setData(settings, bb, DataType.INT8,
-                    new Integer(monitoredValue.getAttributeIndex()));
+                    monitoredValue.getAttributeIndex());
             return bb.array();
         }
         if (e.getIndex() == 4) {
@@ -223,7 +223,7 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
                                     it.getActionUp().getLogicalName()));
                     // ScriptSelector
                     GXCommon.setData(settings, bb, DataType.UINT16,
-                            new Integer(it.getActionUp().getScriptSelector()));
+                            it.getActionUp().getScriptSelector());
                     bb.setUInt8((byte) DataType.STRUCTURE.getValue());
                     bb.setUInt8(2);
                     // LN
@@ -231,8 +231,8 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
                             GXCommon.logicalNameToBytes(
                                     it.getActionDown().getLogicalName()));
                     // ScriptSelector
-                    GXCommon.setData(settings, bb, DataType.UINT16, new Integer(
-                            it.getActionDown().getScriptSelector()));
+                    GXCommon.setData(settings, bb, DataType.UINT16,
+                            it.getActionDown().getScriptSelector());
                 }
             }
             return bb.array();
@@ -250,33 +250,37 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
-            setThresholds((Object[]) e.getValue());
+            if (e.getValue() == null) {
+                setThresholds(null);
+            } else {
+                setThresholds(((List<?>) e.getValue()).toArray());
+            }
         } else if (e.getIndex() == 3) {
             if (getMonitoredValue() == null) {
                 setMonitoredValue(new GXDLMSMonitoredValue());
             }
             getMonitoredValue().setObjectType(ObjectType.forValue(
-                    ((Number) ((Object[]) e.getValue())[0]).intValue()));
+                    ((Number) ((List<?>) e.getValue()).get(0)).intValue()));
             getMonitoredValue().setLogicalName(
-                    GXCommon.toLogicalName(((Object[]) e.getValue())[1]));
+                    GXCommon.toLogicalName(((List<?>) e.getValue()).get(1)));
             getMonitoredValue().setAttributeIndex(
-                    ((Number) ((Object[]) e.getValue())[2]).intValue());
+                    ((Number) ((List<?>) e.getValue()).get(2)).intValue());
         } else if (e.getIndex() == 4) {
             setActions(new GXDLMSActionSet[0]);
             if (e.getValue() != null) {
                 List<GXDLMSActionSet> items = new ArrayList<GXDLMSActionSet>();
-                for (Object as : (Object[]) e.getValue()) {
+                for (Object as : (List<?>) e.getValue()) {
                     GXDLMSActionSet set = new GXDLMSActionSet();
-                    Object[] target = (Object[]) ((Object[]) as)[0];
-                    set.getActionUp()
-                            .setLogicalName(GXCommon.toLogicalName(target[0]));
-                    set.getActionUp()
-                            .setScriptSelector(((Number) target[1]).intValue());
-                    target = (Object[]) ((Object[]) as)[1];
-                    set.getActionDown()
-                            .setLogicalName(GXCommon.toLogicalName(target[0]));
-                    set.getActionDown()
-                            .setScriptSelector(((Number) target[1]).intValue());
+                    List<?> target = (List<?>) ((List<?>) as).get(0);
+                    set.getActionUp().setLogicalName(
+                            GXCommon.toLogicalName(target.get(0)));
+                    set.getActionUp().setScriptSelector(
+                            ((Number) target.get(1)).intValue());
+                    target = (List<?>) ((List<?>) as).get(1);
+                    set.getActionDown().setLogicalName(
+                            GXCommon.toLogicalName(target.get(0)));
+                    set.getActionDown().setScriptSelector(
+                            ((Number) target.get(1)).intValue());
                     items.add(set);
                 }
                 setActions(items.toArray(new GXDLMSActionSet[items.size()]));
@@ -291,7 +295,8 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
         List<Object> tmp = new ArrayList<Object>();
         if (reader.isStartElement("Thresholds", true)) {
             while (reader.isStartElement("Value", false)) {
-                Object it = reader.readElementContentAsObject("Value", null);
+                Object it = reader.readElementContentAsObject("Value", null,
+                        null, 0);
                 tmp.add(it);
             }
             reader.readEndElement("Thresholds");
@@ -375,5 +380,6 @@ public class GXDLMSRegisterMonitor extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

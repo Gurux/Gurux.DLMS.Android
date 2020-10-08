@@ -34,7 +34,6 @@
 
 package gurux.dlms.objects;
 
-import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
@@ -44,21 +43,29 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Online help:<br>
- * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSPrimeNbOfdmPlcApplicationsIdentification
  */
-public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
+public class GXDLMSPrimeNbOfdmPlcApplicationsIdentification extends GXDLMSObject
+        implements IGXDLMSBase {
     /**
-     * Value of data object.<br>
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
+     * Textual description of the firmware version running on the device.
      */
-    private Object value;
+    private String firmwareVersion;
+
+    /**
+     * Unique vendor identifier assigned by PRIME Alliance.
+     */
+    private int vendorId;
+    /**
+     * Vendor assigned unique identifier for specific product.
+     */
+    private int productId;
 
     /**
      * Constructor.
      */
-    public GXDLMSData() {
-        this(null, 0);
+    public GXDLMSPrimeNbOfdmPlcApplicationsIdentification() {
+        this("0.0.28.7.0.255", 0);
     }
 
     /**
@@ -67,7 +74,7 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
      * @param ln
      *            Logical Name of the object.
      */
-    public GXDLMSData(final String ln) {
+    public GXDLMSPrimeNbOfdmPlcApplicationsIdentification(final String ln) {
         this(ln, 0);
     }
 
@@ -79,34 +86,62 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
      * @param sn
      *            Short Name of the object.
      */
-    public GXDLMSData(final String ln, final int sn) {
-        super(ObjectType.DATA, ln, sn);
+    public GXDLMSPrimeNbOfdmPlcApplicationsIdentification(final String ln,
+            final int sn) {
+        super(ObjectType.PRIME_NB_OFDM_PLC_APPLICATIONS_IDENTIFICATION, ln, sn);
     }
 
     /**
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
-     * 
-     * @return Value of data object.
+     * @return Textual description of the firmware version running on the
+     *         device.
      */
-    public final Object getValue() {
-        return value;
+    public final String getFirmwareVersion() {
+        return firmwareVersion;
     }
 
     /**
-     * Online help:<br>
-     * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSData
-     * 
-     * @param forValue
-     *            Value of data object.
+     * @param value
+     *            Textual description of the firmware version running on the
+     *            device.
      */
-    public final void setValue(final Object forValue) {
-        value = forValue;
+    public final void setFirmwareVersion(final String value) {
+        firmwareVersion = value;
+    }
+
+    /**
+     * @return Unique vendor identifier assigned by PRIME Alliance.
+     */
+    public final int getVendorId() {
+        return vendorId;
+    }
+
+    /**
+     * @param value
+     *            Unique vendor identifier assigned by PRIME Alliance.
+     */
+    public final void setVendorId(final int value) {
+        vendorId = value;
+    }
+
+    /**
+     * @return Vendor assigned unique identifier for specific product.
+     */
+    public final int getProductId() {
+        return productId;
+    }
+
+    /**
+     * @param value
+     *            Vendor assigned unique identifier for specific product.
+     */
+    public final void setProductId(final int value) {
+        productId = value;
     }
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getValue() };
+        return new Object[] { getLogicalName(), firmwareVersion, vendorId,
+                productId };
     }
 
     /*
@@ -122,9 +157,17 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
                 || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
-        // Value
+        // FirmwareVersion
         if (all || canRead(2)) {
             attributes.add(2);
+        }
+        // VendorId
+        if (all || canRead(3)) {
+            attributes.add(3);
+        }
+        // ProductId
+        if (all || canRead(4)) {
+            attributes.add(4);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -134,7 +177,7 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int getAttributeCount() {
-        return 2;
+        return 4;
     }
 
     /*
@@ -147,14 +190,17 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final DataType getDataType(final int index) {
-        if (index == 1) {
+        switch (index) {
+        case 1:
+        case 2:
             return DataType.OCTET_STRING;
+        case 3:
+        case 4:
+            return DataType.UINT16;
+        default:
+            throw new IllegalArgumentException(
+                    "getDataType failed. Invalid attribute index.");
         }
-        if (index == 2) {
-            return super.getDataType(index);
-        }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
     }
 
     /*
@@ -163,13 +209,22 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object getValue(final GXDLMSSettings settings,
             final ValueEventArgs e) {
-        if (e.getIndex() == 1) {
+        switch (e.getIndex()) {
+        case 1:
             return GXCommon.logicalNameToBytes(getLogicalName());
+        case 2:
+            if (firmwareVersion != null) {
+                return firmwareVersion.getBytes();
+            }
+            break;
+        case 3:
+            return vendorId;
+        case 4:
+            return productId;
+        default:
+            e.setError(ErrorCode.READ_WRITE_DENIED);
+            break;
         }
-        if (e.getIndex() == 2) {
-            return getValue();
-        }
-        e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
     }
 
@@ -179,27 +234,37 @@ public class GXDLMSData extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void setValue(final GXDLMSSettings settings,
             final ValueEventArgs e) {
-        if (e.getIndex() == 1) {
+        switch (e.getIndex()) {
+        case 1:
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
-        } else if (e.getIndex() == 2) {
-            setValue(e.getValue());
-        } else {
+            break;
+        case 2:
+            firmwareVersion = new String((byte[]) e.getValue());
+            break;
+        case 3:
+            vendorId = ((Number) e.getValue()).intValue();
+            break;
+        case 4:
+            productId = ((Number) e.getValue()).intValue();
+            break;
+        default:
             e.setError(ErrorCode.READ_WRITE_DENIED);
+            break;
         }
     }
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
-        value = reader.readElementContentAsObject("Value", null, this, 2);
+        firmwareVersion = reader.readElementContentAsString("FirmwareVersion");
+        vendorId = reader.readElementContentAsInt("VendorId");
+        productId = reader.readElementContentAsInt("ProductId");
     }
 
     @Override
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
-        DataType dt = getDataType(2);
-        if (value != null && dt == DataType.NONE) {
-            dt = GXDLMSConverter.getDLMSDataType(value);
-        }
-        writer.writeElementObject("Value", value, dt, getUIDataType(2));
+        writer.writeElementString("FirmwareVersion", firmwareVersion);
+        writer.writeElementString("VendorId", vendorId);
+        writer.writeElementString("ProductId", productId);
     }
 
     @Override

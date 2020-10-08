@@ -34,9 +34,17 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -187,6 +195,84 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
      */
     private int maxProvisionPeriod;
+
+    /**
+     * Activate the value.
+     * 
+     * @param client
+     *            DLMS client.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     */
+    public final byte[][] activate(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(getName(), getObjectType(), 1, 0, DataType.INT8);
+    }
+
+    /**
+     * Close the value.
+     * 
+     * @param client
+     *            DLMS client.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     */
+    public final byte[][] close(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(getName(), getObjectType(), 2, 0, DataType.INT8);
+    }
+
+    /**
+     * Reset value.
+     * 
+     * @param client
+     *            DLMS client.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     */
+    public final byte[][] reset(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(getName(), getObjectType(), 3, 0, DataType.INT8);
+    }
 
     /**
      * Constructor.
@@ -640,6 +726,23 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
                 maxProvisionPeriod };
     }
 
+    @Override
+    public final byte[] invoke(final GXDLMSSettings settings,
+            final ValueEventArgs e) {
+        // Resets the value to the default value.
+        // The default value is an instance specific constant.
+        if (e.getIndex() == 1) {
+            accountStatus = AccountStatus.ACTIVE;
+        } else if (e.getIndex() == 2) {
+            accountStatus = AccountStatus.CLOSED;
+        } else if (e.getIndex() == 3) {
+            // Meter must handle this.
+        } else {
+            e.setError(ErrorCode.READ_WRITE_DENIED);
+        }
+        return null;
+    }
+
     /*
      * Returns collection of attributes to read. If attribute is static and
      * already read or device is returned HW error it is not returned.
@@ -651,7 +754,7 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // PaymentMode, AccountStatus
         if (all || canRead(2)) {
@@ -806,14 +909,14 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
             bb.setUInt8(DataType.STRUCTURE.getValue());
             bb.setUInt8(2);
             bb.setUInt8(DataType.ENUM.getValue());
-            bb.setUInt8(accountStatus.getValue());
-            bb.setUInt8(DataType.ENUM.getValue());
             bb.setUInt8(paymentMode.getValue());
+            bb.setUInt8(DataType.ENUM.getValue());
+            bb.setUInt8(accountStatus.getValue());
             return bb.array();
         case 3:
             return currentCreditInUse;
         case 4:
-            return (byte) currentCreditStatus.getValue();
+            return GXBitString.toBitString(currentCreditStatus.getValue(), 8);
         case 5:
             return availableCredit;
         case 6:
@@ -869,7 +972,10 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
                     bb.set(GXCommon
                             .logicalNameToBytes(it.getChargeReference()));
                     GXCommon.setData(settings, bb, DataType.BITSTRING,
-                            it.getCollectionConfiguration());
+                            GXBitString.toBitString(
+                                    CreditCollectionConfiguration.toInteger(
+                                            it.getCollectionConfiguration()),
+                                    3));
                 }
             }
             return bb.array();
@@ -932,18 +1038,17 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
             break;
         case 2:
-            accountStatus = AccountStatus.forValue(
-                    ((Number) ((Object[]) e.getValue())[0]).intValue());
             paymentMode = PaymentMode.forValue(
-                    ((Number) ((Object[]) e.getValue())[1]).intValue());
+                    ((Number) ((List<?>) e.getValue()).get(0)).intValue());
+            accountStatus = AccountStatus.forValue(
+                    ((Number) ((List<?>) e.getValue()).get(1)).intValue());
             break;
         case 3:
             currentCreditInUse = ((Number) e.getValue()).byteValue();
             break;
         case 4:
-            GXByteBuffer bb = new GXByteBuffer();
-            GXCommon.setBitString(bb, e.getValue(), false);
-            currentCreditStatus = AccountCreditStatus.forValue(bb.getUInt8(0));
+            currentCreditStatus = AccountCreditStatus
+                    .forValue(((GXBitString) e.getValue()).toInteger());
             break;
         case 5:
             availableCredit = ((Number) e.getValue()).intValue();
@@ -960,7 +1065,7 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         case 9:
             creditReferences.clear();
             if (e.getValue() != null) {
-                for (Object it : (Object[]) e.getValue()) {
+                for (Object it : (List<?>) e.getValue()) {
                     creditReferences.add(GXCommon.toLogicalName(it));
                 }
             }
@@ -968,7 +1073,7 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         case 10:
             chargeReferences.clear();
             if (e.getValue() != null) {
-                for (Object it : (Object[]) e.getValue()) {
+                for (Object it : (List<?>) e.getValue()) {
                     chargeReferences.add(GXCommon.toLogicalName(it));
                 }
             }
@@ -976,17 +1081,15 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         case 11:
             creditChargeConfigurations.clear();
             if (e.getValue() != null) {
-                for (Object it2 : (Object[]) e.getValue()) {
-                    Object[] it = (Object[]) it2;
+                for (Object it2 : (List<?>) e.getValue()) {
+                    List<?> it = (List<?>) it2;
                     GXCreditChargeConfiguration item =
                             new GXCreditChargeConfiguration();
-                    item.setCreditReference(GXCommon.toLogicalName(it[0]));
-                    item.setChargeReference(GXCommon.toLogicalName(it[1]));
-                    GXByteBuffer bs = new GXByteBuffer();
-                    GXCommon.setBitString(bs, String.valueOf(it[2]), false);
+                    item.setCreditReference(GXCommon.toLogicalName(it.get(0)));
+                    item.setChargeReference(GXCommon.toLogicalName(it.get(1)));
                     item.setCollectionConfiguration(
-                            CreditCollectionConfiguration
-                                    .forValue(bs.getUInt8(0)));
+                            CreditCollectionConfiguration.forValue(
+                                    ((GXBitString) it.get(2)).toInteger()));
                     creditChargeConfigurations.add(item);
                 }
             }
@@ -994,12 +1097,12 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         case 12:
             tokenGatewayConfigurations.clear();
             if (e.getValue() != null) {
-                for (Object it2 : (Object[]) e.getValue()) {
-                    Object[] it = (Object[]) it2;
+                for (Object it2 : (List<?>) e.getValue()) {
+                    List<?> it = (List<?>) it2;
                     GXTokenGatewayConfiguration item =
                             new GXTokenGatewayConfiguration();
-                    item.setCreditReference(GXCommon.toLogicalName(it[0]));
-                    item.setTokenProportion(((Number) it[1]).byteValue());
+                    item.setCreditReference(GXCommon.toLogicalName(it.get(0)));
+                    item.setTokenProportion(((Number) it.get(1)).byteValue());
                     tokenGatewayConfigurations.add(item);
                 }
             }
@@ -1010,8 +1113,14 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -1024,8 +1133,14 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -1033,10 +1148,11 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
             }
             break;
         case 15:
-            Object[] tmp = (Object[]) e.getValue();
-            currency.setName((String) tmp[0]);
-            currency.setScale(((Number) tmp[1]).byteValue());
-            currency.setUnit(Currency.forValue(((Number) tmp[2]).intValue()));
+            List<?> tmp = (List<?>) e.getValue();
+            currency.setName((String) tmp.get(0));
+            currency.setScale(((Number) tmp.get(1)).byteValue());
+            currency.setUnit(
+                    Currency.forValue(((Number) tmp.get(2)).intValue()));
             break;
         case 16:
             lowCreditThreshold = ((Number) e.getValue()).intValue();
@@ -1123,15 +1239,10 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         loadReferences(reader, "ChargeReferences", chargeReferences);
         loadCreditChargeConfigurations(reader, creditChargeConfigurations);
         loadTokenGatewayConfigurations(reader, tokenGatewayConfigurations);
-        String tmp = reader.readElementContentAsString("AccountActivationTime");
-        if (tmp != null) {
-            accountActivationTime = new GXDateTime(tmp);
-        }
-        tmp = reader.readElementContentAsString("AccountClosureTime");
-        if (tmp != null) {
-            accountClosureTime = new GXDateTime(tmp);
-        }
-
+        accountActivationTime =
+                reader.readElementContentAsDateTime("AccountActivationTime");
+        accountClosureTime =
+                reader.readElementContentAsDateTime("AccountClosureTime");
         currency.setName(reader.readElementContentAsString("CurrencyName"));
         currency.setScale(
                 (byte) reader.readElementContentAsInt("CurrencyScale"));
@@ -1207,14 +1318,9 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
         saveReferences(writer, chargeReferences, "ChargeReferences");
         saveCreditChargeConfigurations(writer, creditChargeConfigurations);
         saveTokenGatewayConfigurations(writer, tokenGatewayConfigurations);
-        if (accountActivationTime != null) {
-            writer.writeElementString("AccountActivationTime",
-                    accountActivationTime.toFormatString());
-        }
-        if (accountClosureTime != null) {
-            writer.writeElementString("AccountClosureTime",
-                    accountClosureTime.toFormatString());
-        }
+        writer.writeElementString("AccountActivationTime",
+                accountActivationTime);
+        writer.writeElementString("AccountClosureTime", accountClosureTime);
         writer.writeElementString("CurrencyName", currency.getName());
         writer.writeElementString("CurrencyScale", currency.getScale());
         writer.writeElementString("CurrencyUnit",
@@ -1226,6 +1332,7 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
 
         writer.writeElementString("MaxProvision", maxProvision);
         writer.writeElementString("MaxProvisionPeriod", maxProvisionPeriod);
+
     }
 
     @Override

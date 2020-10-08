@@ -34,9 +34,16 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -161,8 +168,23 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
      * @return If a special day with the same index or with the same date as an
      *         already defined day is inserted, the old entry will be
      *         overwritten.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final byte[][] insert(GXDLMSClient client, GXDLMSTarget entry) {
+    public final byte[][] insert(GXDLMSClient client, GXDLMSTarget entry)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.getValue());
         bb.setUInt8(3);
@@ -182,8 +204,23 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
      * @param entry
      *            Removed entry.
      * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final byte[][] delete(GXDLMSClient client, GXDLMSTarget entry) {
+    public final byte[][] delete(GXDLMSClient client, GXDLMSTarget entry)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
 
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.getValue());
@@ -203,11 +240,11 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
             e.setError(ErrorCode.READ_WRITE_DENIED);
         } else {
             if (e.getIndex() == 1) {
-                Object[] tmp = (Object[]) e.getParameters();
+                List<?> tmp = (List<?>) e.getParameters();
                 ObjectType type =
-                        ObjectType.forValue(((Number) tmp[0]).intValue());
-                String ln = GXCommon.toLogicalName((byte[]) tmp[1]);
-                int index = ((Number) tmp[2]).intValue();
+                        ObjectType.forValue(((Number) tmp.get(0)).intValue());
+                String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
+                int index = ((Number) tmp.get(2)).intValue();
                 for (GXDLMSTarget item : parameters) {
                     if (item.getTarget().getObjectType() == type
                             && item.getTarget().getLogicalName().equals(ln)
@@ -225,11 +262,11 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
                 it.setAttributeIndex(index);
                 parameters.add(it);
             } else if (e.getIndex() == 2) {
-                Object[] tmp = (Object[]) e.getParameters();
+                List<?> tmp = (List<?>) e.getParameters();
                 ObjectType type =
-                        ObjectType.forValue(((Number) tmp[0]).intValue());
-                String ln = GXCommon.toLogicalName((byte[]) tmp[1]);
-                int index = ((Number) tmp[2]).intValue();
+                        ObjectType.forValue(((Number) tmp.get(0)).intValue());
+                String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
+                int index = ((Number) tmp.get(2)).intValue();
                 for (GXDLMSTarget item : parameters) {
                     if (item.getTarget().getObjectType() == type
                             && item.getTarget().getLogicalName().equals(ln)
@@ -254,7 +291,7 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // ChangedParameter
         if (all || canRead(2)) {
@@ -381,14 +418,14 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
             break;
         case 2: {
             changedParameter = new GXDLMSTarget();
-            if (e.getValue() instanceof Object[]) {
-                Object[] tmp = (Object[]) e.getValue();
-                if (tmp.length != 4) {
+            if (e.getValue() instanceof List<?>) {
+                List<?> tmp = (List<?>) e.getValue();
+                if (tmp.size() != 4) {
                     throw new GXDLMSException("Invalid structure format.");
                 }
                 ObjectType type =
-                        ObjectType.forValue(((Number) tmp[0]).intValue());
-                String ln = GXCommon.toLogicalName((byte[]) tmp[1]);
+                        ObjectType.forValue(((Number) tmp.get(0)).intValue());
+                String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
                 changedParameter
                         .setTarget(settings.getObjects().findByLN(type, ln));
                 if (changedParameter.getTarget() == null) {
@@ -396,10 +433,9 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
                     changedParameter.getTarget().setLogicalName(ln);
                 }
                 changedParameter
-                        .setAttributeIndex(((Number) tmp[2]).intValue());
-                changedParameter.setValue(tmp[3]);
+                        .setAttributeIndex(((Number) tmp.get(2)).intValue());
+                changedParameter.setValue(tmp.get(3));
             }
-
             break;
         }
 
@@ -409,8 +445,14 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -420,22 +462,22 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
         case 4: {
             parameters.clear();
             if (e.getValue() != null) {
-                for (Object i : (Object[]) e.getValue()) {
-                    Object[] tmp = (Object[]) i;
-                    if (tmp.length != 3) {
+                for (Object i : (List<?>) e.getValue()) {
+                    List<?> tmp = (List<?>) i;
+                    if (tmp.size() != 3) {
                         throw new GXDLMSException("Invalid structure format.");
                     }
                     GXDLMSTarget obj = new GXDLMSTarget();
-                    ObjectType type =
-                            ObjectType.forValue(((Number) tmp[0]).intValue());
-                    String ln = GXCommon.toLogicalName((byte[]) tmp[1]);
+                    ObjectType type = ObjectType
+                            .forValue(((Number) tmp.get(0)).intValue());
+                    String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
                     obj.setTarget(settings.getObjects().findByLN(type, ln));
                     if (obj.getTarget() == null) {
                         obj.setTarget(GXDLMSClient.createObject(type));
                         obj.getTarget().setLogicalName(
-                                GXCommon.toLogicalName((byte[]) tmp[1]));
+                                GXCommon.toLogicalName((byte[]) tmp.get(1)));
                     }
-                    obj.setAttributeIndex(((Number) tmp[2]).intValue());
+                    obj.setAttributeIndex(((Number) tmp.get(2)).intValue());
                     parameters.add(obj);
                 }
             }
@@ -461,16 +503,14 @@ public class GXDLMSParameterMonitor extends GXDLMSObject
             }
             changedParameter
                     .setAttributeIndex(reader.readElementContentAsInt("Index"));
-            changedParameter
-                    .setValue(reader.readElementContentAsObject("Value", null));
+            changedParameter.setValue(
+                    reader.readElementContentAsObject("Value", null, null, 0));
             reader.readEndElement("ChangedParameter");
         }
-        if ("Time".compareToIgnoreCase(reader.getName()) == 0) {
-            captureTime =
-                    new GXDateTime(reader.readElementContentAsString("Time"))
-                            .getMeterCalendar().getTime();
-        } else {
-            captureTime = new Date(0);
+        GXDateTime tmp = reader.readElementContentAsDateTime("Time");
+        captureTime = null;
+        if (tmp != null) {
+            captureTime = tmp.getMeterCalendar().getTime();
         }
         parameters.clear();
         if (reader.isStartElement("Parameters", true)) {

@@ -34,6 +34,14 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
 
@@ -88,8 +96,23 @@ public interface IGXDLMSBase {
      * @param e
      *            Invoke parameter.
      * @return Reply for the client.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws SignatureException
+     *             Signature exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    byte[] invoke(GXDLMSSettings settings, ValueEventArgs e);
+    byte[] invoke(GXDLMSSettings settings, ValueEventArgs e)
+            throws InvalidKeyException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException,
+            BadPaddingException, SignatureException;
 
     /**
      * Load object content from XML.

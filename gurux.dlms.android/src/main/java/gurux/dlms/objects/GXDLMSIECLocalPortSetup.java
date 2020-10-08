@@ -47,7 +47,7 @@ import gurux.dlms.objects.enums.OpticalProtocolMode;
 
 /**
  * Online help: <br>
- * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSIECOpticalPortSetup
+ * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSIECLocalPortSetup
  */
 public class GXDLMSIECLocalPortSetup extends GXDLMSObject
         implements IGXDLMSBase {
@@ -69,7 +69,7 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
 
     /**
      * Constructor.
-     *
+     * 
      * @param ln
      *            Logical Name of the object.
      */
@@ -79,7 +79,7 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
 
     /**
      * Constructor.
-     *
+     * 
      * @param ln
      *            Logical Name of the object.
      * @param sn
@@ -91,6 +91,7 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
         defaultBaudrate = BaudRate.BAUDRATE_300;
         proposedBaudrate = BaudRate.BAUDRATE_300;
         responseTime = LocalPortResponseTime.ms20;
+        setVersion(1);
     }
 
     public final OpticalProtocolMode getDefaultMode() {
@@ -176,39 +177,39 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // DefaultMode
         if (all || !isRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // DefaultBaudrate
         if (all || !isRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // ProposedBaudrate
         if (all || !isRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // ResponseTime
         if (all || !isRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // DeviceAddress
         if (all || !isRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         // Password1
         if (all || !isRead(7)) {
-            attributes.add(new Integer(7));
+            attributes.add(7);
         }
         // Password2
         if (all || !isRead(8)) {
-            attributes.add(new Integer(8));
+            attributes.add(8);
         }
         // Password5
         if (all || !isRead(9)) {
-            attributes.add(new Integer(9));
+            attributes.add(9);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -272,16 +273,16 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
         if (e.getIndex() == 2) {
-            return new Integer(this.getDefaultMode().getValue());
+            return this.getDefaultMode().getValue();
         }
         if (e.getIndex() == 3) {
-            return new Integer(getDefaultBaudrate().ordinal());
+            return getDefaultBaudrate().ordinal();
         }
         if (e.getIndex() == 4) {
-            return new Integer(getProposedBaudrate().ordinal());
+            return getProposedBaudrate().ordinal();
         }
         if (e.getIndex() == 5) {
-            return new Integer(getResponseTime().ordinal());
+            return getResponseTime().ordinal();
         }
         if (e.getIndex() == 6) {
             return GXCommon.getBytes(deviceAddress);
@@ -321,19 +322,19 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
                     .values()[((Number) e.getValue()).intValue()]);
         } else if (e.getIndex() == 6) {
             setDeviceAddress(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING)
+                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
                     .toString());
         } else if (e.getIndex() == 7) {
             setPassword1(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING)
+                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
                     .toString());
         } else if (e.getIndex() == 8) {
             setPassword2(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING)
+                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
                     .toString());
         } else if (e.getIndex() == 9) {
             setPassword5(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING)
+                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
                     .toString());
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
@@ -371,5 +372,6 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

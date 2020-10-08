@@ -204,7 +204,7 @@ final class GXDLMSSNCommandHandler {
      * @return Response type.
      */
     private static byte getReadData(final GXDLMSSettings settings,
-            final ValueEventArgs[] list, final GXByteBuffer data){
+            final ValueEventArgs[] list, final GXByteBuffer data) throws NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException, InvalidKeyException {
         Object value;
         boolean first = true;
         byte type = SingleReadResponse.DATA;

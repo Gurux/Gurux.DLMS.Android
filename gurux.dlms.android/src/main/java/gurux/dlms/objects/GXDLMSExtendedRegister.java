@@ -35,12 +35,14 @@
 package gurux.dlms.objects;
 
 import java.text.NumberFormat;
+import java.util.Calendar;
 
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
+import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.enums.Unit;
 
@@ -125,6 +127,20 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
                 getCaptureTime() };
     }
 
+    @Override
+    public final byte[] invoke(final GXDLMSSettings settings,
+            final ValueEventArgs e) {
+        // Resets the value to the default value.
+        // The default value is an instance specific constant.
+        if (e.getIndex() == 1) {
+            setValue(null);
+            captureTime = new GXDateTime(Calendar.getInstance());
+        } else {
+            e.setError(ErrorCode.READ_WRITE_DENIED);
+        }
+        return null;
+    }
+
     /*
      * Returns collection of attributes to read. If attribute is static and
      * already read or device is returned HW error it is not returned.
@@ -136,23 +152,23 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // ScalerUnit
         if (all || !isRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // Value
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // Status
         if (all || canRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // CaptureTime
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -215,8 +231,14 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -231,19 +253,20 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
     public final void load(final GXXmlReader reader) throws XMLStreamException {
         setUnit(Unit.forValue(reader.readElementContentAsInt("Unit", 0)));
         setScaler(reader.readElementContentAsDouble("Scaler", 1));
-        setValue(reader.readElementContentAsObject("Value", null));
-        status = reader.readElementContentAsObject("Status", null);
-        captureTime = (GXDateTime) reader
-                .readElementContentAsObject("CaptureTime", null);
+        setValue(reader.readElementContentAsObject("Value", null, this, 2));
+        status = reader.readElementContentAsObject("Status", null, this, 4);
+        captureTime = reader.readElementContentAsDateTime("CaptureTime");
     }
 
     @Override
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
         writer.writeElementString("Unit", getUnit().getValue());
         writer.writeElementString("Scaler", getScaler(), 1);
-        writer.writeElementObject("Value", getValue());
-        writer.writeElementObject("Status", status);
-        writer.writeElementObject("CaptureTime", captureTime);
+        writer.writeElementObject("Value", getValue(), getDataType(2),
+                getUIDataType(2));
+        writer.writeElementObject("Status", status, getDataType(4),
+                getUIDataType(4));
+        writer.writeElementString("CaptureTime", captureTime);
     }
 
     @Override

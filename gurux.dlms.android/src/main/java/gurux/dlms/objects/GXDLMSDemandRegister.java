@@ -34,8 +34,19 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
+import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
+import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
 import gurux.dlms.ValueEventArgs;
@@ -213,16 +224,54 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Reset value.
+     * 
+     * @param client
+     *            DLMS client.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    void reset() {
-
+    public final byte[][] reset(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(getName(), getObjectType(), 1, 0, DataType.INT8);
     }
 
     /**
      * Next period.
+     * 
+     * @param client
+     *            DLMS client.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    void nextPeriod() {
-
+    public final byte[][] nextPeriod(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(getName(), getObjectType(), 2, 0, DataType.INT8);
     }
 
     @Override
@@ -231,8 +280,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
                 + getUnit().toString();
         return new Object[] { getLogicalName(), getCurrentAverageValue(),
                 getLastAverageValue(), str, getStatus(), getCaptureTime(),
-                getStartTimeCurrent(), new Long(getPeriod()),
-                new Long(getNumberOfPeriods()) };
+                getStartTimeCurrent(), getPeriod(), getNumberOfPeriods() };
     }
 
     @Override
@@ -241,6 +289,26 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
             return unit != 0;
         }
         return super.isRead(index);
+    }
+
+    @Override
+    public final byte[] invoke(final GXDLMSSettings settings,
+            final ValueEventArgs e) {
+        // Resets the value to the default value.
+        // The default value is an instance specific constant.
+        if (e.getIndex() == 1) {
+            currentAverageValue = lastAverageValue = null;
+            captureTime = new GXDateTime(Calendar.getInstance());
+            startTimeCurrent = new GXDateTime(Calendar.getInstance());
+        } else if (e.getIndex() == 2) {
+            lastAverageValue = currentAverageValue;
+            currentAverageValue = null;
+            captureTime = new GXDateTime(Calendar.getInstance());
+            startTimeCurrent = new GXDateTime(Calendar.getInstance());
+        } else {
+            e.setError(ErrorCode.READ_WRITE_DENIED);
+        }
+        return null;
     }
 
     /*
@@ -254,39 +322,39 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // ScalerUnit
         if (all || !isRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // CurrentAvarageValue
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // LastAvarageValue
         if (all || canRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // Status
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // CaptureTime
         if (all || canRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         // StartTimeCurrent
         if (all || canRead(7)) {
-            attributes.add(new Integer(7));
+            attributes.add(7);
         }
         // Period
         if (all || canRead(8)) {
-            attributes.add(new Integer(8));
+            attributes.add(8);
         }
         // NumberOfPeriods
         if (all || canRead(9)) {
-            attributes.add(new Integer(9));
+            attributes.add(9);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -350,18 +418,39 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
         if (e.getIndex() == 2) {
-            return getCurrentAverageValue();
+            if (settings != null && !settings.isServer() && getScaler() != 1
+                    && currentAverageValue != null) {
+                DataType type =
+                        GXDLMSConverter.getDLMSDataType(currentAverageValue);
+                Object tmp = ((Number) currentAverageValue).doubleValue()
+                        / getScaler();
+                if (type != DataType.NONE) {
+                    tmp = GXDLMSConverter.changeType(tmp, type);
+                }
+                return tmp;
+            }
+            return currentAverageValue;
         }
         if (e.getIndex() == 3) {
-            return getLastAverageValue();
+            if (settings != null && !settings.isServer() && getScaler() != 1
+                    && lastAverageValue != null) {
+                DataType type =
+                        GXDLMSConverter.getDLMSDataType(lastAverageValue);
+                Object tmp =
+                        ((Number) lastAverageValue).doubleValue() / getScaler();
+                if (type != DataType.NONE) {
+                    tmp = GXDLMSConverter.changeType(tmp, type);
+                }
+                return tmp;
+            }
+            return lastAverageValue;
         }
         if (e.getIndex() == 4) {
             GXByteBuffer data = new GXByteBuffer();
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(2);
-            GXCommon.setData(settings, data, DataType.INT8,
-                    new Integer(scaler));
-            GXCommon.setData(settings, data, DataType.ENUM, new Integer(unit));
+            GXCommon.setData(settings, data, DataType.INT8, scaler);
+            GXCommon.setData(settings, data, DataType.ENUM, unit);
             return data.array();
         }
         if (e.getIndex() == 5) {
@@ -374,10 +463,10 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
             return getStartTimeCurrent();
         }
         if (e.getIndex() == 8) {
-            return new Long(getPeriod());
+            return getPeriod();
         }
         if (e.getIndex() == 9) {
-            return new Long(getNumberOfPeriods());
+            return getNumberOfPeriods();
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
@@ -392,22 +481,44 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
-            setCurrentAverageValue(e.getValue());
+            if (settings != null && !settings.isServer() && getScaler() != 1
+                    && e.getValue() != null) {
+                try {
+                    setCurrentAverageValue(((Number) e.getValue()).doubleValue()
+                            * getScaler());
+                } catch (Exception e1) {
+                    // Sometimes scaler is set for wrong Object type.
+                    setCurrentAverageValue(e.getValue());
+                }
+            } else {
+                setCurrentAverageValue(e.getValue());
+            }
         } else if (e.getIndex() == 3) {
-            setLastAverageValue(e.getValue());
+            if (settings != null && !settings.isServer() && getScaler() != 1
+                    && e.getValue() != null) {
+                try {
+                    setLastAverageValue(((Number) e.getValue()).doubleValue()
+                            * getScaler());
+                } catch (Exception e1) {
+                    // Sometimes scaler is set for wrong Object type.
+                    setLastAverageValue(e.getValue());
+                }
+            } else {
+                setLastAverageValue(e.getValue());
+            }
         } else if (e.getIndex() == 4) {
             // Set default values.
             if (e.getValue() == null) {
                 scaler = 0;
                 unit = 0;
             } else {
-                Object[] arr = (Object[]) e.getValue();
-                if (arr.length != 2) {
+                List<?> arr = (List<?>) e.getValue();
+                if (arr.size() != 2) {
                     throw new IllegalArgumentException(
                             "setValue failed. Invalid scaler unit value.");
                 }
-                scaler = ((Number) arr[0]).intValue();
-                unit = (((Number) arr[1]).intValue() & 0xFF);
+                scaler = ((Number) arr.get(0)).intValue();
+                unit = (((Number) arr.get(1)).intValue() & 0xFF);
             }
         } else if (e.getIndex() == 5) {
             if (e.getValue() == null) {
@@ -421,8 +532,14 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -434,8 +551,14 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -460,25 +583,16 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
-        currentAverageValue =
-                reader.readElementContentAsObject("CurrentAverageValue", null);
-        lastAverageValue =
-                reader.readElementContentAsObject("LastAverageValue", null);
+        currentAverageValue = reader.readElementContentAsObject(
+                "CurrentAverageValue", null, this, 2);
+        lastAverageValue = reader.readElementContentAsObject("LastAverageValue",
+                null, this, 3);
         setScaler(reader.readElementContentAsDouble("Scaler", 1));
         unit = reader.readElementContentAsInt("Unit");
-        status = reader.readElementContentAsObject("Status", null);
-        String str = reader.readElementContentAsString("CaptureTime");
-        if (str == null) {
-            captureTime = null;
-        } else {
-            captureTime = new GXDateTime(str);
-        }
-        str = reader.readElementContentAsString("StartTimeCurrent");
-        if (str == null) {
-            startTimeCurrent = null;
-        } else {
-            startTimeCurrent = new GXDateTime(str);
-        }
+        status = reader.readElementContentAsObject("Status", null, this, 5);
+        captureTime = reader.readElementContentAsDateTime("CaptureTime");
+        startTimeCurrent =
+                reader.readElementContentAsDateTime("StartTimeCurrent");
         period = reader.readElementContentAsInt("Period");
         numberOfPeriods = reader.readElementContentAsInt("NumberOfPeriods");
     }
@@ -498,5 +612,6 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

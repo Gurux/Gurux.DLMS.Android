@@ -34,14 +34,20 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDate;
-import gurux.dlms.GXDateTime;
 import gurux.dlms.GXTime;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
@@ -64,7 +70,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      * Constructor.
      */
     public GXDLMSSchedule() {
-        super(ObjectType.SCHEDULE);
+        this("0.0.12.0.0.255");
     }
 
     /**
@@ -74,7 +80,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      *            Logical Name of the object.
      */
     public GXDLMSSchedule(final String ln) {
-        super(ObjectType.SCHEDULE, ln, 0);
+        this(ln, 0);
     }
 
     /**
@@ -87,6 +93,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      */
     public GXDLMSSchedule(final String ln, final int sn) {
         super(ObjectType.SCHEDULE, ln, sn);
+        entries = new ArrayList<GXDLMSScheduleEntry>();
     }
 
     /**
@@ -115,15 +122,30 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Add entry to entries list.
-     *
+     * 
      * @param client
      *            DLMS client.
      * @param entry
      *            Schedule entry.
      * @return Action bytes.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
      */
     public final byte[][] insert(final GXDLMSClient client,
-                                 final GXDLMSScheduleEntry entry) {
+            final GXDLMSScheduleEntry entry)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         GXByteBuffer data = new GXByteBuffer();
         addEntry(null, entry, data);
         return client.method(this, 2, data.array(), DataType.STRUCTURE);
@@ -131,15 +153,29 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Remove entry from entries list.
-     *
+     * 
      * @param client
      *            DLMS client.
      * @param entry
      *            Schedule entry.
      * @return Action bytes.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
      */
     public final byte[][] delete(GXDLMSClient client, GXDLMSScheduleEntry entry)
-{
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -153,16 +189,29 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Enable entry from entries list.
-     *
+     * 
      * @param client
      *            DLMS client.
      * @param entry
      *            Schedule entries.
      * @return Action bytes.
-
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
      */
     public final byte[][] enable(GXDLMSClient client, GXDLMSScheduleEntry entry)
-    {
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -178,16 +227,30 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Disable entry from entries list.
-     *
+     * 
      * @param client
      *            DLMS client.
      * @param entry
      *            Schedule entries.
      * @return Action bytes.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
      */
     public final byte[][] disable(GXDLMSClient client,
-                                  GXDLMSScheduleEntry entry)
-{
+            GXDLMSScheduleEntry entry)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -213,8 +276,8 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
     private void enableDisable(java.util.ArrayList<?> tmp) {
         // Enable
         for (int index =
-             ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1))
-                .intValue(); ++index) {
+                ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1))
+                        .intValue(); ++index) {
             if (index != 0) {
                 for (GXDLMSScheduleEntry it : entries) {
                     if (it.getIndex() == index) {
@@ -226,8 +289,8 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
         }
         // Disable
         for (int index =
-             ((Number) tmp.get(2)).intValue(); index <= ((Number) tmp.get(3))
-                .intValue(); ++index) {
+                ((Number) tmp.get(2)).intValue(); index <= ((Number) tmp.get(3))
+                        .intValue(); ++index) {
             if (index != 0) {
                 for (GXDLMSScheduleEntry it : entries) {
                     if (it.getIndex() == index) {
@@ -241,40 +304,40 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final byte[] invoke(final GXDLMSSettings settings,
-                               final ValueEventArgs e) {
+            final ValueEventArgs e) {
         switch (e.getIndex()) {
-            // Enable/disable entry
-            case 1: {
-                enableDisable((java.util.ArrayList<?>) e.getParameters());
-            }
+        // Enable/disable entry
+        case 1: {
+            enableDisable((java.util.ArrayList<?>) e.getParameters());
+        }
             break;
-            // Insert entry
-            case 2:
-                boolean useUtc;
-                if (e.getSettings() != null) {
-                    useUtc = e.getSettings().getUseUtc2NormalTime();
-                } else {
-                    useUtc = false;
-                }
-                GXDLMSScheduleEntry entry = createEntry(settings,
-                        (java.util.ArrayList<?>) e.getParameters(), useUtc);
-                removeEntry(entry.getIndex());
-                entries.add(entry);
-                break;
-            // Delete entry
-            case 3: {
-                java.util.ArrayList<?> tmp =
-                        (java.util.ArrayList<?>) e.getParameters();
-                for (int index = ((Number) tmp.get(0))
-                        .intValue(); index <= ((Number) tmp.get(1))
-                        .intValue(); ++index) {
-                    removeEntry(index);
-                }
+        // Insert entry
+        case 2:
+            boolean useUtc;
+            if (e.getSettings() != null) {
+                useUtc = e.getSettings().getUseUtc2NormalTime();
+            } else {
+                useUtc = false;
             }
+            GXDLMSScheduleEntry entry = createEntry(settings,
+                    (java.util.ArrayList<?>) e.getParameters(), useUtc);
+            removeEntry(entry.getIndex());
+            entries.add(entry);
             break;
-            default:
-                e.setError(ErrorCode.READ_WRITE_DENIED);
-                break;
+        // Delete entry
+        case 3: {
+            java.util.ArrayList<?> tmp =
+                    (java.util.ArrayList<?>) e.getParameters();
+            for (int index = ((Number) tmp.get(0))
+                    .intValue(); index <= ((Number) tmp.get(1))
+                            .intValue(); ++index) {
+                removeEntry(index);
+            }
+        }
+            break;
+        default:
+            e.setError(ErrorCode.READ_WRITE_DENIED);
+            break;
         }
         return null;
     }
@@ -290,11 +353,11 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Entries
         if (all || !isRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -328,7 +391,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
     }
 
     private void addEntry(final GXDLMSSettings settings,
-                          final GXDLMSScheduleEntry it, GXByteBuffer data) {
+            final GXDLMSScheduleEntry it, GXByteBuffer data) {
         data.setUInt8(DataType.STRUCTURE.getValue());
         data.setUInt8(10);
         // Add index.
@@ -394,7 +457,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      * Create a new entry.
      */
     private GXDLMSScheduleEntry createEntry(final GXDLMSSettings settings,
-                                            final List<?> tmp, final boolean useUtc) {
+            final List<?> tmp, final boolean useUtc) {
         GXDLMSScheduleEntry item = new GXDLMSScheduleEntry();
         item.setIndex(((Number) tmp.get(0)).intValue());
         item.setEnable(((Boolean) tmp.get(1)).booleanValue());
@@ -434,7 +497,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
                 List<?> tmp = (List<?>) it;
                 entries.add(createEntry(settings, tmp, useUtc));
             }
-        }else {
+        } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         }
     }
@@ -451,18 +514,15 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
                         reader.readElementContentAsString("LogicalName"));
                 it.setScriptSelector((byte) reader
                         .readElementContentAsInt("ScriptSelector"));
-                it.setSwitchTime((GXDateTime) reader.readElementContentAsObject(
-                        "SwitchTime", new GXDateTime()));
+                it.setSwitchTime(reader.readElementContentAsTime("SwitchTime"));
                 it.setValidityWindow((byte) reader
                         .readElementContentAsInt("ValidityWindow"));
                 it.setExecWeekdays(Weekdays.forValue(
                         reader.readElementContentAsInt("ExecWeekdays")));
                 it.setExecSpecDays(
                         reader.readElementContentAsString("ExecSpecDays"));
-                it.setBeginDate((GXDateTime) reader.readElementContentAsObject(
-                        "BeginDate", new GXDateTime()));
-                it.setEndDate((GXDateTime) reader.readElementContentAsObject(
-                        "EndDate", new GXDateTime()));
+                it.setBeginDate(reader.readElementContentAsDate("BeginDate"));
+                it.setEndDate(reader.readElementContentAsDate("EndDate"));
                 entries.add(it);
             }
             reader.readEndElement("Entries");
@@ -480,14 +540,14 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
                 writer.writeElementString("LogicalName", it.getLogicalName());
                 writer.writeElementString("ScriptSelector",
                         it.getScriptSelector());
-                writer.writeElementObject("SwitchTime", it.getSwitchTime());
+                writer.writeElementString("SwitchTime", it.getSwitchTime());
                 writer.writeElementString("ValidityWindow",
                         it.getValidityWindow());
                 writer.writeElementString("ExecWeekdays",
                         Weekdays.toInteger(it.getExecWeekdays()));
                 writer.writeElementString("ExecSpecDays", it.getExecSpecDays());
-                writer.writeElementObject("BeginDate", it.getBeginDate());
-                writer.writeElementObject("EndDate", it.getEndDate());
+                writer.writeElementString("BeginDate", it.getBeginDate());
+                writer.writeElementString("EndDate", it.getEndDate());
                 writer.writeEndElement();
             }
             writer.writeEndElement();

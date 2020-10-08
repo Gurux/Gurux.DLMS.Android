@@ -205,23 +205,23 @@ public class GXDLMSIecTwistedPairSetup extends GXDLMSObject
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Mode
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // Speed
         if (all || canRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // PrimaryAddresses
         if (all || canRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // Tabis
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -291,14 +291,14 @@ public class GXDLMSIecTwistedPairSetup extends GXDLMSObject
             setSpeed(BaudRate.values()[((Number) e.getValue()).intValue()]);
         } else if (e.getIndex() == 4) {
             List<Byte> list = new ArrayList<Byte>();
-            for (Object it : (Object[]) e.getValue()) {
-                list.add(new Byte(((Number) it).byteValue()));
+            for (Object it : (List<?>) e.getValue()) {
+                list.add(((Number) it).byteValue());
             }
             setPrimaryAddresses(toByteArray(list));
         } else if (e.getIndex() == 5) {
             List<Byte> list = new ArrayList<Byte>();
-            for (Object it : (Object[]) e.getValue()) {
-                list.add(new Byte(((Number) it).byteValue()));
+            for (Object it : (List<?>) e.getValue()) {
+                list.add(((Number) it).byteValue());
             }
             setTabis(toByteArray(list));
         } else {
@@ -330,5 +330,6 @@ public class GXDLMSIecTwistedPairSetup extends GXDLMSObject
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

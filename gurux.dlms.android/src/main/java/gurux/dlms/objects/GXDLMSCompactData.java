@@ -34,8 +34,6 @@
 
 package gurux.dlms.objects;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -210,27 +208,27 @@ public class GXDLMSCompactData extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Buffer
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // CaptureObjects
         if (all || canRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // TemplateId
         if (all || canRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // TemplateDescription
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // CaptureMethod
         if (all || canRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -350,22 +348,22 @@ public class GXDLMSCompactData extends GXDLMSObject implements IGXDLMSBase {
     }
 
     private static void setCaptureObjects(GXDLMSSettings settings,
-                                          List<Entry<GXDLMSObject, GXDLMSCaptureObject>> list,
-                                          Object[] array) {
+            List<Entry<GXDLMSObject, GXDLMSCaptureObject>> list,
+            List<?> array) {
         GXDLMSConverter c = null;
         list.clear();
         try {
             if (array != null) {
                 for (Object it : array) {
-                    Object[] tmp = (Object[]) it;
-                    if (tmp.length != 4) {
+                    List<?> tmp = (List<?>) it;
+                    if (tmp.size() != 4) {
                         throw new GXDLMSException("Invalid structure format.");
                     }
-                    int v = ((Number) tmp[0]).intValue();
+                    int v = ((Number) tmp.get(0)).intValue();
                     ObjectType type = ObjectType.forValue(v);
-                    String ln = GXCommon.toLogicalName((byte[]) tmp[1]);
-                    int attributeIndex = ((Number) tmp[2]).intValue();
-                    int dataIndex = ((Number) tmp[3]).intValue();
+                    String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
+                    int attributeIndex = ((Number) tmp.get(2)).intValue();
+                    int dataIndex = ((Number) tmp.get(3)).intValue();
                     GXDLMSObject obj = null;
                     if (settings != null && settings.getObjects() != null) {
                         obj = settings.getObjects().findByLN(type, ln);
@@ -406,8 +404,7 @@ public class GXDLMSCompactData extends GXDLMSObject implements IGXDLMSBase {
             }
             break;
         case 3:
-            setCaptureObjects(settings, captureObjects,
-                    (Object[]) e.getValue());
+            setCaptureObjects(settings, captureObjects, (List<?>) e.getValue());
             if (settings.isServer()) {
                 updateTemplateDescription();
             }
@@ -419,7 +416,8 @@ public class GXDLMSCompactData extends GXDLMSObject implements IGXDLMSBase {
             templateDescription = (byte[]) e.getValue();
             break;
         case 6:
-            captureMethod = CaptureMethod.values()[(short) e.getValue()];
+            captureMethod = CaptureMethod.values()[((Number) e.getValue())
+                    .shortValue()];
             break;
         default:
             e.setError(ErrorCode.READ_WRITE_DENIED);
@@ -601,7 +599,8 @@ public class GXDLMSCompactData extends GXDLMSObject implements IGXDLMSBase {
      *            Buffer byte array.
      * @return Values from byte buffer.
      */
-    public Object[] getValues(final byte[] templateDescription,
+    @SuppressWarnings("unchecked")
+    public List<Object> getValues(final byte[] templateDescription,
             final byte[] buffer) {
         // If templateDescription or buffer is not given.
         if (templateDescription == null || buffer == null
@@ -615,7 +614,6 @@ public class GXDLMSCompactData extends GXDLMSObject implements IGXDLMSBase {
         GXCommon.setObjectCount(buffer.length, data);
         data.set(buffer);
         info.setType(DataType.COMPACT_ARRAY);
-        tmp = GXCommon.getData(null, data, info);
-        return (Object[]) tmp;
+        return (List<Object>) GXCommon.getData(null, data, info);
     }
 }

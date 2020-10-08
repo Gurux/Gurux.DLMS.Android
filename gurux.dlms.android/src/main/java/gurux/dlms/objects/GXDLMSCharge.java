@@ -35,8 +35,10 @@
 package gurux.dlms.objects;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -46,6 +48,7 @@ import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.internal.GXCommon;
+import gurux.dlms.objects.enums.ChargeConfiguration;
 import gurux.dlms.objects.enums.ChargeType;
 
 /**
@@ -101,7 +104,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
      */
-    private String chargeConfiguration;
+    private java.util.Set<ChargeConfiguration> chargeConfiguration;
     /**
      * Last collection time.<br>
      * Online help:<br>
@@ -158,6 +161,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
         unitChargeActive = new GXUnitCharge();
         unitChargePassive = new GXUnitCharge();
         chargeType = ChargeType.CONSUMPTION_BASED_COLLECTION;
+        chargeConfiguration = new HashSet<ChargeConfiguration>();
     }
 
     /**
@@ -313,7 +317,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
      * 
      * @return Charge configuration.
      */
-    public final String getChargeConfiguration() {
+    public final java.util.Set<ChargeConfiguration> getChargeConfiguration() {
         return chargeConfiguration;
     }
 
@@ -324,7 +328,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
      * @param value
      *            Charge configuration.
      */
-    public final void setChargeConfiguration(final String value) {
+    public final void setChargeConfiguration(
+            final java.util.Set<ChargeConfiguration> value) {
         chargeConfiguration = value;
     }
 
@@ -432,7 +437,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // TotalAmountPaid
         if (all || canRead(2)) {
@@ -523,7 +528,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
         case 9:
             return DataType.BITSTRING;
         case 10:
-            return DataType.OCTET_STRING;
+            return DataType.DATETIME;
         case 11:
             return DataType.INT32;
         case 12:
@@ -534,6 +539,14 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
             throw new IllegalArgumentException(
                     "getDataType failed. Invalid attribute index.");
         }
+    }
+
+    @Override
+    public final DataType getUIDataType(final int index) {
+        if (index == 7 || index == 10) {
+            return DataType.DATETIME;
+        }
+        return super.getUIDataType(index);
     }
 
     private static byte[] getUnitCharge(GXUnitCharge charge) {
@@ -609,7 +622,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
         case 8:
             return period;
         case 9:
-            return chargeConfiguration;
+            return GXBitString.toBitString(
+                    ChargeConfiguration.toInteger(chargeConfiguration), 2);
         case 10:
             return lastCollectionTime;
         case 11:
@@ -627,24 +641,24 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
 
     private void setUnitCharge(final GXDLMSSettings settings,
             GXUnitCharge charge, Object value) {
-        Object[] tmp = (Object[]) value;
-        Object[] tmp2 = (Object[]) tmp[0];
+        List<?> tmp = (List<?>) value;
+        List<?> tmp2 = (List<?>) tmp.get(0);
         charge.getChargePerUnitScaling()
-                .setCommodityScale(((Number) tmp2[0]).shortValue());
+                .setCommodityScale(((Number) tmp2.get(0)).shortValue());
         charge.getChargePerUnitScaling()
-                .setPriceScale(((Number) tmp2[1]).shortValue());
-        tmp2 = (Object[]) tmp[1];
-        ObjectType ot = ObjectType.forValue(((Number) tmp2[0]).intValue());
-        String ln = GXCommon.toLogicalName(tmp2[1]);
+                .setPriceScale(((Number) tmp2.get(1)).shortValue());
+        tmp2 = (List<?>) tmp.get(1);
+        ObjectType ot = ObjectType.forValue(((Number) tmp2.get(0)).intValue());
+        String ln = GXCommon.toLogicalName(tmp2.get(1));
         charge.getCommodity().setTarget(settings.getObjects().findByLN(ot, ln));
-        charge.getCommodity().setIndex(((Number) tmp2[2]).intValue());
+        charge.getCommodity().setIndex(((Number) tmp2.get(2)).intValue());
         List<GXChargeTable> list = new ArrayList<GXChargeTable>();
-        tmp2 = (Object[]) tmp[2];
+        tmp2 = (List<?>) tmp.get(2);
         for (Object tmp3 : tmp2) {
-            Object[] it = (Object[]) tmp3;
+            List<?> it = (List<?>) tmp3;
             GXChargeTable item = new GXChargeTable();
-            item.setIndex(new String((byte[]) it[0]));
-            item.setChargePerUnit(((Number) it[1]).shortValue());
+            item.setIndex(new String((byte[]) it.get(0)));
+            item.setChargePerUnit(((Number) it.get(1)).shortValue());
             list.add(item);
         }
         charge.setChargeTables(list.toArray(new GXChargeTable[0]));
@@ -677,18 +691,39 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
             setUnitCharge(settings, unitChargePassive, e.getValue());
             break;
         case 7:
-            unitChargeActivationTime = (GXDateTime) GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.DATETIME);
+            if (e.getValue() instanceof GXDateTime) {
+                unitChargeActivationTime = (GXDateTime) e.getValue();
+            } else {
+                boolean useUtc;
+                if (e.getSettings() != null) {
+                    useUtc = e.getSettings().getUseUtc2NormalTime();
+                } else {
+                    useUtc = false;
+                }
+                unitChargeActivationTime = (GXDateTime) GXDLMSClient.changeType(
+                        (byte[]) e.getValue(), DataType.DATETIME, useUtc);
+            }
             break;
         case 8:
             period = ((Number) e.getValue()).intValue();
             break;
         case 9:
-            chargeConfiguration = String.valueOf(e.getValue());
+            chargeConfiguration = ChargeConfiguration
+                    .forValue(((GXBitString) e.getValue()).toInteger());
             break;
         case 10:
-            lastCollectionTime = (GXDateTime) GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.DATETIME);
+            if (e.getValue() instanceof GXDateTime) {
+                lastCollectionTime = (GXDateTime) e.getValue();
+            } else {
+                boolean useUtc;
+                if (e.getSettings() != null) {
+                    useUtc = e.getSettings().getUseUtc2NormalTime();
+                } else {
+                    useUtc = false;
+                }
+                lastCollectionTime = (GXDateTime) GXDLMSClient.changeType(
+                        (byte[]) e.getValue(), DataType.DATETIME, useUtc);
+            }
             break;
         case 11:
             lastCollectionAmount = ((Number) e.getValue()).intValue();
@@ -718,18 +753,13 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
         priority = (byte) reader.readElementContentAsInt("Priority");
         loadUnitChargeActive(reader, "UnitChargeActive", unitChargeActive);
         loadUnitChargeActive(reader, "UnitChargePassive", unitChargePassive);
-        String tmp =
-                reader.readElementContentAsString("UnitChargeActivationTime");
-        if (tmp != null) {
-            unitChargeActivationTime = new GXDateTime(tmp);
-        }
+        unitChargeActivationTime =
+                reader.readElementContentAsDateTime("UnitChargeActivationTime");
         period = reader.readElementContentAsInt("Period");
-        chargeConfiguration =
-                reader.readElementContentAsString("ChargeConfiguration");
-        tmp = reader.readElementContentAsString("LastCollectionTime");
-        if (tmp != null) {
-            lastCollectionTime = new GXDateTime(tmp);
-        }
+        chargeConfiguration = ChargeConfiguration.forValue(
+                reader.readElementContentAsInt("ChargeConfiguration"));
+        lastCollectionTime =
+                reader.readElementContentAsDateTime("LastCollectionTime");
         lastCollectionAmount =
                 reader.readElementContentAsInt("LastCollectionAmount");
         totalAmountRemaining =
@@ -754,7 +784,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
         writer.writeElementString("UnitChargeActivationTime",
                 unitChargeActivationTime);
         writer.writeElementString("Period", period);
-        writer.writeElementString("ChargeConfiguration", chargeConfiguration);
+        writer.writeElementString("ChargeConfiguration",
+                ChargeConfiguration.toInteger(chargeConfiguration));
         writer.writeElementString("LastCollectionTime", lastCollectionTime);
         writer.writeElementString("LastCollectionAmount", lastCollectionAmount);
         writer.writeElementString("TotalAmountRemaining", totalAmountRemaining);

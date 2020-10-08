@@ -34,10 +34,17 @@
 
 package gurux.dlms.objects;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -76,7 +83,7 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
      *            Logical Name of the object.
      */
     public GXDLMSAutoConnect(final String ln) {
-        this(ln, (short) 0);
+        this(ln, 0);
     }
 
     /**
@@ -91,6 +98,7 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
         super(ObjectType.AUTO_CONNECT, ln, sn);
         callingWindow = new ArrayList<Entry<GXDateTime, GXDateTime>>();
         mode = AutoConnectMode.NO_AUTO_DIALLING;
+        setVersion(2);
     }
 
     public final AutoConnectMode getMode() {
@@ -140,18 +148,30 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
      * @param client
      *            DLMS client.
      * @return Action bytes.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public final byte[][] connect(final GXDLMSClient client) {
-        return client.method(getName(), getObjectType(), 1, new Integer(0),
-                DataType.INT8);
+    public final byte[][] connect(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        return client.method(getName(), getObjectType(), 1, 0, DataType.INT8);
     }
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getMode(),
-                new Integer(getRepetitions()),
-                new Integer(getRepetitionDelay()), getCallingWindow(),
-                getDestinations() };
+        return new Object[] { getLogicalName(), getMode(), getRepetitions(),
+                getRepetitionDelay(), getCallingWindow(), getDestinations() };
     }
 
     @Override
@@ -174,27 +194,27 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // Mode
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // Repetitions
         if (all || canRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // RepetitionDelay
         if (all || canRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // CallingWindow
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // Destinations
         if (all || canRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -249,13 +269,13 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
         if (e.getIndex() == 2) {
-            return new Byte((byte) mode.getValue());
+            return (byte) mode.getValue();
         }
         if (e.getIndex() == 3) {
-            return new Integer(getRepetitions());
+            return getRepetitions();
         }
         if (e.getIndex() == 4) {
-            return new Integer(getRepetitionDelay());
+            return getRepetitionDelay();
         }
         if (e.getIndex() == 5) {
             int cnt = getCallingWindow().size();
@@ -316,12 +336,20 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
             setRepetitionDelay(((Number) e.getValue()).intValue());
         } else if (e.getIndex() == 5) {
             getCallingWindow().clear();
+            boolean useUtc;
+            if (e.getSettings() != null) {
+                useUtc = e.getSettings().getUseUtc2NormalTime();
+            } else {
+                useUtc = false;
+            }
             if (e.getValue() != null) {
-                for (Object item : (Object[]) e.getValue()) {
+                for (Object item : (List<?>) e.getValue()) {
                     GXDateTime start = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) ((Object[]) item)[0], DataType.DATETIME);
+                            (byte[]) ((List<?>) item).get(0), DataType.DATETIME,
+                            useUtc);
                     GXDateTime end = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) ((Object[]) item)[1], DataType.DATETIME);
+                            (byte[]) ((List<?>) item).get(1), DataType.DATETIME,
+                            useUtc);
                     getCallingWindow().add(
                             new GXSimpleEntry<GXDateTime, GXDateTime>(start,
                                     end));
@@ -331,9 +359,9 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
             setDestinations(null);
             if (e.getValue() != null) {
                 List<String> items = new ArrayList<String>();
-                for (Object item : (Object[]) e.getValue()) {
+                for (Object item : (List<?>) e.getValue()) {
                     String it = GXDLMSClient
-                            .changeType((byte[]) item, DataType.STRING)
+                            .changeType((byte[]) item, DataType.STRING, false)
                             .toString();
                     items.add(it);
                 }
@@ -352,10 +380,8 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
         callingWindow.clear();
         if (reader.isStartElement("CallingWindow", true)) {
             while (reader.isStartElement("Item", true)) {
-                GXDateTime start = new GXDateTime(
-                        reader.readElementContentAsString("Start"));
-                GXDateTime end = new GXDateTime(
-                        reader.readElementContentAsString("End"));
+                GXDateTime start = reader.readElementContentAsDateTime("Start");
+                GXDateTime end = reader.readElementContentAsDateTime("End");
                 callingWindow.add(
                         new SimpleEntry<GXDateTime, GXDateTime>(start, end));
             }
@@ -376,10 +402,8 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
             writer.writeStartElement("CallingWindow");
             for (Entry<GXDateTime, GXDateTime> it : callingWindow) {
                 writer.writeStartElement("Item");
-                writer.writeElementString("Start",
-                        it.getKey().toFormatString());
-                writer.writeElementString("End",
-                        it.getValue().toFormatString());
+                writer.writeElementString("Start", it.getKey());
+                writer.writeElementString("End", it.getValue());
                 writer.writeEndElement();
             }
             writer.writeEndElement();
@@ -392,5 +416,6 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

@@ -36,7 +36,7 @@ package gurux.dlms.objects;
 
 import java.util.HashSet;
 
-import gurux.dlms.GXByteBuffer;
+import gurux.dlms.GXBitString;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
@@ -318,7 +318,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // CurrentCreditAmount
         if (all || canRead(2)) {
@@ -430,7 +430,8 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
         case 6:
             return limit;
         case 7:
-            return (byte) CreditConfiguration.toInteger(creditConfiguration);
+            return GXBitString.toBitString(
+                    CreditConfiguration.toInteger(creditConfiguration), 5);
         case 8:
             return status.getValue();
         case 9:
@@ -472,9 +473,8 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
             limit = ((Number) e.getValue()).intValue();
             break;
         case 7:
-            GXByteBuffer bb = new GXByteBuffer();
-            GXCommon.setBitString(bb, e.getValue(), true);
-            creditConfiguration = CreditConfiguration.forValue(bb.getUInt8(1));
+            creditConfiguration = CreditConfiguration
+                    .forValue(((GXBitString) e.getValue()).toInteger());
             break;
         case 8:
             status = CreditStatus.forValue(((Number) e.getValue()).intValue());
@@ -491,8 +491,14 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
+                    boolean useUtc;
+                    if (e.getSettings() != null) {
+                        useUtc = e.getSettings().getUseUtc2NormalTime();
+                    } else {
+                        useUtc = false;
+                    }
                     tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME);
+                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -521,10 +527,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
                 reader.readElementContentAsInt("PresetCreditAmount");
         creditAvailableThreshold =
                 reader.readElementContentAsInt("CreditAvailableThreshold");
-        String str = reader.readElementContentAsString("Period");
-        if (str != null) {
-            period = new GXDateTime(str);
-        }
+        period = reader.readElementContentAsDateTime("Period");
     }
 
     @Override

@@ -47,6 +47,7 @@ import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.internal.GXCommon;
+import gurux.dlms.objects.enums.MBusEncryptionKeyStatus;
 
 /**
  * Online help: <br>
@@ -64,14 +65,14 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
     private int accessNumber;
     private int status;
     private int alarm;
+    private int configuration;
+    private MBusEncryptionKeyStatus encryptionKeyStatus;
 
     /**
      * Constructor.
      */
     public GXDLMSMBusClient() {
-        super(ObjectType.MBUS_CLIENT);
-        captureDefinition =
-                new java.util.ArrayList<java.util.Map.Entry<String, String>>();
+        this(null, 0);
     }
 
     /**
@@ -81,9 +82,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      *            Logical Name of the object.
      */
     public GXDLMSMBusClient(final String ln) {
-        super(ObjectType.MBUS_CLIENT, ln, 0);
-        captureDefinition =
-                new java.util.ArrayList<java.util.Map.Entry<String, String>>();
+        this(ln, 0);
     }
 
     /**
@@ -98,6 +97,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         super(ObjectType.MBUS_CLIENT, ln, sn);
         captureDefinition =
                 new java.util.ArrayList<java.util.Map.Entry<String, String>>();
+        setVersion(1);
     }
 
     /**
@@ -200,14 +200,35 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         alarm = value;
     }
 
+    public int getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(final int value) {
+        configuration = value;
+    }
+
+    public MBusEncryptionKeyStatus getEncryptionKeyStatus() {
+        return encryptionKeyStatus;
+    }
+
+    public void setEncryptionKeyStatus(final MBusEncryptionKeyStatus value) {
+        encryptionKeyStatus = value;
+    }
+
     @Override
     public final Object[] getValues() {
+        if (getVersion() == 0) {
+            return new Object[] { getLogicalName(), mBusPortReference,
+                    captureDefinition, capturePeriod, primaryAddress,
+                    identificationNumber, manufacturerID, dataHeaderVersion,
+                    deviceType, accessNumber, status, alarm };
+        }
         return new Object[] { getLogicalName(), mBusPortReference,
-                captureDefinition, new Long(capturePeriod),
-                new Integer(primaryAddress), new Long(identificationNumber),
-                new Integer(manufacturerID), new Integer(dataHeaderVersion),
-                new Integer(deviceType), new Integer(accessNumber),
-                new Integer(status), new Integer(alarm) };
+                captureDefinition, capturePeriod, primaryAddress,
+                identificationNumber, manufacturerID, dataHeaderVersion,
+                deviceType, accessNumber, status, alarm, configuration,
+                encryptionKeyStatus };
     }
 
     /*
@@ -221,51 +242,61 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         // LN is static and read only once.
         if (all || getLogicalName() == null
                 || getLogicalName().compareTo("") == 0) {
-            attributes.add(new Integer(1));
+            attributes.add(1);
         }
         // MBusPortReference
         if (all || canRead(2)) {
-            attributes.add(new Integer(2));
+            attributes.add(2);
         }
         // CaptureDefinition
         if (all || canRead(3)) {
-            attributes.add(new Integer(3));
+            attributes.add(3);
         }
         // CapturePeriod
         if (all || canRead(4)) {
-            attributes.add(new Integer(4));
+            attributes.add(4);
         }
         // PrimaryAddress
         if (all || canRead(5)) {
-            attributes.add(new Integer(5));
+            attributes.add(5);
         }
         // IdentificationNumber
         if (all || canRead(6)) {
-            attributes.add(new Integer(6));
+            attributes.add(6);
         }
         // ManufacturerID
         if (all || canRead(7)) {
-            attributes.add(new Integer(7));
+            attributes.add(7);
         }
         // Version
         if (all || canRead(8)) {
-            attributes.add(new Integer(8));
+            attributes.add(8);
         }
         // DeviceType
         if (all || canRead(9)) {
-            attributes.add(new Integer(9));
+            attributes.add(9);
         }
         // AccessNumber
         if (all || canRead(10)) {
-            attributes.add(new Integer(10));
+            attributes.add(10);
         }
         // Status
         if (all || canRead(11)) {
-            attributes.add(new Integer(11));
+            attributes.add(11);
         }
         // Alarm
         if (all || canRead(12)) {
-            attributes.add(new Integer(12));
+            attributes.add(12);
+        }
+        if (getVersion() > 0) {
+            // Configuration
+            if (all || canRead(13)) {
+                attributes.add(13);
+            }
+            // EncryptionKeyStatus
+            if (all || canRead(14)) {
+                attributes.add(14);
+            }
         }
         return GXDLMSObjectHelpers.toIntArray(attributes);
     }
@@ -275,7 +306,10 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int getAttributeCount() {
-        return 12;
+        if (getVersion() == 0) {
+            return 12;
+        }
+        return 14;
     }
 
     /*
@@ -324,6 +358,14 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         if (index == 12) {
             return DataType.UINT8;
         }
+        if (getVersion() > 0) {
+            if (index == 13) {
+                return DataType.UINT16;
+            }
+            if (index == 14) {
+                return DataType.ENUM;
+            }
+        }
         throw new IllegalArgumentException(
                 "getDataType failed. Invalid attribute index.");
     }
@@ -359,31 +401,39 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
             return buff.array();
         }
         if (e.getIndex() == 4) {
-            return new Long(capturePeriod);
+            return capturePeriod;
         }
         if (e.getIndex() == 5) {
-            return new Integer(primaryAddress);
+            return primaryAddress;
         }
         if (e.getIndex() == 6) {
-            return new Long(identificationNumber);
+            return identificationNumber;
         }
         if (e.getIndex() == 7) {
-            return new Integer(manufacturerID);
+            return manufacturerID;
         }
         if (e.getIndex() == 8) {
-            return new Integer(dataHeaderVersion);
+            return dataHeaderVersion;
         }
         if (e.getIndex() == 9) {
-            return new Integer(deviceType);
+            return deviceType;
         }
         if (e.getIndex() == 10) {
-            return new Integer(accessNumber);
+            return accessNumber;
         }
         if (e.getIndex() == 11) {
-            return new Integer(status);
+            return status;
         }
         if (e.getIndex() == 12) {
-            return new Integer(alarm);
+            return alarm;
+        }
+        if (getVersion() > 0) {
+            if (e.getIndex() == 13) {
+                return configuration;
+            }
+            if (e.getIndex() == 14) {
+                return encryptionKeyStatus.ordinal();
+            }
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
@@ -402,12 +452,21 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         } else if (e.getIndex() == 3) {
             captureDefinition.clear();
             if (e.getValue() != null) {
-                for (Object it : (Object[]) e.getValue()) {
+                boolean useUtc;
+                if (e.getSettings() != null) {
+                    useUtc = e.getSettings().getUseUtc2NormalTime();
+                } else {
+                    useUtc = false;
+                }
+                for (Object it : (List<?>) e.getValue()) {
                     captureDefinition.add(new GXSimpleEntry<String, String>(
-                            GXDLMSClient.changeType((byte[]) ((Object[]) it)[0],
-                                    DataType.OCTET_STRING).toString(),
-                            GXDLMSClient.changeType((byte[]) ((Object[]) it)[1],
-                                    DataType.OCTET_STRING).toString()));
+                            GXDLMSClient.changeType(
+                                    (byte[]) ((List<?>) it).get(0),
+                                    DataType.OCTET_STRING, useUtc).toString(),
+                            GXDLMSClient
+                                    .changeType((byte[]) ((List<?>) it).get(1),
+                                            DataType.OCTET_STRING, useUtc)
+                                    .toString()));
                 }
             }
         } else if (e.getIndex() == 4) {
@@ -428,6 +487,15 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
             status = ((Number) e.getValue()).intValue();
         } else if (e.getIndex() == 12) {
             alarm = ((Number) e.getValue()).intValue();
+        } else if (getVersion() > 0) {
+            if (e.getIndex() == 13) {
+                configuration = ((Number) e.getValue()).intValue();
+            } else if (e.getIndex() == 14) {
+                encryptionKeyStatus = MBusEncryptionKeyStatus
+                        .values()[((Number) e.getValue()).intValue()];
+            } else {
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+            }
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         }
@@ -454,6 +522,14 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         dataHeaderVersion = reader.readElementContentAsInt("DataHeaderVersion");
         deviceType = reader.readElementContentAsInt("DeviceType");
         accessNumber = reader.readElementContentAsInt("AccessNumber");
+
+        status = reader.readElementContentAsInt("Status");
+        alarm = reader.readElementContentAsInt("Alarm");
+        if (getVersion() > 0) {
+            configuration = reader.readElementContentAsInt("Configuration");
+            encryptionKeyStatus = MBusEncryptionKeyStatus.values()[reader
+                    .readElementContentAsInt("EncryptionKeyStatus")];
+        }
     }
 
     @Override
@@ -476,9 +552,17 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
         writer.writeElementString("DataHeaderVersion", dataHeaderVersion);
         writer.writeElementString("DeviceType", deviceType);
         writer.writeElementString("AccessNumber", accessNumber);
+        writer.writeElementString("Status", status);
+        writer.writeElementString("Alarm", alarm);
+        if (getVersion() > 0) {
+            writer.writeElementString("Configuration", configuration);
+            writer.writeElementString("EncryptionKeyStatus",
+                    encryptionKeyStatus.ordinal());
+        }
     }
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+        // Not needed for this object.
     }
 }

@@ -318,6 +318,10 @@ public class GXDLMSConverter {
     public final void updateOBISCodeInformation(final Context context, final GXDLMSObject object) {
         synchronized (codes) {
             if (codes.size() == 0) {
+                /* OBIS codes are not updated if context is unknown. */
+                if (context == null){
+                    return;
+                }
                 readStandardObisInfo(context, codes);
             }
             updateOBISCodeInfo(codes, object, standard);
