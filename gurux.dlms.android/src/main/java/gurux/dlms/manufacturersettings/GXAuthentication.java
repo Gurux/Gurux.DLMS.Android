@@ -46,13 +46,23 @@ public class GXAuthentication {
     private int clientAddress;
     private Authentication type = Authentication.NONE;
     private byte[] password;
+    private String name;
 
     public GXAuthentication() {
     }
 
+    public GXAuthentication(final String value) {
+        name = value;
+    }
+
     @Override
-    public final String toString() {
-        return getType().toString();
+    public final String toString()
+    {
+        if (name == null || name == "")
+        {
+            return getType().toString();
+        }
+        return name;
     }
 
     /**
@@ -132,14 +142,16 @@ public class GXAuthentication {
      * @param value
      *            Client address.
      */
-    public final void setClientAddress(final int value) {
+    public final void setClientAddress(final int value)
+    {
         clientAddress = value;
     }
 
     /**
      * @return Used password.
      */
-    public final byte[] getPassword() {
+    public final byte[] getPassword()
+    {
         return password;
     }
 
@@ -147,7 +159,23 @@ public class GXAuthentication {
      * @param value
      *            Used password.
      */
-    public final void setPassword(final byte[] value) {
+    public final void setPassword(final byte[] value)
+    {
         password = value;
+    }
+
+    /**
+     * @return Authentication name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param value
+     *            Authentication name.
+     */
+    public void setName(final String value) {
+        name = value;
     }
 }

@@ -232,7 +232,7 @@ public class GXSettings extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 GXAuthentication a = selected.getSettings().get(position);
                 mClientAddress.setText(String.valueOf(a.getClientAddress()));
-                mDevice.setAuthentication(a.getType());
+                mDevice.setAuthentication(a);
                 mDevice.setClientAddress(a.getClientAddress());
             }
 
@@ -335,16 +335,16 @@ public class GXSettings extends Fragment {
      *
      * @param view View.
      */
-    private void updateAuthentications(View view, Authentication authentication) {
-        List<Authentication> authentications = new ArrayList<Authentication>();
-        ArrayAdapter<Authentication> authenticationAdapter = new ArrayAdapter<Authentication>(getActivity(),
+    private void updateAuthentications(View view, final GXAuthentication authentication) {
+        List<GXAuthentication> authentications = new ArrayList<GXAuthentication>();
+        ArrayAdapter<GXAuthentication> authenticationAdapter = new ArrayAdapter<GXAuthentication>(getActivity(),
                 android.R.layout.simple_list_item_1, authentications);
         int index = -1, pos = 0;
         for (GXAuthentication it : selected.getSettings()) {
-            if (it.getType() == authentication) {
+            if (it.toString() == authentication.toString()) {
                 index = pos;
             }
-            authentications.add(it.getType());
+            authentications.add(it);
             ++pos;
         }
         mAuthentication.setAdapter(authenticationAdapter);

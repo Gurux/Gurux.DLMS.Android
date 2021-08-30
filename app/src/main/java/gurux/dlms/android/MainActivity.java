@@ -35,14 +35,12 @@
 package gurux.dlms.android;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -55,6 +53,7 @@ import android.widget.Toast;
 
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.Security;
+import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
 import gurux.dlms.manufacturersettings.StartProtocolType;
@@ -74,13 +73,10 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         mDevice.setMedia(new GXSerial(this));
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveSettings();
-                Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+        fab.setOnClickListener(view -> {
+            saveSettings();
+            Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -119,12 +115,19 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences s = getPreferences(Context.MODE_PRIVATE);
         //Read mDevice settings.
         String man = s.getString("manufacturer", "");
-        if (!man.isEmpty()) {
+        if (man != null && !man.isEmpty()) {
             mDevice.setManufacturer(man);
             mDevice.setStartProtocol(StartProtocolType.values()[s.getInt("protocol", 0)]);
             mDevice.setWaitTime(s.getInt("waitTime", 7000));
             mDevice.setMaximumBaudRate(s.getInt("maximumBaudRate", 0));
-            mDevice.setAuthentication(Authentication.forValue(s.getInt("authentication", 0)));
+            try {
+                mDevice.setAuthentication(new GXAuthentication(s.getString("authentication", "None")));
+            }
+            catch(Exception ex)
+            {
+                //Old way...
+                mDevice.setAuthentication(new GXAuthentication(Authentication.forValue(s.getInt("authentication", 0)).toString()));
+            }
             mDevice.setPassword(s.getString("password", ""));
             mDevice.setSecurity(Security.forValue(s.getInt("security", 0)));
             mDevice.setSystemTitle(s.getString("systemTitle", ""));
@@ -152,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt("protocol", mDevice.getStartProtocol().ordinal());
         editor.putInt("waitTime", mDevice.getWaitTime());
         editor.putInt("maximumBaudRate", mDevice.getMaximumBaudRate());
-        editor.putInt("authentication", mDevice.getAuthentication().getValue());
+        editor.putString("authentication", mDevice.getAuthentication().toString());
         editor.putString("password", mDevice.getPassword());
         editor.putInt("security", mDevice.getSecurity().getValue());
         editor.putString("systemTitle", mDevice.getSystemTitle());
@@ -201,9 +204,9 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Check is serial port available.
-     * @param ports
-     * @param port
-     * @return
+     * @param ports List of serial ports.
+     * @param port Used serial port.
+     * @return True, if serial port is available.
      */
     boolean isPortAvailable(final GXPort[] ports, final GXPort port){
         if (port == null){
@@ -222,7 +225,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment fragment = null;//declaring fragment object
         int id = item.getItemId();
-        Intent i;
         if (id == R.id.nav_read) {
             fragment = GXMain.newInstance(mDevice);
         } else if (id == R.id.nav_obis_translator) {
@@ -231,7 +233,6 @@ public class MainActivity extends AppCompatActivity
             fragment = new GXXmlTranslator();
         } else if (id == R.id.nav_manufacturers) {
             fragment = GXManufacturers.newInstance(mManufacturers);
-        } else if (id == R.id.nav_read) {
         } else if (id == R.id.nav_meterSettings) {
             fragment = GXSettings.newInstance(mDevice, mManufacturers);
         } else if (id == R.id.nav_mediaSettings) {

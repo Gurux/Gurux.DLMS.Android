@@ -244,6 +244,22 @@ public class GXManufacturer {
     }
 
     /**
+     * Get authentication settings.
+     *
+     * @param authentication
+     *            Authentication type.
+     * @return Authentication settings.
+     */
+    public final GXAuthentication getAuthentication(final String authentication) {
+        for (GXAuthentication it : getSettings()) {
+            if (it.toString() == authentication) {
+                return it;
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return Web address where is more information.
      */
     public String getWebAddress() {

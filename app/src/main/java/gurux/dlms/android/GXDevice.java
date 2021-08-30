@@ -41,6 +41,7 @@ import android.os.Parcelable;
 import gurux.common.IGXMedia;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.Security;
+import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
 import gurux.dlms.manufacturersettings.StartProtocolType;
 import gurux.dlms.objects.GXDLMSObjectCollection;
@@ -67,7 +68,7 @@ public class GXDevice implements Parcelable {
     /*
      * Used authentication.
      */
-    private Authentication authentication = Authentication.NONE;
+    private GXAuthentication authentication = null;
 
     /*
      * Is logican name referencing used.
@@ -162,14 +163,14 @@ public class GXDevice implements Parcelable {
     /**
      * @return Used authentication.
      */
-    public final Authentication getAuthentication() {
+    public final GXAuthentication getAuthentication() {
         return authentication;
     }
 
     /**
      * @param value Used authentication.
      */
-    public final void setAuthentication(Authentication value) {
+    public final void setAuthentication(final GXAuthentication value) {
         authentication = value;
     }
 

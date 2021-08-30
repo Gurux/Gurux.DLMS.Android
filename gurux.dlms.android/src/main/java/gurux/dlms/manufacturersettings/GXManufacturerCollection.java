@@ -274,9 +274,11 @@ public class GXManufacturerCollection
                 if (target.equalsIgnoreCase("GXManufacturer")) {
                     man = new GXManufacturer();
                 } else if (target.equalsIgnoreCase("GXObisCode")) {
+                    att = null;
                     obisCode = new GXObisCode();
                     man.getObisCodes().add(obisCode);
                 } else if (target.equalsIgnoreCase("GXAuthentication")) {
+                    att = null;
                     authentication = new GXAuthentication();
                     man.getSettings().add(authentication);
                 } else if (target.equalsIgnoreCase("GXServerAddress")) {
@@ -288,7 +290,16 @@ public class GXManufacturerCollection
                 } else if (target.equalsIgnoreCase("Identification")) {
                     man.setIdentification(readText(parser));
                 } else if (target.equalsIgnoreCase("Name")) {
-                    man.setName(readText(parser));
+                    if (att != null)
+                    {
+                        att.setName(readText(parser));
+                    }else if (authentication != null)
+                    {
+                        authentication.setName(readText(parser));
+                    }else
+                    {
+                        man.setName(readText(parser));
+                    }
                 } else if (target.equalsIgnoreCase("UseLN")) {
                     man.setUseLogicalNameReferencing(
                             Boolean.parseBoolean(readText(parser)));
@@ -326,7 +337,7 @@ public class GXManufacturerCollection
                 } else if (target.equalsIgnoreCase("Type")) {
                     if (authentication != null) {
                         authentication.setType(gurux.dlms.enums.Authentication
-                                .valueOf(readText(parser).toUpperCase()));
+                                .valueOfString(readText(parser)));
                     } else {
                         String str = readText(parser);
                         if (str.equals("BinaryCodedDesimal")) {

@@ -72,6 +72,7 @@ import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSException;
 import gurux.dlms.GXReplyData;
 import gurux.dlms.GXSimpleEntry;
+import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.InterfaceType;
@@ -144,7 +145,7 @@ public class GXMain extends Fragment implements IGXMediaListener, IGXTaskCallbac
             int serverAddress = GXDLMSClient.getServerAddress(mDevice.getLogicalAddress(),
                     mDevice.getPhysicalAddress());
             mClient = new GXDLMSSecureClient(true, mDevice.getClientAddress(), serverAddress,
-                    mDevice.getAuthentication(), mDevice.getPassword(), InterfaceType.HDLC);
+                    mDevice.getAuthentication().getType(), mDevice.getPassword(), InterfaceType.HDLC);
 
             mShowTrace.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                       @Override
