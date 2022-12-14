@@ -107,7 +107,7 @@ public class GXDevice {
     /*
      * Physical address.
      */
-    private int mPhysicalAddress;
+    private int mPhysicalAddress = 1;
     /*
      * Logical address.
      */

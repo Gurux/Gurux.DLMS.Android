@@ -1,9 +1,10 @@
 package gurux.dlms;
 
-import android.app.ProgressDialog;
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,24 +15,23 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.enums.Standard;
+import gurux.dlms.internal.AutoResetEvent;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSObjectCollection;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class GXDLMSConverter {
     /**
      * Collection of standard OBIS codes.
      */
-    private GXStandardObisCodeCollection codes =
-            new GXStandardObisCodeCollection();
+    private final GXStandardObisCodeCollection codes = new GXStandardObisCodeCollection();
 
     private Standard standard;
 
@@ -59,9 +59,12 @@ public class GXDLMSConverter {
     public static boolean isFirstRun(final Context context) {
         File dir = context.getFilesDir();
         String[] files = dir.list();
-        for (String it : files) {
-            if (it.equalsIgnoreCase("obiscodes.txt")) {
-                return false;
+        if (files != null)
+        {
+            for (String it : files) {
+                if (it.equalsIgnoreCase("obiscodes.txt")) {
+                    return false;
+                }
             }
         }
         return true;
@@ -70,17 +73,42 @@ public class GXDLMSConverter {
     /**
      * Update OBIS codes.
      *
-     * @param context
+     * @param context Context.
      */
     public void update(final Context context) throws Exception {
         if (isFirstRun(context))
         {
-            GXDLMSConverterAsyncUpdater updater = new GXDLMSConverterAsyncUpdater(context);
-            updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            updater.waitComplete(60000);
-            if (updater.getException() != null)
+            AutoResetEvent completed = new AutoResetEvent(false);
+            final Exception[] mException = {null};
+            Thread thread = new Thread(() -> {
+                try {
+                    String line, newline;
+                    String path = "obiscodes.txt";
+                    URL url = new URL("https://www.gurux.fi/obis/obiscodes.txt");
+                    URLConnection c = url.openConnection();
+                    try (InputStream io = c.getInputStream()) {
+                        try (InputStreamReader r = new InputStreamReader(io, StandardCharsets.UTF_8)) {
+                            BufferedReader reader = new BufferedReader(r);
+                            try (FileOutputStream writer = context.openFileOutput(path, MODE_PRIVATE)) {
+                                newline = System.getProperty("line.separator");
+                                while ((line = reader.readLine()) != null) {
+                                    writer.write(line.getBytes());
+                                    writer.write(newline.getBytes());
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    mException[0] = e;
+                }
+                completed.set();
+            });
+
+            thread.start();
+            completed.waitOne(60000);
+            if (mException[0] != null)
             {
-                throw updater.getException();
+                throw mException[0];
             }
         }
         readStandardObisInfo(context, codes);
@@ -140,7 +168,7 @@ public class GXDLMSConverter {
         if (codes.size() == 0) {
             throw new RuntimeException("Read OBIS codes first.");
         }
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         boolean all = logicalName == null || logicalName.isEmpty();
         for (GXStandardObisCode it : codes.find(logicalName, type)) {
             if (description != null && !description.isEmpty()
@@ -157,7 +185,7 @@ public class GXDLMSConverter {
                 list.add(it.getDescription());
             }
         }
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
     /**
@@ -167,7 +195,7 @@ public class GXDLMSConverter {
      *            COSEM objects.
      * @param it
      *            COSEM object.
-     * @param it
+     * @param standard
      *            used DLMS standard.
      */
     private static void updateOBISCodeInfo(
@@ -437,9 +465,6 @@ public class GXDLMSConverter {
         if (value == DataType.FLOAT64) {
             return Double.class;
         }
-        if (value == DataType.ENUM) {
-            return GXEnum.class;
-        }
         if (value == DataType.BITSTRING) {
             return GXBitString.class;
         }
@@ -602,11 +627,10 @@ public class GXDLMSConverter {
             throw new IllegalArgumentException(
                     "Can't change octet string type.");
         case STRING:
-            return String.valueOf(value);
+            case STRING_UTF8:
+                return String.valueOf(value);
         case BITSTRING:
             return new GXBitString((String) value);
-        case STRING_UTF8:
-            return String.valueOf(value);
         case STRUCTURE:
             throw new IllegalArgumentException("Can't change structure types.");
         case TIME:
@@ -634,7 +658,6 @@ public class GXDLMSConverter {
         default:
             break;
         }
-        throw new IllegalArgumentException(
-                "Invalid data type: " + type.toString());
+        throw new IllegalArgumentException("Invalid data type: " + type);
     }
 }

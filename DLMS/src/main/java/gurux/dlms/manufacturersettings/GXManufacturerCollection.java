@@ -34,24 +34,38 @@
 
 package gurux.dlms.manufacturersettings;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
-import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.Attributes;
 
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.ObjectType;
+import gurux.dlms.internal.AutoResetEvent;
 import gurux.dlms.internal.GXCommon;
 
 public class GXManufacturerCollection
@@ -79,9 +93,12 @@ public class GXManufacturerCollection
     public static boolean isFirstRun(final Context context) {
         File dir = context.getFilesDir();
         String[] files = dir.list();
-        for (String it : files) {
-            if (it.equalsIgnoreCase("files.xml")) {
-                return false;
+        if ( files != null)
+        {
+            for (String it : files) {
+                if (it.equalsIgnoreCase("files.xml")) {
+                    return false;
+                }
             }
         }
         return true;
@@ -97,14 +114,72 @@ public class GXManufacturerCollection
         if (isFirstRun(context)) {
             return true;
         }
-        GXDLMSManufacturersAsyncUpdateChecker updater = new GXDLMSManufacturersAsyncUpdateChecker(context);
-        updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        updater.waitComplete(60000);
-        if (updater.getException() != null)
+        final Exception[] mException = {null};
+        final boolean[] mUpdates = {false};
+        AutoResetEvent completed = new AutoResetEvent(false);
+        Thread thread = new Thread(() -> {
+            try {
+                Map<String, Date> installed = new HashMap<>();
+                Map<String, Date> available = new HashMap<>();
+                DateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+                try (java.io.FileInputStream tmp = context.openFileInput("files.xml")) {
+                    XmlPullParser parser = Xml.newPullParser();
+                    URL url = new URL("https://www.gurux.fi/obis/files.xml");
+                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                    parser.setInput(tmp, null);
+                    int event;
+                    parser.nextTag();
+                    while ((event = parser.next()) != XmlPullParser.END_TAG) {
+                        if (event == XmlPullParser.START_TAG) {
+                            String target = parser.getName();
+                            if (target.equalsIgnoreCase("file")) {
+                                String data = parser.getAttributeValue(null, "Modified");
+                                installed.put(readText(parser), format.parse(data));
+                            }
+                        }
+                    }
+                    URLConnection c = url.openConnection();
+                    try (InputStream io = c.getInputStream()) {
+                        parser.setInput(io, null);
+                        parser.nextTag();
+                        while ((event = parser.next()) != XmlPullParser.END_TAG) {
+                            if (event == XmlPullParser.START_TAG) {
+                                String target = parser.getName();
+                                if (target.equalsIgnoreCase("file")) {
+                                    String data = parser.getAttributeValue(null, "Modified");
+                                    available.put(readText(parser), format.parse(data));
+                                }
+                            }
+                        }
+                    }
+                    for (Map.Entry<String, Date> it : available.entrySet()) {
+                        // If new item is added.
+                        if (!installed.containsKey(it.getKey())) {
+                            mUpdates[0] = true;
+                            return;
+                        }
+                        // If item is updated.
+                        if (it.getValue().compareTo(installed.get(it.getKey())) != 0) {
+                            mUpdates[0] = true;
+                            return;
+                        }
+                    }
+                    mException[0] = null;
+                }
+            }
+            catch (Exception e) {
+                mUpdates[0] = true;
+                mException[0] = e;
+            }
+            completed.set();
+        });
+        thread.start();
+        completed.waitOne(60000);
+        if (mException[0] != null)
         {
-            throw updater.getException();
+            throw mException[0];
         }
-        return updater.isUpdates();
+        return mUpdates[0];
     }
 
     private static String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -122,12 +197,66 @@ public class GXManufacturerCollection
      * @param context Context.
      */
     public static void updateManufactureSettings(final Context context) throws Exception {
-        GXDLMSManufacturersAsyncUpdater updater = new GXDLMSManufacturersAsyncUpdater(context);
-        updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        updater.waitComplete(60000);
-        if (updater.getException() != null)
+        final Exception[] exception = {null};
+        AutoResetEvent completed = new AutoResetEvent(false);
+        Thread thread = new Thread(() -> {
+            try {
+                String line, newline;
+                String path = "files.xml";
+                URL url = new URL("https://www.gurux.fi/obis/files.xml");
+                URLConnection c = url.openConnection();
+                c.setDoInput(true);
+                c.setDoOutput(true);
+                try (InputStream io = c.getInputStream()) {
+                    try (InputStreamReader r = new InputStreamReader(io, StandardCharsets.UTF_8)) {
+                        BufferedReader reader = new BufferedReader(r);
+                        try (FileOutputStream writer = context.openFileOutput(path, MODE_PRIVATE)) {
+                            newline = System.getProperty("line.separator");
+                            while ((line = reader.readLine()) != null) {
+                                writer.write(line.getBytes());
+                                writer.write(newline.getBytes());
+                            }
+                            r.close();
+                        }
+                    }
+                }
+                XmlPullParser parser = Xml.newPullParser();
+                try (java.io.FileInputStream tmp = context.openFileInput(path)) {
+                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                    parser.setInput(tmp, null);
+                    int event;
+                    parser.nextTag();
+                    while ((event = parser.next()) != XmlPullParser.END_TAG) {
+                        if (event == XmlPullParser.START_TAG) {
+                            String target = parser.getName();
+                            if (target.equalsIgnoreCase("file")) {
+                                String file = readText(parser);
+                                URL f = new URL("https://www.gurux.fi/obis/" + file);
+                                c = f.openConnection();
+                                try (BufferedReader reader = new BufferedReader(new InputStreamReader(c.getInputStream()))) {
+                                    try (FileOutputStream writer = context.openFileOutput(file, MODE_PRIVATE)) {
+                                        while ((line = reader.readLine()) != null) {
+                                            writer.write(line.getBytes());
+                                            writer.write(newline.getBytes());
+                                        }
+                                        reader.close();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.i("gurux.dlms", e.getMessage());
+                exception[0] = e;
+            }
+            completed.set();
+        });
+        thread.start();
+        completed.waitOne(60000);
+        if (exception[0] != null)
         {
-            throw updater.getException();
+            throw exception[0];
         }
     }
 

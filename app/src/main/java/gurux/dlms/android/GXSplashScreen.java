@@ -47,7 +47,7 @@ import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 /**
  * Show splashscreen and load necessary content.
  */
-public class GXSplashScreen extends Activity implements IGXTaskCallback {
+public class GXSplashScreen extends Activity {
 
     private TextView loading;
 
@@ -55,53 +55,35 @@ public class GXSplashScreen extends Activity implements IGXTaskCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        loading = (TextView) findViewById(R.id.loading);
+        loading = findViewById(R.id.loading);
         //Showing splashscreen while downloading necessary data before launching the app.
-        GXTask m = new GXTask(this, Task.DOWNLOAD);
-        m.execute();
-    }
-
-    @Override
-    public void onExecute(final GXTask sender) {
-        //Read OBIS codes.
-        if (GXDLMSConverter.isFirstRun(this)) {
-            loading.setText("Loading OBIS codes.");
-            GXDLMSConverter c = new GXDLMSConverter();
+        Thread thread = new Thread(() -> {
+            //Read OBIS codes.
+            if (GXDLMSConverter.isFirstRun(this)) {
+                loading.setText("Loading OBIS codes.");
+                GXDLMSConverter c = new GXDLMSConverter();
+                try {
+                    c.update(this);
+                } catch (Exception e) {
+                    GXGeneral.showError(this, e, "Failed to read OBIS codes from the server.");
+                }
+            }
+            //Read Manufacturer settings.
             try {
-                c.update(this);
+                GXManufacturerCollection man = new GXManufacturerCollection();
+                loading.setText("Loading manufacturer settings.");
+                if (GXManufacturerCollection.isFirstRun(this) ||
+                        man.isUpdatesAvailable(this)) {
+                    GXManufacturerCollection.updateManufactureSettings(this);
+                }
             } catch (Exception e) {
-                GXGeneral.showError(this, e, "Failed to read OBIS codes from the server.");
+                GXGeneral.showError(this, e, "Failed to read manufacturer settings from the server.");
             }
-        }
-        //Read Manufacturer settings.
-        try {
-            GXManufacturerCollection man = new GXManufacturerCollection();
-            loading.setText("Loading manufacturer settings.");
-            if (GXManufacturerCollection.isFirstRun(this) ||
-                    man.isUpdatesAvailable(this)) {
-                GXManufacturerCollection.updateManufactureSettings(this);
-            }
-        } catch (Exception e) {
-            GXGeneral.showError(this, e, "Failed to read manufacturer settings from the server.");
-        }
-    }
+            Intent i = new Intent(GXSplashScreen.this, MainActivity.class);
+            startActivity(i);
+            finish();
+        });
 
-    /**
-     * Start main activity and close splashscreen.
-     */
-    @Override
-    public void onFinish(GXTask sender, Object result) {
-        Intent i = new Intent(GXSplashScreen.this, MainActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    /**
-     * Show occurred error.
-     */
-    @Override
-    public void onError(GXTask sender, Exception e) {
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        finish();
+        thread.start();
     }
 }

@@ -489,7 +489,7 @@ public class MeterSettingsFragment extends Fragment {
             View view = inflater.inflate(R.layout.dialog_number, null, false);
             EditText text = view.findViewById(R.id.value);
             text.setText(String.valueOf(mDevice.getPhysicalAddress()));
-            builder.setTitle(R.string.waittime)
+            builder.setTitle(R.string.physicalAddress)
                     .setView(view)
                     .setPositiveButton(R.string.ok, (dialog, id) ->
                     {
@@ -524,7 +524,7 @@ public class MeterSettingsFragment extends Fragment {
             View view = inflater.inflate(R.layout.dialog_number, null, false);
             EditText text = view.findViewById(R.id.value);
             text.setText(String.valueOf(mDevice.getLogicalAddress()));
-            builder.setTitle(R.string.waittime)
+            builder.setTitle(R.string.logicalAddress)
                     .setView(view)
                     .setPositiveButton(R.string.ok, (dialog, id) ->
                     {

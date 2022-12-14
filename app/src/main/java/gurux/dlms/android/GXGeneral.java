@@ -47,9 +47,7 @@ public class GXGeneral {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(ex.getMessage())
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();

@@ -46,12 +46,12 @@ final class GXAsn1Settings {
     private boolean comments;
 
     private final StringBuffer sb = new StringBuffer();
-    private HashMap<Short, String> tags = new HashMap<Short, String>();
-    private HashMap<String, Short> tagbyName = new HashMap<String, Short>();
+    private HashMap<Integer, String> tags = new HashMap<>();
+    private HashMap<String, Integer> tagbyName = new HashMap<>();
 
     private void addTag(final int key, final String value) {
-        tags.put(new Short((short) key), value);
-        tagbyName.put(value.toLowerCase(), new Short((short) key));
+        tags.put(key, value);
+        tagbyName.put(value.toLowerCase(), key);
     }
 
     /**
@@ -79,11 +79,11 @@ final class GXAsn1Settings {
         addTag(-8, "Long");
     }
 
-    public String getTag(final short value) {
+    public String getTag(final int value) {
         return tags.get(value);
     }
 
-    public short getTag(final String value) {
+    public int getTag(final String value) {
         return tagbyName.get(value);
     }
 
@@ -125,9 +125,6 @@ final class GXAsn1Settings {
 
     /**
      * Append spaces to the buffer.
-     * 
-     * @param count
-     *            Amount of spaces.
      */
     public void appendSpaces() {
         for (int pos = 0; pos != count; ++pos) {
@@ -162,7 +159,7 @@ final class GXAsn1Settings {
     }
 
     /**
-     * @param comments
+     * @param value
      *            Are comments used.
      */
     public void setComments(final boolean value) {

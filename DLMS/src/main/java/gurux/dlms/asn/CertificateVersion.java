@@ -12,27 +12,27 @@ public final class CertificateVersion {
     public static final CertificateVersion V2 = new CertificateVersion(1);
     public static final CertificateVersion V3 = new CertificateVersion(2);
 
-    private byte value;
-    private static java.util.HashMap<Byte, CertificateVersion> mappings;
+    private int value;
+    private static java.util.HashMap<Integer, CertificateVersion> mappings;
 
-    private static java.util.HashMap<Byte, CertificateVersion> getMappings() {
+    private static java.util.HashMap<Integer, CertificateVersion> getMappings() {
         synchronized (CertificateVersion.class) {
             if (mappings == null) {
-                mappings = new java.util.HashMap<Byte, CertificateVersion>();
+                mappings = new java.util.HashMap<Integer, CertificateVersion>();
             }
         }
         return mappings;
     }
 
     CertificateVersion(final int mode) {
-        value = (byte) mode;
-        getMappings().put(new Byte((byte) mode), this);
+        value =  mode;
+        getMappings().put(mode, this);
     }
 
     /*
      * Get integer value for enumeration.
      */
-    public byte getValue() {
+    public int getValue() {
         return value;
     }
 
@@ -40,7 +40,7 @@ public final class CertificateVersion {
      * Convert string for enumeration value.
      */
     public static CertificateVersion forValue(final int value) {
-        return getMappings().get(new Byte((byte) value));
+        return getMappings().get(value);
     }
 
     @Override
