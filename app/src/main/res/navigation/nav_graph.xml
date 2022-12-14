@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_main">
+
+    <fragment
+        android:id="@+id/nav_main"
+        android:name="gurux.dlms.android.ui.main.MainFragment"
+        android:label="@string/read"
+        tools:layout="@layout/fragment_read" />
+
+    <fragment
+        android:id="@+id/nav_meterSettings"
+        android:name="gurux.dlms.android.ui.meterSettings.MeterSettingsFragment"
+        android:label="@string/menu_meter_settings"
+        tools:layout="@layout/fragment_meter_settings" />
+
+    <fragment
+        android:id="@+id/nav_mediaSettings"
+        android:name="gurux.dlms.android.ui.media.MediaFragment"
+        android:label="@string/menu_media_settings"
+        tools:layout="@layout/fragment_media" />
+
+    <fragment
+        android:id="@+id/nav_xml_translator"
+        android:name="gurux.dlms.android.ui.xmlTranslator.GXXmlTranslator"
+        android:label="@string/menu_xml_translator"
+        tools:layout="@layout/fragment_xml_translator" />
+    <fragment
+        android:id="@+id/nav_obis_translator"
+        android:name="gurux.dlms.android.ui.obisTranslator.GXObisTranslator"
+        android:label="@string/menu_obis_translator"
+        tools:layout="@layout/fragment_obis_translator" />
+    <fragment
+        android:id="@+id/nav_manufacturers"
+        android:name="gurux.dlms.android.ui.manufacturers.ManufacturersFragment"
+        android:label="@string/menu_manufacturers"
+        tools:layout="@layout/fragment_manufacturers" />
+
+</navigation>

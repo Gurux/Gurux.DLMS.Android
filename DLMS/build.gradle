@@ -1,0 +1,98 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+android {
+    namespace 'gurux.dlms'
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 28
+        targetSdk 32
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = "org.gurux"
+                artifactId = "gurux.dlms.android"
+                version = "2.0.1"
+
+                signing {
+                    sign publishing.publications.release
+                }
+
+                pom {
+                    name = 'gurux.dlms.android'
+                    description = 'gurux.dlms.android package is a comunication library for DLMS devices. Purpose of Gurux Device Framework is help you to read your devices, meters and sensors easier'
+                    url = 'https://www.gurux.fi'
+                    licenses {
+                        license {
+                            name = 'GNU General Public License, version 2'
+                            url = 'http://www.gnu.org/licenses/gpl-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'gurux'
+                            name = 'Gurux ltd'
+                            email = 'gurux@gurux.fi'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/gurux/gurux.dlms.android.git'
+                        developerConnection = 'scm:git:https://github.com/gurux/gurux.dlms.android.git'
+                        url = 'https://github.com/gurux/gurux.dlms.android'
+                    }
+                }
+                boolean isEnabled = project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')
+                repositories {
+                    maven {
+                        name = "Maven central"
+                        url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                        if (isEnabled){
+                            credentials{
+                                username = sonatypeUsername
+                                password = sonatypePassword
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

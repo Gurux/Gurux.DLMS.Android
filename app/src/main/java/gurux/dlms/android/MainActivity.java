@@ -1,114 +1,85 @@
-//
-// --------------------------------------------------------------------------
-//  Gurux Ltd
-//
-//
-//
-// Filename:        $HeadURL$
-//
-// Version:         $Revision$,
-//                  $Date$
-//                  $Author$
-//
-// Copyright (c) Gurux Ltd
-//
-//---------------------------------------------------------------------------
-//
-//  DESCRIPTION
-//
-// This file is a part of Gurux Device Framework.
-//
-// Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; version 2 of the License.
-// Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See the GNU General Public License for more details.
-//
-// More information of Gurux products: http://www.gurux.org
-//
-// This code is licensed under the GNU General Public License v2.
-// Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
-//---------------------------------------------------------------------------
-
 package gurux.dlms.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import gurux.dlms.android.databinding.ActivityMainBinding;
+import gurux.dlms.android.ui.main.MainViewModel;
+import gurux.dlms.android.ui.manufacturers.ManufacturersViewModel;
+import gurux.dlms.android.ui.media.MediaViewModel;
+import gurux.dlms.android.ui.meterSettings.MeterSettingsViewModel;
 import gurux.dlms.enums.Authentication;
+import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
 import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
-import gurux.dlms.manufacturersettings.StartProtocolType;
 import gurux.serial.GXSerial;
-import gurux.serial.GXPort;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
+
+    private AppBarConfiguration mAppBarConfiguration;
+
     GXDevice mDevice = new GXDevice();
-    private GXManufacturerCollection mManufacturers = new GXManufacturerCollection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         mDevice.setMedia(new GXSerial(this));
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            saveSettings();
-            Snackbar.make(view, "Settings Saved", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        });
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        loadSettings();
-        Fragment fragment = null;
-        if (mDevice.getMedia() instanceof GXSerial){
-            GXSerial s = ((GXSerial)mDevice.getMedia());
-            GXPort port = s.getPort();
-            if (!isPortAvailable(s.getPorts(), s.getPort())){
-                fragment = ((GXSerial) mDevice.getMedia()).properties();
-            }
-        }
-        if (fragment == null){
-            String name = mDevice.getManufacturer();
-            if (name == null || "".equals(name)){
-                fragment = GXSettings.newInstance(mDevice, mManufacturers);
-            }
-        }
-        if (fragment == null){
-            fragment = GXMain.newInstance(mDevice);
-        }
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.mainFrame, fragment);
-        ft.commit();
+        GXManufacturerCollection mManufacturers = new GXManufacturerCollection();
         GXManufacturerCollection.readManufacturerSettings(this, mManufacturers);
-        String name = mDevice.getManufacturer();
+        if ((mDevice.getManufacturer() == null || mDevice.getManufacturer().equals("")) &&
+                !mManufacturers.isEmpty())
+        {
+            mDevice.setManufacturer(mManufacturers.get(0).getName());
+        }
+        loadSettings();
+        ManufacturersViewModel mManufacturersViewModel = new ViewModelProvider(this).get(ManufacturersViewModel.class);
+        mManufacturersViewModel.updateManufacturers(mManufacturers);
+
+        MainViewModel mainViewModelViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModelViewModel.setDevice(mDevice);
+
+        MeterSettingsViewModel mMeterSettingsViewModel = new ViewModelProvider(this).get(MeterSettingsViewModel.class);
+        mMeterSettingsViewModel.updateManufacturers(mManufacturers);
+        mMeterSettingsViewModel.setDevice(mDevice);
+
+        MediaViewModel mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
+        mediaViewModel.setDevice(mDevice);
+
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.appBarMain.toolbar);
+        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
+
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_main,  R.id.nav_meterSettings, R.id.nav_mediaSettings,
+                R.id.nav_xml_translator, R.id.nav_obis_translator, R.id.nav_manufacturers)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
     }
 
     private void loadSettings() {
@@ -117,7 +88,15 @@ public class MainActivity extends AppCompatActivity
         String man = s.getString("manufacturer", "");
         if (man != null && !man.isEmpty()) {
             mDevice.setManufacturer(man);
-            mDevice.setStartProtocol(StartProtocolType.values()[s.getInt("protocol", 0)]);
+            try {
+                mDevice.setInterfaceType(InterfaceType.values()[s.getInt("interfaceType", 0)]);
+            }
+            catch(Exception ex)
+            {
+                //Old way...
+                mDevice.setInterfaceType(InterfaceType.HDLC);
+            }
+
             mDevice.setWaitTime(s.getInt("waitTime", 7000));
             mDevice.setMaximumBaudRate(s.getInt("maximumBaudRate", 0));
             try {
@@ -152,10 +131,13 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("manufacturer", mDevice.getManufacturer());
-        editor.putInt("protocol", mDevice.getStartProtocol().ordinal());
+        editor.putInt("interfaceType", mDevice.getInterfaceType().getValue());
         editor.putInt("waitTime", mDevice.getWaitTime());
         editor.putInt("maximumBaudRate", mDevice.getMaximumBaudRate());
-        editor.putString("authentication", mDevice.getAuthentication().toString());
+        if (mDevice.getAuthentication() != null)
+        {
+            editor.putString("authentication", mDevice.getAuthentication().toString());
+        }
         editor.putString("password", mDevice.getPassword());
         editor.putInt("security", mDevice.getSecurity().getValue());
         editor.putString("systemTitle", mDevice.getSystemTitle());
@@ -167,17 +149,7 @@ public class MainActivity extends AppCompatActivity
         editor.putInt("logicalAddress", mDevice.getLogicalAddress());
         editor.putString("mediaSettings", mDevice.getMedia().getSettings());
         editor.putString("objects", mDevice.getObjects().getXml());
-        editor.commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        editor.apply();
     }
 
     @Override
@@ -188,73 +160,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Check is serial port available.
-     * @param ports List of serial ports.
-     * @param port Used serial port.
-     * @return True, if serial port is available.
-     */
-    boolean isPortAvailable(final GXPort[] ports, final GXPort port){
-        if (port == null){
-            return false;
-        }
-        for(GXPort it : ports){
-            if (it.getPort().equals(port.getPort())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        Fragment fragment = null;//declaring fragment object
-        int id = item.getItemId();
-        if (id == R.id.nav_read) {
-            fragment = GXMain.newInstance(mDevice);
-        } else if (id == R.id.nav_obis_translator) {
-            fragment = new GXObisTranslator();
-        } else if (id == R.id.nav_xml_translator) {
-            fragment = new GXXmlTranslator();
-        } else if (id == R.id.nav_manufacturers) {
-            fragment = GXManufacturers.newInstance(mManufacturers);
-        } else if (id == R.id.nav_meterSettings) {
-            fragment = GXSettings.newInstance(mDevice, mManufacturers);
-        } else if (id == R.id.nav_mediaSettings) {
-            fragment = ((GXSerial) mDevice.getMedia()).properties();
-        } else if (id == R.id.nav_send) {
-
-        } else if (id == R.id.nav_share) {
-
-        }
-        if (fragment != null) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
-            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.mainFrame, fragment);
-            ft.commit();
-        }
-        return true;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 
     @Override
@@ -268,6 +177,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDestroy() {
+        saveSettings();
         if (mDevice.getMedia() != null) {
             mDevice.getMedia().close();
             mDevice.setMedia(null);

@@ -39,7 +39,7 @@ import android.os.AsyncTask;
 /**
  * This class is used to execute task.
  */
-class GXTask extends AsyncTask<Void, Void, Object> {
+public class GXTask extends AsyncTask<Void, Void, Object> {
     private IGXTaskCallback mHandler;
 
     /**

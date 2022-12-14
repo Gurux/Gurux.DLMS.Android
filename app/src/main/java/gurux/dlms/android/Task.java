@@ -37,7 +37,7 @@ package gurux.dlms.android;
 /**
  * All tasks are enumerated here.
  */
-enum Task {
+public enum Task {
     /**
      * Download settings from Gurux www server.
      */

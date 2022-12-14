@@ -38,7 +38,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
-class GXGeneral {
+public class GXGeneral {
     private GXGeneral() {
 
     }

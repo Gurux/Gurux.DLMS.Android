@@ -37,7 +37,7 @@ package gurux.dlms.android;
 /**
  * This interface is used to notify state of task.
  */
-interface IGXTaskCallback {
+public interface IGXTaskCallback {
     /**
      * Indicates that the download operation has successfully finished.
      *

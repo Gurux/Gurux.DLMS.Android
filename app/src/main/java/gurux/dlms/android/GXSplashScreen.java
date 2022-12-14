@@ -37,6 +37,8 @@ package gurux.dlms.android;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import gurux.dlms.GXDLMSConverter;
@@ -47,13 +49,14 @@ import gurux.dlms.manufacturersettings.GXManufacturerCollection;
  */
 public class GXSplashScreen extends Activity implements IGXTaskCallback {
 
+    private TextView loading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        /**
-         * Showing splashscreen while downloading necessary data before launching the app.
-         */
+        loading = (TextView) findViewById(R.id.loading);
+        //Showing splashscreen while downloading necessary data before launching the app.
         GXTask m = new GXTask(this, Task.DOWNLOAD);
         m.execute();
     }
@@ -62,13 +65,24 @@ public class GXSplashScreen extends Activity implements IGXTaskCallback {
     public void onExecute(final GXTask sender) {
         //Read OBIS codes.
         if (GXDLMSConverter.isFirstRun(this)) {
+            loading.setText("Loading OBIS codes.");
             GXDLMSConverter c = new GXDLMSConverter();
-            c.update(this);
+            try {
+                c.update(this);
+            } catch (Exception e) {
+                GXGeneral.showError(this, e, "Failed to read OBIS codes from the server.");
+            }
         }
         //Read Manufacturer settings.
-        if (GXManufacturerCollection.isFirstRun(this) ||
-                GXManufacturerCollection.isUpdatesAvailable(this)) {
-            GXManufacturerCollection.updateManufactureSettings(this);
+        try {
+            GXManufacturerCollection man = new GXManufacturerCollection();
+            loading.setText("Loading manufacturer settings.");
+            if (GXManufacturerCollection.isFirstRun(this) ||
+                    man.isUpdatesAvailable(this)) {
+                GXManufacturerCollection.updateManufactureSettings(this);
+            }
+        } catch (Exception e) {
+            GXGeneral.showError(this, e, "Failed to read manufacturer settings from the server.");
         }
     }
 

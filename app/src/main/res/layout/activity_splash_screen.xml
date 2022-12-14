@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/splash_screen"
-    tools:context="gurux.dlms.android.GXSplashScreen">
+    tools:context=".GXSplashScreen">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,5 +12,6 @@
         android:textColor="#454545"
         android:gravity="center_vertical|center_horizontal"
         android:layout_alignParentBottom="true"
+        android:id="@+id/loading"
         android:text="Downloading content..." />
 </RelativeLayout>

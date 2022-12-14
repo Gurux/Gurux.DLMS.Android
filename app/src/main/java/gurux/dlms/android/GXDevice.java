@@ -40,6 +40,7 @@ import android.os.Parcelable;
 
 import gurux.common.IGXMedia;
 import gurux.dlms.enums.Authentication;
+import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
 import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
@@ -49,8 +50,7 @@ import gurux.dlms.objects.GXDLMSObjectCollection;
 /**
  * DLMS meter settings.
  */
-public class GXDevice implements Parcelable {
-    public static final Creator<UsbDevice> CREATOR = null;
+public class GXDevice {
     /*
      * Flag name of the manufacturer.
      */
@@ -68,7 +68,7 @@ public class GXDevice implements Parcelable {
     /*
      * Used authentication.
      */
-    private GXAuthentication authentication = null;
+    private GXAuthentication authentication;
 
     /*
      * Is logican name referencing used.
@@ -112,10 +112,11 @@ public class GXDevice implements Parcelable {
      * Logical address.
      */
     private int mLogicalAddress;
-    /*
-     * Start protocol type.
+
+    /**
+     * Interface type.
      */
-    private StartProtocolType mStartProtocol = StartProtocolType.IEC;
+    private InterfaceType interfaceType = InterfaceType.HDLC;
 
     /*
      * Address type.
@@ -288,20 +289,6 @@ public class GXDevice implements Parcelable {
     }
 
     /**
-     * @return Start protocol.
-     */
-    public StartProtocolType getStartProtocol() {
-        return mStartProtocol;
-    }
-
-    /**
-     * @param value Start protocol.
-     */
-    public void setStartProtocol(StartProtocolType value) {
-        mStartProtocol = value;
-    }
-
-    /**
      * @return Client address.
      */
     public int getClientAddress() {
@@ -373,12 +360,27 @@ public class GXDevice implements Parcelable {
         mUseLN = value ;
     }
 
-    @Override
-    public int describeContents() {
-       return 0;
+    /**
+     * Constructor.
+     */
+   public GXDevice()
+   {
+       authentication = new GXAuthentication(Authentication.NONE, 16);
+   }
+
+    /**
+     *
+     * @return Interface type.
+     */
+    public InterfaceType getInterfaceType() {
+        return interfaceType;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    /**
+     *
+     * @param value Interface type.
+     */
+    public void setInterfaceType(final InterfaceType value) {
+        interfaceType = value;
     }
 }
