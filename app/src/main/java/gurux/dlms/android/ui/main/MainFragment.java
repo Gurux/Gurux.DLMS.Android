@@ -543,7 +543,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
             readDLMSPacket(data, reply);
             while (reply.isMoreData()) {
                 rt = reply.getMoreData();
-                data = mClient.receiverReady(rt);
+                data = mClient.receiverReady(reply);
                 readDLMSPacket(data, reply);
             }
         }
@@ -726,6 +726,30 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     @Override
     public void onPropertyChanged(Object sender, PropertyChangedEventArgs e) {
 
+    }
+
+    @Override
+    public void onStop() {
+        try {
+            close();
+        }
+        catch (Exception e)
+        {
+            GXGeneral.showError(getActivity(), e, getString(R.string.error));
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            close();
+        }
+        catch (Exception e)
+        {
+            GXGeneral.showError(getActivity(), e, getString(R.string.error));
+        }
+        super.onDestroy();
     }
 
     @Override

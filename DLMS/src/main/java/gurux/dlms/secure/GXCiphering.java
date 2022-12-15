@@ -34,17 +34,23 @@
 
 package gurux.dlms.secure;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXICipher;
 import gurux.dlms.asn.GXx509CertificateCollection;
 import gurux.dlms.enums.Security;
-import gurux.dlms.objects.enums.CertificateType;
+import gurux.dlms.enums.Signing;
+import gurux.dlms.objects.enums.SecurityPolicy;
 import gurux.dlms.objects.enums.SecuritySuite;
 
 /**
@@ -52,6 +58,9 @@ import gurux.dlms.objects.enums.SecuritySuite;
  */
 public class GXCiphering implements GXICipher {
     private Security security = Security.NONE;
+
+    Set<SecurityPolicy> securityPolicy;
+
     private byte[] authenticationKey;
     /**
      * Dedicated key.
@@ -82,6 +91,12 @@ public class GXCiphering implements GXICipher {
      * Block cipher key.
      */
     private byte[] blockCipherKey;
+
+    /**
+     * Broadcast block cipher key.
+     */
+    private byte[] broadcastBlockCipherKey;
+
     /**
      * Invocation Counter.
      */
@@ -90,7 +105,7 @@ public class GXCiphering implements GXICipher {
     /**
      * Used security suite.
      */
-    private SecuritySuite securitySuite = SecuritySuite.AES_GCM_128;
+    private SecuritySuite securitySuite = SecuritySuite.SUITE_0;
 
     /**
      * Signing key pair.
@@ -103,14 +118,19 @@ public class GXCiphering implements GXICipher {
     private KeyPair keyAgreementKeyPair;
 
     /**
-     * Target (Server or client) Public key.
+     * Used signing.
      */
-    private List<Map.Entry<CertificateType, PublicKey>> publicKeys;
+    private Signing signing;
 
     /**
-     * Shared secret is generated when connection is made.
+     * Transaction Id.
      */
-    private byte[] sharedSecret;
+    private byte[] transactionId;
+
+    /**
+     * TLS key pair.
+     */
+    KeyPair tlsKeyPair;
 
     /**
      * Constructor. Default values are from the Green Book.
@@ -119,24 +139,24 @@ public class GXCiphering implements GXICipher {
      *            Used system title.
      */
     public GXCiphering(final byte[] title) {
-        publicKeys = new ArrayList<Map.Entry<CertificateType, PublicKey>>();
+        securityPolicy = new HashSet<SecurityPolicy>();
         certificates = new GXx509CertificateCollection();
         setSecurity(Security.NONE);
         setSystemTitle(title);
-        setBlockCipherKey(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
-                0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F });
-        setAuthenticationKey(new byte[] { (byte) 0xD0, (byte) 0xD1, (byte) 0xD2,
-                (byte) 0xD3, (byte) 0xD4, (byte) 0xD5, (byte) 0xD6, (byte) 0xD7,
-                (byte) 0xD8, (byte) 0xD9, (byte) 0xDA, (byte) 0xDB, (byte) 0xDC,
-                (byte) 0xDD, (byte) 0xDE, (byte) 0xDF });
+        setBlockCipherKey(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+                0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F });
+        setAuthenticationKey(new byte[] { (byte) 0xD0, (byte) 0xD1, (byte) 0xD2, (byte) 0xD3,
+                (byte) 0xD4, (byte) 0xD5, (byte) 0xD6, (byte) 0xD7, (byte) 0xD8, (byte) 0xD9,
+                (byte) 0xDA, (byte) 0xDB, (byte) 0xDC, (byte) 0xDD, (byte) 0xDE, (byte) 0xDF });
+        signing = Signing.NONE;
     }
 
     public static byte[] decrypt(final GXICipher c, final AesGcmParameter p,
-            final GXByteBuffer data) {
+            final GXByteBuffer data)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         byte[] tmp;
-        p.setSharedSecret(c.getSharedSecret());
-        tmp = GXDLMSChippering.decryptAesGcm(c, p, data);
-        c.setSharedSecret(p.getSharedSecret());
+        tmp = GXSecure.decryptAesGcm(c, p, data);
         return tmp;
     }
 
@@ -148,18 +168,31 @@ public class GXCiphering implements GXICipher {
      * @param data
      *            Plain text.
      * @return Secured data.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public static byte[] encrypt(final AesGcmParameter p, final byte[] data) {
+    public static byte[] encrypt(final AesGcmParameter p, final byte[] data)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         if (p.getSecurity() != Security.NONE) {
-            byte[] tmp = GXDLMSChippering.encryptAesGcm(p, data);
-            p.setInvocationCounter(p.getInvocationCounter() + 1);
-            return tmp;
+            return GXSecure.encryptAesGcm(true, p, data);
         }
         return data;
     }
 
     @Override
     public final void reset() {
+        signing = Signing.NONE;
         setSecurity(Security.NONE);
         setInvocationCounter(0);
     }
@@ -178,7 +211,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @return .
+     * @return Invocation Counter.
      */
     public final long getInvocationCounter() {
         return invocationCounter;
@@ -197,6 +230,21 @@ public class GXCiphering implements GXICipher {
      */
     public final void setSecurity(final Security value) {
         security = value;
+    }
+
+    /**
+     * @param value
+     *            Used security policy.
+     */
+    public void setSecurityPolicy(java.util.Set<SecurityPolicy> value) {
+        securityPolicy.addAll(value);
+    }
+
+    /**
+     * @return Used security policy.
+     */
+    public java.util.Set<SecurityPolicy> getSecurityPolicy() {
+        return securityPolicy;
     }
 
     /**
@@ -236,8 +284,7 @@ public class GXCiphering implements GXICipher {
      */
     public final void setRecipientSystemTitle(final byte[] value) {
         if (value != null && value.length != 8) {
-            throw new IllegalArgumentException(
-                    "Invalid recipient system title.");
+            throw new IllegalArgumentException("Invalid recipient system title.");
         }
         recipientSystemTitle = value;
     }
@@ -270,6 +317,24 @@ public class GXCiphering implements GXICipher {
             throw new IllegalArgumentException("Invalid Authentication Key.");
         }
         authenticationKey = value;
+    }
+
+    /**
+     * @param value
+     *            Broadcast block cipher key.
+     */
+    public final void setBroadcastBlockCipherKey(byte[] value) {
+        if (value != null && value.length != 16) {
+            throw new IllegalArgumentException("Invalid Block Cipher Key.");
+        }
+        broadcastBlockCipherKey = value;
+    }
+
+    /**
+     * @return Broadcast block cipher key.
+     */
+    public final byte[] getBroadcastBlockCipherKey() {
+        return broadcastBlockCipherKey;
     }
 
     /**
@@ -325,13 +390,6 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @return Target (Server or client) Public key.
-     */
-    public final List<Map.Entry<CertificateType, PublicKey>> getPublicKeys() {
-        return publicKeys;
-    }
-
-    /**
      * @return Used security suite.
      */
     public SecuritySuite getSecuritySuite() {
@@ -347,36 +405,35 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @return Shared secret is generated when connection is made.
-     */
-    public byte[] getSharedSecret() {
-        return sharedSecret;
-    }
-
-    /**
-     * @param value
-     *            Shared secret is generated when connection is made.
-     */
-    public void setSharedSecret(final byte[] value) {
-        sharedSecret = value;
-    }
-
-    /**
      * Generate GMAC password from given challenge.
      * 
      * @param challenge
      *            Client to Server or Server to Client challenge.
      * @return Generated challenge.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
      */
-    public byte[] generateGmacPassword(final byte[] challenge) {
-        AesGcmParameter p = new AesGcmParameter(0x10, Security.AUTHENTICATION,
-                invocationCounter, systemTitle, blockCipherKey,
-                authenticationKey);
+    public byte[] generateGmacPassword(final byte[] challenge)
+            throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+        AesGcmParameter p =
+                new AesGcmParameter(0x10, Security.AUTHENTICATION, SecuritySuite.SUITE_0,
+                        invocationCounter, systemTitle, blockCipherKey, authenticationKey);
+        p.setType(CountType.TAG);
         GXByteBuffer bb = new GXByteBuffer();
-        GXDLMSChippering.encryptAesGcm(p, challenge);
         bb.setUInt8(0x10);
         bb.setUInt32(invocationCounter);
-        bb.set(p.getCountTag());
+        bb.set(GXSecure.encryptAesGcm(true, p, challenge));
         return bb.array();
     }
 
@@ -388,5 +445,42 @@ public class GXCiphering implements GXICipher {
     @Override
     public void setDedicatedKey(final byte[] value) {
         dedicatedKey = value;
+    }
+
+    /**
+     * @return Used key agreement scheme.
+     */
+    @Override
+    public Signing getSigning() {
+        return signing;
+    }
+
+    /**
+     * @param value
+     *            Used key agreement scheme.
+     */
+    @Override
+    public void setSigning(final Signing value) {
+        signing = value;
+    }
+
+    @Override
+    public byte[] getTransactionId() {
+        return transactionId;
+    }
+
+    @Override
+    public void setTransactionId(byte[] value) {
+        transactionId = value;
+    }
+
+    @Override
+    public KeyPair getTlsKeyPair() {
+        return tlsKeyPair;
+    }
+
+    @Override
+    public void setTlsKeyPair(final KeyPair value) {
+        tlsKeyPair = value;
     }
 }

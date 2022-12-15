@@ -251,6 +251,11 @@ public final class Command {
     public static final int GLO_CONFIRMED_SERVICE_ERROR = 46;
 
     /**
+     * Glo information report.
+     */
+    public static final int GLO_INFORMATION_REPORT = 56;
+
+    /**
      * General GLO ciphering.
      */
     public static final int GENERAL_GLO_CIPHERING = 0xDB;
@@ -264,6 +269,11 @@ public final class Command {
      * General ciphering.
      */
     public static final int GENERAL_CIPHERING = 0xDD;
+
+    /**
+     * General signing.
+     */
+    public static final int GENERAL_SIGNING = 0xDF;
 
     /**
      * Information Report request.
@@ -364,6 +374,34 @@ public final class Command {
      * Response message from gateway to client.
      */
     public static final int GATEWAY_RESPONSE = 0xE7;
+
+    /**
+     * PLC discover request.
+     */
+    public static final int DISCOVER_REQUEST = 0x1D;
+
+    /**
+     * PLC discover report.
+     */
+    public static final int DISCOVER_REPORT = 0x1E;
+
+    /**
+     * PLC register request.
+     */
+    public static final int REGISTER_REQUEST = 0x1C;
+    /**
+     * PLC ping request.
+     */
+    public static final int PING_REQUEST = 0x19;
+    /**
+     * PLC ping response.
+     */
+    public static final int PING_RESPONSE = 0x1A;
+
+    /**
+     * PLC repeat call request.
+     */
+    public static final int REPEAT_CALL_REQUEST = 0x1F;
 
     public static String toString(final int value) {
         String str;
@@ -522,10 +560,28 @@ public final class Command {
             str = "DedMethodRequest";
             break;
         case GATEWAY_REQUEST:
-            str = "GatewayRequest ";
+            str = "GatewayRequest";
             break;
         case GATEWAY_RESPONSE:
-            str = "GatewayResponse ";
+            str = "GatewayResponse";
+            break;
+        case DISCOVER_REQUEST:
+            str = "DiscoverRequest";
+            break;
+        case DISCOVER_REPORT:
+            str = "DiscoverReport";
+            break;
+        case REGISTER_REQUEST:
+            str = "RegisterRequest";
+            break;
+        case PING_REQUEST:
+            str = "PingRequest ";
+            break;
+        case PING_RESPONSE:
+            str = "PingResponse";
+            break;
+        case REPEAT_CALL_REQUEST:
+            str = "RepeatCallRequest";
             break;
         default:
             throw new IllegalArgumentException(String.valueOf(value));
@@ -631,6 +687,18 @@ public final class Command {
             ret = Command.GATEWAY_REQUEST;
         } else if ("GatewayResponse".equalsIgnoreCase(value)) {
             ret = Command.GATEWAY_RESPONSE;
+        } else if ("DiscoverRequest".equalsIgnoreCase(value)) {
+            ret = Command.DISCOVER_REQUEST;
+        } else if ("DiscoverReport".equalsIgnoreCase(value)) {
+            ret = Command.DISCOVER_REPORT;
+        } else if ("RegisterRequest".equalsIgnoreCase(value)) {
+            ret = Command.REGISTER_REQUEST;
+        } else if ("PingRequest".equalsIgnoreCase(value)) {
+            ret = Command.PING_REQUEST;
+        } else if ("PingResponse".equalsIgnoreCase(value)) {
+            ret = Command.PING_RESPONSE;
+        } else if ("RepeatCallRequest".equalsIgnoreCase(value)) {
+            ret = Command.REPEAT_CALL_REQUEST;
         } else {
             throw new IllegalArgumentException(value);
         }

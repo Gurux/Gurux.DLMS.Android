@@ -34,6 +34,9 @@
 
 package gurux.dlms.secure;
 
+import java.math.BigInteger;
+
+import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslatorStructure;
 import gurux.dlms.enums.Security;
 import gurux.dlms.internal.GXCommon;
@@ -42,6 +45,12 @@ import gurux.dlms.objects.enums.SecuritySuite;
 public class AesGcmParameter {
 
     private int tag;
+
+    /*
+     * DLMS settings.
+     */
+    private GXDLMSSettings settings;
+
     private Security security;
 
     /**
@@ -65,10 +74,6 @@ public class AesGcmParameter {
      * Count type.
      */
     private int type;
-    /**
-     * Counted tag.
-     */
-    private byte[] countTag;
 
     /**
      * Recipient system title.
@@ -99,14 +104,19 @@ public class AesGcmParameter {
     private byte[] cipheredContent;
 
     /**
-     * Shared secret is generated when connection is made.
+     * Signature.
      */
-    private byte[] sharedSecret;
+    private byte[] signature;
 
-    /**
+    /*
      * Used security suite.
      */
-    private SecuritySuite securitySuite = SecuritySuite.AES_GCM_128;
+    private SecuritySuite securitySuite = SecuritySuite.SUITE_0;
+
+    /*
+     * System title is not send on pre-established connections.
+     */
+    private boolean ignoreSystemTitle;
 
     private GXDLMSTranslatorStructure xml;
 
@@ -117,6 +127,8 @@ public class AesGcmParameter {
      *            Tag.
      * @param forSecurity
      *            Security level.
+     * @param forSecuritySuite
+     *            Security suite.
      * @param forInvocationCounter
      *            Invocation counter.
      * @param forSystemTitle
@@ -127,10 +139,12 @@ public class AesGcmParameter {
      *            Authentication key.
      */
     public AesGcmParameter(final int forTag, final Security forSecurity,
-            final long forInvocationCounter, final byte[] forSystemTitle,
-            final byte[] forBlockCipherKey, final byte[] forAuthenticationKey) {
+            final SecuritySuite forSecuritySuite, final long forInvocationCounter,
+            final byte[] forSystemTitle, final byte[] forBlockCipherKey,
+            final byte[] forAuthenticationKey) {
         tag = forTag;
         security = forSecurity;
+        securitySuite = forSecuritySuite;
         invocationCounter = forInvocationCounter;
         systemTitle = forSystemTitle;
         blockCipherKey = forBlockCipherKey;
@@ -143,6 +157,8 @@ public class AesGcmParameter {
      * 
      * @param forTag
      *            Tag.
+     * @param forSettings
+     *            DLMS settings.
      * @param forSecurity
      *            Security level.
      * @param forSecuritySuite
@@ -162,13 +178,12 @@ public class AesGcmParameter {
      * @param forOtherInformation
      *            Other information.
      */
-    public AesGcmParameter(final int forTag, final Security forSecurity,
-            final SecuritySuite forSecuritySuite,
-            final long forInvocationCounter, final byte[] kdf,
-            final byte[] forAuthenticationKey,
-            final byte[] forOriginatorSystemTitle,
+    public AesGcmParameter(final int forTag, GXDLMSSettings forSettings, final Security forSecurity,
+            final SecuritySuite forSecuritySuite, final long forInvocationCounter, final byte[] kdf,
+            final byte[] forAuthenticationKey, final byte[] forOriginatorSystemTitle,
             final byte[] forRecipientSystemTitle, final byte[] forDateTime,
             final byte[] forOtherInformation) {
+        settings = forSettings;
         tag = forTag;
         security = forSecurity;
         invocationCounter = forInvocationCounter;
@@ -185,6 +200,8 @@ public class AesGcmParameter {
     /**
      * Constructor.
      * 
+     * @param forSettings
+     *            DLMS settings.
      * @param forsystemTitle
      *            System title.
      * @param forblockCipherKey
@@ -192,16 +209,37 @@ public class AesGcmParameter {
      * @param forauthenticationKey
      *            Authentication key.
      */
-    public AesGcmParameter(final byte[] forsystemTitle,
+    public AesGcmParameter(final GXDLMSSettings forSettings, final byte[] forsystemTitle,
             final byte[] forblockCipherKey, final byte[] forauthenticationKey) {
         systemTitle = forsystemTitle;
         blockCipherKey = forblockCipherKey;
         authenticationKey = forauthenticationKey;
         type = CountType.PACKET;
+        settings = forSettings;
     }
 
     public final int getTag() {
         return tag;
+    }
+
+    /**
+     * Used transaction ID.
+     */
+    BigInteger transactionId;
+
+    /**
+     * @return Used transaction ID.
+     */
+    public final BigInteger getTransactionId() {
+        return transactionId;
+    }
+
+    /**
+     * @param value
+     *            Used transaction ID.
+     */
+    public final void setTransactionId(final BigInteger value) {
+        transactionId = value;
     }
 
     public final Security getSecurity() {
@@ -257,14 +295,6 @@ public class AesGcmParameter {
 
     public final void setType(final int value) {
         type = value;
-    }
-
-    public final byte[] getCountTag() {
-        return countTag;
-    }
-
-    public final void setCountTag(final byte[] value) {
-        countTag = value;
     }
 
     @Override
@@ -329,21 +359,6 @@ public class AesGcmParameter {
     }
 
     /**
-     * @return Shared secret is generated when connection is made.
-     */
-    public byte[] getSharedSecret() {
-        return sharedSecret;
-    }
-
-    /**
-     * @param value
-     *            Shared secret is generated when connection is made.
-     */
-    public void setSharedSecret(final byte[] value) {
-        sharedSecret = value;
-    }
-
-    /**
      * @return Used security suite.
      */
     public SecuritySuite getSecuritySuite() {
@@ -356,6 +371,21 @@ public class AesGcmParameter {
      */
     public void setSecuritySuite(final SecuritySuite value) {
         securitySuite = value;
+    }
+
+    /**
+     * @return System title is not send on pre-established connections.
+     */
+    public boolean getIgnoreSystemTitle() {
+        return ignoreSystemTitle;
+    }
+
+    /**
+     * @param value
+     *            System title is not send on pre-established connections.
+     */
+    public void setIgnoreSystemTitle(final boolean value) {
+        ignoreSystemTitle = value;
     }
 
     /**
@@ -409,5 +439,27 @@ public class AesGcmParameter {
 
     public final GXDLMSTranslatorStructure getXml() {
         return xml;
+    }
+
+    /**
+     * @return DLMS settings.
+     */
+    public GXDLMSSettings getSettings() {
+        return settings;
+    }
+
+    /**
+     * @return Signature.
+     */
+    public byte[] getSignature() {
+        return signature;
+    }
+
+    /**
+     * @param value
+     *            Signature.
+     */
+    public void setSignature(final byte[] value) {
+        signature = value;
     }
 }

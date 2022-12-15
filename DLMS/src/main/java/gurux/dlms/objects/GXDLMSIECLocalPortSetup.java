@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+
+
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
@@ -49,8 +51,7 @@ import gurux.dlms.objects.enums.OpticalProtocolMode;
  * Online help: <br>
  * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSIECLocalPortSetup
  */
-public class GXDLMSIECLocalPortSetup extends GXDLMSObject
-        implements IGXDLMSBase {
+public class GXDLMSIECLocalPortSetup extends GXDLMSObject implements IGXDLMSBase {
     private String password1;
     private String password2;
     private String password5;
@@ -160,10 +161,9 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getDefaultMode(),
-                getDefaultBaudrate(), getProposedBaudrate(), getResponseTime(),
-                getDeviceAddress(), getPassword1(), getPassword2(),
-                getPassword5() };
+        return new Object[] { getLogicalName(), getDefaultMode(), getDefaultBaudrate(),
+                getProposedBaudrate(), getResponseTime(), getDeviceAddress(), getPassword1(),
+                getPassword2(), getPassword5() };
     }
 
     /*
@@ -172,11 +172,9 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
      */
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // DefaultMode
@@ -259,16 +257,14 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
         if (index == 9) {
             return DataType.OCTET_STRING;
         }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
     /*
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -304,38 +300,33 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
-            setDefaultMode(OpticalProtocolMode
-                    .forValue(((Number) e.getValue()).intValue()));
+            setDefaultMode(OpticalProtocolMode.forValue(((Number) e.getValue()).intValue()));
         } else if (e.getIndex() == 3) {
-            setDefaultBaudrate(
-                    BaudRate.values()[((Number) e.getValue()).intValue()]);
+            setDefaultBaudrate(BaudRate.values()[((Number) e.getValue()).intValue()]);
         } else if (e.getIndex() == 4) {
-            setProposedBaudrate(
-                    BaudRate.values()[((Number) e.getValue()).intValue()]);
+            setProposedBaudrate(BaudRate.values()[((Number) e.getValue()).intValue()]);
         } else if (e.getIndex() == 5) {
-            setResponseTime(LocalPortResponseTime
-                    .values()[((Number) e.getValue()).intValue()]);
+            setResponseTime(LocalPortResponseTime.values()[((Number) e.getValue()).intValue()]);
         } else if (e.getIndex() == 6) {
-            setDeviceAddress(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
-                    .toString());
+            setDeviceAddress(
+                    GXDLMSClient.changeType((byte[]) e.getValue(), DataType.STRING, e.getSettings())
+                            .toString());
         } else if (e.getIndex() == 7) {
-            setPassword1(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
-                    .toString());
+            setPassword1(
+                    GXDLMSClient.changeType((byte[]) e.getValue(), DataType.STRING, e.getSettings())
+                            .toString());
         } else if (e.getIndex() == 8) {
-            setPassword2(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
-                    .toString());
+            setPassword2(
+                    GXDLMSClient.changeType((byte[]) e.getValue(), DataType.STRING, e.getSettings())
+                            .toString());
         } else if (e.getIndex() == 9) {
-            setPassword5(GXDLMSClient
-                    .changeType((byte[]) e.getValue(), DataType.STRING, false)
-                    .toString());
+            setPassword5(
+                    GXDLMSClient.changeType((byte[]) e.getValue(), DataType.STRING, e.getSettings())
+                            .toString());
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         }
@@ -343,14 +334,11 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
-        defaultMode = OpticalProtocolMode
-                .forValue(reader.readElementContentAsInt("DefaultMode"));
-        defaultBaudrate = BaudRate.values()[reader
-                .readElementContentAsInt("DefaultBaudrate")];
-        proposedBaudrate = BaudRate.values()[reader
-                .readElementContentAsInt("ProposedBaudrate")];
-        responseTime = LocalPortResponseTime
-                .forValue(reader.readElementContentAsInt("ResponseTime"));
+        defaultMode = OpticalProtocolMode.forValue(reader.readElementContentAsInt("DefaultMode"));
+        defaultBaudrate = BaudRate.values()[reader.readElementContentAsInt("DefaultBaudrate")];
+        proposedBaudrate = BaudRate.values()[reader.readElementContentAsInt("ProposedBaudrate")];
+        responseTime =
+                LocalPortResponseTime.forValue(reader.readElementContentAsInt("ResponseTime"));
         deviceAddress = reader.readElementContentAsString("DeviceAddress");
         password1 = reader.readElementContentAsString("Password1");
         password2 = reader.readElementContentAsString("Password2");
@@ -361,8 +349,7 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
         writer.writeElementString("DefaultMode", defaultMode.getValue());
         writer.writeElementString("DefaultBaudrate", defaultBaudrate.ordinal());
-        writer.writeElementString("ProposedBaudrate",
-                proposedBaudrate.ordinal());
+        writer.writeElementString("ProposedBaudrate", proposedBaudrate.ordinal());
         writer.writeElementString("ResponseTime", responseTime.getValue());
         writer.writeElementString("DeviceAddress", deviceAddress);
         writer.writeElementString("Password1", password1);
@@ -373,5 +360,17 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject
     @Override
     public final void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Default Mode", "Default Baud rate",
+                "Proposed Baud rate", "Response Time", "Device Address", "Password 1", "Password 2",
+                "Password 5" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[0];
     }
 }

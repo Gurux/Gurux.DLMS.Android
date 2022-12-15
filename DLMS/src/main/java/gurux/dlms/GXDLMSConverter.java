@@ -3,11 +3,10 @@ package gurux.dlms;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,23 +16,33 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import gurux.dlms.asn.enums.KeyUsage;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.enums.Standard;
 import gurux.dlms.internal.AutoResetEvent;
 import gurux.dlms.internal.GXCommon;
+import gurux.dlms.manufacturersettings.GXObisCode;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSObjectCollection;
+import gurux.dlms.objects.enums.CertificateType;
 
+/**
+ * DLMS converter is used to get descriptions for the OBIS codes.
+ */
 public class GXDLMSConverter {
     /**
      * Collection of standard OBIS codes.
      */
-    private final GXStandardObisCodeCollection codes = new GXStandardObisCodeCollection();
+    private GXStandardObisCodeCollection codes = new GXStandardObisCodeCollection();
 
-    private Standard standard;
+    private Standard standard = Standard.DLMS;
 
     /**
      * Constructor.
@@ -111,7 +120,7 @@ public class GXDLMSConverter {
                 throw mException[0];
             }
         }
-        readStandardObisInfo(context, codes);
+        readStandardObisInfo(context, Standard.DLMS, codes);
     }
 
     /**
@@ -163,29 +172,27 @@ public class GXDLMSConverter {
      *            Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
-    public final String[] getDescription(final String logicalName,
-            final ObjectType type, final String description) {
-        if (codes.size() == 0) {
+    public final String[] getDescription(final String logicalName, final ObjectType type,
+            final String description) {
+        if (codes.isEmpty()) {
             throw new RuntimeException("Read OBIS codes first.");
         }
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         boolean all = logicalName == null || logicalName.isEmpty();
         for (GXStandardObisCode it : codes.find(logicalName, type)) {
             if (description != null && !description.isEmpty()
-                    && !it.getDescription().toLowerCase()
-                            .contains(description.toLowerCase())) {
+                    && !it.getDescription().toLowerCase().contains(description.toLowerCase())) {
                 continue;
             }
             if (all) {
-                list.add("A=" + it.getOBIS()[0] + ", B=" + it.getOBIS()[1]
-                        + ", C=" + it.getOBIS()[2] + ", D=" + it.getOBIS()[3]
-                        + ", E=" + it.getOBIS()[4] + ", F=" + it.getOBIS()[5]
-                        + "\r\n" + it.getDescription());
+                list.add("A=" + it.getOBIS()[0] + ", B=" + it.getOBIS()[1] + ", C="
+                        + it.getOBIS()[2] + ", D=" + it.getOBIS()[3] + ", E=" + it.getOBIS()[4]
+                        + ", F=" + it.getOBIS()[5] + "\r\n" + it.getDescription());
             } else {
                 list.add(it.getDescription());
             }
         }
-        return list.toArray(new String[0]);
+        return list.toArray(new String[list.size()]);
     }
 
     /**
@@ -195,12 +202,11 @@ public class GXDLMSConverter {
      *            COSEM objects.
      * @param it
      *            COSEM object.
-     * @param standard
+     * @param it
      *            used DLMS standard.
      */
-    private static void updateOBISCodeInfo(
-            final GXStandardObisCodeCollection codes, final GXDLMSObject it,
-            final Standard standard) {
+    private static void updateOBISCodeInfo(final GXStandardObisCodeCollection codes,
+            final GXDLMSObject it, final Standard standard) {
         String ln = it.getLogicalName();
         GXStandardObisCode[] list = codes.find(ln, it.getObjectType());
         GXStandardObisCode code = list[0];
@@ -217,111 +223,89 @@ public class GXDLMSConverter {
                 // If string is used
                 if (code.getDataType().contains("10")) {
                     code.setUIDataType("10");
-                } else if (code.getDataType().contains("25")
-                        || code.getDataType().contains("26")) {
+                } else if (code.getDataType().contains("25") || code.getDataType().contains("26")) {
                     // If date time is used.
                     code.setUIDataType("25");
                 } else if (code.getDataType().contains("9")) {
                     // Time stamps of the billing periods objects (first
                     // scheme
                     // if there are two)
-                    if ((GXStandardObisCodeCollection
-                            .equalsMask("0.0-64.96.7.10-14.255", ln)
+                    if ((GXStandardObisCodeCollection.equalsMask("0.0-64.96.7.10-14.255", ln)
                             // Time stamps of the billing periods objects
                             // (second scheme)
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("0.0-64.0.1.5.0-99,255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("0.0-64.0.1.5.0-99,255", ln)
                             // Time of power failure
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("0.0-64.0.1.2.0-99,255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("0.0-64.0.1.2.0-99,255", ln)
                             // Time stamps of the billing periods
                             // objects (first
                             // scheme if there are two)
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.1.2.0-99,255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.1.2.0-99,255", ln)
                             // Time stamps of the billing periods
                             // objects
                             // (second scheme)
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.1.5.0-99,255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.1.5.0-99,255", ln)
                             // Time expired since last end of
                             // billing
                             // period
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.9.0.255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.0.255", ln)
                             // Time of last reset
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.9.6.255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.6.255", ln)
                             // Date of last reset
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.9.7.255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.7.255", ln)
                             // Time expired since last end of
                             // billing
                             // period
                             // (Second billing period scheme)
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.9.13.255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.13.255", ln)
                             // Time of last reset (Second billing
                             // period
                             // scheme)
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.9.14.255", ln)
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.14.255", ln)
                             // Date of last reset (Second billing
                             // period
                             // scheme)
-                            || GXStandardObisCodeCollection
-                                    .equalsMask("1.0-64.0.9.15.255", ln))) {
+                            || GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.15.255", ln))) {
                         code.setUIDataType("25");
-                    } else if (GXStandardObisCodeCollection
-                            .equalsMask("1.0-64.0.9.1.255", ln)) {
+                    } else if (GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.1.255", ln)) {
                         // Local time
                         code.setUIDataType("27");
-                    } else if (GXStandardObisCodeCollection
-                            .equalsMask("1.0-64.0.9.2.255", ln)) {
+                    } else if (GXStandardObisCodeCollection.equalsMask("1.0-64.0.9.2.255", ln)) {
                         // Local date
                         code.setUIDataType("26");
                     }
                     // Active firmware identifier
-                    else if (GXStandardObisCodeCollection
-                            .equalsMask("1.0.0.2.0.255", ln)) {
+                    else if (GXStandardObisCodeCollection.equalsMask("1.0.0.2.0.255", ln)) {
                         code.setUIDataType("10");
                     }
                 }
                 // Unix time
                 else if (it.getObjectType() == ObjectType.DATA
-                        && GXStandardObisCodeCollection
-                                .equalsMask("0.0.1.1.0.255", ln)) {
+                        && GXStandardObisCodeCollection.equalsMask("0.0.1.1.0.255", ln)) {
                     code.setUIDataType("25");
                 }
             }
-            if (!code.getDataType().equals("*")
-                    && !code.getDataType().equals("")
+            if (!code.getDataType().equals("*") && !code.getDataType().equals("")
                     && !code.getDataType().contains(",")) {
-                DataType type =
-                        DataType.forValue(Integer.parseInt(code.getDataType()));
+                DataType type = DataType.forValue(Integer.parseInt(code.getDataType()));
                 ObjectType objectType = it.getObjectType();
-                if (objectType == ObjectType.DATA
-                        || objectType == ObjectType.REGISTER
+                if (objectType == ObjectType.DATA || objectType == ObjectType.REGISTER
                         || objectType == ObjectType.REGISTER_ACTIVATION
                         || objectType == ObjectType.EXTENDED_REGISTER) {
                     it.setDataType(2, type);
                 }
             }
-            if (code.getUIDataType() != null
-                    && !code.getUIDataType().isEmpty()) {
-                DataType type = DataType
-                        .forValue(Integer.parseInt(code.getUIDataType()));
+            if (code.getUIDataType() != null && !code.getUIDataType().isEmpty()) {
+                DataType type = DataType.forValue(Integer.parseInt(code.getUIDataType()));
                 ObjectType objectType = it.getObjectType();
-                if (objectType == ObjectType.DATA
-                        || objectType == ObjectType.REGISTER
+                if (objectType == ObjectType.DATA || objectType == ObjectType.REGISTER
                         || objectType == ObjectType.REGISTER_ACTIVATION
                         || objectType == ObjectType.EXTENDED_REGISTER) {
                     it.setUIDataType(2, type);
                 }
             }
         } else {
-            System.out.println("Unknown OBIS Code: " + it.getLogicalName()
-                    + " Type: " + it.getObjectType());
+            Logger.getLogger(GXDLMSConverter.class.getName()).log(Level.INFO,
+                    "Unknown OBIS Code: " + it.getLogicalName() + " Type: " + it.getObjectType());
         }
     }
 
@@ -330,14 +314,14 @@ public class GXDLMSConverter {
      *
      * @param object COSEM object.
      */
-    public final void updateOBISCodeInformation(final Context context, final GXDLMSObject object) {
+    public final void updateOBISCodeInformation(final Context context, final GXDLMSObject object){
         synchronized (codes) {
             if (codes.size() == 0) {
                 /* OBIS codes are not updated if context is unknown. */
                 if (context == null){
                     return;
                 }
-                readStandardObisInfo(context, codes);
+                readStandardObisInfo(context, standard, codes);
             }
             updateOBISCodeInfo(codes, object, standard);
         }
@@ -348,14 +332,10 @@ public class GXDLMSConverter {
      *
      * @param objects Collection of COSEM objects to update.
      */
-    public final void
-    updateOBISCodeInformation(final Context context, final GXDLMSObjectCollection objects) {
+    public final void updateOBISCodeInformation(final Context context, final GXDLMSObjectCollection objects) {
         synchronized (codes) {
-            if (codes.size() == 0) {
-                if (context == null){
-                    return;
-                }
-                readStandardObisInfo(context, codes);
+            if (codes.isEmpty()) {
+                readStandardObisInfo(context, standard, codes);
             }
             for (GXDLMSObject it : objects) {
                 updateOBISCodeInfo(codes, it, standard);
@@ -364,45 +344,119 @@ public class GXDLMSConverter {
     }
 
     /**
-     * Read standard OBIS code information from the file.
-     *
-     * @param codes Collection of standard OBIS codes.
+     * Get country spesific OBIS codes.
+     * 
+     * @param standard
+     *            Used standard.
+     * @return Collection for special OBIC codes.
      */
-    private static void
-    readStandardObisInfo(final Context context, final GXStandardObisCodeCollection codes) {
-        try (java.io.FileInputStream stream = context.openFileInput("obiscodes.txt")) {
-            if (stream == null) {
-                return;
+    @SuppressWarnings("squid:S00112")
+    static GXObisCode[] getObjects(Standard standard) {
+        List<GXObisCode> codes = new ArrayList<GXObisCode>();
+        InputStream stream = null;
+        if (standard == Standard.ITALY) {
+            stream = GXDLMSClient.class.getResourceAsStream("/Italy.txt");
+        } else if (standard == Standard.INDIA) {
+            stream = GXDLMSClient.class.getResourceAsStream("/India.txt");
+        } else if (standard == Standard.SAUDI_ARABIA) {
+            stream = GXDLMSClient.class.getResourceAsStream("/SaudiArabia.txt");
+        } else if (standard == Standard.SPAIN) {
+            stream = GXDLMSClient.class.getResourceAsStream("/Spain.txt");
+        }
+        if (stream == null) {
+            return new GXObisCode[0];
+        }
+        int nRead;
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] data = new byte[1000];
+        try {
+            while ((nRead = stream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
             }
-
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            int nRead;
-            byte[] data = new byte[1000];
-            try {
-                while ((nRead = stream.read(data, 0, data.length)) != -1) {
-                    buffer.write(data, 0, nRead);
-                }
-                buffer.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
-            }
-            String str = buffer.toString();
-            String newline = System.getProperty("line.separator");
-            List<String> rows = GXCommon.split(str, newline);
-            for (String it : rows) {
-                if (!it.isEmpty()) {
-                    List<String> items = GXCommon.split(it, ';');
-                    List<String> obis = GXCommon.split(items.get(0), '.');
-                    GXStandardObisCode code = new GXStandardObisCode(
-                            obis.toArray(new String[0]),
-                            items.get(3) + "; " + items.get(4) + "; " + items.get(5)
-                                    + "; " + items.get(6) + "; " + items.get(7),
-                            items.get(1), items.get(2));
+            buffer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        String str = buffer.toString();
+        str = str.replace("\r", "");
+        List<String> rows = GXCommon.split(str, '\n');
+        for (String it : rows) {
+            // Comments start with #.
+            if (!it.startsWith("#")) {
+                List<String> items = GXCommon.split(it, ';');
+                // Skip empty lines.
+                if (items.size() > 1) {
+                    ObjectType ot = ObjectType.forValue(Integer.parseInt(items.get(0)));
+                    String ln = GXCommon.toLogicalName(GXCommon.logicalNameToBytes(items.get(1)));
+                    int version = Integer.parseInt(items.get(2));
+                    String desc = items.get(3);
+                    GXObisCode code = new GXObisCode(ln, ot, desc);
+                    if (items.size() > 4) {
+                        code.setUIDataType(items.get(4));
+                    }
+                    code.setVersion(version);
                     codes.add(code);
                 }
             }
-        } catch (Exception ex) {
-            Log.e("gurux.dlms.android", ex.getMessage());
+        }
+        return codes.toArray(new GXObisCode[0]);
+    }
+
+    /**
+     * Read standard OBIS code information from the file.
+     * 
+     * @param codes
+     *            Collection of standard OBIS codes.
+     */
+    @SuppressWarnings("squid:S00112")
+    private static void readStandardObisInfo(final Context context,
+                                             final Standard standard,
+                                             final GXStandardObisCodeCollection codes) {
+        if (standard != Standard.DLMS) {
+            for (GXObisCode it : getObjects(standard)) {
+                GXStandardObisCode tmp = new GXStandardObisCode();
+                tmp.setInterfaces(String.valueOf(it.getObjectType().getValue()));
+                tmp.setOBIS(GXCommon.split(it.getLogicalName(), '.').toArray(new String[0]));
+                tmp.setDescription(it.getDescription());
+                tmp.setUIDataType(it.getUIDataType());
+                codes.add(tmp);
+            }
+        }
+        InputStream stream = null;
+        try {
+            if (context != null)
+            {
+                stream = context.openFileInput("obiscodes.txt");
+            }
+        } catch (FileNotFoundException e) {
+        }
+        if (stream == null) {
+            return;
+        }
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1000];
+        try {
+            while ((nRead = stream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        String str = buffer.toString();
+        String newline = System.getProperty("line.separator");
+        List<String> rows = GXCommon.split(str, newline);
+        for (String it : rows) {
+            if (!it.isEmpty()) {
+                List<String> items = GXCommon.split(it, ';');
+                List<String> obis = GXCommon.split(items.get(0), '.');
+                GXStandardObisCode code = new GXStandardObisCode(
+                        obis.toArray(new String[0]), items.get(3) + "; " + items.get(4) + "; "
+                                + items.get(5) + "; " + items.get(6) + "; " + items.get(7),
+                        items.get(1), items.get(2));
+                codes.add(code);
+            }
         }
     }
 
@@ -553,6 +607,15 @@ public class GXDLMSConverter {
         throw new IllegalArgumentException("Invalid value.");
     }
 
+    /**
+     * Change value type.
+     * 
+     * @param value
+     *            Value to converted.
+     * @param type
+     *            Data type.
+     * @return Converted value.
+     */
     public static Object changeType(final Object value, final DataType type) {
         if (getDLMSDataType(value) == type) {
             return value;
@@ -568,8 +631,7 @@ public class GXDLMSConverter {
             }
             return ((Number) value).longValue() != 0;
         case COMPACT_ARRAY:
-            throw new IllegalArgumentException(
-                    "Can't change compact array types.");
+            throw new IllegalArgumentException("Can't change compact array types.");
         case DATE:
             return new GXDate((String) value);
         case DATETIME:
@@ -593,8 +655,7 @@ public class GXDLMSConverter {
                 try {
                     return Double.parseDouble((String) value);
                 } catch (NumberFormatException e) {
-                    return Double
-                            .parseDouble(((String) value).replace(",", "."));
+                    return Double.parseDouble(((String) value).replace(",", "."));
                 }
             }
             return ((Number) value).doubleValue();
@@ -624,13 +685,13 @@ public class GXDLMSConverter {
             if (value instanceof String) {
                 return GXCommon.hexToBytes((String) value);
             }
-            throw new IllegalArgumentException(
-                    "Can't change octet string type.");
+            throw new IllegalArgumentException("Can't change octet string type.");
         case STRING:
-            case STRING_UTF8:
-                return String.valueOf(value);
+            return String.valueOf(value);
         case BITSTRING:
             return new GXBitString((String) value);
+        case STRING_UTF8:
+            return String.valueOf(value);
         case STRUCTURE:
             throw new IllegalArgumentException("Can't change structure types.");
         case TIME:
@@ -658,6 +719,66 @@ public class GXDLMSConverter {
         default:
             break;
         }
-        throw new IllegalArgumentException("Invalid data type: " + type);
+        throw new IllegalArgumentException("Invalid data type: " + type.toString());
+    }
+
+    /**
+     * Convert system title to string.
+     * 
+     * @param standard
+     *            Used standard.
+     * @param st
+     *            System title.
+     * @param addComments
+     *            Are comments added.
+     * @return System title in string format.
+     */
+    public static String systemTitleToString(final Standard standard, final byte[] st,
+            final boolean addComments) {
+        return GXCommon.systemTitleToString(standard, st, addComments);
+    }
+
+    /**
+     * Convert key usage to certificate type.
+     * 
+     * @param value
+     *            Key usage
+     * @return Certificate type.
+     */
+    public static CertificateType keyUsageToCertificateType(final Set<KeyUsage> value) {
+        if (value.contains(KeyUsage.DIGITAL_SIGNATURE) && value.contains(KeyUsage.KEY_AGREEMENT)) {
+            return CertificateType.TLS;
+        } else if (value.contains(KeyUsage.DIGITAL_SIGNATURE)) {
+            return CertificateType.DIGITAL_SIGNATURE;
+        } else if (value.contains(KeyUsage.KEY_AGREEMENT)) {
+            return CertificateType.KEY_AGREEMENT;
+        }
+        throw new IllegalArgumentException("Unknown certificate type.");
+    }
+
+    /**
+     * Convert key usage to certificate type.
+     * 
+     * @param value
+     *            Key usage
+     * @return Certificate type.
+     */
+    public static Set<KeyUsage> certificateTypeToKeyUsage(final CertificateType value) {
+        Set<KeyUsage> ret = new HashSet<KeyUsage>();
+        switch (value) {
+        case DIGITAL_SIGNATURE:
+            ret.add(KeyUsage.DIGITAL_SIGNATURE);
+            break;
+        case KEY_AGREEMENT:
+            ret.add(KeyUsage.KEY_AGREEMENT);
+            break;
+        case TLS:
+            ret.add(KeyUsage.DIGITAL_SIGNATURE);
+            ret.add(KeyUsage.KEY_AGREEMENT);
+            break;
+        default:
+            throw new IllegalArgumentException();
+        }
+        return ret;
     }
 }

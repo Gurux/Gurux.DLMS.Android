@@ -34,20 +34,40 @@
 
 package gurux.dlms;
 
+import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import gurux.dlms.asn.GXPkcs8;
+import gurux.dlms.asn.GXx509Certificate;
+import gurux.dlms.asn.enums.KeyUsage;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.Conformance;
+import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.DateTimeSkips;
 import gurux.dlms.enums.InterfaceType;
+import gurux.dlms.enums.ObjectType;
 import gurux.dlms.enums.Priority;
+import gurux.dlms.enums.Security;
 import gurux.dlms.enums.ServiceClass;
+import gurux.dlms.enums.Signing;
 import gurux.dlms.enums.Standard;
+import gurux.dlms.objects.GXDLMSAssociationLogicalName;
+import gurux.dlms.objects.GXDLMSData;
 import gurux.dlms.objects.GXDLMSHdlcSetup;
 import gurux.dlms.objects.GXDLMSObjectCollection;
+import gurux.dlms.objects.GXDLMSSecuritySetup;
 import gurux.dlms.objects.GXDLMSTcpUdpSetup;
+import gurux.dlms.objects.enums.ApplicationContextName;
+import gurux.dlms.objects.enums.AssociationStatus;
+import gurux.dlms.objects.enums.CertificateType;
+import gurux.dlms.objects.enums.SecuritySuite;
 
 /**
  * This class includes DLMS communication settings.
@@ -144,6 +164,12 @@ public class GXDLMSSettings {
      * Service class.
      */
     private ServiceClass serviceClass = ServiceClass.CONFIRMED;
+
+    /**
+     * Assigned association for the server.
+     */
+    GXDLMSAssociationLogicalName assignedAssociation;
+
     /**
      * Client address.
      */
@@ -152,6 +178,17 @@ public class GXDLMSSettings {
      * Server address.
      */
     private int serverAddress;
+
+    /**
+     * Client address of the notification message.
+     */
+    private int targetAddress;
+
+    /**
+     * Server address of the notification message.
+     */
+    private int sourceAddress;
+
     /**
      * Server is using push client address when sending push messages. Client
      * address is used if PushAddress is zero.
@@ -244,14 +281,19 @@ public class GXDLMSSettings {
     private boolean server;
 
     /**
-     * Information from the connection size that server can handle.
+     * HDLC framing settings.
      */
-    private GXDLMSLimits limits;
+    private GXHdlcSettings hdlcSettings;
 
     /**
      * Gateway settings.
      */
     private GXDLMSGateway gateway;
+
+    /**
+     * PLC settings.
+     */
+    private GXPlcSettings plc;
 
     private int startingPacketIndex = 1;
 
@@ -270,6 +312,11 @@ public class GXDLMSSettings {
     private GXICipher cipher;
 
     /**
+     * Crypto notifier.
+     */
+    private final IGXCryptoNotifier cryptoNotifier;
+
+    /**
      * Block number acknowledged in GBT.
      */
     private int blockNumberAck;
@@ -277,7 +324,7 @@ public class GXDLMSSettings {
     /**
      * GBT window size.
      */
-    private byte windowSize;
+    private byte gbtWindowSize;
 
     /*
      * User id is the identifier of the user. This value is used if user list on
@@ -306,8 +353,12 @@ public class GXDLMSSettings {
     /**
      * Skipped fields.
      */
-    private java.util.Set<DateTimeSkips> dateTimeSkips =
-            new HashSet<DateTimeSkips>();
+    private java.util.Set<DateTimeSkips> dateTimeSkips = new HashSet<DateTimeSkips>();
+
+    /**
+     * Skipped fields.
+     */
+    private java.util.Set<DateTimeSkips> readDateTimeSkips = new HashSet<DateTimeSkips>();
 
     private Standard standard;
 
@@ -331,22 +382,98 @@ public class GXDLMSSettings {
      */
     private boolean autoIncreaseInvokeID = false;
 
+    GXDLMSData invocationCounter;
+
+    /**
+     * Ephemeral Block cipher key.
+     */
+    private byte[] ephemeralBlockCipherKey;
+
+    /**
+     * Ephemeral broadcast block cipher key.
+     */
+    private byte[] ephemeralBroadcastBlockCipherKey;
+    /**
+     * Ephemeral authentication key.
+     */
+    private byte[] ephemeralAuthenticationKey;
+
+    /**
+     * XML needs list of certificates to decrypt the data.
+     */
+    private List<Map.Entry<GXPkcs8, GXx509Certificate>> keys;
+
+    /**
+     * Size of the challenge.
+     */
+    private byte challengeSize = 16;
+
+    boolean overwriteAttributeAccessRights;
+
+    /**
+     * @return Ephemeral Block cipher key.
+     */
+    public final byte[] getEphemeralBlockCipherKey() {
+        return ephemeralBlockCipherKey;
+    }
+
+    /**
+     * @param value
+     *            Ephemeral Block cipher key.
+     */
+    public final void setEphemeralBlockCipherKey(final byte[] value) {
+        ephemeralBlockCipherKey = value;
+    }
+
+    /**
+     * @return Ephemeral broadcast block cipher key.
+     */
+    public final byte[] getEphemeralBroadcastBlockCipherKey() {
+        return ephemeralBroadcastBlockCipherKey;
+    }
+
+    /**
+     * @param value
+     *            Ephemeral broadcast block cipher key.
+     */
+    public final void setEphemeralBroadcastBlockCipherKey(final byte[] value) {
+        ephemeralBroadcastBlockCipherKey = value;
+    }
+
+    /**
+     * @return Ephemeral authentication key.
+     */
+    public final byte[] getEphemeralAuthenticationKey() {
+        return ephemeralAuthenticationKey;
+    }
+
+    /**
+     * @param value
+     *            Ephemeral authentication key.
+     */
+    public final void setEphemeralAuthenticationKey(final byte[] value) {
+        ephemeralAuthenticationKey = value;
+    }
+
     /*
      * Constructor.
      */
-    GXDLMSSettings(final boolean isServer) {
+    GXDLMSSettings(final boolean isServer, final IGXCryptoNotifier notifier) {
         server = isServer;
+        cryptoNotifier = notifier;
         objects = new GXDLMSObjectCollection();
-        limits = new GXDLMSLimits(this);
+        hdlcSettings = new GXDLMSLimits(this);
+        plc = new GXPlcSettings(this);
         gateway = null;
         proposedConformance.addAll(GXDLMSClient.getInitialConformance(false));
         if (isServer) {
             proposedConformance.add(Conformance.GENERAL_PROTECTION);
         }
         resetFrameSequence();
-        windowSize = 1;
+        gbtWindowSize = 1;
         userId = -1;
         standard = Standard.DLMS;
+        keys = new ArrayList<Map.Entry<GXPkcs8, GXx509Certificate>>();
     }
 
     /**
@@ -477,24 +604,22 @@ public class GXDLMSSettings {
             return true;
         }
         // If U frame.
-        if ((frame & HdlcFrameType.U_FRAME.getValue()) == HdlcFrameType.U_FRAME
-                .getValue()) {
+        if ((frame & HdlcFrameType.U_FRAME.getValue()) == HdlcFrameType.U_FRAME.getValue()) {
             if (frame == 0x73 || frame == 0x93) {
                 resetFrameSequence();
                 return true;
             }
         }
         // If S -frame.
-        if ((frame & HdlcFrameType.S_FRAME.getValue()) == HdlcFrameType.S_FRAME
-                .getValue()) {
+        if ((frame & HdlcFrameType.S_FRAME.getValue()) == HdlcFrameType.S_FRAME.getValue()) {
             receiverFrame = increaseReceiverSequence(receiverFrame);
             return true;
         }
         // Handle I-frame.
         short expected;
         if ((senderFrame & 0x1) == 0) {
-            expected = (short) (increaseReceiverSequence(
-                    increaseSendSequence(receiverFrame)) & 0xFF);
+            expected =
+                    (short) (increaseReceiverSequence(increaseSendSequence(receiverFrame)) & 0xFF);
             if (frame == expected) {
                 receiverFrame = frame;
                 return true;
@@ -512,8 +637,8 @@ public class GXDLMSSettings {
             receiverFrame = frame;
             return true;
         }
-        System.out.println("Invalid HDLC Frame: " + Long.toString(frame, 16)
-                + " Expected: " + Long.toString(expected, 16));
+        Logger.getLogger(GXDLMS.class.getName()).log(Level.INFO, "Invalid HDLC Frame: "
+                + Long.toString(frame, 16) + " Expected: " + Long.toString(expected, 16));
         return false;
     }
 
@@ -546,8 +671,7 @@ public class GXDLMSSettings {
      */
     final byte getNextSend(final boolean first) {
         if (first) {
-            senderFrame = increaseReceiverSequence(
-                    increaseSendSequence((byte) senderFrame));
+            senderFrame = increaseReceiverSequence(increaseSendSequence((byte) senderFrame));
         } else {
             senderFrame = increaseSendSequence((byte) senderFrame);
         }
@@ -659,8 +783,8 @@ public class GXDLMSSettings {
     /**
      * @return Information from the frame size that server can handle.
      */
-    public final GXDLMSLimits getLimits() {
-        return limits;
+    public final GXHdlcSettings getHdlcSettings() {
+        return hdlcSettings;
     }
 
     /**
@@ -679,11 +803,26 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Information from the frame size that server can handle.
+     * @return PLC settings.
      */
-    public final void setLimits(final GXDLMSLimits value) {
-        limits = value;
+    public final GXPlcSettings getPlc() {
+        return plc;
+    }
+
+    /**
+     * @param value
+     *            PLC settings.
+     */
+    public final void setPlc(GXPlcSettings value) {
+        plc = value;
+    }
+
+    /**
+     * @param value
+     *            HDLC connection settings.
+     */
+    public final void setLimits(final GXHdlcSettings value) {
+        hdlcSettings = value;
     }
 
     /**
@@ -706,6 +845,26 @@ public class GXDLMSSettings {
      */
     public final int getClientAddress() {
         return clientAddress;
+    }
+
+    /*
+     * General Block Transfer count in server.
+     */
+    private int gbtCount;
+
+    /**
+     * @param value
+     *            General Block Transfer count in server.
+     */
+    public final void setGbtCount(final int value) {
+        gbtCount = value;
+    }
+
+    /**
+     * @return General Block Transfer count in server.
+     */
+    public final int getGbtCount() {
+        return gbtCount;
     }
 
     /**
@@ -808,8 +967,8 @@ public class GXDLMSSettings {
         if (useLogicalNameReferencing != value) {
             useLogicalNameReferencing = value;
             proposedConformance.clear();
-            proposedConformance.addAll(GXDLMSClient
-                    .getInitialConformance(getUseLogicalNameReferencing()));
+            proposedConformance
+                    .addAll(GXDLMSClient.getInitialConformance(getUseLogicalNameReferencing()));
             if (isServer()) {
                 proposedConformance.add(Conformance.GENERAL_PROTECTION);
             }
@@ -844,6 +1003,108 @@ public class GXDLMSSettings {
      */
     public final void setServiceClass(final ServiceClass value) {
         serviceClass = value;
+    }
+
+    void updateSecuritySettings(final byte[] systemTitle) {
+        if (assignedAssociation != null) {
+            // Update security settings.
+            if (assignedAssociation.getSecuritySetupReference() != null
+                    && (assignedAssociation.getApplicationContextName()
+                            .getContextId() == ApplicationContextName.LOGICAL_NAME_WITH_CIPHERING
+                            || assignedAssociation.getAuthenticationMechanismName()
+                                    .getMechanismId() == Authentication.HIGH_GMAC
+                            || assignedAssociation.getAuthenticationMechanismName()
+                                    .getMechanismId() == Authentication.HIGH_ECDSA)) {
+                GXDLMSSecuritySetup ss = (GXDLMSSecuritySetup) assignedAssociation.getObjectList()
+                        .findByLN(ObjectType.SECURITY_SETUP,
+                                assignedAssociation.getSecuritySetupReference());
+                if (ss != null) {
+                    getCipher().setSecurityPolicy(ss.getSecurityPolicy());
+                    getCipher().setBlockCipherKey(ss.getGuek());
+                    getCipher().setBroadcastBlockCipherKey(ss.getGbek());
+                    getCipher().setAuthenticationKey(ss.getGak());
+                    setEphemeralBlockCipherKey(ss.getGuek());
+                    setEphemeralBroadcastBlockCipherKey(ss.getGbek());
+                    setEphemeralAuthenticationKey(ss.getGak());
+                    setKek(ss.getKek());
+                    // Update certificates for pre-established connections.
+                    byte[] st;
+                    if (systemTitle == null) {
+                        st = ss.getClientSystemTitle();
+                    } else {
+                        st = systemTitle;
+                    }
+                    if (st != null) {
+                        GXx509Certificate cert = ss.serverCertificates.findBySystemTitle(st,
+                                KeyUsage.DIGITAL_SIGNATURE);
+                        if (cert != null) {
+                            getCipher().setSigningKeyPair(
+                                    new KeyPair(cert.getPublicKey(), ss.signingKey.getPrivate()));
+                        }
+                        cert = ss.serverCertificates.findBySystemTitle(st, KeyUsage.KEY_AGREEMENT);
+                        if (cert != null) {
+                            getCipher().setKeyAgreementKeyPair(
+                                    new KeyPair(cert.getPublicKey(), ss.keyAgreement.getPrivate()));
+                        }
+                        setSourceSystemTitle(st);
+                    }
+                    getCipher().setSecuritySuite(ss.getSecuritySuite());
+                    getCipher().setSystemTitle(ss.getServerSystemTitle());
+                    // Find Invocation counter and use it if it exists.
+                    String ln = "0.0.43.1." + ss.getLogicalName().split("[.]")[4] + ".255";
+                    invocationCounter = (GXDLMSData) getObjects().findByLN(ObjectType.DATA, ln);
+                    if (invocationCounter != null && invocationCounter.getValue() == null) {
+                        if (invocationCounter.getDataType(2) == DataType.NONE) {
+                            invocationCounter.setDataType(2, DataType.UINT32);
+                        }
+                        invocationCounter.setValue(0);
+                    }
+                } else {
+                    assignedAssociation.getApplicationContextName()
+                            .setContextId(ApplicationContextName.LOGICAL_NAME);
+                }
+            } else {
+                // Update server system title if security setup is set.
+                GXDLMSSecuritySetup ss = (GXDLMSSecuritySetup) assignedAssociation.getObjectList()
+                        .findByLN(ObjectType.SECURITY_SETUP,
+                                assignedAssociation.getSecuritySetupReference());
+                if (ss != null) {
+                    getCipher().setSystemTitle(ss.getServerSystemTitle());
+                }
+            }
+        }
+    }
+
+    /**
+     * @param value
+     *            Current association of the server.
+     */
+    public final void setAssignedAssociation(final GXDLMSAssociationLogicalName value) {
+        if (assignedAssociation != null) {
+            assignedAssociation.setAssociationStatus(AssociationStatus.NON_ASSOCIATED);
+            assignedAssociation.getXDLMSContextInfo().setCypheringInfo(null);
+            invocationCounter = null;
+            getCipher().getSecurityPolicy().clear();
+            setEphemeralBlockCipherKey(null);
+            setEphemeralBroadcastBlockCipherKey(null);
+            setEphemeralAuthenticationKey(null);
+            getCipher().setSecuritySuite(SecuritySuite.SUITE_0);
+        }
+
+        assignedAssociation = value;
+        if (assignedAssociation != null) {
+            proposedConformance = assignedAssociation.getXDLMSContextInfo().getConformance();
+            maxServerPDUSize = assignedAssociation.getXDLMSContextInfo().getMaxReceivePduSize();
+            authentication = assignedAssociation.getAuthenticationMechanismName().getMechanismId();
+            updateSecuritySettings(null);
+        }
+    }
+
+    /**
+     * @return Current server association.
+     */
+    public final GXDLMSAssociationLogicalName getAssignedAssociation() {
+        return assignedAssociation;
     }
 
     /**
@@ -920,6 +1181,14 @@ public class GXDLMSSettings {
      */
     public final void setUseCustomChallenge(final boolean value) {
         customChallenges = value;
+    }
+
+    public boolean isCiphered(boolean checkGeneralSigning) {
+        if (cipher == null) {
+            return false;
+        }
+        return cipher.getSecurity() != Security.NONE
+                || (checkGeneralSigning && cipher.getSigning() == Signing.GENERAL_SIGNING);
     }
 
     /**
@@ -1078,16 +1347,16 @@ public class GXDLMSSettings {
     /**
      * @return GBT window size.
      */
-    public final byte getWindowSize() {
-        return windowSize;
+    public final byte getGbtWindowSize() {
+        return gbtWindowSize;
     }
 
     /**
      * @param value
      *            GBT window size.
      */
-    public final void setWindowSize(final byte value) {
-        windowSize = value;
+    public final void setGbtWindowSize(final byte value) {
+        gbtWindowSize = value;
     }
 
     /**
@@ -1141,8 +1410,7 @@ public class GXDLMSSettings {
      *            Some meters expect that Invocation Counter is increased for
      *            Authentication when connection is established.
      */
-    public void setIncreaseInvocationCounterForGMacAuthentication(
-            final boolean value) {
+    public void setIncreaseInvocationCounterForGMacAuthentication(final boolean value) {
         increaseInvocationCounterForGMacAuthentication = value;
     }
 
@@ -1161,6 +1429,23 @@ public class GXDLMSSettings {
      */
     public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
         dateTimeSkips = value;
+    }
+
+    /**
+     * @return Skipped date time fields on read. This value can be used if meter
+     *         returns invalid deviation on read.
+     */
+    public java.util.Set<DateTimeSkips> getDateTimeSkipsOnRead() {
+        return readDateTimeSkips;
+    }
+
+    /**
+     * @param value
+     *            Skipped date time fields on read. This value can be used if
+     *            meter returns invalid deviation on read.
+     */
+    public void setDateTimeSkipsOnRead(final java.util.Set<DateTimeSkips> value) {
+        readDateTimeSkips = value;
     }
 
     /**
@@ -1302,4 +1587,146 @@ public class GXDLMSSettings {
     public void setPushClientAddress(final int value) {
         pushClientAddress = value;
     }
+
+    /**
+     * @return XML needs list of certificates to decrypt the data.
+     */
+    public List<Map.Entry<GXPkcs8, GXx509Certificate>> getKeys() {
+        return keys;
+    }
+
+    /**
+     * @param value
+     *            XML needs list of certificates to decrypt the data.
+     */
+    public void setKeys(final List<Map.Entry<GXPkcs8, GXx509Certificate>> value) {
+        keys = value;
+    }
+
+    public GXDLMSData getInvocationCounter() {
+        return invocationCounter;
+    }
+
+    /**
+     * @return Crypto notifier.
+     */
+    public IGXCryptoNotifier getCryptoNotifier() {
+        return cryptoNotifier;
+    }
+
+    public Object getKey(CertificateType certificateType, byte[] systemTitle, boolean encrypt) {
+        if (cryptoNotifier == null) {
+            throw new RuntimeException("Failed to get the certificate.");
+        }
+        if (certificateType == CertificateType.DIGITAL_SIGNATURE
+                && cipher.getSigningKeyPair() != null) {
+            if (encrypt) {
+                if (cipher.getSigningKeyPair().getPrivate() != null) {
+                    return cipher.getSigningKeyPair().getPrivate();
+                }
+            } else if (cipher.getSigningKeyPair().getPublic() != null) {
+                return cipher.getSigningKeyPair().getPublic();
+            }
+        } else if (certificateType == CertificateType.KEY_AGREEMENT
+                && cipher.getKeyAgreementKeyPair() != null) {
+            if (encrypt) {
+                if (cipher.getKeyAgreementKeyPair().getPrivate() != null) {
+                    return cipher.getKeyAgreementKeyPair().getPrivate();
+                }
+            } else if (cipher.getKeyAgreementKeyPair().getPublic() != null) {
+                return cipher.getKeyAgreementKeyPair().getPublic();
+            }
+        }
+        GXCryptoKeyParameter args = new GXCryptoKeyParameter();
+        args.setEncrypt(encrypt);
+        args.setSecuritySuite(cipher.getSecuritySuite());
+        args.setCertificateType(certificateType);
+        args.setSystemTitle(systemTitle);
+        cryptoNotifier.onKey(cryptoNotifier, args);
+        if (encrypt) {
+            return args.getPrivateKey();
+        } else {
+            return args.getPublicKey();
+        }
+    }
+
+    /**
+     * Encrypt or decrypt the data using external Hardware Security Module.
+     * 
+     * @param certificateType
+     * @param Data
+     * @param encrypt
+     * @return
+     */
+    byte[] crypt(final CertificateType certificateType, final byte[] Data, final boolean encrypt) {
+        if (cryptoNotifier != null) {
+            GXCryptoKeyParameter args = new GXCryptoKeyParameter();
+            args.setEncrypt(encrypt);
+            args.setSystemTitle(getCipher().getSystemTitle());
+            args.setRecipientSystemTitle(getSourceSystemTitle());
+            args.setCertificateType(certificateType);
+            args.setInvocationCounter(getCipher().getInvocationCounter());
+            args.setSecuritySuite(getCipher().getSecuritySuite());
+            args.setSecurityPolicy(getCipher().getSecurityPolicy());
+            if (encrypt) {
+                args.setPlainText(Data);
+            } else {
+                args.setEncrypted(Data);
+            }
+            args.setAuthenticationKey(getCipher().getAuthenticationKey());
+            if (getCipher().getDedicatedKey() != null && getCipher().getDedicatedKey().length == 16
+                    && (getConnected() & ConnectionState.DLMS) != 0) {
+                args.setBlockCipherKey(getCipher().getDedicatedKey());
+            } else {
+                args.setBlockCipherKey(getCipher().getBlockCipherKey());
+            }
+            cryptoNotifier.onCrypto(cryptoNotifier, args);
+            if (encrypt) {
+                return args.getEncrypted();
+            } else {
+                return args.getPlainText();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return Size of the challenge.
+     */
+    public byte getChallengeSize() {
+        return challengeSize;
+    }
+
+    /**
+     * @param value
+     *            Size of the challenge.
+     */
+    public void setChallengeSize(byte value) {
+        if (authentication == Authentication.HIGH_ECDSA && value < 32) {
+            throw new IllegalArgumentException(
+                    "Invalid challenge size. ECDSA challenge must be between 32 to 64 bytes.");
+        } else if (value < 8 || value > 64) {
+            throw new IllegalArgumentException(
+                    "Invalid challenge size. Challenge must be between 8 to 64 bytes.");
+        }
+        challengeSize = value;
+    }
+
+    /**
+     * @return Overwrite attribute access rights if association view tells wrong
+     *         access rights and they need to be overwritten.
+     */
+    public final boolean getOverwriteAttributeAccessRights() {
+        return overwriteAttributeAccessRights;
+    }
+
+    /**
+     * @param value
+     *            Overwrite attribute access rights if association view tells
+     *            wrong access rights and they need to be overwritten.
+     */
+    public final void setOverwriteAttributeAccessRights(boolean value) {
+        overwriteAttributeAccessRights = value;
+    }
+
 }

@@ -84,8 +84,7 @@ public enum Security {
     public static Security forValue(final int value) {
         Security tmp = getMappings().get(value);
         if (tmp == null) {
-            throw new IllegalArgumentException(
-                    "Invalid security integer value.");
+            throw new IllegalArgumentException("Invalid security integer value.");
         }
         return tmp;
     }

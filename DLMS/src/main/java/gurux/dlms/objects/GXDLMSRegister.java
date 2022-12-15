@@ -37,12 +37,14 @@ package gurux.dlms.objects;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.text.NumberFormat;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -169,11 +171,13 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(getName(), getObjectType(), 1, 0, DataType.INT8);
     }
 
@@ -365,6 +369,17 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Value", "Scaler and Unit" };
+
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Reset" };
     }
 
 }

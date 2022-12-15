@@ -41,6 +41,9 @@ import gurux.dlms.enums.Command;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.RequestTypes;
 
+/**
+ * Reply data keeps reply information.
+ */
 public class GXReplyData {
 
     /**
@@ -159,13 +162,13 @@ public class GXReplyData {
      * Client address of the notification message. Notification message sets
      * this.
      */
-    private int clientAddress;
+    private int targetAddress;
 
     /**
      * Server address of the notification message. Notification message sets
      * this.
      */
-    private int serverAddress;
+    private int sourceAddress;
 
     /**
      * Gateway information.
@@ -186,9 +189,8 @@ public class GXReplyData {
      * @param err
      *            Received error ID.
      */
-    GXReplyData(final RequestTypes more, final short cmd,
-            final GXByteBuffer buff, final boolean forComplete,
-            final byte err) {
+    GXReplyData(final RequestTypes more, final short cmd, final GXByteBuffer buff,
+            final boolean forComplete, final byte err) {
         clear();
         moreData = new HashSet<RequestTypes>();
         moreData.add(more);
@@ -206,26 +208,47 @@ public class GXReplyData {
         clear();
     }
 
+    /**
+     * @return Value type.
+     */
     public final DataType getValueType() {
         return dataType;
     }
 
+    /**
+     * @param value
+     *            Value type.
+     */
     public final void setValueType(final DataType value) {
         dataType = value;
     }
 
+    /**
+     * @return Value that meter returned.
+     */
     public final Object getValue() {
         return dataValue;
     }
 
+    /**
+     * @param value
+     *            Value that meter returned.
+     */
     public final void setValue(final Object value) {
         dataValue = value;
     }
 
+    /**
+     * @return Read position.
+     */
     public final int getReadPosition() {
         return readPosition;
     }
 
+    /**
+     * @param value
+     *            Read position.
+     */
     public final void setReadPosition(final int value) {
         readPosition = value;
     }
@@ -245,14 +268,26 @@ public class GXReplyData {
         packetLength = value;
     }
 
+    /**
+     * @param value
+     *            Received command.
+     */
     public final void setCommand(final int value) {
         command = value;
     }
 
+    /**
+     * @param value
+     *            Received data from the meter.
+     */
     public final void setData(final GXByteBuffer value) {
         data = value;
     }
 
+    /**
+     * @param value
+     *            is reply compleate.
+     */
     public final void setComplete(final boolean value) {
         complete = value;
     }
@@ -265,6 +300,10 @@ public class GXReplyData {
         error = value;
     }
 
+    /**
+     * @param value
+     *            Total items count.
+     */
     public final void setTotalCount(final int value) {
         totalCount = value;
     }
@@ -318,8 +357,7 @@ public class GXReplyData {
      * @return Is notify message.
      */
     public boolean isNotify() {
-        return command == Command.EVENT_NOTIFICATION
-                || command == Command.DATA_NOTIFICATION
+        return command == Command.EVENT_NOTIFICATION || command == Command.DATA_NOTIFICATION
                 || command == Command.INFORMATION_REPORT;
     }
 
@@ -368,6 +406,9 @@ public class GXReplyData {
         return error;
     }
 
+    /**
+     * @return Error message in a string format.
+     */
     public final String getErrorMessage() {
         return GXDLMS.getDescription(error);
     }
@@ -582,8 +623,7 @@ public class GXReplyData {
      * @return Is GBT streaming.
      */
     public final boolean isStreaming() {
-        return getStreaming() && (getBlockNumberAck() * getWindowSize())
-                + 1 > getBlockNumber();
+        return getStreaming() && (getBlockNumberAck() * getWindowSize()) + 1 > getBlockNumber();
     }
 
     /**
@@ -591,7 +631,7 @@ public class GXReplyData {
      *         sets this.
      */
     public final int getClientAddress() {
-        return clientAddress;
+        return targetAddress;
     }
 
     /**
@@ -600,7 +640,45 @@ public class GXReplyData {
      *            message sets this.
      */
     public final void setClientAddress(final int value) {
-        clientAddress = value;
+        targetAddress = value;
+    }
+
+    /**
+     * @return Client address of the notification message.<br>
+     *         Notification message sets this. This is also used with XML
+     *         parser.
+     */
+    public final int getTargetAddress() {
+        return targetAddress;
+    }
+
+    /**
+     * @param value
+     *            Client address of the notification message.<br>
+     *            Notification message sets this. This is also used with XML
+     *            parser.
+     */
+    public final void setTargetAddress(final int value) {
+        targetAddress = value;
+    }
+
+    /**
+     * @return Server address of the notification message.<br>
+     *         Notification message sets this. This is also used with XML
+     *         parser.
+     */
+    public final int getSourceAddress() {
+        return sourceAddress;
+    }
+
+    /**
+     * @param value
+     *            Server address of the notification message.<br>
+     *            Notification message sets this. This is also used with XML
+     *            parser.
+     */
+    public final void setSourceAddress(final int value) {
+        sourceAddress = value;
     }
 
     /**
@@ -608,7 +686,7 @@ public class GXReplyData {
      *         sets this.
      */
     public final int getServerAddress() {
-        return serverAddress;
+        return sourceAddress;
     }
 
     /**
@@ -617,7 +695,7 @@ public class GXReplyData {
      *            message sets this.
      */
     public final void setServerAddress(int value) {
-        serverAddress = value;
+        sourceAddress = value;
     }
 
     /**

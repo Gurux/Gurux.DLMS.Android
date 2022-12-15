@@ -37,6 +37,8 @@ package gurux.dlms.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -274,20 +276,17 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), monitoredValue, thresholdActive,
-                thresholdNormal, thresholdEmergency, minOverThresholdDuration,
-                minUnderThresholdDuration, emergencyProfile,
-                emergencyProfileGroupIDs, emergencyProfileActive,
+        return new Object[] { getLogicalName(), monitoredValue, thresholdActive, thresholdNormal,
+                thresholdEmergency, minOverThresholdDuration, minUnderThresholdDuration,
+                emergencyProfile, emergencyProfileGroupIDs, emergencyProfileActive,
                 new Object[] { actionOverThreshold, actionUnderThreshold } };
     }
 
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // MonitoredValue
@@ -391,16 +390,14 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
         if (index == 11) {
             return DataType.STRUCTURE;
         }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
     /*
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         } else if (e.getIndex() == 2) {
@@ -415,10 +412,9 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXCommon.setData(settings, data, DataType.UINT16,
                         monitoredValue.getObjectType().getValue());
-                GXCommon.setData(settings, data, DataType.OCTET_STRING, GXCommon
-                        .logicalNameToBytes(monitoredValue.getLogicalName()));
-                GXCommon.setData(settings, data, DataType.INT8,
-                        monitoredAttributeIndex);
+                GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                        GXCommon.logicalNameToBytes(monitoredValue.getLogicalName()));
+                GXCommon.setData(settings, data, DataType.INT8, monitoredAttributeIndex);
             }
             return data.array();
         } else if (e.getIndex() == 3) {
@@ -435,12 +431,10 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
             GXByteBuffer data = new GXByteBuffer();
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(3);
-            GXCommon.setData(settings, data, DataType.UINT16,
-                    emergencyProfile.getID());
+            GXCommon.setData(settings, data, DataType.UINT16, emergencyProfile.getID());
             GXCommon.setData(settings, data, DataType.OCTET_STRING,
                     emergencyProfile.getActivationTime());
-            GXCommon.setData(settings, data, DataType.UINT32,
-                    emergencyProfile.getDuration());
+            GXCommon.setData(settings, data, DataType.UINT32, emergencyProfile.getDuration());
             return data.array();
         } else if (e.getIndex() == 9) {
             GXByteBuffer data = new GXByteBuffer();
@@ -458,14 +452,14 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
             data.setUInt8(2);
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(2);
-            GXCommon.setData(settings, data, DataType.OCTET_STRING, GXCommon
-                    .logicalNameToBytes(actionOverThreshold.getLogicalName()));
+            GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                    GXCommon.logicalNameToBytes(actionOverThreshold.getLogicalName()));
             GXCommon.setData(settings, data, DataType.UINT16,
                     actionOverThreshold.getScriptSelector());
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(2);
-            GXCommon.setData(settings, data, DataType.OCTET_STRING, GXCommon
-                    .logicalNameToBytes(actionUnderThreshold.getLogicalName()));
+            GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                    GXCommon.logicalNameToBytes(actionUnderThreshold.getLogicalName()));
             GXCommon.setData(settings, data, DataType.UINT16,
                     actionUnderThreshold.getScriptSelector());
             return data.array();
@@ -478,16 +472,14 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
-            ObjectType ot = ObjectType.forValue(
-                    ((Number) (((List<?>) e.getValue()).get(0))).intValue());
+            ObjectType ot =
+                    ObjectType.forValue(((Number) (((List<?>) e.getValue()).get(0))).intValue());
             String ln = GXCommon.toLogicalName(((List<?>) e.getValue()).get(1));
-            monitoredAttributeIndex =
-                    ((Number) (((List<?>) e.getValue()).get(2))).intValue();
+            monitoredAttributeIndex = ((Number) (((List<?>) e.getValue()).get(2))).intValue();
             monitoredValue = settings.getObjects().findByLN(ot, ln);
         } else if (e.getIndex() == 3) {
             thresholdActive = e.getValue();
@@ -500,21 +492,13 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
         } else if (e.getIndex() == 7) {
             minUnderThresholdDuration = ((Number) e.getValue()).longValue();
         } else if (e.getIndex() == 8) {
-            boolean useUtc;
-            if (e.getSettings() != null) {
-                useUtc = e.getSettings().getUseUtc2NormalTime();
-            } else {
-                useUtc = false;
-            }
             List<?> tmp = (List<?>) e.getValue();
             emergencyProfile.setID(((Number) tmp.get(0)).intValue());
-            emergencyProfile.setActivationTime(
-                    (GXDateTime) GXDLMSClient.changeType((byte[]) tmp.get(1),
-                            DataType.DATETIME, useUtc));
+            emergencyProfile.setActivationTime((GXDateTime) GXDLMSClient
+                    .changeType((byte[]) tmp.get(1), DataType.DATETIME, e.getSettings()));
             emergencyProfile.setDuration(((Number) tmp.get(2)).longValue());
         } else if (e.getIndex() == 9) {
-            java.util.ArrayList<Integer> list =
-                    new java.util.ArrayList<Integer>();
+            java.util.ArrayList<Integer> list = new java.util.ArrayList<Integer>();
             if (e.getValue() != null) {
                 for (Object it : (List<?>) e.getValue()) {
                     list.add(((Number) it).intValue());
@@ -527,14 +511,10 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
             List<?> tmp = (List<?>) e.getValue();
             List<?> tmp1 = (List<?>) tmp.get(0);
             List<?> tmp2 = (List<?>) tmp.get(1);
-            actionOverThreshold
-                    .setLogicalName(GXCommon.toLogicalName(tmp1.get(0)));
-            actionOverThreshold
-                    .setScriptSelector(((Number) tmp1.get(1)).intValue());
-            actionUnderThreshold
-                    .setLogicalName(GXCommon.toLogicalName(tmp2.get(0)));
-            actionUnderThreshold
-                    .setScriptSelector(((Number) tmp2.get(1)).intValue());
+            actionOverThreshold.setLogicalName(GXCommon.toLogicalName(tmp1.get(0)));
+            actionOverThreshold.setScriptSelector(((Number) tmp1.get(1)).intValue());
+            actionUnderThreshold.setLogicalName(GXCommon.toLogicalName(tmp2.get(0)));
+            actionUnderThreshold.setScriptSelector(((Number) tmp2.get(1)).intValue());
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         }
@@ -543,8 +523,7 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
         if (reader.isStartElement("MonitoredValue", true)) {
-            ObjectType ot = ObjectType
-                    .forValue(reader.readElementContentAsInt("ObjectType"));
+            ObjectType ot = ObjectType.forValue(reader.readElementContentAsInt("ObjectType"));
             String ln = reader.readElementContentAsString("LN");
             if (ot != ObjectType.NONE && ln != null) {
                 monitoredValue = reader.getObjects().findByLN(ot, ln);
@@ -556,22 +535,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
             }
             reader.readEndElement("MonitoredValue");
         }
-        thresholdActive = reader.readElementContentAsObject("ThresholdActive",
-                null, this, 3);
-        thresholdNormal = reader.readElementContentAsObject("ThresholdNormal",
-                null, this, 4);
-        thresholdEmergency = reader.readElementContentAsObject(
-                "ThresholdEmergency", null, this, 5);
-        minOverThresholdDuration =
-                reader.readElementContentAsInt("MinOverThresholdDuration");
-        minUnderThresholdDuration =
-                reader.readElementContentAsInt("MinUnderThresholdDuration");
+        thresholdActive = reader.readElementContentAsObject("ThresholdActive", null, this, 3);
+        thresholdNormal = reader.readElementContentAsObject("ThresholdNormal", null, this, 4);
+        thresholdEmergency = reader.readElementContentAsObject("ThresholdEmergency", null, this, 5);
+        minOverThresholdDuration = reader.readElementContentAsInt("MinOverThresholdDuration");
+        minUnderThresholdDuration = reader.readElementContentAsInt("MinUnderThresholdDuration");
         if (reader.isStartElement("EmergencyProfile", true)) {
             emergencyProfile.setID(reader.readElementContentAsInt("ID"));
-            emergencyProfile.setActivationTime(
-                    reader.readElementContentAsDateTime("Time"));
-            emergencyProfile
-                    .setDuration(reader.readElementContentAsInt("Duration"));
+            emergencyProfile.setActivationTime(reader.readElementContentAsDateTime("Time"));
+            emergencyProfile.setDuration(reader.readElementContentAsInt("Duration"));
             reader.readEndElement("EmergencyProfile");
         }
         List<Integer> list = new ArrayList<Integer>();
@@ -584,17 +556,14 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
         emergencyProfileGroupIDs = GXCommon.toIntArray(list);
         emergencyProfileActive = reader.readElementContentAsInt("Active") != 0;
         if (reader.isStartElement("ActionOverThreshold", true)) {
-            actionOverThreshold
-                    .setLogicalName(reader.readElementContentAsString("LN"));
-            actionOverThreshold.setScriptSelector(
-                    reader.readElementContentAsInt("ScriptSelector"));
+            actionOverThreshold.setLogicalName(reader.readElementContentAsString("LN"));
+            actionOverThreshold.setScriptSelector(reader.readElementContentAsInt("ScriptSelector"));
             reader.readEndElement("ActionOverThreshold");
         }
         if (reader.isStartElement("ActionUnderThreshold", true)) {
+            actionUnderThreshold.setLogicalName(reader.readElementContentAsString("LN"));
             actionUnderThreshold
-                    .setLogicalName(reader.readElementContentAsString("LN"));
-            actionUnderThreshold.setScriptSelector(
-                    reader.readElementContentAsInt("ScriptSelector"));
+                    .setScriptSelector(reader.readElementContentAsInt("ScriptSelector"));
             reader.readEndElement("ActionUnderThreshold");
         }
     }
@@ -603,28 +572,23 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
         if (monitoredValue != null) {
             writer.writeStartElement("MonitoredValue");
-            writer.writeElementString("ObjectType",
-                    monitoredValue.getObjectType().getValue());
+            writer.writeElementString("ObjectType", monitoredValue.getObjectType().getValue());
             writer.writeElementString("LN", monitoredValue.getLogicalName());
             writer.writeEndElement();
         }
-        writer.writeElementObject("ThresholdActive", thresholdActive,
-                getDataType(3), getUIDataType(3));
-        writer.writeElementObject("ThresholdNormal", thresholdNormal,
-                getDataType(4), getUIDataType(4));
-        writer.writeElementObject("ThresholdEmergency", thresholdEmergency,
-                getDataType(5), getUIDataType(5));
-        writer.writeElementString("MinOverThresholdDuration",
-                minOverThresholdDuration);
-        writer.writeElementString("MinUnderThresholdDuration",
-                minUnderThresholdDuration);
+        writer.writeElementObject("ThresholdActive", thresholdActive, getDataType(3),
+                getUIDataType(3));
+        writer.writeElementObject("ThresholdNormal", thresholdNormal, getDataType(4),
+                getUIDataType(4));
+        writer.writeElementObject("ThresholdEmergency", thresholdEmergency, getDataType(5),
+                getUIDataType(5));
+        writer.writeElementString("MinOverThresholdDuration", minOverThresholdDuration);
+        writer.writeElementString("MinUnderThresholdDuration", minUnderThresholdDuration);
         if (emergencyProfile != null) {
             writer.writeStartElement("EmergencyProfile");
             writer.writeElementString("ID", emergencyProfile.getID());
-            writer.writeElementString("Time",
-                    emergencyProfile.getActivationTime());
-            writer.writeElementString("Duration",
-                    emergencyProfile.getDuration());
+            writer.writeElementString("Time", emergencyProfile.getActivationTime());
+            writer.writeElementString("Duration", emergencyProfile.getDuration());
             writer.writeEndElement();
         }
         if (emergencyProfileGroupIDs != null) {
@@ -638,19 +602,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
         if (actionOverThreshold != null) {
             writer.writeStartElement("ActionOverThreshold");
-            writer.writeElementString("LN",
-                    actionOverThreshold.getLogicalName());
-            writer.writeElementString("ScriptSelector",
-                    actionOverThreshold.getScriptSelector());
+            writer.writeElementString("LN", actionOverThreshold.getLogicalName());
+            writer.writeElementString("ScriptSelector", actionOverThreshold.getScriptSelector());
             writer.writeEndElement();
         }
 
         if (actionUnderThreshold != null) {
             writer.writeStartElement("ActionUnderThreshold");
-            writer.writeElementString("LN",
-                    actionUnderThreshold.getLogicalName());
-            writer.writeElementString("ScriptSelector",
-                    actionUnderThreshold.getScriptSelector());
+            writer.writeElementString("LN", actionUnderThreshold.getLogicalName());
+            writer.writeElementString("ScriptSelector", actionUnderThreshold.getScriptSelector());
             writer.writeEndElement();
         }
     }
@@ -659,12 +619,24 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     public final void postLoad(final GXXmlReader reader) {
         // Upload Monitored Value after load.
         if (monitoredValue != null) {
-            GXDLMSObject target =
-                    reader.getObjects().findByLN(monitoredValue.getObjectType(),
-                            monitoredValue.getLogicalName());
+            GXDLMSObject target = reader.getObjects().findByLN(monitoredValue.getObjectType(),
+                    monitoredValue.getLogicalName());
             if (target != null && target != monitoredValue) {
                 monitoredValue = target;
             }
         }
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Monitored Value", "Active Threshold",
+                "Normal Threshold", "Emergency Threshold", "Threshold Duration Min Over",
+                "Threshold Duration Min Under", "Emergency Profile", "Emergency Profile Group",
+                "Emergency Profile Active", "Actions" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[0];
     }
 }

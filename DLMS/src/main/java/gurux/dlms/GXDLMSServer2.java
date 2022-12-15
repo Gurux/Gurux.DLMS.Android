@@ -37,6 +37,7 @@ package gurux.dlms;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -99,7 +100,6 @@ public abstract class GXDLMSServer2 {
     public GXDLMSServer2(final GXDLMSAssociationLogicalName ln,
             final InterfaceType type) {
         base = new GXDLMSServerBase(this, true, type);
-        ln.getXDLMSContextInfo().setSettings(getSettings());
         base.getItems().add(ln);
     }
 
@@ -129,7 +129,6 @@ public abstract class GXDLMSServer2 {
             final GXDLMSHdlcSetup hdlc) {
         base = new GXDLMSServerBase(this, true, InterfaceType.HDLC);
         base.setHdlc(hdlc);
-        ln.getXDLMSContextInfo().setSettings(getSettings());
         base.getItems().add(ln);
         base.getItems().add(hdlc);
     }
@@ -161,7 +160,6 @@ public abstract class GXDLMSServer2 {
     public GXDLMSServer2(final GXDLMSAssociationLogicalName ln,
             final GXDLMSTcpUdpSetup wrapper) {
         base = new GXDLMSServerBase(this, true, InterfaceType.WRAPPER);
-        ln.getXDLMSContextInfo().setSettings(getSettings());
         getSettings().setWrapper(wrapper);
         base.getItems().add(ln);
         base.getItems().add(wrapper);
@@ -239,7 +237,7 @@ public abstract class GXDLMSServer2 {
      * @return GBT window size.
      */
     public final int getWindowSize() {
-        return getSettings().getWindowSize();
+        return getSettings().getGbtWindowSize();
     }
 
     /**
@@ -247,14 +245,23 @@ public abstract class GXDLMSServer2 {
      *            GBT window size.
      */
     public final void setWindowSize(final int value) {
-        getSettings().setWindowSize((byte) value);
+        getSettings().setGbtWindowSize((byte) value);
     }
 
     /**
      * @return Information from the connection size that server can handle.
+     * @deprecated use {@link getHdlcSettings} instead.
      */
+    @Deprecated
     public final GXDLMSLimits getLimits() {
         return base.getLimits();
+    }
+
+    /**
+     * @return HDLC connection settings.
+     */
+    public final GXHdlcSettings getHdlcSettings() {
+        return base.getHdlcSettings();
     }
 
     /**
@@ -490,6 +497,22 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
+     * @param value
+     *            Current association of the server.
+     */
+    public final void
+            setAssignedAssociation(final GXDLMSAssociationLogicalName value) {
+        base.setAssignedAssociation(value);
+    }
+
+    /**
+     * @return Current server association.
+     */
+    public final GXDLMSAssociationLogicalName getAssignedAssociation() {
+        return base.getAssignedAssociation();
+    }
+
+    /**
      * Handles client request.
      * 
      * @param buff
@@ -508,11 +531,13 @@ public abstract class GXDLMSServer2 {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[] handleRequest(final byte[] buff)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return handleRequest(buff, new GXDLMSConnectionEventArgs());
     }
 
@@ -537,12 +562,14 @@ public abstract class GXDLMSServer2 {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[] handleRequest(final byte[] buff,
             final GXDLMSConnectionEventArgs connectionInfo)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXServerReply sr = new GXServerReply(buff);
         sr.setConnectionInfo(connectionInfo);
         base.handleRequest(sr);
@@ -566,11 +593,13 @@ public abstract class GXDLMSServer2 {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final void handleRequest(GXServerReply sr)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         base.handleRequest(sr);
     }
 
@@ -804,12 +833,14 @@ public abstract class GXDLMSServer2 {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[][] generateDataNotificationMessages(final Date time,
             final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         List<byte[]> reply;
         if (getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(getSettings(), 0,
@@ -855,12 +886,14 @@ public abstract class GXDLMSServer2 {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[][] generatePushSetupMessages(final Date date,
             final GXDLMSPushSetup push)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (push == null) {
             throw new IllegalArgumentException("push");
         }
@@ -890,5 +923,30 @@ public abstract class GXDLMSServer2 {
      */
     public void setClientSystemTitle(final byte[] value) {
         getSettings().setPreEstablishedSystemTitle(value);
+    }
+
+    /**
+     * Is value of the object changed with action instead of write.
+     * 
+     * @param objectType
+     *            Object type.
+     * @param methodIndex
+     *            Method index.
+     * @return Returns true if object is modified with action.
+     */
+    public boolean isChangedWithAction(ObjectType objectType, int methodIndex) {
+        if ((objectType == ObjectType.ASSOCIATION_LOGICAL_NAME
+                && methodIndex != 1)
+                || (objectType == ObjectType.SECURITY_SETUP && (methodIndex == 1
+                        || methodIndex == 4 || methodIndex == 6
+                        || methodIndex == 7 || methodIndex == 8))) {
+            return true;
+        }
+        // SAP assignment is added or removed.
+        return objectType == ObjectType.SAP_ASSIGNMENT ||
+        // Connection state is changed.
+                objectType == ObjectType.DISCONNECT_CONTROL
+                || objectType == ObjectType.SPECIAL_DAYS_TABLE
+                || objectType == ObjectType.REGISTER_ACTIVATION;
     }
 }

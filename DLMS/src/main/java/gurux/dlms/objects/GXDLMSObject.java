@@ -34,6 +34,10 @@
 
 package gurux.dlms.objects;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
@@ -45,14 +49,18 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+
+import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSException;
 import gurux.dlms.GXDLMSServerBase;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.AccessMode;
+import gurux.dlms.enums.AccessMode3;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.MethodAccessMode;
+import gurux.dlms.enums.MethodAccessMode3;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.manufacturersettings.GXAttributeCollection;
@@ -62,9 +70,8 @@ import gurux.dlms.manufacturersettings.GXDLMSAttributeSettings;
  * GXDLMSObject provides an interface to DLMS registers.
  */
 public class GXDLMSObject {
-    private HashMap<Integer, java.util.Date> readTimes =
-            new HashMap<Integer, java.util.Date>();
-    private int version;
+    private HashMap<Integer, java.util.Date> readTimes = new HashMap<Integer, java.util.Date>();
+    protected int version;
     private ObjectType objectType = ObjectType.NONE;
     private GXAttributeCollection attributes = null;
     private GXAttributeCollection methodAttributes = null;
@@ -89,8 +96,7 @@ public class GXDLMSObject {
     /*
      * Constructor,
      */
-    protected GXDLMSObject(final ObjectType type, final String ln,
-            final int sn) {
+    protected GXDLMSObject(final ObjectType type, final String ln, final int sn) {
         attributes = new GXAttributeCollection();
         methodAttributes = new GXAttributeCollection();
         setObjectType(type);
@@ -161,8 +167,7 @@ public class GXDLMSObject {
      * @param attributeIndex Attribute index.
      * @param tm Read time.
      */
-    protected final void setLastReadTime(final int attributeIndex,
-            final java.util.Date tm) {
+    protected final void setLastReadTime(final int attributeIndex, final java.util.Date tm) {
         readTimes.put(attributeIndex, tm);
     }
 
@@ -327,10 +332,52 @@ public class GXDLMSObject {
             attributes.add(att);
         }
         att.setAccess(access);
+        att.getAccess3().clear();
     }
 
-    /*
-     * Returns amount of methods.
+    /**
+     * Returns is attribute read only. -
+     * 
+     * @param index
+     *            Attribute index.
+     * @return Is attribute read only.
+     */
+    public final java.util.Set<AccessMode3> getAccess3(final int index) {
+        if (index == 1) {
+            java.util.Set<AccessMode3> tmp = new java.util.HashSet<AccessMode3>();
+            tmp.add(AccessMode3.READ);
+            return tmp;
+        }
+        GXDLMSAttributeSettings att = attributes.find(index);
+        if (att == null) {
+            java.util.Set<AccessMode3> tmp = new java.util.HashSet<AccessMode3>();
+            tmp.add(AccessMode3.READ);
+            tmp.add(AccessMode3.WRITE);
+            return tmp;
+        }
+        return att.getAccess3();
+    }
+
+    /**
+     * Set attribute access.
+     * 
+     * @param index
+     *            Attribute index.
+     * @param access
+     *            Attribute access.
+     */
+    public final void setAccess3(final int index, final java.util.Set<AccessMode3> access) {
+        GXDLMSAttributeSettings att = attributes.find(index);
+        if (att == null) {
+            att = new GXDLMSAttributeSettings(index);
+            attributes.add(att);
+        }
+        att.setAccess3(access);
+        att.setAccess(AccessMode.NO_ACCESS);
+    }
+
+    /**
+     * @return Returns amount of methods.
      */
     // CHECKSTYLE:OFF
     public int getMethodCount() {
@@ -361,8 +408,7 @@ public class GXDLMSObject {
      * @param access
      *            Method access mode.
      */
-    public final void setMethodAccess(final int index,
-            final MethodAccessMode access) {
+    public final void setMethodAccess(final int index, final MethodAccessMode access) {
         GXDLMSAttributeSettings att = getMethodAttributes().find(index);
         if (att == null) {
             att = new GXDLMSAttributeSettings(index);
@@ -371,7 +417,48 @@ public class GXDLMSObject {
         att.setMethodAccess(access);
     }
 
-    // CHECKSTYLE:OFF
+    /**
+     * Returns is Method attribute read only. -
+     * 
+     * @param index
+     *            Method Attribute index.
+     * @return Is attribute read only.
+     */
+    public final java.util.Set<MethodAccessMode3> getMethodAccess3(final int index) {
+        GXDLMSAttributeSettings att = getMethodAttributes().find(index);
+        if (att != null) {
+            return att.getMethodAccess3();
+        }
+        java.util.Set<MethodAccessMode3> tmp = new java.util.HashSet<MethodAccessMode3>();
+        tmp.add(MethodAccessMode3.ACCESS);
+        return tmp;
+    }
+
+    /**
+     * Set Method attribute access.
+     * 
+     * @param index
+     *            Method index.
+     * @param access
+     *            Method access mode.
+     */
+    public final void setMethodAccess3(final int index,
+            final java.util.Set<MethodAccessMode3> access) {
+        GXDLMSAttributeSettings att = getMethodAttributes().find(index);
+        if (att == null) {
+            att = new GXDLMSAttributeSettings(index);
+            getMethodAttributes().add(att);
+        }
+        att.setMethodAccess3(access);
+    }
+
+    /**
+     * Returns device data type of selected attribute index.
+     * 
+     * @param index
+     *            Attribute index of the object.
+     * @return Device data type of the object.
+     */
     public DataType getDataType(final int index) {
         GXDLMSAttributeSettings att = attributes.find(index);
         if (att == null) {
@@ -379,9 +466,14 @@ public class GXDLMSObject {
         }
         return att.getType();
     }
-    // CHECKSTYLE:ON
 
-    // CHECKSTYLE:OFF
+    /**
+     * Returns UI data type of selected index.
+     * 
+     * @param index
+     *            Attribute index of the object.
+     * @return UI data type of the object.
+     */
     public DataType getUIDataType(final int index) {
         GXDLMSAttributeSettings att = attributes.find(index);
         if (att == null) {
@@ -389,7 +481,6 @@ public class GXDLMSObject {
         }
         return att.getUIType();
     }
-    // CHECKSTYLE:ON
 
     /**
      * @return Amount of attributes.
@@ -407,14 +498,16 @@ public class GXDLMSObject {
         throw new UnsupportedOperationException("getValues");
     }
 
-    /*
+    /**
      * Get value.
-     * @param settings DLMS settings.
-     * @param e Value event parameters.
+     * 
+     * @param settings
+     *            DLMS settings.
+     * @param e
+     *            Value event parameters.
      * @return Value of given attribute.
      */
-    public Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         throw new UnsupportedOperationException("getValue");
     }
 
@@ -426,26 +519,48 @@ public class GXDLMSObject {
      * @param e
      *            Value event parameters.
      */
-    public void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         throw new UnsupportedOperationException("setValue");
     }
 
-    /*
+    /**
      * Server calls this invokes method.
-     * @param settings DLMS settings.
-     * @param e Value event parameters.
+     * 
+     * @param settings
+     *            DLMS settings.
+     * @param e
+     *            Value event parameters.
+     * @return Generated bytes.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     // CHECKSTYLE:OFF
     public byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e)
-            throws InvalidKeyException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException,
-            BadPaddingException, SignatureException {
+            throws InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         e.setError(ErrorCode.READ_WRITE_DENIED);
         return null;
     }
     // CHECKSTYLE:ON
 
+    /**
+     * Set data type.
+     * 
+     * @param index
+     *            Attribute index.
+     * @param type
+     *            Data type-
+     */
     public final void setDataType(final int index, final DataType type) {
         GXDLMSAttributeSettings att = attributes.find(index);
         if (att == null) {
@@ -455,6 +570,14 @@ public class GXDLMSObject {
         att.setType(type);
     }
 
+    /**
+     * Set UI data type.
+     * 
+     * @param index
+     *            Attribute index.
+     * @param type
+     *            Data type-
+     */
     public final void setUIDataType(final int index, final DataType type) {
         GXDLMSAttributeSettings att = attributes.find(index);
         if (att == null) {
@@ -464,6 +587,14 @@ public class GXDLMSObject {
         att.setUIType(type);
     }
 
+    /**
+     * Set if attribute is static.
+     * 
+     * @param index
+     *            Attribute index.
+     * @param isStatic
+     *            Is attribute static.
+     */
     public final void setStatic(final int index, final boolean isStatic) {
         GXDLMSAttributeSettings att = attributes.find(index);
         if (att == null) {
@@ -473,6 +604,13 @@ public class GXDLMSObject {
         att.setStatic(isStatic);
     }
 
+    /**
+     * Is attribute static.
+     * 
+     * @param index
+     *            Attribute index.
+     * @return True, if attribute is static.
+     */
     public final boolean getStatic(final int index) {
         GXDLMSAttributeSettings att = attributes.find(index);
         if (att == null) {
@@ -504,5 +642,63 @@ public class GXDLMSObject {
      */
     public void stop(final GXDLMSServerBase server) throws Exception {
 
+    }
+
+    /**
+     * Creates and returns a copy of this object.
+     * 
+     * @return Cloned object.
+     */
+    public final GXDLMSObject clone() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(2000);
+        GXXmlWriterSettings settings = null;
+        GXXmlWriter writer;
+        try {
+            GXDLMSObject target = GXDLMSClient.createObject(getObjectType());
+            writer = new GXXmlWriter(out);
+            writer.writeStartDocument();
+            writer.writeStartElement("Objects");
+            ((IGXDLMSBase) this).save(writer);
+            writer.writeEndElement();
+            writer.writeEndDocument();
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            GXXmlReader reader = new GXXmlReader(in);
+            reader.read();
+            reader.read();
+            ((IGXDLMSBase) target).load(reader);
+            return target;
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (XmlPullParserException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Check are content of the objects equal.
+     * 
+     * @param obj1
+     *            Object.
+     * @param obj2
+     *            Object.
+     * @return True, if content of the objects is equal.
+     */
+    public static final boolean equals(final GXDLMSObject obj1, final GXDLMSObject obj2) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(2000);
+        GXXmlWriterSettings settings = null;
+        GXXmlWriter writer;
+        try {
+            writer = new GXXmlWriter(out);
+            writer.writeStartDocument();
+            ((IGXDLMSBase) obj1).save(writer);
+            String expected = writer.toString();
+            out.reset();
+            writer.writeStartDocument();
+            ((IGXDLMSBase) obj2).save(writer);
+            String actual = writer.toString();
+            return expected.equals(actual);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

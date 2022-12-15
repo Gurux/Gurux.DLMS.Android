@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
+import gurux.dlms.enums.DataType;
 import gurux.dlms.internal.GXCommon;
 
 /**
@@ -228,8 +229,7 @@ public class GXByteBuffer {
      * @param count
      *            Item count.
      */
-    public final void move(final int srcPos, final int destPos,
-            final int count) {
+    public final void move(final int srcPos, final int destPos, final int count) {
         if (count < 0) {
             throw new IllegalArgumentException("count");
         }
@@ -268,6 +268,26 @@ public class GXByteBuffer {
         ++size;
     }
 
+    /**
+     * Push the given data type into this buffer at the current position, and
+     * then increments the position.
+     * 
+     * @param item
+     *            The UInt8 value to be added.
+     */
+    public final void setUInt8(final DataType item) {
+        setUInt8(item.getValue());
+    }
+
+    /**
+     * Set the UInt8 value into this buffer for given position, and then
+     * increments the position.
+     * 
+     * @param index
+     *            Buffer index where value is set.
+     * @param item
+     *            The UInt8 value to be added.
+     */
     public final void setUInt8(final int index, final int item) {
 
         if (index >= capacity()) {
@@ -276,11 +296,27 @@ public class GXByteBuffer {
         data[index] = (byte) item;
     }
 
+    /**
+     * Push the UInt16 value into this buffer at the current position, and then
+     * increments the position.
+     * 
+     * @param item
+     *            The UInt16 value to be added.
+     */
     public final void setUInt16(final int item) {
         setUInt16(size, item);
         size += 2;
     }
 
+    /**
+     * Set the UInt16 value into this buffer for the given position, and then
+     * increments the position.
+     * 
+     * @param index
+     *            Buffer index where value is set.
+     * @param item
+     *            The UInt16 value to be added.
+     */
     public final void setUInt16(final int index, final int item) {
 
         if (index + 2 >= capacity()) {
@@ -290,12 +326,28 @@ public class GXByteBuffer {
         data[index + 1] = (byte) (item & 0xFF);
     }
 
+    /**
+     * Push the UInt32 value into this buffer at the current position, and then
+     * increments the position.
+     * 
+     * @param item
+     *            The UInt32 value to be added.
+     */
     public final void setUInt32(final long item) {
 
         setUInt32(size, item);
         size += 4;
     }
 
+    /**
+     * Set the UInt32 value into this buffer for the given position, and then
+     * increments the position.
+     * 
+     * @param index
+     *            Buffer index where value is set.
+     * @param item
+     *            The UInt32 value to be added.
+     */
     public final void setUInt32(final int index, final long item) {
 
         if (index + 4 >= capacity()) {
@@ -307,12 +359,28 @@ public class GXByteBuffer {
         data[index + 3] = (byte) (item & 0xFF);
     }
 
+    /**
+     * Push the UInt64 value into this buffer at the current position, and then
+     * increments the position.
+     * 
+     * @param item
+     *            The UInt64 value to be added.
+     */
     public final void setUInt64(final long item) {
 
         setUInt64(size, item);
         size += 8;
     }
 
+    /**
+     * Set the UInt64 value into this buffer for the given position, and then
+     * increments the position.
+     * 
+     * @param index
+     *            Buffer index where value is set.
+     * @param item
+     *            The UInt64 value to be added.
+     */
     public final void setUInt64(final int index, final long item) {
 
         if (index + 8 >= capacity()) {
@@ -328,36 +396,82 @@ public class GXByteBuffer {
         data[size + 7] = (byte) (item & 0xFF);
     }
 
+    /**
+     * Push the float value into this buffer at the current position, and then
+     * increments the position.
+     * 
+     * @param value
+     *            Float value to be added.
+     */
     public final void setFloat(final float value) {
         setFloat(size, value);
         size += 4;
     }
+
+    /**
+     * Set the float value into this buffer for the given position, and then
+     * increments the position.
+     * 
+     * @param index
+     *            Buffer index where value is set.
+     * @param value
+     *            The float value to be added.
+     */
 
     public final void setFloat(final int index, final float value) {
         int tmp = Float.floatToIntBits(value);
         setUInt32(index, tmp);
     }
 
+    /**
+     * Push the double value into this buffer at the current position, and then
+     * increments the position.
+     * 
+     * @param value
+     *            Double value to be added.
+     */
     public final void setDouble(final double value) {
         setDouble(size, value);
         size += 8;
     }
 
+    /**
+     * Set the double value into this buffer for the given position, and then
+     * increments the position.
+     * 
+     * @param index
+     *            Buffer index where value is set.
+     * @param value
+     *            The double value to be added.
+     */
     public final void setDouble(final int index, final double value) {
         long tmp = Double.doubleToLongBits(value);
         setUInt64(index, tmp);
     }
 
+    /**
+     * @return UInt8 value from byte buffer.
+     */
     public final short getUInt8() {
         short value = getUInt8(position());
         ++position;
         return value;
     }
 
+    /**
+     * @return Int8 value from byte buffer.
+     */
     public final byte getInt8() {
         return (byte) getUInt8();
     }
 
+    /**
+     * Get UInt8 value from byte buffer from the given index..
+     * 
+     * @param index
+     *            Buffer index.
+     * @return UInt8 value.
+     */
     public final short getUInt8(final int index) {
         if (index >= size) {
             throw new IllegalArgumentException("getUInt8");
@@ -365,16 +479,29 @@ public class GXByteBuffer {
         return (short) (data[index] & 0xFF);
     }
 
+    /**
+     * @return UInt16 value from byte buffer.
+     */
     public final int getUInt16() {
         int value = getUInt16(position());
         position += 2;
         return value;
     }
 
+    /**
+     * @return Int16 value from byte buffer.
+     */
     public final short getInt16() {
         return (short) getUInt16();
     }
 
+    /**
+     * Get UInt16 value from byte buffer from the given index..
+     * 
+     * @param index
+     *            Buffer index.
+     * @return UInt16 value.
+     */
     public final int getUInt16(final int index) {
         if (index + 2 > size) {
             throw new IllegalArgumentException("getUInt16");
@@ -382,23 +509,46 @@ public class GXByteBuffer {
         return ((data[index] & 0xFF) << 8) | (data[index + 1] & 0xFF);
     }
 
+    /**
+     * Get Int32 value from the current position.
+     * 
+     * @return Int32 value.
+     */
     public final long getUInt32() {
         long value = getUInt32(position());
         position += 4;
         return value;
     }
 
+    /**
+     * Get UInt24 value from the current position.
+     * 
+     * @return Int32 value.
+     */
     public final int getUInt24() {
         int value = getUInt24(position());
         position += 3;
         return value;
     }
 
+    /**
+     * Get Int32 value from the current position.
+     * 
+     * @return Int32 value.
+     */
     public final int getInt32() {
         int value = getInt32(position());
         position += 4;
         return value;
     }
+
+    /**
+     * Get UInt32 value from byte buffer from the given index..
+     * 
+     * @param index
+     *            Buffer index.
+     * @return UInt32 value.
+     */
 
     public final int getInt32(final int index) {
         if (index + 4 > size) {
@@ -408,6 +558,13 @@ public class GXByteBuffer {
                 | (data[index + 2] & 0xFF) << 8 | (data[index + 3] & 0xFF);
     }
 
+    /**
+     * Get UInt24 value from byte buffer from the given index..
+     * 
+     * @param index
+     *            Buffer index.
+     * @return UInt24 value.
+     */
     public final int getUInt24(final int index) {
         if (index + 3 > size) {
             throw new IllegalArgumentException("getUInt24");
@@ -416,6 +573,13 @@ public class GXByteBuffer {
                 | (data[index + 2] & 0xFF);
     }
 
+    /**
+     * Get UInt32 value from byte buffer from the given index..
+     * 
+     * @param index
+     *            Buffer index.
+     * @return UInt32 value.
+     */
     public final long getUInt32(final int index) {
         if (index + 4 > size) {
             throw new IllegalArgumentException("getUInt32");
@@ -428,24 +592,45 @@ public class GXByteBuffer {
         return value;
     }
 
+    /**
+     * @return Get float value from byte buffer.
+     */
     public final float getFloat() {
         return Float.intBitsToFloat(getInt32());
     }
 
+    /**
+     * @return Get double value from byte buffer.
+     */
     public final double getDouble() {
         return Double.longBitsToDouble(getInt64());
     }
 
+    /**
+     * @return Get Int64 value from byte buffer.
+     */
     public final long getInt64() {
-        long value = (long) (data[position] & 0xFF) << 56;
-        value |= (long) (data[position + 1] & 0xFF) << 48;
-        value |= (long) (data[position + 2] & 0xFF) << 40;
-        value |= (long) (data[position + 3] & 0xFF) << 32;
-        value |= (long) (data[position + 4] & 0xFF) << 24;
-        value |= (data[position + 5] & 0xFF) << 16;
-        value |= (data[position + 6] & 0xFF) << 8;
-        value |= (data[position + 7] & 0xFF);
+        long value = getInt64(position);
         position += 8;
+        return value;
+    }
+
+    /**
+     * Get Int64 value from byte buffer using the index.
+     * 
+     * @param index
+     *            Byte index.
+     * @return Int64 value.
+     */
+    public final long getInt64(final int index) {
+        long value = (long) (data[index] & 0xFF) << 56;
+        value |= (long) (data[index + 1] & 0xFF) << 48;
+        value |= (long) (data[index + 2] & 0xFF) << 40;
+        value |= (long) (data[index + 3] & 0xFF) << 32;
+        value |= (long) (data[index + 4] & 0xFF) << 24;
+        value |= (data[index + 5] & 0xFF) << 16;
+        value |= (data[index + 6] & 0xFF) << 8;
+        value |= (data[index + 7] & 0xFF);
         return value;
     }
 
@@ -464,8 +649,24 @@ public class GXByteBuffer {
         data = value;
     }
 
+    /**
+     * @return Get UInt64 value from byte buffer.
+     */
     public final BigInteger getUInt64() {
-        long value = getInt64();
+        BigInteger value = getUInt64(position);
+        position += 8;
+        return value;
+    }
+
+    /**
+     * Get UInt64 value from byte buffer using index.
+     * 
+     * @param index
+     *            Byte index.
+     * @return UInt64 value.
+     */
+    public final BigInteger getUInt64(final int index) {
+        long value = getInt64(index);
         BigInteger b = BigInteger.valueOf(value);
         if (b.compareTo(BigInteger.ZERO) < 0) {
             b = b.add(BigInteger.ONE.shiftLeft(64));
@@ -497,8 +698,7 @@ public class GXByteBuffer {
     public static boolean isAsciiString(byte[] value) {
         if (value != null) {
             for (byte it : value) {
-                if ((it < 32 || it > 127) && it != '\r' && it != '\n'
-                        && it != 0) {
+                if ((it < 32 || it > 127) && it != '\r' && it != '\n' && it != 0) {
                     return false;
                 }
             }
@@ -506,18 +706,44 @@ public class GXByteBuffer {
         return true;
     }
 
+    /**
+     * Get string value from byte buffer.
+     * 
+     * @param count
+     *            Amount of the chars to get.
+     * @return String value.
+     */
     public final String getString(final int count) {
         String str = getString(position, count, "ASCII");
         position += count;
         return str;
     }
 
+    /**
+     * Get string value from byte buffer.
+     * 
+     * @param index
+     *            Byte index.
+     * @param count
+     *            Amount of the chars to get.
+     * @return String value.
+     */
     public final String getString(final int index, final int count) {
         return getString(index, count, "ASCII");
     }
 
-    public final String getString(final int index, final int count,
-            final String charsetName) {
+    /**
+     * Get string value from byte buffer.
+     * 
+     * @param index
+     *            Byte index.
+     * @param count
+     *            Amount of the chars to get.
+     * @param charsetName
+     *            charset name.
+     * @return String value.
+     */
+    public final String getString(final int index, final int count, final String charsetName) {
         if (index + count > size) {
             throw new IllegalArgumentException("getString");
         }
@@ -525,14 +751,13 @@ public class GXByteBuffer {
             byte[] tmp = subArray(index, count);
             if (charsetName.equalsIgnoreCase("ASCII")) {
                 if (isAsciiString(tmp)) {
-                    return new String(getData(), index, count, charsetName)
-                            .replaceAll("[\\x00]", "");
+                    return new String(getData(), index, count, charsetName).replaceAll("[\\x00]",
+                            "");
                 } else {
                     return GXCommon.toHex(tmp, true);
                 }
             } else {
-                return new String(getData(), index, count, charsetName)
-                        .replaceAll("[\\x00]", "");
+                return new String(getData(), index, count, charsetName).replaceAll("[\\x00]", "");
             }
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage());
@@ -577,8 +802,7 @@ public class GXByteBuffer {
      * @param count
      *            Byte count.
      */
-    public final void set(final byte[] value, final int index,
-            final int count) {
+    public final void set(final byte[] value, final int index, final int count) {
         if (value != null && count != 0) {
             if (size + count > capacity()) {
                 capacity(size + count + ARRAY_CAPACITY);
@@ -588,6 +812,10 @@ public class GXByteBuffer {
         }
     }
 
+    /**
+     * @param value
+     *            Set new value to byte array.
+     */
     public final void set(final GXByteBuffer value) {
         if (value != null) {
             set(value, value.size() - value.position());
@@ -657,6 +885,10 @@ public class GXByteBuffer {
         }
     }
 
+    /**
+     * @param target
+     *            get bytes from byte buffer.
+     */
     public final void get(final byte[] target) {
         if (size - position < target.length) {
             throw new IllegalArgumentException("get");
@@ -740,8 +972,7 @@ public class GXByteBuffer {
      * @param count
      *            Byte count.
      */
-    public final void setHexString(final String value, final int index,
-            final int count) {
+    public final void setHexString(final String value, final int index, final int count) {
         set(GXCommon.hexToBytes(value), index, count);
     }
 
@@ -794,8 +1025,7 @@ public class GXByteBuffer {
      *            Byte count.
      * @return Data as hex string.
      */
-    public final String toHex(final boolean addSpace, final int index,
-            final int count) {
+    public final String toHex(final boolean addSpace, final int index, final int count) {
         return GXCommon.toHex(data, addSpace, index, count);
     }
 

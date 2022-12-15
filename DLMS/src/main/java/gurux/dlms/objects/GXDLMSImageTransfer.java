@@ -37,6 +37,7 @@ package gurux.dlms.objects;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -45,6 +46,8 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -193,31 +196,33 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
         imageTransferStatus = value;
     }
 
+    /**
+     * @return Holds the images available to activated.
+     */
     public final GXDLMSImageActivateInfo[] getImageActivateInfo() {
         return imageActivateInfo;
     }
 
-    public final void
-            setImageActivateInfo(final GXDLMSImageActivateInfo[] value) {
+    /**
+     * @param value
+     *            Holds the images available to activated.
+     */
+    public final void setImageActivateInfo(final GXDLMSImageActivateInfo[] value) {
         imageActivateInfo = value;
     }
 
     @Override
     public final Object[] getValues() {
         return new Object[] { getLogicalName(), getImageBlockSize(),
-                getImageTransferredBlocksStatus(),
-                getImageFirstNotTransferredBlockNumber(),
-                getImageTransferEnabled(), getImageTransferStatus(),
-                getImageActivateInfo() };
+                getImageTransferredBlocksStatus(), getImageFirstNotTransferredBlockNumber(),
+                getImageTransferEnabled(), getImageTransferStatus(), getImageActivateInfo() };
     }
 
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // ImageBlockSize
@@ -258,8 +263,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e) {
         // Image transfer initiate
         if (e.getIndex() == 1) {
             imageFirstNotTransferredBlockNumber = 0;
@@ -268,8 +272,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
             byte[] imageIdentifier = (byte[]) value.get(0);
             imageSize = ((Number) value.get(1)).longValue();
             imageTransferStatus = ImageTransferStatus.IMAGE_TRANSFER_INITIATED;
-            List<GXDLMSImageActivateInfo> list =
-                    new ArrayList<GXDLMSImageActivateInfo>();
+            List<GXDLMSImageActivateInfo> list = new ArrayList<GXDLMSImageActivateInfo>();
             list.addAll(Arrays.asList(imageActivateInfo));
             GXDLMSImageActivateInfo item = null;
             for (GXDLMSImageActivateInfo it : imageActivateInfo) {
@@ -284,8 +287,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
             }
             item.setSize(imageSize);
             item.setIdentification(imageIdentifier);
-            imageActivateInfo =
-                    list.toArray(new GXDLMSImageActivateInfo[list.size()]);
+            imageActivateInfo = list.toArray(new GXDLMSImageActivateInfo[list.size()]);
             int cnt = (int) (imageSize / imageBlockSize);
             if (imageSize % imageBlockSize != 0) {
                 ++cnt;
@@ -341,8 +343,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
         if (index == 7) {
             return DataType.ARRAY;
         }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
     private Object getImageActivateInfo(GXDLMSSettings settings) {
@@ -359,10 +360,8 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
                 // Item count.
                 data.setUInt8((byte) 3);
                 GXCommon.setData(settings, data, DataType.UINT32, it.getSize());
-                GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                        it.getIdentification());
-                GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                        it.getSignature());
+                GXCommon.setData(settings, data, DataType.OCTET_STRING, it.getIdentification());
+                GXCommon.setData(settings, data, DataType.OCTET_STRING, it.getSignature());
             }
         }
         return data.array();
@@ -372,8 +371,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -403,8 +401,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
@@ -419,39 +416,33 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
             if (e.getValue() == null) {
                 setImageFirstNotTransferredBlockNumber(0);
             } else {
-                setImageFirstNotTransferredBlockNumber(
-                        ((Number) e.getValue()).intValue());
+                setImageFirstNotTransferredBlockNumber(((Number) e.getValue()).intValue());
             }
         } else if (e.getIndex() == 5) {
             if (e.getValue() == null) {
                 setImageTransferEnabled(false);
             } else {
-                setImageTransferEnabled(
-                        ((Boolean) e.getValue()).booleanValue());
+                setImageTransferEnabled(((Boolean) e.getValue()).booleanValue());
             }
         } else if (e.getIndex() == 6) {
             if (e.getValue() == null) {
-                setImageTransferStatus(
-                        ImageTransferStatus.IMAGE_TRANSFER_NOT_INITIATED);
+                setImageTransferStatus(ImageTransferStatus.IMAGE_TRANSFER_NOT_INITIATED);
             } else {
-                setImageTransferStatus(ImageTransferStatus
-                        .values()[((Number) e.getValue()).intValue()]);
+                setImageTransferStatus(
+                        ImageTransferStatus.values()[((Number) e.getValue()).intValue()]);
             }
         } else if (e.getIndex() == 7) {
             imageActivateInfo = new GXDLMSImageActivateInfo[0];
             if (e.getValue() != null) {
-                List<GXDLMSImageActivateInfo> list =
-                        new ArrayList<GXDLMSImageActivateInfo>();
+                List<GXDLMSImageActivateInfo> list = new ArrayList<GXDLMSImageActivateInfo>();
                 for (Object it : (List<?>) e.getValue()) {
-                    GXDLMSImageActivateInfo item =
-                            new GXDLMSImageActivateInfo();
+                    GXDLMSImageActivateInfo item = new GXDLMSImageActivateInfo();
                     item.setSize(((Number) ((List<?>) it).get(0)).longValue());
                     item.setIdentification((byte[]) ((List<?>) it).get(1));
                     item.setSignature((byte[]) ((List<?>) it).get(2));
                     list.add(item);
                 }
-                imageActivateInfo =
-                        list.toArray(new GXDLMSImageActivateInfo[list.size()]);
+                imageActivateInfo = list.toArray(new GXDLMSImageActivateInfo[list.size()]);
             }
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);
@@ -459,25 +450,21 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     public final byte[][] imageTransferInitiate(final GXDLMSClient client,
-            final String imageIdentifier, final long forImageSize)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
-        return imageTransferInitiate(client, GXCommon.getBytes(imageIdentifier),
-                forImageSize);
+            final String imageIdentifier, final long forImageSize) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
+        return imageTransferInitiate(client, GXCommon.getBytes(imageIdentifier), forImageSize);
     }
 
     public final byte[][] imageTransferInitiate(final GXDLMSClient client,
-            final byte[] imageIdentifier, final long forImageSize)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            final byte[] imageIdentifier, final long forImageSize) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (imageBlockSize == 0) {
             throw new IllegalArgumentException("Invalid image block size.");
         }
         if (imageBlockSize > client.getMaxReceivePDUSize()) {
-            throw new IllegalArgumentException(
-                    "Image block size is bigger than max PDU size.");
+            throw new IllegalArgumentException("Image block size is bigger than max PDU size.");
         }
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
@@ -487,17 +474,17 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
         return client.method(this, 1, data.array(), DataType.ARRAY);
     }
 
-    public final byte[][] imageBlockTransfer(final GXDLMSClient client,
-            final byte[] imageBlockValue, final int[] imageBlockCount)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
-        int cnt = (int) (imageBlockValue.length / imageBlockSize);
-        if (imageBlockValue.length % imageBlockSize != 0) {
+    /**
+     * Returns image blocks to send to the meter.
+     * 
+     * @param image
+     *            Image.
+     * @return Sent blocks.
+     */
+    public List<byte[]> getImageBlocks(final byte[] image) {
+        int cnt = (int) (image.length / imageBlockSize);
+        if (image.length % imageBlockSize != 0) {
             ++cnt;
-        }
-        if (imageBlockCount != null) {
-            imageBlockCount[0] = cnt;
         }
         List<byte[]> packets = new ArrayList<byte[]>();
         for (int pos = 0; pos != cnt; ++pos) {
@@ -506,88 +493,208 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
             data.setUInt8(2);
             GXCommon.setData(null, data, DataType.UINT32, pos);
             byte[] tmp;
-            int bytes = (int) (imageBlockValue.length
-                    - ((pos + 1) * imageBlockSize));
+            int bytes = (int) (image.length - ((pos + 1) * imageBlockSize));
             // If last packet
             if (bytes < 0) {
-                bytes = (int) (imageBlockValue.length - (pos * imageBlockSize));
+                bytes = (int) (image.length - (pos * imageBlockSize));
                 tmp = new byte[bytes];
-                System.arraycopy(imageBlockValue, (int) (pos * imageBlockSize),
-                        tmp, 0, bytes);
+                System.arraycopy(image, (int) (pos * imageBlockSize), tmp, 0, bytes);
             } else {
                 tmp = new byte[(int) imageBlockSize];
-                System.arraycopy(imageBlockValue, (int) (pos * imageBlockSize),
-                        tmp, 0, (int) imageBlockSize);
+                System.arraycopy(image, (int) (pos * imageBlockSize), tmp, 0, (int) imageBlockSize);
             }
             GXCommon.setData(null, data, DataType.OCTET_STRING, tmp);
-            packets.addAll(Arrays.asList(
-                    client.method(this, 2, data.array(), DataType.ARRAY)));
+            packets.add(data.array());
         }
-        byte[][] tmp = new byte[packets.size()][];
-        int pos = -1;
-        for (byte[] it : packets) {
-            ++pos;
-            tmp[pos] = new byte[it.length];
-            System.arraycopy(it, 0, tmp[pos], 0, it.length);
-        }
-        return tmp;
-
+        return packets;
     }
 
-    public final byte[][] imageVerify(final GXDLMSClient client)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    /**
+     * Move image to the meter.
+     * 
+     * @param client
+     *            DLMS Client.
+     * @param image
+     *            Image
+     * @param imageBlockCount
+     *            Total number of blocks to send.
+     * @return DLMS frames that are send to the meter.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
+     */
+    public final byte[][] imageBlockTransfer(final GXDLMSClient client, final byte[] image,
+            final int[] imageBlockCount) throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
+            BadPaddingException, SignatureException {
+        return imageBlockTransfer(client, image, 0, imageBlockCount);
+    }
+
+    /**
+     * Move image to the meter.
+     * 
+     * @param client
+     *            DLMS Client.
+     * @param image
+     *            Image
+     * @param index
+     *            Zero based index from which blocks are send.
+     * @param imageBlockCount
+     *            Total number of blocks to send.
+     * @return DLMS frames that are send to the meter.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
+     */
+    public final byte[][] imageBlockTransfer(final GXDLMSClient client, final byte[] image,
+            final int index, final int[] imageBlockCount) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
+
+        if (index < 0) {
+            throw new IllegalArgumentException("Index is zero based value.");
+        }
+        List<byte[]> blocks = getImageBlocks(image);
+        if (imageBlockCount != null) {
+            imageBlockCount[0] = blocks.size();
+        }
+        if (index >= blocks.size()) {
+            throw new IllegalArgumentException(
+                    "Image start index is higher than image block count");
+        }
+        List<byte[]> packets = new ArrayList<byte[]>();
+        int i = index;
+        for (byte[] it : blocks) {
+            if (i == 0) {
+                packets.addAll(Arrays.asList(client.method(this, 2, it, DataType.ARRAY)));
+            } else {
+                --i;
+            }
+        }
+        return packets.toArray(new byte[packets.size()][]);
+    }
+
+    /**
+     * Send image to the meter using blocks states.
+     * 
+     * @param client
+     *            DLMS Client.
+     * @param image
+     *            Image
+     * @param blocksStatus
+     *            Block states in the bit string.
+     * @param imageBlockCount
+     *            Total number of blocks to send.
+     * @return DLMS frames that are send to the meter.
+     * @throws NoSuchPaddingException
+     *             No such padding exception.
+     * @throws NoSuchAlgorithmException
+     *             No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException
+     *             Invalid algorithm parameter exception.
+     * @throws InvalidKeyException
+     *             Invalid key exception.
+     * @throws BadPaddingException
+     *             Bad padding exception.
+     * @throws IllegalBlockSizeException
+     *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
+     */
+    public byte[][] imageBlockTransfer(final GXDLMSClient client, final byte[] image,
+            final String blocksStatus, final int[] imageBlockCount) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
+        List<byte[]> packets = new ArrayList<byte[]>();
+        List<byte[]> blocks = getImageBlocks(image);
+        if (imageBlockCount != null) {
+            imageBlockCount[0] = blocks.size();
+        }
+        if (blocksStatus == null || blocksStatus.length() < blocks.size()) {
+            throw new IllegalArgumentException(
+                    "Image start index is higher than image block count");
+        }
+        int index = 0;
+        byte[] status = blocksStatus.getBytes();
+        for (byte[] it : blocks) {
+            if (blocksStatus == null || blocksStatus.length() < index || status[index] != '1') {
+                packets.addAll(Arrays.asList(client.method(this, 2, it, DataType.ARRAY)));
+            } else {
+                ++index;
+            }
+        }
+        return packets.toArray(new byte[packets.size()][]);
+    }
+
+    public final byte[][] imageVerify(final GXDLMSClient client) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 3, 0, DataType.INT8);
     }
 
-    public final byte[][] imageActivate(final GXDLMSClient client)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] imageActivate(final GXDLMSClient client) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 4, 0, DataType.INT8);
     }
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
         imageBlockSize = reader.readElementContentAsInt("ImageBlockSize");
-        imageTransferredBlocksStatus = reader
-                .readElementContentAsString("ImageTransferredBlocksStatus");
-        imageFirstNotTransferredBlockNumber = reader.readElementContentAsLong(
-                "ImageFirstNotTransferredBlockNumber");
-        imageTransferEnabled =
-                reader.readElementContentAsInt("ImageTransferEnabled") != 0;
-        imageTransferStatus = ImageTransferStatus.values()[reader
-                .readElementContentAsInt("ImageTransferStatus")];
+        imageTransferredBlocksStatus =
+                reader.readElementContentAsString("ImageTransferredBlocksStatus");
+        imageFirstNotTransferredBlockNumber =
+                reader.readElementContentAsLong("ImageFirstNotTransferredBlockNumber");
+        imageTransferEnabled = reader.readElementContentAsInt("ImageTransferEnabled") != 0;
+        imageTransferStatus =
+                ImageTransferStatus.values()[reader.readElementContentAsInt("ImageTransferStatus")];
 
-        List<GXDLMSImageActivateInfo> list =
-                new ArrayList<GXDLMSImageActivateInfo>();
+        List<GXDLMSImageActivateInfo> list = new ArrayList<GXDLMSImageActivateInfo>();
         if (reader.isStartElement("ImageActivateInfo", true)) {
             while (reader.isStartElement("Item", true)) {
                 GXDLMSImageActivateInfo it = new GXDLMSImageActivateInfo();
                 it.setSize(reader.readElementContentAsULong("Size"));
-                it.setIdentification(GXCommon.hexToBytes(
-                        reader.readElementContentAsString("Identification")));
-                it.setSignature(GXCommon.hexToBytes(
-                        reader.readElementContentAsString("Signature")));
+                it.setIdentification(
+                        GXCommon.hexToBytes(reader.readElementContentAsString("Identification")));
+                it.setSignature(
+                        GXCommon.hexToBytes(reader.readElementContentAsString("Signature")));
                 list.add(it);
             }
             reader.readEndElement("ImageActivateInfo");
         }
-        imageActivateInfo =
-                list.toArray(new GXDLMSImageActivateInfo[list.size()]);
+        imageActivateInfo = list.toArray(new GXDLMSImageActivateInfo[list.size()]);
     }
 
     @Override
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
         writer.writeElementString("ImageBlockSize", imageBlockSize);
-        writer.writeElementString("ImageTransferredBlocksStatus",
-                imageTransferredBlocksStatus);
+        writer.writeElementString("ImageTransferredBlocksStatus", imageTransferredBlocksStatus);
         writer.writeElementString("ImageFirstNotTransferredBlockNumber",
                 imageFirstNotTransferredBlockNumber);
         writer.writeElementString("ImageTransferEnabled", imageTransferEnabled);
-        writer.writeElementString("ImageTransferStatus",
-                imageTransferStatus.ordinal());
+        writer.writeElementString("ImageTransferStatus", imageTransferStatus.ordinal());
         if (imageActivateInfo != null) {
             writer.writeStartElement("ImageActivateInfo");
             for (GXDLMSImageActivateInfo it : imageActivateInfo) {
@@ -595,8 +702,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
                 writer.writeElementString("Size", it.getSize());
                 writer.writeElementString("Identification",
                         GXCommon.toHex(it.getIdentification(), false));
-                writer.writeElementString("Signature",
-                        GXCommon.toHex(it.getSignature(), false));
+                writer.writeElementString("Signature", GXCommon.toHex(it.getSignature(), false));
                 writer.writeEndElement();
             }
             writer.writeEndElement();
@@ -606,5 +712,18 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Image Block Size", "Image Transferred Blocks Status",
+                "Image FirstNot Transferred Block Number", "Image Transfer Enabled",
+                "Image Transfer Status", "Image Activate Info" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Image transfer initiate", "Image block transfer", "Image verify",
+                "Image activate" };
     }
 }

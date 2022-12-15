@@ -35,13 +35,11 @@
 package gurux.dlms;
 
 import java.security.KeyPair;
-import java.security.PublicKey;
-import java.util.List;
-import java.util.Map;
 
 import gurux.dlms.asn.GXx509CertificateCollection;
 import gurux.dlms.enums.Security;
-import gurux.dlms.objects.enums.CertificateType;
+import gurux.dlms.enums.Signing;
+import gurux.dlms.objects.enums.SecurityPolicy;
 import gurux.dlms.objects.enums.SecuritySuite;
 
 public interface GXICipher {
@@ -60,6 +58,17 @@ public interface GXICipher {
      * @return Used security.
      */
     Security getSecurity();
+
+    /**
+     * @param value
+     *            Used security policy.
+     */
+    void setSecurityPolicy(java.util.Set<SecurityPolicy> value);
+
+    /**
+     * @return Used security policy.
+     */
+    java.util.Set<SecurityPolicy> getSecurityPolicy();
 
     /**
      * @param value
@@ -82,6 +91,12 @@ public interface GXICipher {
      * @return System title.
      */
     byte[] getSystemTitle();
+
+    /**
+     * @param value
+     *            System title.
+     */
+    void setSystemTitle(byte[] value);
 
     /**
      * @return Recipient system Title.
@@ -111,6 +126,17 @@ public interface GXICipher {
     void setAuthenticationKey(byte[] value);
 
     /**
+     * @param value
+     *            Broadcast block cipher key.
+     */
+    void setBroadcastBlockCipherKey(byte[] value);
+
+    /**
+     * @return Broadcast block cipher key.
+     */
+    byte[] getBroadcastBlockCipherKey();
+
+    /**
      * @return Invocation counter.
      */
     long getInvocationCounter();
@@ -120,6 +146,17 @@ public interface GXICipher {
      *            Invocation counter.
      */
     void setInvocationCounter(long value);
+
+    /**
+     * @return Invocation counter.
+     */
+    byte[] getTransactionId();
+
+    /**
+     * @param value
+     *            Invocation counter.
+     */
+    void setTransactionId(byte[] value);
 
     /**
      * @return Ephemeral key pair.
@@ -144,11 +181,6 @@ public interface GXICipher {
     void setKeyAgreementKeyPair(KeyPair value);
 
     /**
-     * @return Target (Server or client) Public key.
-     */
-    List<Map.Entry<CertificateType, PublicKey>> getPublicKeys();
-
-    /**
      * @return Available certificates.
      */
     GXx509CertificateCollection getCertificates();
@@ -165,15 +197,15 @@ public interface GXICipher {
     void setSigningKeyPair(KeyPair value);
 
     /**
-     * @return Shared secret is generated when connection is made.
+     * @return TLS signing key pair.
      */
-    byte[] getSharedSecret();
+    KeyPair getTlsKeyPair();
 
     /**
      * @param value
-     *            Shared secret is generated when connection is made.
+     *            Signing key pair.
      */
-    void setSharedSecret(byte[] value);
+    void setTlsKeyPair(KeyPair value);
 
     /**
      * @return Dedicated key.
@@ -185,4 +217,16 @@ public interface GXICipher {
      *            Dedicated key.
      */
     void setDedicatedKey(byte[] value);
+
+    /**
+     * @return Used signing.
+     */
+    Signing getSigning();
+
+    /**
+     * @param value
+     *            Used signing.
+     */
+    void setSigning(Signing value);
+
 }

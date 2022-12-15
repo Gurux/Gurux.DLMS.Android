@@ -37,6 +37,8 @@ package gurux.dlms.objects;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -257,8 +259,8 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), token, time, descriptions,
-                deliveryMethod, new Object[] { statusCode, dataValue } };
+        return new Object[] { getLogicalName(), token, time, descriptions, deliveryMethod,
+                new Object[] { statusCode, dataValue } };
     }
 
     /*
@@ -267,11 +269,9 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // Token
@@ -329,8 +329,7 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
         case 6:
             return DataType.STRUCTURE;
         default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -338,8 +337,7 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         GXByteBuffer bb;
         switch (e.getIndex()) {
         case 1:
@@ -382,8 +380,7 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
         case 1:
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
@@ -392,14 +389,8 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
             token = (byte[]) e.getValue();
             break;
         case 3:
-            boolean useUtc;
-            if (e.getSettings() != null) {
-                useUtc = e.getSettings().getUseUtc2NormalTime();
-            } else {
-                useUtc = false;
-            }
-            time = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                    DataType.DATETIME, useUtc);
+            time = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
+                    e.getSettings());
             break;
         case 4:
             descriptions.clear();
@@ -410,12 +401,11 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
             }
             break;
         case 5:
-            deliveryMethod =
-                    TokenDelivery.forValue(((Number) e.getValue()).intValue());
+            deliveryMethod = TokenDelivery.forValue(((Number) e.getValue()).intValue());
             break;
         case 6:
-            statusCode = TokenStatusCode.forValue(
-                    ((Number) ((List<?>) e.getValue()).get(0)).intValue());
+            statusCode =
+                    TokenStatusCode.forValue(((Number) ((List<?>) e.getValue()).get(0)).intValue());
             dataValue = String.valueOf(((List<?>) e.getValue()).get(1));
             break;
         default:
@@ -435,10 +425,8 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
             }
             reader.readEndElement("Descriptions");
         }
-        deliveryMethod = TokenDelivery
-                .forValue(reader.readElementContentAsInt("DeliveryMethod"));
-        statusCode = TokenStatusCode
-                .forValue(reader.readElementContentAsInt("Status"));
+        deliveryMethod = TokenDelivery.forValue(reader.readElementContentAsInt("DeliveryMethod"));
+        statusCode = TokenStatusCode.forValue(reader.readElementContentAsInt("Status"));
         dataValue = reader.readElementContentAsString("Data");
     }
 
@@ -463,5 +451,17 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Token", "Time", "Description", "DeliveryMethod",
+                "Status" };
+
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Enter" };
     }
 }

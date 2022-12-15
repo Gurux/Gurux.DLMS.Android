@@ -37,6 +37,7 @@ package gurux.dlms.objects;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -59,8 +61,7 @@ import gurux.dlms.internal.GXCommon;
  * Online help: <br>
  * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSSpecialDaysTable
  */
-public class GXDLMSSpecialDaysTable extends GXDLMSObject
-        implements IGXDLMSBase {
+public class GXDLMSSpecialDaysTable extends GXDLMSObject implements IGXDLMSBase {
     private GXDLMSSpecialDay[] entries;
 
     /**
@@ -129,12 +130,13 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
-    public final byte[][] insert(final GXDLMSClient client,
-            final GXDLMSSpecialDay entry)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] insert(final GXDLMSClient client, final GXDLMSSpecialDay entry)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
+            SignatureException {
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.getValue());
         bb.setUInt8(3);
@@ -164,12 +166,13 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
-    public final byte[][] delete(final GXDLMSClient client,
-            final GXDLMSSpecialDay entry)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] delete(final GXDLMSClient client, final GXDLMSSpecialDay entry)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
+            SignatureException {
         return client.method(this, 2, entry.getIndex(), DataType.UINT16);
     }
 
@@ -180,11 +183,9 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
 
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // Entries
@@ -218,16 +219,14 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
         if (index == 2) {
             return DataType.ARRAY;
         }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
     /*
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -243,10 +242,8 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
                 for (GXDLMSSpecialDay it : entries) {
                     data.setUInt8(DataType.STRUCTURE.getValue());
                     data.setUInt8(3); // Count
-                    GXCommon.setData(null, data, DataType.UINT16,
-                            it.getIndex());
-                    GXCommon.setData(null, data, DataType.OCTET_STRING,
-                            it.getDate());
+                    GXCommon.setData(null, data, DataType.UINT16, it.getIndex());
+                    GXCommon.setData(null, data, DataType.OCTET_STRING, it.getDate());
                     GXCommon.setData(null, data, DataType.UINT8, it.getDayId());
                 }
             }
@@ -260,8 +257,7 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
@@ -273,8 +269,8 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
                     List<?> item = (List<?>) i;
                     GXDLMSSpecialDay it = new GXDLMSSpecialDay();
                     it.setIndex(((Number) item.get(0)).intValue());
-                    it.setDate((GXDate) GXDLMSClient.changeType(
-                            (byte[]) item.get(1), DataType.DATE, false));
+                    it.setDate((GXDate) GXDLMSClient.changeType((byte[]) item.get(1), DataType.DATE,
+                            e.getSettings()));
                     it.setDayId(((Number) item.get(2)).intValue());
                     items.add(it);
                 }
@@ -286,8 +282,7 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
     }
 
     @Override
-    public final byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() != 1 && e.getIndex() != 2) {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         } else {
@@ -299,8 +294,8 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
                 List<?> tmp = (List<?>) e.getParameters();
                 GXDLMSSpecialDay it = new GXDLMSSpecialDay();
                 it.setIndex(((Number) tmp.get(0)).intValue());
-                it.setDate((GXDate) GXDLMSClient.changeType((byte[]) tmp.get(1),
-                        DataType.DATE, false));
+                it.setDate((GXDate) GXDLMSClient.changeType((byte[]) tmp.get(1), DataType.DATE,
+                        e.getSettings()));
                 it.setDayId(((Number) tmp.get(2)).intValue());
                 for (GXDLMSSpecialDay item2 : items) {
                     if (item2.getIndex() == it.getIndex()) {
@@ -357,5 +352,15 @@ public class GXDLMSSpecialDaysTable extends GXDLMSObject
     @Override
     public final void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Entries" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Insert", "Delete" };
     }
 }

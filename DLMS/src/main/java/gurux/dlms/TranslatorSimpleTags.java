@@ -13,10 +13,10 @@ import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.Definition;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ExceptionServiceError;
+import gurux.dlms.enums.ExceptionStateError;
 import gurux.dlms.enums.HardwareResource;
 import gurux.dlms.enums.Initiate;
 import gurux.dlms.enums.LoadDataSet;
-import gurux.dlms.enums.StateError;
 import gurux.dlms.enums.Task;
 import gurux.dlms.enums.VdeStateError;
 
@@ -194,19 +194,36 @@ final class TranslatorSimpleTags {
         list.put(Command.METHOD_REQUEST << 8 | ActionRequestType.NORMAL,
                 "ActionRequestNormal");
         list.put(Command.METHOD_REQUEST << 8 | ActionRequestType.NEXT_BLOCK,
-                "ActionRequestForNextDataBlock");
+                "ActionRequestForNextPBlock");
         list.put(Command.METHOD_REQUEST << 8 | ActionRequestType.WITH_LIST,
                 "ActionRequestWithList");
+        list.put(
+                (int) Command.METHOD_REQUEST << 8
+                        | (int) ActionRequestType.WITH_FIRST_BLOCK,
+                "ActionRequestWithFirstBlock");
+        list.put(
+                (int) Command.METHOD_REQUEST << 8
+                        | (int) ActionRequestType.WITH_LIST_AND_FIRST_BLOCK,
+                "ActionRequestWithListAndFirstBlock");
+        list.put(
+                (int) Command.METHOD_REQUEST << 8
+                        | (int) ActionRequestType.WITH_BLOCK,
+                "ActionRequestWithBlock");
+
         GXDLMSTranslator.addTag(list, Command.METHOD_RESPONSE,
                 "ActionResponse");
         list.put(Command.METHOD_RESPONSE << 8 | ActionResponseType.NORMAL,
                 "ActionResponseNormal");
         list.put(
                 Command.METHOD_RESPONSE << 8
-                        | ActionResponseType.WITH_FIRST_BLOCK,
-                "ActionResponseWithFirstBlock");
+                        | ActionResponseType.WITH_BLOCK,
+                "ActionResponseWithPBlock");
         list.put(Command.METHOD_RESPONSE << 8 | ActionResponseType.WITH_LIST,
                 "ActionResponseWithList");
+        list.put(
+                (int) (Command.METHOD_RESPONSE) << 8
+                        | (byte) ActionResponseType.NEXT_BLOCK,
+                "ActionResponseWithBlock");
         list.put((int) Command.DATA_NOTIFICATION, "DataNotification");
         GXDLMSTranslator.addTag(list, Command.GET_RESPONSE, "GetResponse");
         list.put(Command.GET_RESPONSE << 8 | GetCommandType.NORMAL,
@@ -274,6 +291,20 @@ final class TranslatorSimpleTags {
                 "GatewayRequest");
         GXDLMSTranslator.addTag(list, Command.GATEWAY_RESPONSE,
                 "GatewayResponse");
+    }
+
+    /*
+     * Get PLC tags.
+     */
+    static void getPlcTags(final HashMap<Integer, String> list) {
+        GXDLMSTranslator.addTag(list, Command.DISCOVER_REQUEST,
+                "DiscoverRequest");
+        GXDLMSTranslator.addTag(list, Command.DISCOVER_REPORT,
+                "DiscoverReport");
+        GXDLMSTranslator.addTag(list, Command.REGISTER_REQUEST,
+                "RegisterRequest");
+        GXDLMSTranslator.addTag(list, Command.PING_REQUEST, "PingRequest");
+        GXDLMSTranslator.addTag(list, Command.PING_RESPONSE, "PingResponse");
     }
 
     /*
@@ -380,6 +411,7 @@ final class TranslatorSimpleTags {
                 "MethodDescriptor");
         GXDLMSTranslator.addTag(list, TranslatorTags.METHOD_ID, "MethodId");
         GXDLMSTranslator.addTag(list, TranslatorTags.RESULT, "Result");
+        GXDLMSTranslator.addTag(list, TranslatorTags.P_BLOCK, "PBlock");
         GXDLMSTranslator.addTag(list, TranslatorTags.RETURN_PARAMETERS,
                 "ReturnParameters");
         GXDLMSTranslator.addTag(list, TranslatorTags.ACCESS_SELECTION,
@@ -772,7 +804,7 @@ final class TranslatorSimpleTags {
      *            State error enumerator value.
      * @return State error as an string.
      */
-    static String stateErrorToString(final StateError error) {
+    static String stateErrorToString(final ExceptionStateError error) {
         switch (error) {
         case SERVICE_NOT_ALLOWED:
             return "ServiceNotAllowed";
@@ -815,12 +847,12 @@ final class TranslatorSimpleTags {
      *            State error string value.
      * @return State error enum value.
      */
-    static StateError valueofStateError(final String value) {
+    static ExceptionStateError valueofStateError(final String value) {
         if ("ServiceNotAllowed".equalsIgnoreCase(value)) {
-            return StateError.SERVICE_NOT_ALLOWED;
+            return ExceptionStateError.SERVICE_NOT_ALLOWED;
         }
         if ("ServiceUnknown".equalsIgnoreCase(value)) {
-            return StateError.SERVICE_UNKNOWN;
+            return ExceptionStateError.SERVICE_UNKNOWN;
         }
         throw new IllegalArgumentException();
     }
@@ -1097,9 +1129,6 @@ final class TranslatorSimpleTags {
         case RESERVED_SEVEN:
             str = "ReservedSeven";
             break;
-        case RESERVED_SIX:
-            str = "ReservedSix";
-            break;
         case RESERVED_ZERO:
             str = "ReservedZero";
             break;
@@ -1111,6 +1140,9 @@ final class TranslatorSimpleTags {
             break;
         case UN_CONFIRMED_WRITE:
             str = "UnconfirmedWrite";
+            break;
+        case DELTA_VALUE_ENCODING:
+            str = "DeltaValueEncoding";
             break;
         case WRITE:
             str = "Write";
@@ -1159,8 +1191,8 @@ final class TranslatorSimpleTags {
             ret = Conformance.READ;
         } else if ("ReservedSeven".equalsIgnoreCase(value)) {
             ret = Conformance.RESERVED_SEVEN;
-        } else if ("ReservedSix".equalsIgnoreCase(value)) {
-            ret = Conformance.RESERVED_SIX;
+        } else if ("DeltaValueEncoding".equalsIgnoreCase(value)) {
+            ret = Conformance.DELTA_VALUE_ENCODING;
         } else if ("ReservedZero".equalsIgnoreCase(value)) {
             ret = Conformance.RESERVED_ZERO;
         } else if ("SelectiveAccess".equalsIgnoreCase(value)) {

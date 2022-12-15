@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -107,8 +109,7 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
         return listeningWindow;
     }
 
-    public final void setListeningWindow(
-            final List<Entry<GXDateTime, GXDateTime>> value) {
+    public final void setListeningWindow(final List<Entry<GXDateTime, GXDateTime>> value) {
         listeningWindow = value;
     }
 
@@ -154,8 +155,8 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
     public final Object[] getValues() {
         String str = String.valueOf(numberOfRingsInListeningWindow) + "/"
                 + String.valueOf(numberOfRingsOutListeningWindow);
-        return new Object[] { getLogicalName(), getMode(), getListeningWindow(),
-                getStatus(), getNumberOfCalls(), str };
+        return new Object[] { getLogicalName(), getMode(), getListeningWindow(), getStatus(),
+                getNumberOfCalls(), str };
     }
 
     /*
@@ -164,11 +165,9 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // Mode is static and read only once.
@@ -231,16 +230,14 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
         if (index == 6) {
             return DataType.ARRAY;
         }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
     /*
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -259,11 +256,9 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
                     // Count
                     buff.setUInt8(2);
                     // Start time
-                    GXCommon.setData(null, buff, DataType.OCTET_STRING,
-                            it.getKey());
+                    GXCommon.setData(null, buff, DataType.OCTET_STRING, it.getKey());
                     // End time
-                    GXCommon.setData(null, buff, DataType.OCTET_STRING,
-                            it.getValue());
+                    GXCommon.setData(null, buff, DataType.OCTET_STRING, it.getValue());
                 }
             }
             return buff.array();
@@ -278,10 +273,8 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
             GXByteBuffer buff = new GXByteBuffer();
             buff.setUInt8(DataType.STRUCTURE.getValue());
             GXCommon.setObjectCount(2, buff);
-            GXCommon.setData(null, buff, DataType.UINT8,
-                    numberOfRingsInListeningWindow);
-            GXCommon.setData(null, buff, DataType.UINT8,
-                    numberOfRingsOutListeningWindow);
+            GXCommon.setData(null, buff, DataType.UINT8, numberOfRingsInListeningWindow);
+            GXCommon.setData(null, buff, DataType.UINT8, numberOfRingsOutListeningWindow);
             return buff.array();
         }
         e.setError(ErrorCode.READ_WRITE_DENIED);
@@ -292,37 +285,26 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
-            setMode(AutoAnswerMode
-                    .values()[(((Number) e.getValue()).byteValue() & 0xFF)]);
+            setMode(AutoAnswerMode.values()[(((Number) e.getValue()).byteValue() & 0xFF)]);
         } else if (e.getIndex() == 3) {
             getListeningWindow().clear();
             if (e.getValue() != null) {
-                boolean useUtc;
-                if (e.getSettings() != null) {
-                    useUtc = e.getSettings().getUseUtc2NormalTime();
-                } else {
-                    useUtc = false;
-                }
                 for (Object item : (List<?>) e.getValue()) {
-                    GXDateTime start = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) ((List<?>) item).get(0), DataType.DATETIME,
-                            useUtc);
-                    GXDateTime end = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) ((List<?>) item).get(1), DataType.DATETIME,
-                            useUtc);
-                    getListeningWindow().add(
-                            new GXSimpleEntry<GXDateTime, GXDateTime>(start,
-                                    end));
+                    GXDateTime start =
+                            (GXDateTime) GXDLMSClient.changeType((byte[]) ((List<?>) item).get(0),
+                                    DataType.DATETIME, e.getSettings());
+                    GXDateTime end =
+                            (GXDateTime) GXDLMSClient.changeType((byte[]) ((List<?>) item).get(1),
+                                    DataType.DATETIME, e.getSettings());
+                    getListeningWindow().add(new GXSimpleEntry<GXDateTime, GXDateTime>(start, end));
                 }
             }
         } else if (e.getIndex() == 4) {
-            setStatus(AutoAnswerStatus
-                    .forValue(((Number) e.getValue()).intValue()));
+            setStatus(AutoAnswerStatus.forValue(((Number) e.getValue()).intValue()));
         } else if (e.getIndex() == 5) {
             setNumberOfCalls(((Number) e.getValue()).intValue());
         } else if (e.getIndex() == 6) {
@@ -347,18 +329,16 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
             while (reader.isStartElement("Item", true)) {
                 GXDateTime start = reader.readElementContentAsDateTime("Start");
                 GXDateTime end = reader.readElementContentAsDateTime("End");
-                listeningWindow.add(
-                        new SimpleEntry<GXDateTime, GXDateTime>(start, end));
+                listeningWindow.add(new SimpleEntry<GXDateTime, GXDateTime>(start, end));
             }
             reader.readEndElement("ListeningWindow");
         }
-        status = AutoAnswerStatus.values()[reader
-                .readElementContentAsInt("Status")];
+        status = AutoAnswerStatus.values()[reader.readElementContentAsInt("Status")];
         numberOfCalls = reader.readElementContentAsInt("NumberOfCalls");
-        numberOfRingsInListeningWindow = reader
-                .readElementContentAsInt("NumberOfRingsInListeningWindow");
-        numberOfRingsOutListeningWindow = reader
-                .readElementContentAsInt("NumberOfRingsOutListeningWindow");
+        numberOfRingsInListeningWindow =
+                reader.readElementContentAsInt("NumberOfRingsInListeningWindow");
+        numberOfRingsOutListeningWindow =
+                reader.readElementContentAsInt("NumberOfRingsOutListeningWindow");
     }
 
     @Override
@@ -380,8 +360,7 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
             writer.writeElementString("Status", status.getValue());
         }
         writer.writeElementString("NumberOfCalls", numberOfCalls);
-        writer.writeElementString("NumberOfRingsInListeningWindow",
-                numberOfRingsInListeningWindow);
+        writer.writeElementString("NumberOfRingsInListeningWindow", numberOfRingsInListeningWindow);
         writer.writeElementString("NumberOfRingsOutListeningWindow",
                 numberOfRingsOutListeningWindow);
     }
@@ -389,5 +368,16 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Mode", "Listening Window", "Status",
+                "Number Of Calls", "Number Of Rings In Listening Window" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[0];
     }
 }

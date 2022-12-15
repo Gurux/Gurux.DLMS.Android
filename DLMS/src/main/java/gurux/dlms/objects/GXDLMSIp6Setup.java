@@ -39,6 +39,7 @@ import java.net.UnknownHostException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +47,7 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -208,12 +210,14 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
      *             Invalid algorithm parameter exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public byte[][] addAddress(final GXDLMSClient client,
             final IPv6AddressType type, final InetAddress address)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.ordinal());
         bb.setUInt8(2);
@@ -244,12 +248,13 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
      *             Illegal block size exception.
      * @throws InvalidAlgorithmParameterException
      *             Invalid algorithm parameter exception.
+     * @throws SignatureException
      */
     public byte[][] removeAddress(final GXDLMSClient client,
             final IPv6AddressType type, final InetAddress address)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(DataType.STRUCTURE.ordinal());
         bb.setUInt8(2);
@@ -413,38 +418,43 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final DataType getDataType(final int index) {
-        if (index == 1) {
-            return DataType.OCTET_STRING;
+        DataType ret;
+        switch (index) {
+        case 1:
+            ret = DataType.OCTET_STRING;
+            break;
+        case 2:
+            ret = DataType.OCTET_STRING;
+            break;
+        case 3:
+            ret = DataType.ENUM;
+            break;
+        case 4:
+            ret = DataType.ARRAY;
+            break;
+        case 5:
+            ret = DataType.ARRAY;
+            break;
+        case 6:
+            ret = DataType.ARRAY;
+            break;
+        case 7:
+            ret = DataType.OCTET_STRING;
+            break;
+        case 8:
+            ret = DataType.OCTET_STRING;
+            break;
+        case 9:
+            ret = DataType.UINT8;
+            break;
+        case 10:
+            ret = DataType.ARRAY;
+            break;
+        default:
+            throw new IllegalArgumentException(
+                    "getDataType failed. Invalid attribute index.");
         }
-        if (index == 2) {
-            return DataType.OCTET_STRING;
-        }
-        if (index == 3) {
-            return DataType.ENUM;
-        }
-        if (index == 4) {
-            return DataType.ARRAY;
-        }
-        if (index == 5) {
-            return DataType.ARRAY;
-        }
-        if (index == 6) {
-            return DataType.ARRAY;
-        }
-        if (index == 7) {
-            return DataType.OCTET_STRING;
-        }
-        if (index == 8) {
-            return DataType.OCTET_STRING;
-        }
-        if (index == 9) {
-            return DataType.UINT8;
-        }
-        if (index == 10) {
-            return DataType.ARRAY;
-        }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        return ret;
     }
 
     /*
@@ -745,5 +755,19 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void postLoad(final GXXmlReader reader) {
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Data LinkLayer Reference",
+                "Address Config Mode", "Unicast IP Address",
+                "Multicast IP Address", "Gateway IP Address",
+                "Primary DNS Address", "Secondary DNS Address", "Traffic Class",
+                "Neighbor Discovery Setup" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Add IP v6 address", "Remove IP v6 address" };
     }
 }

@@ -37,6 +37,7 @@ package gurux.dlms.objects;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ import java.util.TimeZone;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -231,9 +233,8 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getTime(), getTimeZone(),
-                getStatus(), getBegin(), getEnd(), getDeviation(), getEnabled(),
-                getClockBase() };
+        return new Object[] { getLogicalName(), getTime(), getTimeZone(), getStatus(), getBegin(),
+                getEnd(), getDeviation(), getEnabled(), getClockBase() };
     }
 
     /**
@@ -268,8 +269,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     @SuppressWarnings("squid:S1168")
-    public final byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e) {
         // Resets the value to the default value.
         // The default value is an instance specific constant.
         if (e.getIndex() == 1) {
@@ -310,22 +310,14 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
         } else if (e.getIndex() == 5) {
             List<?> arr = (List<?>) e.getParameters();
-            boolean useUtc;
-            if (e.getSettings() != null) {
-                useUtc = e.getSettings().getUseUtc2NormalTime();
-            } else {
-                useUtc = false;
-            }
             // Presets the time to a new value (preset_time) and defines
             // avalidity_interval within which the new time can be activated.
-            GXDateTime presetTime = (GXDateTime) GXDLMSClient
-                    .changeType((byte[]) arr.get(0), DataType.DATETIME, useUtc);
+            GXDateTime presetTime = (GXDateTime) GXDLMSClient.changeType((byte[]) arr.get(0),
+                    DataType.DATETIME, e.getSettings());
             // GXDateTime validityIntervalStart = (GXDateTime)
-            GXDLMSClient.changeType((byte[]) arr.get(1), DataType.DATETIME,
-                    useUtc);
+            GXDLMSClient.changeType((byte[]) arr.get(1), DataType.DATETIME, e.getSettings());
             // GXDateTime validityIntervalEnd = (GXDateTime)
-            GXDLMSClient.changeType((byte[]) arr.get(2), DataType.DATETIME,
-                    useUtc);
+            GXDLMSClient.changeType((byte[]) arr.get(2), DataType.DATETIME, e.getSettings());
             setTime(presetTime);
         } else if (e.getIndex() == 6) {
             // Shifts the time.
@@ -346,10 +338,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * Sets the meter's time to the nearest (+/-) quarter of an hour value
      * (*:00, *:15, *:30, *:45).
      */
-    public final byte[][] adjustToQuarter(final GXDLMSClient client)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] adjustToQuarter(final GXDLMSClient client) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 1, 0, DataType.INT8);
     }
 
@@ -358,9 +349,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * period.
      */
     public final byte[][] adjustToMeasuringPeriod(final GXDLMSClient client)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
+            SignatureException {
         return client.method(this, 2, 0, DataType.INT8);
     }
 
@@ -370,10 +361,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * is set to 0, and minute_counter and all depending clock values are
      * incremented if necessary.
      */
-    public final byte[][] adjustToMinute(final GXDLMSClient client)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] adjustToMinute(final GXDLMSClient client) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 3, 0, DataType.INT8);
     }
 
@@ -382,10 +372,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * If the meter's time lies between validity_interval_start and
      * validity_interval_end, then time is set to preset_time.
      */
-    public final byte[][] adjustToPresetTime(final GXDLMSClient client)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] adjustToPresetTime(final GXDLMSClient client) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 4, 0, DataType.INT8);
     }
 
@@ -393,31 +382,27 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * Presets the time to a new value (preset_time) and defines a
      * validity_interval within which the new time can be activated.
      */
-    public final byte[][] presetAdjustingTime(final GXDLMSClient client,
-            final Date presetTime, final Date validityIntervalStart,
-            final Date validityIntervalEnd)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] presetAdjustingTime(final GXDLMSClient client, final Date presetTime,
+            final Date validityIntervalStart, final Date validityIntervalEnd)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
+            SignatureException {
         GXByteBuffer buff = new GXByteBuffer(44);
         buff.setUInt8(DataType.STRUCTURE.getValue());
         buff.setUInt8(3);
         GXCommon.setData(null, buff, DataType.OCTET_STRING, presetTime);
-        GXCommon.setData(null, buff, DataType.OCTET_STRING,
-                validityIntervalStart);
-        GXCommon.setData(null, buff, DataType.OCTET_STRING,
-                validityIntervalEnd);
+        GXCommon.setData(null, buff, DataType.OCTET_STRING, validityIntervalStart);
+        GXCommon.setData(null, buff, DataType.OCTET_STRING, validityIntervalEnd);
         return client.method(this, 5, buff.array(), DataType.ARRAY);
     }
 
     /*
      * Shifts the time by n (-900 <= n <= 900) s.
      */
-    public final byte[][] shiftTime(final GXDLMSClient client,
-            final int forTime)
-            throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+    public final byte[][] shiftTime(final GXDLMSClient client, final int forTime)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
+            SignatureException {
         if (forTime < -900 || forTime > 900) {
             throw new IllegalArgumentException("Invalid shift time.");
         }
@@ -430,11 +415,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // Time
@@ -510,8 +493,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
         case 9:
             return DataType.ENUM;
         default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -519,8 +501,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
         case 1:
             return GXCommon.logicalNameToBytes(getLogicalName());
@@ -551,8 +532,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
         case 1:
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
@@ -563,14 +543,8 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
             } else {
                 GXDateTime tmp;
                 if (e.getValue() instanceof byte[]) {
-                    boolean useUtc;
-                    if (e.getSettings() != null) {
-                        useUtc = e.getSettings().getUseUtc2NormalTime();
-                    } else {
-                        useUtc = false;
-                    }
-                    tmp = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) e.getValue(), DataType.DATETIME, useUtc);
+                    tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                            DataType.DATETIME, e.getSettings());
                 } else {
                     tmp = (GXDateTime) e.getValue();
                 }
@@ -590,8 +564,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
                 val.add(ClockStatus.OK);
                 setStatus(val);
             } else {
-                setStatus(ClockStatus
-                        .forValue(((Number) e.getValue()).intValue()));
+                setStatus(ClockStatus.forValue(((Number) e.getValue()).intValue()));
             }
             break;
         case 5:
@@ -599,14 +572,8 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
                 setBegin(new GXDateTime());
             } else if (e.getValue() instanceof byte[]) {
                 GXDateTime tmp;
-                boolean useUtc;
-                if (e.getSettings() != null) {
-                    useUtc = e.getSettings().getUseUtc2NormalTime();
-                } else {
-                    useUtc = false;
-                }
-                tmp = (GXDateTime) GXDLMSClient.changeType(
-                        (byte[]) e.getValue(), DataType.DATETIME, useUtc);
+                tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
+                        e.getSettings());
                 setBegin(tmp);
             } else {
                 setBegin((GXDateTime) e.getValue());
@@ -616,15 +583,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
             if (e.getValue() == null) {
                 setEnd(new GXDateTime());
             } else if (e.getValue() instanceof byte[]) {
-                boolean useUtc;
-                if (e.getSettings() != null) {
-                    useUtc = e.getSettings().getUseUtc2NormalTime();
-                } else {
-                    useUtc = false;
-                }
                 GXDateTime tmp;
-                tmp = (GXDateTime) GXDLMSClient.changeType(
-                        (byte[]) e.getValue(), DataType.DATETIME, useUtc);
+                tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
+                        e.getSettings());
                 setEnd(tmp);
             } else {
                 setEnd((GXDateTime) e.getValue());
@@ -648,8 +609,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
             if (e.getValue() == null) {
                 setClockBase(ClockBase.NONE);
             } else {
-                setClockBase(
-                        ClockBase.values()[((Number) e.getValue()).intValue()]);
+                setClockBase(ClockBase.values()[((Number) e.getValue()).intValue()]);
             }
             break;
         default:
@@ -667,8 +627,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
         end = reader.readElementContentAsDateTime("End");
         deviation = reader.readElementContentAsInt("Deviation");
         enabled = reader.readElementContentAsInt("Enabled") != 0;
-        clockBase =
-                ClockBase.values()[reader.readElementContentAsInt("ClockBase")];
+        clockBase = ClockBase.values()[reader.readElementContentAsInt("ClockBase")];
     }
 
     @Override
@@ -686,5 +645,17 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Time", "Time Zone", "Status", "Begin", "End",
+                "Deviation", "Enabled", "Clock Base" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Adjust to quarter", "Adjust to measuring period", "Adjust to minute",
+                "Adjust to preset time", "Preset adjusting time", "Shift time" };
     }
 }

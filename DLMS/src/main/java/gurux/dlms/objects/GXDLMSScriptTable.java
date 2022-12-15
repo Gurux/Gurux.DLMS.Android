@@ -37,12 +37,14 @@ package gurux.dlms.objects;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -311,12 +313,14 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[][] execute(final GXDLMSClient client,
             final GXDLMSScript script)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 1, script.getId(), DataType.UINT16);
     }
 
@@ -340,11 +344,13 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
      *             Bad padding exception.
      * @throws IllegalBlockSizeException
      *             Illegal block size exception.
+     * @throws SignatureException
+     *             Signature exception.
      */
     public final byte[][] execute(final GXDLMSClient client, final int scriptId)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
         return client.method(this, 1, scriptId, DataType.UINT16);
     }
 
@@ -426,6 +432,16 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void postLoad(final GXXmlReader reader) {
         // Not needed for this object.
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Scripts" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[] { "Execute" };
     }
 
 }

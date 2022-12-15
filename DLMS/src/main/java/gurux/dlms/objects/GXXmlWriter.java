@@ -49,6 +49,7 @@ import gurux.dlms.GXDateTimeOS;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.GXTimeOS;
 import gurux.dlms.enums.DataType;
+import gurux.dlms.enums.ObjectType;
 
 /**
  * Save COSEM object to the file.
@@ -273,5 +274,30 @@ public class GXXmlWriter implements AutoCloseable{
      *             Invalid XML stream.
      */
     public final void flush() throws XMLStreamException {
+    }
+
+    /**
+     * Check if object attribute is serialized.
+     *
+     * @param objectType
+     *            Object type
+     * @param index
+     *            Attribute index.
+     * @return True, if object attribute is not serialized.
+     */
+    boolean isSerialized(ObjectType objectType, int index) {
+        if (settings == null) {
+            return false;
+        }
+        for (GXIgnoreSerialize it : settings.getIgnored()) {
+            if (it.getObjectType() == objectType) {
+                for (int i : it.getAttributes()) {
+                    if (i == index) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

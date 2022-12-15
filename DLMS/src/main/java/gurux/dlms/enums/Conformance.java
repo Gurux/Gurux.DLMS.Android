@@ -52,10 +52,9 @@ public enum Conformance {
      */
     UN_CONFIRMED_WRITE(0x20),
     /**
-     * Reserved six conformance bit.<br>
-     * Not used at the moment.
+     * Delta value encoding.
      */
-    RESERVED_SIX(0x40),
+    DELTA_VALUE_ENCODING(0x40),
     /**
      * Reserved seven conformance bit.<br>
      * Not used at the moment.
@@ -198,14 +197,13 @@ public enum Conformance {
     }
 
     public static Conformance[] getEnumConstants() {
-        return new Conformance[] { ACTION, EVENT_NOTIFICATION, SELECTIVE_ACCESS,
-                SET, GET, PARAMETERIZED_ACCESS, ACCESS, DATA_NOTIFICATION,
-                INFORMATION_REPORT, MULTIPLE_REFERENCES,
-                BLOCK_TRANSFER_WITH_ACTION, BLOCK_TRANSFER_WITH_SET_OR_WRITE,
+        return new Conformance[] { ACTION, EVENT_NOTIFICATION, SELECTIVE_ACCESS, SET, GET,
+                PARAMETERIZED_ACCESS, ACCESS, DATA_NOTIFICATION, INFORMATION_REPORT,
+                MULTIPLE_REFERENCES, BLOCK_TRANSFER_WITH_ACTION, BLOCK_TRANSFER_WITH_SET_OR_WRITE,
                 BLOCK_TRANSFER_WITH_GET_OR_READ, ATTRIBUTE_0_SUPPORTED_WITH_GET,
-                PRIORITY_MGMT_SUPPORTED, ATTRIBUTE_0_SUPPORTED_WITH_SET,
-                RESERVED_SEVEN, RESERVED_SIX, UN_CONFIRMED_WRITE, WRITE, READ,
-                GENERAL_BLOCK_TRANSFER, GENERAL_PROTECTION, RESERVED_ZERO };
+                PRIORITY_MGMT_SUPPORTED, ATTRIBUTE_0_SUPPORTED_WITH_SET, RESERVED_SEVEN,
+                DELTA_VALUE_ENCODING, UN_CONFIRMED_WRITE, WRITE, READ, GENERAL_BLOCK_TRANSFER,
+                GENERAL_PROTECTION, RESERVED_ZERO };
     }
 
     /**

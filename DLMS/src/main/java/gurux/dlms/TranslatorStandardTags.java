@@ -13,10 +13,10 @@ import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.Definition;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ExceptionServiceError;
+import gurux.dlms.enums.ExceptionStateError;
 import gurux.dlms.enums.HardwareResource;
 import gurux.dlms.enums.Initiate;
 import gurux.dlms.enums.LoadDataSet;
-import gurux.dlms.enums.StateError;
 import gurux.dlms.enums.Task;
 import gurux.dlms.enums.VdeStateError;
 
@@ -205,19 +205,35 @@ final class TranslatorStandardTags {
         list.put(Command.METHOD_REQUEST << 8 | ActionRequestType.NORMAL,
                 "action-request-normal");
         list.put(Command.METHOD_REQUEST << 8 | ActionRequestType.NEXT_BLOCK,
-                "ActionRequestForNextDataBlock");
+                "action-request-next-pblock");
         list.put(Command.METHOD_REQUEST << 8 | ActionRequestType.WITH_LIST,
                 "action-request-with-list");
+        list.put(
+                (int) Command.METHOD_REQUEST << 8
+                        | (int) ActionRequestType.WITH_FIRST_BLOCK,
+                "ActionRequestWithFirstBlock");
+        list.put(
+                (int) Command.METHOD_REQUEST << 8
+                        | (int) ActionRequestType.WITH_LIST_AND_FIRST_BLOCK,
+                "ActionRequestWithListAndFirstBlock");
+        list.put(
+                (int) Command.METHOD_REQUEST << 8
+                        | (int) ActionRequestType.WITH_BLOCK,
+                "ActionRequestWithBlock");
         GXDLMSTranslator.addTag(list, Command.METHOD_RESPONSE,
                 "action-response");
         list.put(Command.METHOD_RESPONSE << 8 | ActionResponseType.NORMAL,
                 "action-response-normal");
         list.put(
                 Command.METHOD_RESPONSE << 8
-                        | ActionResponseType.WITH_FIRST_BLOCK,
-                "action-response-with-first-block");
+                        | ActionResponseType.WITH_BLOCK,
+                "action-response-with-pblock");
         list.put(Command.METHOD_RESPONSE << 8 | ActionResponseType.WITH_LIST,
                 "action-response-with-list");
+        list.put(
+                (int) (Command.METHOD_REQUEST) << 8
+                        | (byte) ActionResponseType.NEXT_BLOCK,
+                "ActionResponseWithBlock");
         list.put(TranslatorTags.SINGLE_RESPONSE, "single-response");
 
         list.put((int) Command.DATA_NOTIFICATION, "data-notification");
@@ -279,6 +295,20 @@ final class TranslatorStandardTags {
                 "gateway-request");
         GXDLMSTranslator.addTag(list, Command.GATEWAY_RESPONSE,
                 "gateway-response");
+    }
+
+    /*
+     * Get PLC tags.
+     */
+    static void getPlcTags(final HashMap<Integer, String> list) {
+        GXDLMSTranslator.addTag(list, Command.DISCOVER_REQUEST,
+                "discover-request");
+        GXDLMSTranslator.addTag(list, Command.DISCOVER_REPORT,
+                "discover-report");
+        GXDLMSTranslator.addTag(list, Command.REGISTER_REQUEST,
+                "register-request");
+        GXDLMSTranslator.addTag(list, Command.PING_REQUEST, "ping-request");
+        GXDLMSTranslator.addTag(list, Command.PING_RESPONSE, "ping-response");
     }
 
     /*
@@ -383,6 +413,7 @@ final class TranslatorStandardTags {
                 "cosem-method-descriptor");
         GXDLMSTranslator.addTag(list, TranslatorTags.METHOD_ID, "method-id");
         GXDLMSTranslator.addTag(list, TranslatorTags.RESULT, "result");
+        GXDLMSTranslator.addTag(list, TranslatorTags.P_BLOCK, "pblock");
         GXDLMSTranslator.addTag(list, TranslatorTags.RETURN_PARAMETERS,
                 "return-parameters");
         GXDLMSTranslator.addTag(list, TranslatorTags.ACCESS_SELECTION,
@@ -1020,8 +1051,8 @@ final class TranslatorStandardTags {
         case RESERVED_SEVEN:
             str = "reserved-seven";
             break;
-        case RESERVED_SIX:
-            str = "reserved-six";
+        case DELTA_VALUE_ENCODING:
+            str = "delta-value-encoding";
             break;
         case RESERVED_ZERO:
             str = "reserved-zero";
@@ -1082,8 +1113,8 @@ final class TranslatorStandardTags {
             ret = Conformance.READ;
         } else if ("reserved-seven".equalsIgnoreCase(value)) {
             ret = Conformance.RESERVED_SEVEN;
-        } else if ("reserved-six".equalsIgnoreCase(value)) {
-            ret = Conformance.RESERVED_SIX;
+        } else if ("delta-value-encoding".equalsIgnoreCase(value)) {
+            ret = Conformance.DELTA_VALUE_ENCODING;
         } else if ("reserved-zero".equalsIgnoreCase(value)) {
             ret = Conformance.RESERVED_ZERO;
         } else if ("selective-access".equalsIgnoreCase(value)) {
@@ -1175,7 +1206,7 @@ final class TranslatorStandardTags {
      *            State error enumerator value.
      * @return State error as an string.
      */
-    static String stateErrorToString(final StateError error) {
+    static String stateErrorToString(final ExceptionStateError error) {
         switch (error) {
         case SERVICE_NOT_ALLOWED:
             return "service-not-allowed";
@@ -1218,12 +1249,12 @@ final class TranslatorStandardTags {
      *            State error string value.
      * @return State error enum value.
      */
-    static StateError valueofStateError(final String value) {
+    static ExceptionStateError valueofStateError(final String value) {
         if ("service-not-allowed".equalsIgnoreCase(value)) {
-            return StateError.SERVICE_NOT_ALLOWED;
+            return ExceptionStateError.SERVICE_NOT_ALLOWED;
         }
         if ("service-unknown".equalsIgnoreCase(value)) {
-            return StateError.SERVICE_UNKNOWN;
+            return ExceptionStateError.SERVICE_UNKNOWN;
         }
         throw new IllegalArgumentException();
     }

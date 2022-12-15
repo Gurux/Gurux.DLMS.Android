@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 mDevice.setInterfaceType(InterfaceType.HDLC);
             }
 
-            mDevice.setWaitTime(s.getInt("waitTime", 7000));
+            mDevice.setWaitTime(s.getInt("waitTime", 5));
             mDevice.setMaximumBaudRate(s.getInt("maximumBaudRate", 0));
             try {
                 mDevice.setAuthentication(new GXAuthentication(s.getString("authentication", "None")));
@@ -169,19 +169,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         saveSettings();
-        if (mDevice.getMedia() != null) {
-            mDevice.getMedia().close();
-        }
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
         saveSettings();
-        if (mDevice.getMedia() != null) {
-            mDevice.getMedia().close();
-            mDevice.setMedia(null);
-        }
         super.onDestroy();
     }
 }

@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -125,8 +127,7 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     public final void setType(final SingleActionScheduleType value) {
         if (value == null) {
-            throw new IllegalArgumentException(
-                    "Invalid SingleActionScheduleType");
+            throw new IllegalArgumentException("Invalid SingleActionScheduleType");
         }
         type = value;
     }
@@ -147,8 +148,7 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
         } else {
             str = "0.0.0.0.0.0";
         }
-        return new Object[] { getLogicalName(),
-                str + " " + executedScriptSelector, getType(),
+        return new Object[] { getLogicalName(), str + " " + executedScriptSelector, getType(),
                 getExecutionTime() };
     }
 
@@ -158,11 +158,9 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final int[] getAttributeIndexToRead(final boolean all) {
-        java.util.ArrayList<Integer> attributes =
-                new java.util.ArrayList<Integer>();
+        java.util.ArrayList<Integer> attributes = new java.util.ArrayList<Integer>();
         // LN is static and read only once.
-        if (all || getLogicalName() == null
-                || getLogicalName().compareTo("") == 0) {
+        if (all || getLogicalName() == null || getLogicalName().compareTo("") == 0) {
             attributes.add(1);
         }
         // ExecutedScriptLogicalName is static and read only once.
@@ -210,16 +208,14 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
         if (index == 4) {
             return DataType.ARRAY;
         }
-        throw new IllegalArgumentException(
-                "getDataType failed. Invalid attribute index.");
+        throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
     /*
      * Returns value of given attribute.
      */
     @Override
-    public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -235,8 +231,7 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
             stream.setUInt8(2);
             GXCommon.setData(settings, stream, DataType.OCTET_STRING,
                     GXCommon.logicalNameToBytes(str));
-            GXCommon.setData(settings, stream, DataType.UINT16,
-                    executedScriptSelector);
+            GXCommon.setData(settings, stream, DataType.UINT16, executedScriptSelector);
             return stream.array();
         }
         if (e.getIndex() == 3) {
@@ -252,21 +247,16 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
                 for (GXDateTime it : getExecutionTime()) {
                     bb.setUInt8(DataType.STRUCTURE.getValue());
                     bb.setUInt8(2); // Count
-                    if (settings != null && settings
-                            .getStandard() == Standard.SAUDI_ARABIA) {
+                    if (settings != null && settings.getStandard() == Standard.SAUDI_ARABIA) {
                         // Time
-                        GXCommon.setData(settings, bb, DataType.TIME,
-                                new GXTime(it));
+                        GXCommon.setData(settings, bb, DataType.TIME, new GXTime(it));
                         // Date
-                        GXCommon.setData(settings, bb, DataType.DATE,
-                                new GXDate(it));
+                        GXCommon.setData(settings, bb, DataType.DATE, new GXDate(it));
                     } else {
                         // Time
-                        GXCommon.setData(settings, bb, DataType.OCTET_STRING,
-                                new GXTime(it));
+                        GXCommon.setData(settings, bb, DataType.OCTET_STRING, new GXTime(it));
                         // Date
-                        GXCommon.setData(settings, bb, DataType.OCTET_STRING,
-                                new GXDate(it));
+                        GXCommon.setData(settings, bb, DataType.OCTET_STRING, new GXDate(it));
                     }
                 }
             }
@@ -280,50 +270,36 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
      * Set value of given attribute.
      */
     @Override
-    public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+    public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
             String ln = GXCommon.toLogicalName(((List<?>) e.getValue()).get(0));
-            target = (GXDLMSScriptTable) settings.getObjects()
-                    .findByLN(ObjectType.SCRIPT_TABLE, ln);
+            target = (GXDLMSScriptTable) settings.getObjects().findByLN(ObjectType.SCRIPT_TABLE,
+                    ln);
             if (target == null) {
                 target = new GXDLMSScriptTable(ln);
             }
-            setExecutedScriptSelector(
-                    ((Number) ((List<?>) e.getValue()).get(1)).intValue());
+            setExecutedScriptSelector(((Number) ((List<?>) e.getValue()).get(1)).intValue());
         } else if (e.getIndex() == 3) {
-            setType(SingleActionScheduleType
-                    .forValue(((Number) e.getValue()).intValue()));
+            setType(SingleActionScheduleType.forValue(((Number) e.getValue()).intValue()));
         } else if (e.getIndex() == 4) {
             setExecutionTime(null);
             if (e.getValue() != null) {
-                boolean useUtc;
-                if (e.getSettings() != null) {
-                    useUtc = e.getSettings().getUseUtc2NormalTime();
-                } else {
-                    useUtc = false;
-                }
-                java.util.ArrayList<GXDateTime> items =
-                        new java.util.ArrayList<GXDateTime>();
+                java.util.ArrayList<GXDateTime> items = new java.util.ArrayList<GXDateTime>();
                 for (Object it : (List<?>) e.getValue()) {
-                    GXDateTime time = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) ((List<?>) it).get(0), DataType.TIME,
-                            useUtc);
-                    time.setSkip(DateTimeSkips.forValue(DateTimeSkips
-                            .toInteger(time.getSkip())
-                            & ~(DateTimeSkips.YEAR.getValue()
-                                    | DateTimeSkips.MONTH.getValue()
+                    GXDateTime time =
+                            (GXDateTime) GXDLMSClient.changeType((byte[]) ((List<?>) it).get(0),
+                                    DataType.TIME, e.getSettings());
+                    time.setSkip(DateTimeSkips.forValue(DateTimeSkips.toInteger(time.getSkip())
+                            & ~(DateTimeSkips.YEAR.getValue() | DateTimeSkips.MONTH.getValue()
                                     | DateTimeSkips.DAY.getValue()
                                     | DateTimeSkips.DAY_OF_WEEK.getValue())));
-                    GXDateTime date = (GXDateTime) GXDLMSClient.changeType(
-                            (byte[]) ((List<?>) it).get(1), DataType.DATE,
-                            useUtc);
-                    date.setSkip(DateTimeSkips.forValue(DateTimeSkips
-                            .toInteger(date.getSkip())
-                            & ~(DateTimeSkips.HOUR.getValue()
-                                    | DateTimeSkips.MINUTE.getValue()
+                    GXDateTime date =
+                            (GXDateTime) GXDLMSClient.changeType((byte[]) ((List<?>) it).get(1),
+                                    DataType.DATE, e.getSettings());
+                    date.setSkip(DateTimeSkips.forValue(DateTimeSkips.toInteger(date.getSkip())
+                            & ~(DateTimeSkips.HOUR.getValue() | DateTimeSkips.MINUTE.getValue()
                                     | DateTimeSkips.SECOND.getValue()
                                     | DateTimeSkips.MILLISECOND.getValue())));
                     GXDateTime tmp = new GXDateTime(date);
@@ -346,8 +322,7 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final void load(final GXXmlReader reader) throws XMLStreamException {
-        ObjectType ot = ObjectType
-                .forValue(reader.readElementContentAsInt("ObjectType"));
+        ObjectType ot = ObjectType.forValue(reader.readElementContentAsInt("ObjectType"));
         String ln = reader.readElementContentAsString("LN");
         if (ot != ObjectType.NONE && ln != null) {
             target = (GXDLMSScriptTable) reader.getObjects().findByLN(ot, ln);
@@ -356,10 +331,8 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
                 target = new GXDLMSScriptTable(ln);
             }
         }
-        executedScriptSelector =
-                reader.readElementContentAsInt("ExecutedScriptSelector");
-        type = SingleActionScheduleType
-                .forValue(reader.readElementContentAsInt("Type"));
+        executedScriptSelector = reader.readElementContentAsInt("ExecutedScriptSelector");
+        type = SingleActionScheduleType.forValue(reader.readElementContentAsInt("Type"));
         List<GXDateTime> list = new ArrayList<GXDateTime>();
         if (reader.isStartElement("ExecutionTime", true)) {
             while (reader.isStartElement("Time", false)) {
@@ -374,12 +347,10 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void save(final GXXmlWriter writer) throws XMLStreamException {
         if (target != null) {
-            writer.writeElementString("ObjectType",
-                    target.getObjectType().getValue());
+            writer.writeElementString("ObjectType", target.getObjectType().getValue());
             writer.writeElementString("LN", target.getLogicalName());
         }
-        writer.writeElementString("ExecutedScriptSelector",
-                executedScriptSelector);
+        writer.writeElementString("ExecutedScriptSelector", executedScriptSelector);
         writer.writeElementString("Type", type.getValue());
         if (executionTime != null) {
             writer.writeStartElement("ExecutionTime");
@@ -400,5 +371,16 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
                 target = t;
             }
         }
+    }
+
+    @Override
+    public String[] getNames() {
+        return new String[] { "Logical Name", "Executed Script Logical Name", "Type",
+                "Execution Time" };
+    }
+
+    @Override
+    public String[] getMethodNames() {
+        return new String[0];
     }
 }

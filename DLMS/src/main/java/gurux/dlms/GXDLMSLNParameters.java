@@ -100,15 +100,20 @@ class GXDLMSLNParameters {
      */
     private long invokeId;
 
-    /// <summary>
-    /// GBT window size.
-    /// </summary>
+    /**
+     * GBT window size.
+     */
     public byte windowSize;
 
-    /// <summary>
-    /// Is GBT streaming used.
-    /// </summary>
+    /**
+     * Is GBT streaming used.
+     */
     public boolean streaming;
+
+    /**
+     * Access mode.
+     */
+    public int accessMode;
 
     /**
      * Constructor.
@@ -132,9 +137,8 @@ class GXDLMSLNParameters {
      */
     GXDLMSLNParameters(final GXDLMSSettings forSettings, final long forInvokeId,
             final int forCommand, final int forCommandType,
-            final GXByteBuffer forAttributeDescriptor,
-            final GXByteBuffer forData, final int forStatus,
-            int forCipheredCommand) {
+            final GXByteBuffer forAttributeDescriptor, final GXByteBuffer forData,
+            final int forStatus, int forCipheredCommand) {
         settings = forSettings;
         invokeId = forInvokeId;
         setBlockIndex(settings.getBlockIndex());
@@ -373,7 +377,6 @@ class GXDLMSLNParameters {
      * @return Is GBT streaming.
      */
     public final boolean isStreaming() {
-        return getStreaming() && (getBlockNumberAck() * getWindowSize())
-                + 1 > getBlockNumber();
+        return getStreaming() && (getBlockNumberAck() * getWindowSize()) + 1 > getBlockNumber();
     }
 }
