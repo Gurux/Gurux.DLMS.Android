@@ -53,8 +53,6 @@ import gurux.dlms.android.R;
  */
 public class GXXmlTranslator extends Fragment {
 
-    private Button toXml;
-    private Button toPdu;
     private EditText pduText;
     private EditText xmlText;
     GXDLMSTranslator translator =
@@ -73,31 +71,18 @@ public class GXXmlTranslator extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_xml_translator, container, false);
-        toXml = (Button) view.findViewById(R.id.toXml);
-        toPdu = (Button) view.findViewById(R.id.toPdu);
-        pduText = (EditText) view.findViewById(R.id.pdu);
-        xmlText = (EditText) view.findViewById(R.id.xml);
+        Button toXml = view.findViewById(R.id.toXml);
+        Button toPdu = view.findViewById(R.id.toPdu);
+        pduText = view.findViewById(R.id.pdu);
+        xmlText = view.findViewById(R.id.xml);
 
-        toXml.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toXml(v);
-            }
-        });
-        toPdu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPdu(v);
-            }
-        });
+        toXml.setOnClickListener(v -> toXml());
+        toPdu.setOnClickListener(v -> toPdu());
         return view;
     }
 
-    /**
+    /*
      * Remove comments
-     *
-     * @param data
-     * @return
      */
     private static String removeComments(final String data) {
         StringBuilder sb = new StringBuilder();
@@ -116,7 +101,7 @@ public class GXXmlTranslator extends Fragment {
     /**
      * Convert XML to PDU.
      */
-    void toPdu(View v) {
+    void toPdu() {
         try {
             //TODO: translator.setHex(hexBtn.getValue());
             String xml = removeComments(xmlText.getText().toString());
@@ -129,7 +114,7 @@ public class GXXmlTranslator extends Fragment {
     /**
      * Convert PDU to XML.
      */
-    void toXml(View v) {
+    void toXml() {
         try {
             //TODO:  translator.setHex(hexBtn.getValue());
             String pdu = removeComments(pduText.getText().toString());

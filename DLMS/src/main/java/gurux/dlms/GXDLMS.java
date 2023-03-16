@@ -61,6 +61,7 @@ import gurux.dlms.ecdsa.GXEcdsa;
 import gurux.dlms.enums.AccessMode3;
 import gurux.dlms.enums.Command;
 import gurux.dlms.enums.Conformance;
+import gurux.dlms.enums.CryptoKeyType;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.ExceptionServiceError;
@@ -622,7 +623,7 @@ abstract class GXDLMS {
     /**
      * Get used ded message.
      * 
-     * @param cmd
+     * @param command
      *            Executed command.
      * @return Integer value of ded message.
      */
@@ -1069,9 +1070,9 @@ abstract class GXDLMS {
         if (!signing) {
             // Association LN V3 and signing is not needed.
             if (p.getSettings().isServer()) {
-                signing = (p.accessMode & AccessMode3.DIGITALLY_SIGNED_RESPONSE.ordinal()) != 0;
+                signing = (p.accessMode & AccessMode3.DIGITALLY_SIGNED_RESPONSE.getValue()) != 0;
             } else {
-                signing = (p.accessMode & AccessMode3.DIGITALLY_SIGNED_REQUEST.ordinal()) != 0;
+                signing = (p.accessMode & AccessMode3.DIGITALLY_SIGNED_REQUEST.getValue()) != 0;
             }
         }
         return signing;
@@ -1125,7 +1126,7 @@ abstract class GXDLMS {
                 key = cipher.getDedicatedKey();
             }
         }
-        AesGcmParameter s = new AesGcmParameter(cmd, cipher.getSecurity(),
+        AesGcmParameter s = new AesGcmParameter(p.getSettings(), cmd, cipher.getSecurity(),
                 cipher.getSecuritySuite(), cipher.getInvocationCounter(), cipher.getSystemTitle(),
                 key, getAuthenticationKey(p.getSettings()));
         s.setIgnoreSystemTitle(p.getSettings().getStandard() == Standard.ITALY);
@@ -1214,8 +1215,12 @@ abstract class GXDLMS {
         PublicKey pub = null;
         if (!sign) {
             // If external Hardware Security Module is used.
-            byte[] ret = p.getSettings().crypt(CertificateType.KEY_AGREEMENT, data, true);
+            byte[] ret = GXCommon.crypt(p.getSettings(), CertificateType.KEY_AGREEMENT, data, true,
+                    CryptoKeyType.ECDSA, 0, c.getSecurity(), c.getSecuritySuite(),
+                    c.getInvocationCounter());
             if (ret != null) {
+                p.getSettings().getCipher().setInvocationCounter(
+                        1 + p.getSettings().getCipher().getInvocationCounter());
                 return ret;
             }
             if (c.getKeyAgreementKeyPair() != null) {
@@ -1512,7 +1517,23 @@ abstract class GXDLMS {
                 key = cipher.getDedicatedKey();
             }
         }
-        AesGcmParameter s = new AesGcmParameter(cmd, cipher.getSecurity(),
+        // If external Hardware Security Module is used.
+        CryptoKeyType keyType;
+        switch (cipher.getSecurity()) {
+        case AUTHENTICATION:
+            keyType = CryptoKeyType.AUTHENTICATION;
+            break;
+        case ENCRYPTION:
+            keyType = CryptoKeyType.BLOCK_CIPHER;
+            break;
+        case AUTHENTICATION_ENCRYPTION:
+            keyType = CryptoKeyType.forValue(CryptoKeyType.AUTHENTICATION.getValue()
+                    | CryptoKeyType.BLOCK_CIPHER.getValue());
+            break;
+        default:
+            throw new IllegalArgumentException("Security");
+        }
+        AesGcmParameter s = new AesGcmParameter(p.getSettings(), cmd, cipher.getSecurity(),
                 cipher.getSecuritySuite(), cipher.getInvocationCounter(), cipher.getSystemTitle(),
                 key, getAuthenticationKey(p.getSettings()));
         byte[] tmp = GXCiphering.encrypt(s, data);
@@ -1745,7 +1766,7 @@ abstract class GXDLMS {
         // If Ciphering is used.
         if (ciphering && p.getCommand() != Command.AARQ && p.getCommand() != Command.AARE) {
             GXICipher cipher = p.getSettings().getCipher();
-            AesGcmParameter s = new AesGcmParameter(getGloMessage(p.getCommand()),
+            AesGcmParameter s = new AesGcmParameter(p.getSettings(), getGloMessage(p.getCommand()),
                     cipher.getSecurity(), cipher.getSecuritySuite(), cipher.getInvocationCounter(),
                     cipher.getSystemTitle(), getBlockCipherKey(p.getSettings()),
                     getAuthenticationKey(p.getSettings()));
