@@ -26,6 +26,7 @@ import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
 import gurux.dlms.manufacturersettings.GXAuthentication;
+import gurux.dlms.manufacturersettings.GXManufacturer;
 import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
 import gurux.serial.GXSerial;
@@ -33,6 +34,7 @@ import gurux.serial.GXSerial;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private GXManufacturerCollection mManufacturers;
 
     GXDevice mDevice = new GXDevice();
 
@@ -40,14 +42,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDevice.setMedia(new GXSerial(this));
-        GXManufacturerCollection mManufacturers = new GXManufacturerCollection();
+        mManufacturers = new GXManufacturerCollection();
         GXManufacturerCollection.readManufacturerSettings(this, mManufacturers);
         if ((mDevice.getManufacturer() == null || mDevice.getManufacturer().equals("")) &&
                 !mManufacturers.isEmpty())
         {
             mDevice.setManufacturer(mManufacturers.get(0).getName());
         }
-        loadSettings();
         ManufacturersViewModel mManufacturersViewModel = new ViewModelProvider(this).get(ManufacturersViewModel.class);
         mManufacturersViewModel.updateManufacturers(mManufacturers);
 
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         MeterSettingsViewModel mMeterSettingsViewModel = new ViewModelProvider(this).get(MeterSettingsViewModel.class);
         mMeterSettingsViewModel.updateManufacturers(mManufacturers);
         mMeterSettingsViewModel.setDevice(mDevice);
+        loadSettings();
 
         MediaViewModel mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
         mediaViewModel.setDevice(mDevice);
@@ -100,7 +102,26 @@ public class MainActivity extends AppCompatActivity {
             mDevice.setWaitTime(s.getInt("waitTime", 5));
             mDevice.setMaximumBaudRate(s.getInt("maximumBaudRate", 0));
             try {
-                mDevice.setAuthentication(new GXAuthentication(s.getString("authentication", "None")));
+                String auth = s.getString("authentication", "None");
+                for(GXManufacturer it : mManufacturers)
+                {
+                    if (it.getIdentification().compareTo(man) == 0)
+                    {
+                        for(GXAuthentication authentication : it.getSettings())
+                        {
+                            if (auth.compareTo(authentication.toString()) == 0)
+                            {
+                                mDevice.setAuthentication(authentication);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (mDevice.getAuthentication() == null)
+                {
+                    mDevice.setAuthentication(new GXAuthentication(auth));
+                }
             }
             catch(Exception ex)
             {
