@@ -14,3 +14,5 @@
 .cxx
 local.properties
 .svn/
+Xamarin/Gurux.DLMS.Client.Example/Gurux.DLMS.Client.Example.csproj.user
+Xamarin/Gurux.DLMS.Client.Example/.vs/
