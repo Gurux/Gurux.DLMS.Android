@@ -500,7 +500,7 @@ public class GXDLMSArrayManager extends GXDLMSObject implements IGXDLMSBase {
                     GXArray arr = (GXArray) GXCommon.getData(settings, bb, info);
                     // Change from to zero-based.
                     --from;
-                    arr.removeRange(from, to);
+                    //TODO: arr.removeRange(from, to);
                     arg.setValue(arr);
                     ((IGXDLMSBase) it.getElement().getTarget()).setValue(settings, arg);
                     found = true;

@@ -33,8 +33,6 @@
 //---------------------------------------------------------------------------
 package gurux.dlms.objects;
 
-import javax.xml.stream.XMLStreamException;
-
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXUInt32;
 import gurux.dlms.ValueEventArgs;

@@ -42,8 +42,6 @@ import java.security.SignatureException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.xml.stream.XMLStreamException;
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -227,14 +225,10 @@ public class GXDLMSMBusDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Last time when ReceivedSignalStrength, LinkStatus, Transmissions,
      * ReceivedFrames or FailedReceivedFrames was changed.
-     * {@link receivedSignalStrength} {@link linkStatus} {@link Transmissions}
-     * {@link receivedFrames} {@link failedReceivedFrames}
      */
     private GXCaptureTime captureTime;
 
     /**
-     * {@link receivedSignalStrength} {@link linkStatus} {@link transmissions}
-     * {@link receivedFrames} {@link failedReceivedFrames}
      *
      * @return Last time when ReceivedSignalStrength, LinkStatus, Transmissions,
      * ReceivedFrames or FailedReceivedFrames was changed.
@@ -244,8 +238,6 @@ public class GXDLMSMBusDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * {@link receivedSignalStrength} {@link linkStatus} {@link transmissions}
-     * {@link receivedFrames} {@link failedReceivedFrames}
      *
      * @param value Last time when ReceivedSignalStrength, LinkStatus,
      *              Transmissions, ReceivedFrames or FailedReceivedFrames was
