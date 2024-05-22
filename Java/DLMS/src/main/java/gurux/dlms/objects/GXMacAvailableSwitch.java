@@ -70,8 +70,7 @@ public class GXMacAvailableSwitch {
     }
 
     /**
-     * @param value
-     *            EUI-48 of the subnetwork.
+     * @param value EUI-48 of the subnetwork.
      */
     public final void setSna(final byte[] value) {
         sna = value;
@@ -85,8 +84,7 @@ public class GXMacAvailableSwitch {
     }
 
     /**
-     * @param value
-     *            SID of this switch.
+     * @param value SID of this switch.
      */
     public final void setLsId(short value) {
         lsId = value;
@@ -100,8 +98,7 @@ public class GXMacAvailableSwitch {
     }
 
     /**
-     * @param value
-     *            Level of this switch in subnetwork hierarchy.
+     * @param value Level of this switch in subnetwork hierarchy.
      */
     public final void setLevel(final byte value) {
         level = value;
@@ -115,8 +112,7 @@ public class GXMacAvailableSwitch {
     }
 
     /**
-     * @param value
-     *            The received signal level for this switch;
+     * @param value The received signal level for this switch;
      */
     public final void setRxLevel(final byte value) {
         rxLevel = value;
@@ -130,8 +126,7 @@ public class GXMacAvailableSwitch {
     }
 
     /**
-     * @param value
-     *            The signal to noise ratio for this switch.
+     * @param value The signal to noise ratio for this switch.
      */
     public final void setRxSnr(final byte value) {
         rxSnr = value;

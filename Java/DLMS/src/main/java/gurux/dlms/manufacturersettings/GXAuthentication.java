@@ -56,10 +56,8 @@ public class GXAuthentication {
     }
 
     @Override
-    public final String toString()
-    {
-        if (name == null || name == "")
-        {
+    public final String toString() {
+        if (name == null || name == "") {
             return getType().toString();
         }
         return name;
@@ -67,29 +65,24 @@ public class GXAuthentication {
 
     /**
      * Constructor.
-     * 
-     * @param forType
-     *            Authentication type
-     * @param forClientAddress
-     *            Client Id.
+     *
+     * @param forType          Authentication type
+     * @param forClientAddress Client Id.
      */
     public GXAuthentication(final Authentication forType,
-            final int forClientAddress) {
+                            final int forClientAddress) {
         this(forType, (byte[]) null, forClientAddress);
     }
 
     /**
      * Constructor.
-     * 
-     * @param forType
-     *            Authentication type
-     * @param pw
-     *            Used password.
-     * @param forClientAddress
-     *            Client Id.
+     *
+     * @param forType          Authentication type
+     * @param pw               Used password.
+     * @param forClientAddress Client Id.
      */
     public GXAuthentication(final Authentication forType, final byte[] pw,
-            final int forClientAddress) {
+                            final int forClientAddress) {
         setType(forType);
         setPassword(pw);
         setClientAddress(forClientAddress);
@@ -97,16 +90,13 @@ public class GXAuthentication {
 
     /**
      * Constructor.
-     * 
-     * @param forType
-     *            Authentication type
-     * @param pw
-     *            Used password.
-     * @param forClientAddress
-     *            Client Id.
+     *
+     * @param forType          Authentication type
+     * @param pw               Used password.
+     * @param forClientAddress Client Id.
      */
     public GXAuthentication(final Authentication forType, final String pw,
-            final int forClientAddress) {
+                            final int forClientAddress) {
         setType(forType);
         try {
             setPassword(pw.getBytes("ASCII"));
@@ -124,8 +114,7 @@ public class GXAuthentication {
     }
 
     /**
-     * @param value
-     *            Authentication type.
+     * @param value Authentication type.
      */
     public final void setType(final Authentication value) {
         type = value;
@@ -139,28 +128,23 @@ public class GXAuthentication {
     }
 
     /**
-     * @param value
-     *            Client address.
+     * @param value Client address.
      */
-    public final void setClientAddress(final int value)
-    {
+    public final void setClientAddress(final int value) {
         clientAddress = value;
     }
 
     /**
      * @return Used password.
      */
-    public final byte[] getPassword()
-    {
+    public final byte[] getPassword() {
         return password;
     }
 
     /**
-     * @param value
-     *            Used password.
+     * @param value Used password.
      */
-    public final void setPassword(final byte[] value)
-    {
+    public final void setPassword(final byte[] value) {
         password = value;
     }
 
@@ -172,8 +156,7 @@ public class GXAuthentication {
     }
 
     /**
-     * @param value
-     *            Authentication name.
+     * @param value Authentication name.
      */
     public void setName(final String value) {
         name = value;

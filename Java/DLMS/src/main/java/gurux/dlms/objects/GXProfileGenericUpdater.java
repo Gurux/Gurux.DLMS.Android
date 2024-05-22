@@ -58,7 +58,7 @@ final class GXProfileGenericUpdater extends Thread {
      * Constructor.
      */
     GXProfileGenericUpdater(final GXDLMSServerBase svr,
-            final GXDLMSProfileGeneric pg) {
+                            final GXDLMSProfileGeneric pg) {
         receivedEvent = new AutoResetEvent(false);
         target = pg;
         server = svr;

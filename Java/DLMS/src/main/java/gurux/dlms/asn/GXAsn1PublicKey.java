@@ -62,9 +62,8 @@ public class GXAsn1PublicKey {
 
     /**
      * Constructor for RSA Public Key (PKCS#1). This is read from PEM file.
-     * 
-     * @param data
-     *            (PKCS#1) Public key.
+     *
+     * @param data (PKCS#1) Public key.
      */
     public GXAsn1PublicKey(final GXAsn1BitString data) {
         if (data == null) {
@@ -73,14 +72,13 @@ public class GXAsn1PublicKey {
         GXAsn1Sequence seq =
                 (GXAsn1Sequence) GXAsn1Converter.fromByteArray(data.getValue());
         init(GXAsn1Converter
-                .toByteArray(new Object[] { seq.get(0), seq.get(1) }));
+                .toByteArray(new Object[]{seq.get(0), seq.get(1)}));
     }
 
     /**
      * Constructor
-     * 
-     * @param key
-     *            Public key.
+     *
+     * @param key Public key.
      */
     public GXAsn1PublicKey(final byte[] key) {
         init(key);

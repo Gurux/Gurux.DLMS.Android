@@ -87,8 +87,7 @@ public class GXxDLMSContextType {
     }
 
     /**
-     * @param value
-     *            Conformance
+     * @param value Conformance
      */
     public final void setConformance(final Set<Conformance> value) {
         conformance = value;

@@ -32,7 +32,7 @@ final class TranslatorStandardTags {
      * Get general tags.
      */
     static void getGeneralTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                               final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.SNRM, "Snrm");
         GXDLMSTranslator.addTag(list, Command.UNACCEPTABLE_FRAME,
                 "UnacceptableFrame");
@@ -145,7 +145,7 @@ final class TranslatorStandardTags {
      * Get SN tags.
      */
     static void getSnTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                          final HashMap<Integer, String> list) {
         list.put(Command.READ_REQUEST, "readRequest");
         list.put(Command.WRITE_REQUEST, "writeRequest");
         list.put(Command.WRITE_RESPONSE, "writeResponse");
@@ -184,7 +184,7 @@ final class TranslatorStandardTags {
      * Get LN tags.
      */
     static void getLnTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                          final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.GET_REQUEST, "get-request");
         list.put(Command.GET_REQUEST << 8 | GetCommandType.NORMAL,
                 "get-request-normal");
@@ -315,7 +315,7 @@ final class TranslatorStandardTags {
      * Get glo tags.
      */
     static void getGloTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                           final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.GLO_INITIATE_REQUEST,
                 "glo-initiate-request");
         GXDLMSTranslator.addTag(list, Command.GLO_INITIATE_RESPONSE,
@@ -350,7 +350,7 @@ final class TranslatorStandardTags {
      * Get ded tags.
      */
     static void getDedTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                           final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.DED_INITIATE_REQUEST,
                 "ded-initiate-request");
         GXDLMSTranslator.addTag(list, Command.DED_INITIATE_RESPONSE,
@@ -375,7 +375,7 @@ final class TranslatorStandardTags {
      * Get translator tags.
      */
     static void getTranslatorTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                                  final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, TranslatorTags.WRAPPER, "Wrapper");
         GXDLMSTranslator.addTag(list, TranslatorTags.HDLC, "Hdlc");
         GXDLMSTranslator.addTag(list, TranslatorTags.PDU_DLMS, "xDLMS-APDU");
@@ -555,57 +555,57 @@ final class TranslatorStandardTags {
     static String errorCodeToString(final ErrorCode value) {
         String str;
         switch (value) {
-        case ACCESS_VIOLATED:
-            str = "scope-of-access-violated";
-            break;
-        case DATA_BLOCK_NUMBER_INVALID:
-            str = "data-block-number-invalid";
-            break;
-        case DATA_BLOCK_UNAVAILABLE:
-            str = "data-block-unavailable";
-            break;
-        case HARDWARE_FAULT:
-            str = "hardware-fault";
-            break;
-        case INCONSISTENT_CLASS:
-            str = "object-class-inconsistent";
-            break;
-        case LONG_GET_OR_READ_ABORTED:
-            str = "long-get-aborted";
-            break;
-        case LONG_SET_OR_WRITE_ABORTED:
-            str = "long-set-aborted";
-            break;
-        case NO_LONG_GET_OR_READ_IN_PROGRESS:
-            str = "no-long-get-in-progress";
-            break;
-        case NO_LONG_SET_OR_WRITE_IN_PROGRESS:
-            str = "no-long-set-in-progress";
-            break;
-        case OK:
-            str = "success";
-            break;
-        case OTHER_REASON:
-            str = "other-reason";
-            break;
-        case READ_WRITE_DENIED:
-            str = "read-write-denied";
-            break;
-        case TEMPORARY_FAILURE:
-            str = "temporary-failure";
-            break;
-        case UNAVAILABLE_OBJECT:
-            str = "object-unavailable";
-            break;
-        case UNDEFINED_OBJECT:
-            str = "object-undefined";
-            break;
-        case UNMATCHED_TYPE:
-            str = "type-unmatched";
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Error code: " + String.valueOf(value));
+            case ACCESS_VIOLATED:
+                str = "scope-of-access-violated";
+                break;
+            case DATA_BLOCK_NUMBER_INVALID:
+                str = "data-block-number-invalid";
+                break;
+            case DATA_BLOCK_UNAVAILABLE:
+                str = "data-block-unavailable";
+                break;
+            case HARDWARE_FAULT:
+                str = "hardware-fault";
+                break;
+            case INCONSISTENT_CLASS:
+                str = "object-class-inconsistent";
+                break;
+            case LONG_GET_OR_READ_ABORTED:
+                str = "long-get-aborted";
+                break;
+            case LONG_SET_OR_WRITE_ABORTED:
+                str = "long-set-aborted";
+                break;
+            case NO_LONG_GET_OR_READ_IN_PROGRESS:
+                str = "no-long-get-in-progress";
+                break;
+            case NO_LONG_SET_OR_WRITE_IN_PROGRESS:
+                str = "no-long-set-in-progress";
+                break;
+            case OK:
+                str = "success";
+                break;
+            case OTHER_REASON:
+                str = "other-reason";
+                break;
+            case READ_WRITE_DENIED:
+                str = "read-write-denied";
+                break;
+            case TEMPORARY_FAILURE:
+                str = "temporary-failure";
+                break;
+            case UNAVAILABLE_OBJECT:
+                str = "object-unavailable";
+                break;
+            case UNDEFINED_OBJECT:
+                str = "object-undefined";
+                break;
+            case UNMATCHED_TYPE:
+                str = "type-unmatched";
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Error code: " + String.valueOf(value));
         }
         return str;
     }
@@ -770,38 +770,37 @@ final class TranslatorStandardTags {
     }
 
     static String getServiceErrorValue(final ServiceError error,
-            final byte value) {
+                                       final byte value) {
         switch (error) {
-        case APPLICATION_REFERENCE:
-            return getApplicationReference()
-                    .get(ApplicationReference.forValue(value));
-        case HARDWARE_RESOURCE:
-            return getHardwareResource().get(HardwareResource.forValue(value));
-        case VDE_STATE_ERROR:
-            return getVdeStateError().get(VdeStateError.forValue(value));
-        case SERVICE:
-            return getService().get(Service.forValue(value));
-        case DEFINITION:
-            return getDefinition().get(Definition.forValue(value));
-        case ACCESS:
-            return getAccess().get(Access.forValue(value));
-        case INITIATE:
-            return getInitiate().get(Initiate.forValue(value));
-        case LOAD_DATASET:
-            return getLoadDataSet().get(LoadDataSet.forValue(value));
-        case TASK:
-            return getTask().get(Task.forValue(value));
-        case OTHER_ERROR:
-            return String.valueOf(value);
-        default:
-            break;
+            case APPLICATION_REFERENCE:
+                return getApplicationReference()
+                        .get(ApplicationReference.forValue(value));
+            case HARDWARE_RESOURCE:
+                return getHardwareResource().get(HardwareResource.forValue(value));
+            case VDE_STATE_ERROR:
+                return getVdeStateError().get(VdeStateError.forValue(value));
+            case SERVICE:
+                return getService().get(Service.forValue(value));
+            case DEFINITION:
+                return getDefinition().get(Definition.forValue(value));
+            case ACCESS:
+                return getAccess().get(Access.forValue(value));
+            case INITIATE:
+                return getInitiate().get(Initiate.forValue(value));
+            case LOAD_DATASET:
+                return getLoadDataSet().get(LoadDataSet.forValue(value));
+            case TASK:
+                return getTask().get(Task.forValue(value));
+            case OTHER_ERROR:
+                return String.valueOf(value);
+            default:
+                break;
         }
         return "";
     }
 
     /**
-     * @param error
-     *            Service error enumeration value.
+     * @param error Service error enumeration value.
      * @return Service error standard XML tag.
      */
     static String serviceErrorToString(final ServiceError error) {
@@ -809,8 +808,7 @@ final class TranslatorStandardTags {
     }
 
     /**
-     * @param value
-     *            Service error standard XML tag.
+     * @param value Service error standard XML tag.
      * @return Service error enumeration value.
      */
     static ServiceError getServiceError(final String value) {
@@ -958,38 +956,38 @@ final class TranslatorStandardTags {
     static byte getError(final ServiceError serviceError, final String value) {
         int ret = 0;
         switch (serviceError) {
-        case APPLICATION_REFERENCE:
-            ret = getApplicationReference(value);
-            break;
-        case HARDWARE_RESOURCE:
-            ret = getHardwareResource(value);
-            break;
-        case VDE_STATE_ERROR:
-            ret = getVdeStateError(value);
-            break;
-        case SERVICE:
-            ret = getService(value);
-            break;
-        case DEFINITION:
-            ret = getDefinition(value);
-            break;
-        case ACCESS:
-            ret = getAccess(value);
-            break;
-        case INITIATE:
-            ret = getInitiate(value);
-            break;
-        case LOAD_DATASET:
-            ret = getLoadDataSet(value);
-            break;
-        case TASK:
-            ret = getTask(value);
-            break;
-        case OTHER_ERROR:
-            ret = Integer.parseInt(value);
-            break;
-        default:
-            break;
+            case APPLICATION_REFERENCE:
+                ret = getApplicationReference(value);
+                break;
+            case HARDWARE_RESOURCE:
+                ret = getHardwareResource(value);
+                break;
+            case VDE_STATE_ERROR:
+                ret = getVdeStateError(value);
+                break;
+            case SERVICE:
+                ret = getService(value);
+                break;
+            case DEFINITION:
+                ret = getDefinition(value);
+                break;
+            case ACCESS:
+                ret = getAccess(value);
+                break;
+            case INITIATE:
+                ret = getInitiate(value);
+                break;
+            case LOAD_DATASET:
+                ret = getLoadDataSet(value);
+                break;
+            case TASK:
+                ret = getTask(value);
+                break;
+            case OTHER_ERROR:
+                ret = Integer.parseInt(value);
+                break;
+            default:
+                break;
         }
         return (byte) ret;
     }
@@ -997,80 +995,80 @@ final class TranslatorStandardTags {
     static String conformancetoString(final Conformance value) {
         String str;
         switch (value) {
-        case ACCESS:
-            str = "access";
-            break;
-        case ACTION:
-            str = "action";
-            break;
-        case ATTRIBUTE_0_SUPPORTED_WITH_GET:
-            str = "attribute0-supported-with-get";
-            break;
-        case ATTRIBUTE_0_SUPPORTED_WITH_SET:
-            str = "attribute0-supported-with-set";
-            break;
-        case BLOCK_TRANSFER_WITH_ACTION:
-            str = "block-transfer-with-action";
-            break;
-        case BLOCK_TRANSFER_WITH_GET_OR_READ:
-            str = "block-transfer-with-get-or-read";
-            break;
-        case BLOCK_TRANSFER_WITH_SET_OR_WRITE:
-            str = "block-transfer-with-set-or-write";
-            break;
-        case DATA_NOTIFICATION:
-            str = "data-notification";
-            break;
-        case EVENT_NOTIFICATION:
-            str = "event-notification";
-            break;
-        case GENERAL_BLOCK_TRANSFER:
-            str = "general-block-transfer";
-            break;
-        case GENERAL_PROTECTION:
-            str = "general-protection";
-            break;
-        case GET:
-            str = "get";
-            break;
-        case INFORMATION_REPORT:
-            str = "information-report";
-            break;
-        case MULTIPLE_REFERENCES:
-            str = "multiple-references";
-            break;
-        case PARAMETERIZED_ACCESS:
-            str = "parameterized-access";
-            break;
-        case PRIORITY_MGMT_SUPPORTED:
-            str = "priority-mgmt-supported";
-            break;
-        case READ:
-            str = "read";
-            break;
-        case RESERVED_SEVEN:
-            str = "reserved-seven";
-            break;
-        case DELTA_VALUE_ENCODING:
-            str = "delta-value-encoding";
-            break;
-        case RESERVED_ZERO:
-            str = "reserved-zero";
-            break;
-        case SELECTIVE_ACCESS:
-            str = "selective-access";
-            break;
-        case SET:
-            str = "set";
-            break;
-        case UN_CONFIRMED_WRITE:
-            str = "unconfirmed-write";
-            break;
-        case WRITE:
-            str = "write";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case ACCESS:
+                str = "access";
+                break;
+            case ACTION:
+                str = "action";
+                break;
+            case ATTRIBUTE_0_SUPPORTED_WITH_GET:
+                str = "attribute0-supported-with-get";
+                break;
+            case ATTRIBUTE_0_SUPPORTED_WITH_SET:
+                str = "attribute0-supported-with-set";
+                break;
+            case BLOCK_TRANSFER_WITH_ACTION:
+                str = "block-transfer-with-action";
+                break;
+            case BLOCK_TRANSFER_WITH_GET_OR_READ:
+                str = "block-transfer-with-get-or-read";
+                break;
+            case BLOCK_TRANSFER_WITH_SET_OR_WRITE:
+                str = "block-transfer-with-set-or-write";
+                break;
+            case DATA_NOTIFICATION:
+                str = "data-notification";
+                break;
+            case EVENT_NOTIFICATION:
+                str = "event-notification";
+                break;
+            case GENERAL_BLOCK_TRANSFER:
+                str = "general-block-transfer";
+                break;
+            case GENERAL_PROTECTION:
+                str = "general-protection";
+                break;
+            case GET:
+                str = "get";
+                break;
+            case INFORMATION_REPORT:
+                str = "information-report";
+                break;
+            case MULTIPLE_REFERENCES:
+                str = "multiple-references";
+                break;
+            case PARAMETERIZED_ACCESS:
+                str = "parameterized-access";
+                break;
+            case PRIORITY_MGMT_SUPPORTED:
+                str = "priority-mgmt-supported";
+                break;
+            case READ:
+                str = "read";
+                break;
+            case RESERVED_SEVEN:
+                str = "reserved-seven";
+                break;
+            case DELTA_VALUE_ENCODING:
+                str = "delta-value-encoding";
+                break;
+            case RESERVED_ZERO:
+                str = "reserved-zero";
+                break;
+            case SELECTIVE_ACCESS:
+                str = "selective-access";
+                break;
+            case SET:
+                str = "set";
+                break;
+            case UN_CONFIRMED_WRITE:
+                str = "unconfirmed-write";
+                break;
+            case WRITE:
+                str = "write";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }
@@ -1132,26 +1130,26 @@ final class TranslatorStandardTags {
     }
 
     static String
-            releaseResponseReasonToString(final ReleaseResponseReason value) {
+    releaseResponseReasonToString(final ReleaseResponseReason value) {
         String str;
         switch (value) {
-        case NORMAL:
-            str = "normal";
-            break;
-        case NOT_FINISHED:
-            str = "not-finished";
-            break;
-        case USER_DEFINED:
-            str = "user-defined";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case NORMAL:
+                str = "normal";
+                break;
+            case NOT_FINISHED:
+                str = "not-finished";
+                break;
+            case USER_DEFINED:
+                str = "user-defined";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }
 
     static ReleaseResponseReason
-            valueOfReleaseResponseReason(final String value) {
+    valueOfReleaseResponseReason(final String value) {
         ReleaseResponseReason ret;
         if ("normal".equalsIgnoreCase(value)) {
             ret = ReleaseResponseReason.NORMAL;
@@ -1166,26 +1164,26 @@ final class TranslatorStandardTags {
     }
 
     static String
-            releaseRequestReasonToString(final ReleaseRequestReason value) {
+    releaseRequestReasonToString(final ReleaseRequestReason value) {
         String str;
         switch (value) {
-        case NORMAL:
-            str = "normal";
-            break;
-        case URGENT:
-            str = "not-finished";
-            break;
-        case USER_DEFINED:
-            str = "user-defined";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case NORMAL:
+                str = "normal";
+                break;
+            case URGENT:
+                str = "not-finished";
+                break;
+            case USER_DEFINED:
+                str = "user-defined";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }
 
     static ReleaseRequestReason
-            valueOfReleaseRequestReason(final String value) {
+    valueOfReleaseRequestReason(final String value) {
         ReleaseRequestReason ret;
         if ("normal".equalsIgnoreCase(value)) {
             ret = ReleaseRequestReason.NORMAL;
@@ -1201,52 +1199,49 @@ final class TranslatorStandardTags {
 
     /**
      * Gets state error description.
-     * 
-     * @param error
-     *            State error enumerator value.
+     *
+     * @param error State error enumerator value.
      * @return State error as an string.
      */
     static String stateErrorToString(final ExceptionStateError error) {
         switch (error) {
-        case SERVICE_NOT_ALLOWED:
-            return "service-not-allowed";
-        case SERVICE_UNKNOWN:
-            return "service-unknown";
-        default:
-            throw new IllegalArgumentException();
+            case SERVICE_NOT_ALLOWED:
+                return "service-not-allowed";
+            case SERVICE_UNKNOWN:
+                return "service-unknown";
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     /**
      * Gets service error description.
-     * 
-     * @param error
-     *            Service error enumerator value.
+     *
+     * @param error Service error enumerator value.
      * @return Service error as an string.
      */
     static String
-            exceptionServiceErrorToString(final ExceptionServiceError error) {
+    exceptionServiceErrorToString(final ExceptionServiceError error) {
         switch (error) {
-        case OPERATION_NOT_POSSIBLE:
-            return "operation-not-possible";
-        case SERVICE_NOT_SUPPORTED:
-            return "service-not-supported";
-        case OTHER_REASON:
-            return "other-reason";
-        case PDU_TOO_LONG:
-            return "pdu-too-long";
-        case DECIPHERING_ERROR:
-            return "deciphering-error";
-        case INVOCATION_COUNTER_ERROR:
-            return "invocation-counter-error";
-        default:
-            throw new IllegalArgumentException();
+            case OPERATION_NOT_POSSIBLE:
+                return "operation-not-possible";
+            case SERVICE_NOT_SUPPORTED:
+                return "service-not-supported";
+            case OTHER_REASON:
+                return "other-reason";
+            case PDU_TOO_LONG:
+                return "pdu-too-long";
+            case DECIPHERING_ERROR:
+                return "deciphering-error";
+            case INVOCATION_COUNTER_ERROR:
+                return "invocation-counter-error";
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     /**
-     * @param value
-     *            State error string value.
+     * @param value State error string value.
      * @return State error enum value.
      */
     static ExceptionStateError valueofStateError(final String value) {
@@ -1260,12 +1255,11 @@ final class TranslatorStandardTags {
     }
 
     /**
-     * @param value
-     *            Service error string value.
+     * @param value Service error string value.
      * @return Service error enum value.
      */
     static ExceptionServiceError
-            valueOfExceptionServiceError(final String value) {
+    valueOfExceptionServiceError(final String value) {
         if ("operation-not-possible".equalsIgnoreCase(value)) {
             return ExceptionServiceError.OPERATION_NOT_POSSIBLE;
         }

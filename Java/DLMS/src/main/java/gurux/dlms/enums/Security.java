@@ -94,20 +94,20 @@ public enum Security {
         String str;
         Security value = Security.forValue(getValue());
         switch (value) {
-        case NONE:
-            str = "NONE";
-            break;
-        case AUTHENTICATION:
-            str = "AUTHENTICATION";
-            break;
-        case ENCRYPTION:
-            str = "ENCRYPTION";
-            break;
-        case AUTHENTICATION_ENCRYPTION:
-            str = "AUTHENTICATION_ENCRYPTION";
-            break;
-        default:
-            throw new IllegalArgumentException("Security");
+            case NONE:
+                str = "NONE";
+                break;
+            case AUTHENTICATION:
+                str = "AUTHENTICATION";
+                break;
+            case ENCRYPTION:
+                str = "ENCRYPTION";
+                break;
+            case AUTHENTICATION_ENCRYPTION:
+                str = "AUTHENTICATION_ENCRYPTION";
+                break;
+            default:
+                throw new IllegalArgumentException("Security");
         }
         return str;
     }

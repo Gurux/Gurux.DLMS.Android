@@ -78,9 +78,8 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSSchedule(final String ln) {
         this(ln, 0);
@@ -88,11 +87,9 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSSchedule(final String ln, final int sn) {
         super(ObjectType.SCHEDULE, ln, sn);
@@ -101,7 +98,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Specifies the scripts to be executed at given times.
-     * 
+     *
      * @return List of executed schedule entries.
      */
     public final List<GXDLMSScheduleEntry> getEntries() {
@@ -110,9 +107,8 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Specifies the scripts to be executed at given times.
-     * 
-     * @param value
-     *            List of executed schedule entries.
+     *
+     * @param value List of executed schedule entries.
      */
     public final void setEntries(final List<GXDLMSScheduleEntry> value) {
         entries = value;
@@ -120,31 +116,22 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), entries };
+        return new Object[]{getLogicalName(), entries};
     }
 
     /**
      * Add entry to entries list.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param entry
-     *            Schedule entry.
+     *
+     * @param client DLMS client.
+     * @param entry  Schedule entry.
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] insert(final GXDLMSClient client, final GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -157,26 +144,17 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Remove entry from entries list.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param entry
-     *            Schedule entry.
+     *
+     * @param client DLMS client.
+     * @param entry  Schedule entry.
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] delete(GXDLMSClient client, GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -195,26 +173,17 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Enable entry from entries list.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param entry
-     *            Schedule entries.
+     *
+     * @param client DLMS client.
+     * @param entry  Schedule entries.
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] enable(GXDLMSClient client, GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -235,26 +204,17 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Disable entry from entries list.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param entry
-     *            Schedule entries.
+     *
+     * @param client DLMS client.
+     * @param entry  Schedule entries.
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] disable(GXDLMSClient client, GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -312,30 +272,30 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        // Enable/disable entry
-        case 1: {
-            enableDisable((java.util.ArrayList<?>) e.getParameters());
-        }
-            break;
-        // Insert entry
-        case 2:
-            GXDLMSScheduleEntry entry =
-                    createEntry(settings, (java.util.ArrayList<?>) e.getParameters());
-            removeEntry(entry.getIndex());
-            entries.add(entry);
-            break;
-        // Delete entry
-        case 3: {
-            java.util.ArrayList<?> tmp = (java.util.ArrayList<?>) e.getParameters();
-            for (int index = ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1))
-                    .intValue(); ++index) {
-                removeEntry(index);
+            // Enable/disable entry
+            case 1: {
+                enableDisable((java.util.ArrayList<?>) e.getParameters());
             }
-        }
             break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
+            // Insert entry
+            case 2:
+                GXDLMSScheduleEntry entry =
+                        createEntry(settings, (java.util.ArrayList<?>) e.getParameters());
+                removeEntry(entry.getIndex());
+                entries.add(entry);
+                break;
+            // Delete entry
+            case 3: {
+                java.util.ArrayList<?> tmp = (java.util.ArrayList<?>) e.getParameters();
+                for (int index = ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1))
+                        .intValue(); ++index) {
+                    removeEntry(index);
+                }
+            }
             break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -386,7 +346,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
     }
 
     private void addEntry(final GXDLMSSettings settings, final GXDLMSScheduleEntry it,
-            GXByteBuffer data) {
+                          GXByteBuffer data) {
         data.setUInt8(DataType.STRUCTURE.getValue());
         data.setUInt8(10);
         // Add index.
@@ -399,7 +359,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
         data.setUInt8(DataType.OCTET_STRING.getValue());
         data.setUInt8(6);
         if (it.getLogicalName() == null) {
-            data.set(new byte[] { 0, 0, 0, 0, 0, 0 });
+            data.set(new byte[]{0, 0, 0, 0, 0, 0});
         } else {
             data.set(GXCommon.logicalNameToBytes(it.getLogicalName()));
         }
@@ -536,11 +496,11 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Entries" };
+        return new String[]{"Logical Name", "Entries"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Enable/disable", "Insert", "Delete" };
+        return new String[]{"Enable/disable", "Insert", "Delete"};
     }
 }

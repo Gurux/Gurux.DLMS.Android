@@ -86,9 +86,8 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSClock(final String ln) {
         this(ln, 0);
@@ -96,11 +95,9 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSClock(final String ln, final int sn) {
         super(ObjectType.CLOCK, ln, sn);
@@ -131,24 +128,21 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Time of COSEM Clock object.
+     * @param value Time of COSEM Clock object.
      */
     public final void setTime(final GXDateTime value) {
         time = value;
     }
 
     /**
-     * @param value
-     *            Time of COSEM Clock object.
+     * @param value Time of COSEM Clock object.
      */
     public final void setTime(final Date value) {
         time = new GXDateTime(value);
     }
 
     /**
-     * @param value
-     *            Time of COSEM Clock object.
+     * @param value Time of COSEM Clock object.
      */
     public final void setTime(final java.util.Calendar value) {
         time = new GXDateTime(value.getTime());
@@ -162,8 +156,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            TimeZone of COSEM Clock object.
+     * @param value TimeZone of COSEM Clock object.
      */
     public final void setTimeZone(final int value) {
         timeZone = value;
@@ -177,8 +170,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Status of COSEM Clock object.
+     * @param value Status of COSEM Clock object.
      */
     public final void setStatus(final java.util.Set<ClockStatus> value) {
         status = value;
@@ -224,8 +216,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Clock base of COSEM Clock object.
+     * @param value Clock base of COSEM Clock object.
      */
     public final void setClockBase(final ClockBase value) {
         clockBase = value;
@@ -233,8 +224,8 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getTime(), getTimeZone(), getStatus(), getBegin(),
-                getEnd(), getDeviation(), getEnabled(), getClockBase() };
+        return new Object[]{getLogicalName(), getTime(), getTimeZone(), getStatus(), getBegin(),
+                getEnd(), getDeviation(), getEnabled(), getClockBase()};
     }
 
     /**
@@ -383,7 +374,7 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
      * validity_interval within which the new time can be activated.
      */
     public final byte[][] presetAdjustingTime(final GXDLMSClient client, final Date presetTime,
-            final Date validityIntervalStart, final Date validityIntervalEnd)
+                                              final Date validityIntervalStart, final Date validityIntervalEnd)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -474,26 +465,26 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-            return DataType.OCTET_STRING;
-        case 3:
-            return DataType.INT16;
-        case 4:
-            return DataType.UINT8;
-        case 5:
-            return DataType.OCTET_STRING;
-        case 6:
-            return DataType.OCTET_STRING;
-        case 7:
-            return DataType.INT8;
-        case 8:
-            return DataType.BOOLEAN;
-        case 9:
-            return DataType.ENUM;
-        default:
-            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+                return DataType.OCTET_STRING;
+            case 3:
+                return DataType.INT16;
+            case 4:
+                return DataType.UINT8;
+            case 5:
+                return DataType.OCTET_STRING;
+            case 6:
+                return DataType.OCTET_STRING;
+            case 7:
+                return DataType.INT8;
+            case 8:
+                return DataType.BOOLEAN;
+            case 9:
+                return DataType.ENUM;
+            default:
+                throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -503,27 +494,27 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return getTime();
-        case 3:
-            return getTimeZone();
-        case 4:
-            return ClockStatus.toInteger(status);
-        case 5:
-            return getBegin();
-        case 6:
-            return getEnd();
-        case 7:
-            return getDeviation();
-        case 8:
-            return getEnabled();
-        case 9:
-            return getClockBase().ordinal();
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return getTime();
+            case 3:
+                return getTimeZone();
+            case 4:
+                return ClockStatus.toInteger(status);
+            case 5:
+                return getBegin();
+            case 6:
+                return getEnd();
+            case 7:
+                return getDeviation();
+            case 8:
+                return getEnabled();
+            case 9:
+                return getClockBase().ordinal();
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -534,87 +525,87 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            if (e.getValue() == null) {
-                setTime(new GXDateTime());
-            } else {
-                GXDateTime tmp;
-                if (e.getValue() instanceof byte[]) {
-                    tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                            DataType.DATETIME, e.getSettings());
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                if (e.getValue() == null) {
+                    setTime(new GXDateTime());
                 } else {
-                    tmp = (GXDateTime) e.getValue();
+                    GXDateTime tmp;
+                    if (e.getValue() instanceof byte[]) {
+                        tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                                DataType.DATETIME, e.getSettings());
+                    } else {
+                        tmp = (GXDateTime) e.getValue();
+                    }
+                    setTime(tmp);
                 }
-                setTime(tmp);
-            }
-            break;
-        case 3:
-            if (e.getValue() == null) {
-                setTimeZone(0);
-            } else {
-                setTimeZone(((Number) e.getValue()).intValue());
-            }
-            break;
-        case 4:
-            if (e.getValue() == null) {
-                Set<ClockStatus> val = new HashSet<ClockStatus>();
-                val.add(ClockStatus.OK);
-                setStatus(val);
-            } else {
-                setStatus(ClockStatus.forValue(((Number) e.getValue()).intValue()));
-            }
-            break;
-        case 5:
-            if (e.getValue() == null) {
-                setBegin(new GXDateTime());
-            } else if (e.getValue() instanceof byte[]) {
-                GXDateTime tmp;
-                tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
-                        e.getSettings());
-                setBegin(tmp);
-            } else {
-                setBegin((GXDateTime) e.getValue());
-            }
-            break;
-        case 6:
-            if (e.getValue() == null) {
-                setEnd(new GXDateTime());
-            } else if (e.getValue() instanceof byte[]) {
-                GXDateTime tmp;
-                tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
-                        e.getSettings());
-                setEnd(tmp);
-            } else {
-                setEnd((GXDateTime) e.getValue());
-            }
-            break;
-        case 7:
-            if (e.getValue() == null) {
-                setDeviation(0);
-            } else {
-                setDeviation(((Number) e.getValue()).intValue());
-            }
-            break;
-        case 8:
-            if (e.getValue() == null) {
-                setEnabled(false);
-            } else {
-                setEnabled(((Boolean) e.getValue()).booleanValue());
-            }
-            break;
-        case 9:
-            if (e.getValue() == null) {
-                setClockBase(ClockBase.NONE);
-            } else {
-                setClockBase(ClockBase.values()[((Number) e.getValue()).intValue()]);
-            }
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+                break;
+            case 3:
+                if (e.getValue() == null) {
+                    setTimeZone(0);
+                } else {
+                    setTimeZone(((Number) e.getValue()).intValue());
+                }
+                break;
+            case 4:
+                if (e.getValue() == null) {
+                    Set<ClockStatus> val = new HashSet<ClockStatus>();
+                    val.add(ClockStatus.OK);
+                    setStatus(val);
+                } else {
+                    setStatus(ClockStatus.forValue(((Number) e.getValue()).intValue()));
+                }
+                break;
+            case 5:
+                if (e.getValue() == null) {
+                    setBegin(new GXDateTime());
+                } else if (e.getValue() instanceof byte[]) {
+                    GXDateTime tmp;
+                    tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
+                            e.getSettings());
+                    setBegin(tmp);
+                } else {
+                    setBegin((GXDateTime) e.getValue());
+                }
+                break;
+            case 6:
+                if (e.getValue() == null) {
+                    setEnd(new GXDateTime());
+                } else if (e.getValue() instanceof byte[]) {
+                    GXDateTime tmp;
+                    tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(), DataType.DATETIME,
+                            e.getSettings());
+                    setEnd(tmp);
+                } else {
+                    setEnd((GXDateTime) e.getValue());
+                }
+                break;
+            case 7:
+                if (e.getValue() == null) {
+                    setDeviation(0);
+                } else {
+                    setDeviation(((Number) e.getValue()).intValue());
+                }
+                break;
+            case 8:
+                if (e.getValue() == null) {
+                    setEnabled(false);
+                } else {
+                    setEnabled(((Boolean) e.getValue()).booleanValue());
+                }
+                break;
+            case 9:
+                if (e.getValue() == null) {
+                    setClockBase(ClockBase.NONE);
+                } else {
+                    setClockBase(ClockBase.values()[((Number) e.getValue()).intValue()]);
+                }
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -649,13 +640,13 @@ public class GXDLMSClock extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Time", "Time Zone", "Status", "Begin", "End",
-                "Deviation", "Enabled", "Clock Base" };
+        return new String[]{"Logical Name", "Time", "Time Zone", "Status", "Begin", "End",
+                "Deviation", "Enabled", "Clock Base"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Adjust to quarter", "Adjust to measuring period", "Adjust to minute",
-                "Adjust to preset time", "Preset adjusting time", "Shift time" };
+        return new String[]{"Adjust to quarter", "Adjust to measuring period", "Adjust to minute",
+                "Adjust to preset time", "Preset adjusting time", "Shift time"};
     }
 }

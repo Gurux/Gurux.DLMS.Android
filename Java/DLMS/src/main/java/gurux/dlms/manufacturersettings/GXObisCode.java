@@ -61,13 +61,10 @@ public class GXObisCode {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical name.
-     * @param type
-     *            Object type.
-     * @param index
-     *            Attribute index.
+     *
+     * @param ln    Logical name.
+     * @param type  Object type.
+     * @param index Attribute index.
      */
     public GXObisCode(final String ln, final ObjectType type, final int index) {
         setLogicalName(ln);
@@ -77,16 +74,13 @@ public class GXObisCode {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical name.
-     * @param type
-     *            Object type.
-     * @param desc
-     *            Object description.
+     *
+     * @param ln   Logical name.
+     * @param type Object type.
+     * @param desc Object description.
      */
     public GXObisCode(final String ln, final ObjectType type,
-            final String desc) {
+                      final String desc) {
         setLogicalName(ln);
         setObjectType(type);
         setDescription(desc);
@@ -100,8 +94,7 @@ public class GXObisCode {
     }
 
     /**
-     * @param value
-     *            Attribute index.
+     * @param value Attribute index.
      */
     public final void setAttributeIndex(final int value) {
         attributeIndex = value;
@@ -115,8 +108,7 @@ public class GXObisCode {
     }
 
     /**
-     * @param value
-     *            Logical name of the OBIS item.
+     * @param value Logical name of the OBIS item.
      */
     public final void setLogicalName(final String value) {
         logicalName = value;
@@ -130,8 +122,7 @@ public class GXObisCode {
     }
 
     /**
-     * @param value
-     *            Description of the OBIS item.
+     * @param value Description of the OBIS item.
      */
     public final void setDescription(final String value) {
         description = value;
@@ -145,8 +136,7 @@ public class GXObisCode {
     }
 
     /**
-     * @param value
-     *            Object type.
+     * @param value Object type.
      */
     public final void setObjectType(final ObjectType value) {
         objectType = value;
@@ -160,8 +150,7 @@ public class GXObisCode {
     }
 
     /**
-     * @param value
-     *            Version number.
+     * @param value Version number.
      */
     public final void setVersion(final int value) {
         version = value;
@@ -175,8 +164,7 @@ public class GXObisCode {
     }
 
     /**
-     * @param value
-     *            Object attributes collection.
+     * @param value Object attributes collection.
      */
     public final void setAttributes(final GXAttributeCollection value) {
         attributes = value;

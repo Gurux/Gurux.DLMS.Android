@@ -3,6 +3,7 @@ package gurux.dlms;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,8 +55,7 @@ public class GXDLMSConverter {
     /**
      * Constructor.
      *
-     * @param value
-     *            Used standard.
+     * @param value Used standard.
      */
     public GXDLMSConverter(Standard value) {
         standard = value;
@@ -68,8 +68,7 @@ public class GXDLMSConverter {
     public static boolean isFirstRun(final Context context) {
         File dir = context.getFilesDir();
         String[] files = dir.list();
-        if (files != null)
-        {
+        if (files != null) {
             for (String it : files) {
                 if (it.equalsIgnoreCase("obiscodes.txt")) {
                     return false;
@@ -85,8 +84,7 @@ public class GXDLMSConverter {
      * @param context Context.
      */
     public void update(final Context context) throws Exception {
-        if (isFirstRun(context))
-        {
+        if (isFirstRun(context)) {
             AutoResetEvent completed = new AutoResetEvent(false);
             final Exception[] mException = {null};
             Thread thread = new Thread(() -> {
@@ -115,8 +113,7 @@ public class GXDLMSConverter {
 
             thread.start();
             completed.waitOne(60000);
-            if (mException[0] != null)
-            {
+            if (mException[0] != null) {
                 throw mException[0];
             }
         }
@@ -135,45 +132,38 @@ public class GXDLMSConverter {
 
     /**
      * Get OBIS code description.
-     * 
-     * @param logicalName
-     *            Logical name (OBIS code).
-     * @param description
-     *            Description filter.
+     *
+     * @param logicalName Logical name (OBIS code).
+     * @param description Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
     public final String[] getDescription(final String logicalName,
-            final String description) {
+                                         final String description) {
         return getDescription(logicalName, ObjectType.NONE, description);
     }
 
     /**
      * Get OBIS code description.
-     * 
-     * @param logicalName
-     *            Logical name (OBIS code).
-     * @param type
-     *            Object type.
+     *
+     * @param logicalName Logical name (OBIS code).
+     * @param type        Object type.
      * @return Array of descriptions that match given OBIS code.
      */
     public final String[] getDescription(final String logicalName,
-            final ObjectType type) {
+                                         final ObjectType type) {
         return getDescription(logicalName, type, null);
     }
 
     /**
      * Get OBIS code description.
-     * 
-     * @param logicalName
-     *            Logical name (OBIS code).
-     * @param type
-     *            Object type.
-     * @param description
-     *            Description filter.
+     *
+     * @param logicalName Logical name (OBIS code).
+     * @param type        Object type.
+     * @param description Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
     public final String[] getDescription(final String logicalName, final ObjectType type,
-            final String description) {
+                                         final String description) {
         if (codes.isEmpty()) {
             throw new RuntimeException("Read OBIS codes first.");
         }
@@ -197,16 +187,13 @@ public class GXDLMSConverter {
 
     /**
      * Update OBIS code information.
-     * 
-     * @param codes
-     *            COSEM objects.
-     * @param it
-     *            COSEM object.
-     * @param it
-     *            used DLMS standard.
+     *
+     * @param codes COSEM objects.
+     * @param it    COSEM object.
+     * @param it    used DLMS standard.
      */
     private static void updateOBISCodeInfo(final GXStandardObisCodeCollection codes,
-            final GXDLMSObject it, final Standard standard) {
+                                           final GXDLMSObject it, final Standard standard) {
         String ln = it.getLogicalName();
         GXStandardObisCode[] list = codes.find(ln, it.getObjectType());
         GXStandardObisCode code = list[0];
@@ -314,11 +301,11 @@ public class GXDLMSConverter {
      *
      * @param object COSEM object.
      */
-    public final void updateOBISCodeInformation(final Context context, final GXDLMSObject object){
+    public final void updateOBISCodeInformation(final Context context, final GXDLMSObject object) {
         synchronized (codes) {
             if (codes.size() == 0) {
                 /* OBIS codes are not updated if context is unknown. */
-                if (context == null){
+                if (context == null) {
                     return;
                 }
                 readStandardObisInfo(context, standard, codes);
@@ -345,9 +332,8 @@ public class GXDLMSConverter {
 
     /**
      * Get country spesific OBIS codes.
-     * 
-     * @param standard
-     *            Used standard.
+     *
+     * @param standard Used standard.
      * @return Collection for special OBIC codes.
      */
     @SuppressWarnings("squid:S00112")
@@ -404,9 +390,8 @@ public class GXDLMSConverter {
 
     /**
      * Read standard OBIS code information from the file.
-     * 
-     * @param codes
-     *            Collection of standard OBIS codes.
+     *
+     * @param codes Collection of standard OBIS codes.
      */
     @SuppressWarnings("squid:S00112")
     private static void readStandardObisInfo(final Context context,
@@ -424,8 +409,7 @@ public class GXDLMSConverter {
         }
         InputStream stream = null;
         try {
-            if (context != null)
-            {
+            if (context != null) {
                 stream = context.openFileInput("obiscodes.txt");
             }
         } catch (FileNotFoundException e) {
@@ -453,7 +437,7 @@ public class GXDLMSConverter {
                 List<String> obis = GXCommon.split(items.get(0), '.');
                 GXStandardObisCode code = new GXStandardObisCode(
                         obis.toArray(new String[0]), items.get(3) + "; " + items.get(4) + "; "
-                                + items.get(5) + "; " + items.get(6) + "; " + items.get(7),
+                        + items.get(5) + "; " + items.get(6) + "; " + items.get(7),
                         items.get(1), items.get(2));
                 codes.add(code);
             }
@@ -609,11 +593,9 @@ public class GXDLMSConverter {
 
     /**
      * Change value type.
-     * 
-     * @param value
-     *            Value to converted.
-     * @param type
-     *            Data type.
+     *
+     * @param value Value to converted.
+     * @param type  Data type.
      * @return Converted value.
      */
     public static Object changeType(final Object value, final DataType type) {
@@ -621,128 +603,124 @@ public class GXDLMSConverter {
             return value;
         }
         switch (type) {
-        case ARRAY:
-            throw new IllegalArgumentException("Can't change array types.");
-        case BCD:
-            break;
-        case BOOLEAN:
-            if (value instanceof String) {
-                return Boolean.parseBoolean((String) value);
-            }
-            return ((Number) value).longValue() != 0;
-        case COMPACT_ARRAY:
-            throw new IllegalArgumentException("Can't change compact array types.");
-        case DATE:
-            return new GXDate((String) value);
-        case DATETIME:
-            return new GXDateTime((String) value);
-        case ENUM:
-            if (value instanceof String) {
-                return new GXEnum(Short.parseShort((String) value));
-            }
-            return new GXEnum((byte) value);
-        case FLOAT32:
-            if (value instanceof String) {
-                try {
-                    return Float.parseFloat((String) value);
-                } catch (NumberFormatException e) {
-                    return Float.parseFloat(((String) value).replace(",", "."));
+            case ARRAY:
+                throw new IllegalArgumentException("Can't change array types.");
+            case BCD:
+                break;
+            case BOOLEAN:
+                if (value instanceof String) {
+                    return Boolean.parseBoolean((String) value);
                 }
-            }
-            return ((Number) value).floatValue();
-        case FLOAT64:
-            if (value instanceof String) {
-                try {
-                    return Double.parseDouble((String) value);
-                } catch (NumberFormatException e) {
-                    return Double.parseDouble(((String) value).replace(",", "."));
+                return ((Number) value).longValue() != 0;
+            case COMPACT_ARRAY:
+                throw new IllegalArgumentException("Can't change compact array types.");
+            case DATE:
+                return new GXDate((String) value);
+            case DATETIME:
+                return new GXDateTime((String) value);
+            case ENUM:
+                if (value instanceof String) {
+                    return new GXEnum(Short.parseShort((String) value));
                 }
-            }
-            return ((Number) value).doubleValue();
-        case INT16:
-            if (value instanceof String) {
-                return Short.parseShort((String) value);
-            }
-            return ((Number) value).shortValue();
-        case INT32:
-            if (value instanceof String) {
-                return Integer.parseInt((String) value);
-            }
-            return ((Number) value).intValue();
-        case INT64:
-            if (value instanceof String) {
-                return Long.parseLong((String) value);
-            }
-            return ((Number) value).longValue();
-        case INT8:
-            if (value instanceof String) {
-                return Byte.parseByte((String) value);
-            }
-            return (char) ((Number) value).byteValue();
-        case NONE:
-            return null;
-        case OCTET_STRING:
-            if (value instanceof String) {
-                return GXCommon.hexToBytes((String) value);
-            }
-            throw new IllegalArgumentException("Can't change octet string type.");
-        case STRING:
-            return String.valueOf(value);
-        case BITSTRING:
-            return new GXBitString((String) value);
-        case STRING_UTF8:
-            return String.valueOf(value);
-        case STRUCTURE:
-            throw new IllegalArgumentException("Can't change structure types.");
-        case TIME:
-            return new GXTime((String) value);
-        case UINT8:
-            if (value instanceof String) {
-                return new GXUInt8(Short.parseShort((String) value));
-            }
-            return new GXUInt8(((Number) value).shortValue());
-        case UINT16:
-            if (value instanceof String) {
-                return new GXUInt16(Integer.parseInt((String) value));
-            }
-            return new GXUInt16(((Number) value).intValue());
-        case UINT32:
-            if (value instanceof String) {
-                return new GXUInt32(Long.parseLong((String) value));
-            }
-            return new GXUInt32(((Number) value).longValue());
-        case UINT64:
-            if (value instanceof String) {
-                return BigInteger.valueOf(Long.parseLong((String) value));
-            }
-            return BigInteger.valueOf(((Number) value).longValue());
-        default:
-            break;
+                return new GXEnum((byte) value);
+            case FLOAT32:
+                if (value instanceof String) {
+                    try {
+                        return Float.parseFloat((String) value);
+                    } catch (NumberFormatException e) {
+                        return Float.parseFloat(((String) value).replace(",", "."));
+                    }
+                }
+                return ((Number) value).floatValue();
+            case FLOAT64:
+                if (value instanceof String) {
+                    try {
+                        return Double.parseDouble((String) value);
+                    } catch (NumberFormatException e) {
+                        return Double.parseDouble(((String) value).replace(",", "."));
+                    }
+                }
+                return ((Number) value).doubleValue();
+            case INT16:
+                if (value instanceof String) {
+                    return Short.parseShort((String) value);
+                }
+                return ((Number) value).shortValue();
+            case INT32:
+                if (value instanceof String) {
+                    return Integer.parseInt((String) value);
+                }
+                return ((Number) value).intValue();
+            case INT64:
+                if (value instanceof String) {
+                    return Long.parseLong((String) value);
+                }
+                return ((Number) value).longValue();
+            case INT8:
+                if (value instanceof String) {
+                    return Byte.parseByte((String) value);
+                }
+                return (char) ((Number) value).byteValue();
+            case NONE:
+                return null;
+            case OCTET_STRING:
+                if (value instanceof String) {
+                    return GXCommon.hexToBytes((String) value);
+                }
+                throw new IllegalArgumentException("Can't change octet string type.");
+            case STRING:
+                return String.valueOf(value);
+            case BITSTRING:
+                return new GXBitString((String) value);
+            case STRING_UTF8:
+                return String.valueOf(value);
+            case STRUCTURE:
+                throw new IllegalArgumentException("Can't change structure types.");
+            case TIME:
+                return new GXTime((String) value);
+            case UINT8:
+                if (value instanceof String) {
+                    return new GXUInt8(Short.parseShort((String) value));
+                }
+                return new GXUInt8(((Number) value).shortValue());
+            case UINT16:
+                if (value instanceof String) {
+                    return new GXUInt16(Integer.parseInt((String) value));
+                }
+                return new GXUInt16(((Number) value).intValue());
+            case UINT32:
+                if (value instanceof String) {
+                    return new GXUInt32(Long.parseLong((String) value));
+                }
+                return new GXUInt32(((Number) value).longValue());
+            case UINT64:
+                if (value instanceof String) {
+                    return BigInteger.valueOf(Long.parseLong((String) value));
+                }
+                return BigInteger.valueOf(((Number) value).longValue());
+            default:
+                break;
         }
         throw new IllegalArgumentException("Invalid data type: " + type.toString());
     }
 
     /**
      * Convert system title to string.
-     * 
-     * @param standard
-     *            Used standard.
-     * @param st
-     *            System title.
-     * @param addComments
-     *            Are comments added.
+     *
+     * @param standard    Used standard.
+     * @param st          System title.
+     * @param addComments Are comments added.
      * @return System title in string format.
      */
     public static String systemTitleToString(final Standard standard, final byte[] st,
-            final boolean addComments) {
+                                             final boolean addComments) {
         return GXCommon.systemTitleToString(standard, st, addComments);
     }
 
     /**
      * Convert key usage to certificate type.
-     * 
-     * @param value
-     *            Key usage
+     *
+     * @param value Key usage
      * @return Certificate type.
      */
     public static CertificateType keyUsageToCertificateType(final Set<KeyUsage> value) {
@@ -758,26 +736,25 @@ public class GXDLMSConverter {
 
     /**
      * Convert key usage to certificate type.
-     * 
-     * @param value
-     *            Key usage
+     *
+     * @param value Key usage
      * @return Certificate type.
      */
     public static Set<KeyUsage> certificateTypeToKeyUsage(final CertificateType value) {
         Set<KeyUsage> ret = new HashSet<KeyUsage>();
         switch (value) {
-        case DIGITAL_SIGNATURE:
-            ret.add(KeyUsage.DIGITAL_SIGNATURE);
-            break;
-        case KEY_AGREEMENT:
-            ret.add(KeyUsage.KEY_AGREEMENT);
-            break;
-        case TLS:
-            ret.add(KeyUsage.DIGITAL_SIGNATURE);
-            ret.add(KeyUsage.KEY_AGREEMENT);
-            break;
-        default:
-            throw new IllegalArgumentException();
+            case DIGITAL_SIGNATURE:
+                ret.add(KeyUsage.DIGITAL_SIGNATURE);
+                break;
+            case KEY_AGREEMENT:
+                ret.add(KeyUsage.KEY_AGREEMENT);
+                break;
+            case TLS:
+                ret.add(KeyUsage.DIGITAL_SIGNATURE);
+                ret.add(KeyUsage.KEY_AGREEMENT);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
         return ret;
     }

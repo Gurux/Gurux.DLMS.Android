@@ -35,7 +35,7 @@
 package gurux.dlms.objects.enums;
 
 /*
- * Defines whether or not the device has been assigned an address 
+ * Defines whether or not the device has been assigned an address
  * since last power up of the device.
  */
 public enum AddressState {

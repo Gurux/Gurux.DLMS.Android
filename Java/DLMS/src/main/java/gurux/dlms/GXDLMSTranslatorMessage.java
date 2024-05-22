@@ -102,8 +102,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Converted XML.
+     * @param value Converted XML.
      */
     public final void setXml(String value) {
         xml = value;
@@ -117,8 +116,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Executed Command.
+     * @param value Executed Command.
      */
     public final void setCommand(int value) {
         command = value;
@@ -132,8 +130,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            System title from AARQ or AARE messages.
+     * @param value System title from AARQ or AARE messages.
      */
     public final void setSystemTitle(byte[] value) {
         systemTitle = value;
@@ -147,8 +144,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Dedicated key from AARQ messages.
+     * @param value Dedicated key from AARQ messages.
      */
     public final void setDedicatedKey(byte[] value) {
         dedicatedKey = value;
@@ -162,8 +158,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Interface type.
+     * @param value Interface type.
      */
     public final void setInterfaceType(final InterfaceType value) {
         interfaceType = value;
@@ -177,8 +172,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Source address.
+     * @param value Source address.
      */
     public final void setSourceAddress(final int value) {
         sourceAddress = value;
@@ -192,8 +186,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Target address.
+     * @param value Target address.
      */
     public final void setTargetAddress(final int value) {
         targetAddress = value;
@@ -201,16 +194,15 @@ public class GXDLMSTranslatorMessage {
 
     /**
      * @return Is more data available. Return None if more data is not available
-     *         or Frame or Block type.
+     * or Frame or Block type.
      */
     public final RequestTypes getMoreData() {
         return moreData;
     }
 
     /**
-     * @param value
-     *            Is more data available. Return None if more data is not
-     *            available or Frame or Block type.
+     * @param value Is more data available. Return None if more data is not
+     *              available or Frame or Block type.
      */
     public final void setMoreData(final RequestTypes value) {
         moreData = value;
@@ -224,8 +216,7 @@ public class GXDLMSTranslatorMessage {
     }
 
     /**
-     * @param value
-     *            Occurred exception.
+     * @param value Occurred exception.
      */
     public final void setException(final RuntimeException value) {
         exception = value;

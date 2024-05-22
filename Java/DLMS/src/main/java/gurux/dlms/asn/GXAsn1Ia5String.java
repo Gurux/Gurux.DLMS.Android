@@ -47,9 +47,8 @@ public class GXAsn1Ia5String {
 
     /**
      * Constructor.
-     * 
-     * @param str
-     *            IA5 string.
+     *
+     * @param str IA5 string.
      */
     public GXAsn1Ia5String(final String str) {
         ia5String = str;

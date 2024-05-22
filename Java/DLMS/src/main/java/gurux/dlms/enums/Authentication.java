@@ -89,9 +89,8 @@ public enum Authentication {
 
     /**
      * Convert integer for enumeration value.
-     * 
-     * @param value
-     *            Integer value of enumeration.
+     *
+     * @param value Integer value of enumeration.
      * @return Enumerated value from integer.
      */
     public static Authentication forValue(final int value) {
@@ -103,33 +102,33 @@ public enum Authentication {
         String str;
         Authentication value = Authentication.forValue(getValue());
         switch (value) {
-        case HIGH:
-            str = "High";
-            break;
-        case HIGH_GMAC:
-            str = "HighGMac";
-            break;
-        case HIGH_MD5:
-            str = "HighMd5";
-            break;
-        case HIGH_SHA1:
-            str = "HighSha1";
-            break;
-        case HIGH_ECDSA:
-            str = "HighECDSA";
-            break;
-        case HIGH_SHA256:
-            str = "HighSha256";
-            break;
-        case LOW:
-            str = "Low";
-            break;
-        case NONE:
-            str = "None";
-            break;
-        default:
-            str = "";
-            break;
+            case HIGH:
+                str = "High";
+                break;
+            case HIGH_GMAC:
+                str = "HighGMac";
+                break;
+            case HIGH_MD5:
+                str = "HighMd5";
+                break;
+            case HIGH_SHA1:
+                str = "HighSha1";
+                break;
+            case HIGH_ECDSA:
+                str = "HighECDSA";
+                break;
+            case HIGH_SHA256:
+                str = "HighSha256";
+                break;
+            case LOW:
+                str = "Low";
+                break;
+            case NONE:
+                str = "None";
+                break;
+            default:
+                str = "";
+                break;
         }
         return str;
     }

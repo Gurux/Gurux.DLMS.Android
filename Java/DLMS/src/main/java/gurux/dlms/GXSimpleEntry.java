@@ -38,7 +38,7 @@ import java.util.Map;
 
 /**
  * Java ME is not implementing SimpleEntry.
- * 
+ *
  * @author Gurux Ltd.
  */
 public final class GXSimpleEntry<K, V> implements Map.Entry<K, V> {
@@ -47,11 +47,9 @@ public final class GXSimpleEntry<K, V> implements Map.Entry<K, V> {
 
     /**
      * Constructor for Parameterized type public GXSimpleEntry(K key, V value)
-     * 
-     * @param forKey
-     *            Key
-     * @param forValue
-     *            Value
+     *
+     * @param forKey   Key
+     * @param forValue Value
      */
     public GXSimpleEntry(final K forKey, final V forValue) {
         this.key = forKey;

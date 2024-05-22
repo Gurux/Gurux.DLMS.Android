@@ -62,7 +62,7 @@ public enum Service {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static java.util.HashMap<Integer, Service> getMappings() {
@@ -78,9 +78,8 @@ public enum Service {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     Service(final int value) {
         intValue = value;
@@ -89,7 +88,7 @@ public enum Service {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -98,9 +97,8 @@ public enum Service {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static Service forValue(final int value) {

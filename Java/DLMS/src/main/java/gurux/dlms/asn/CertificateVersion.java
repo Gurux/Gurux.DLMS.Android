@@ -25,7 +25,7 @@ public final class CertificateVersion {
     }
 
     CertificateVersion(final int mode) {
-        value =  mode;
+        value = mode;
         getMappings().put(mode, this);
     }
 

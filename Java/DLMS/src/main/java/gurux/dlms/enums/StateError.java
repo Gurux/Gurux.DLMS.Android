@@ -36,7 +36,7 @@ package gurux.dlms.enums;
 
 /**
  * DLMS state errors.
- * 
+ *
  * @author Gurux Ltd.
  */
 public enum StateError {
@@ -62,7 +62,7 @@ public enum StateError {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static java.util.HashMap<Integer, StateError> getMappings() {
@@ -76,9 +76,8 @@ public enum StateError {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     StateError(final int value) {
         intValue = value;
@@ -87,7 +86,7 @@ public enum StateError {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -96,9 +95,8 @@ public enum StateError {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static StateError forValue(final int value) {

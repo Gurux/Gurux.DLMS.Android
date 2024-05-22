@@ -110,20 +110,19 @@ public enum MacCapabilities {
      * @return Get enumeration constant values.
      */
     private static MacCapabilities[] getEnumConstants() {
-        return new MacCapabilities[] { SWITCH_CAPABLE, PACKET_AGGREGATION,
+        return new MacCapabilities[]{SWITCH_CAPABLE, PACKET_AGGREGATION,
                 CONTENTION_FREE_PERIOD, DIRECT_CONNECTION, MULTICAST,
                 PHY_ROBUSTNESS_MANAGEMENT, ARQ, RESERVED_FOR_FUTURE_USE,
                 DIRECT_CONNECTION_SWITCHING, MULTICAST_SWITCHING_CAPABILITY,
                 PHY_ROBUSTNESS_MANAGEMENT_SWITCHING_CAPABILITY,
-                ARQ_BUFFERING_SWITCHING_CAPABILITY };
+                ARQ_BUFFERING_SWITCHING_CAPABILITY};
 
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<MacCapabilities> forValue(final int value) {
@@ -139,9 +138,8 @@ public enum MacCapabilities {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<MacCapabilities> value) {

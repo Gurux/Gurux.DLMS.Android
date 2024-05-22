@@ -62,11 +62,11 @@ public enum CertificateIdentificationType {
 
     /**
      * Get mappings.
-     * 
+     *
      * @return Hash map of enumeration and integer values.
      */
     private static HashMap<Integer, CertificateIdentificationType>
-            getMappings() {
+    getMappings() {
         synchronized (CertificateIdentificationType.class) {
             if (mappings == null) {
                 mappings =
@@ -78,9 +78,8 @@ public enum CertificateIdentificationType {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value for enumerator.
+     *
+     * @param value Integer value for enumerator.
      */
     CertificateIdentificationType(final int value) {
         intValue = value;
@@ -91,7 +90,7 @@ public enum CertificateIdentificationType {
 
     /**
      * Get enemerator's integer value.
-     * 
+     *
      * @return Integer value of enumerator.
      */
     public int getValue() {
@@ -100,9 +99,8 @@ public enum CertificateIdentificationType {
 
     /**
      * Get enumerator from integer value.
-     * 
-     * @param value
-     *            integer value.
+     *
+     * @param value integer value.
      * @return Enumerator value.
      */
     public static CertificateIdentificationType forValue(final int value) {

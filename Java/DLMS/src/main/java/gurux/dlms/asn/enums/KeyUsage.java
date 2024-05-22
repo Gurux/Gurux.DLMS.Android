@@ -102,16 +102,15 @@ public enum KeyUsage {
      * @return Get enumeration constant values.
      */
     private static KeyUsage[] getEnumConstants() {
-        return new KeyUsage[] { DIGITAL_SIGNATURE, NON_REPUDIATION,
+        return new KeyUsage[]{DIGITAL_SIGNATURE, NON_REPUDIATION,
                 KEY_ENCIPHERMENT, DATA_ENCIPHERMENT, KEY_AGREEMENT,
-                KEY_CERT_SIGN, CRL_SIGN, ENCIPHER_ONLY, DECIPHER_ONLY };
+                KEY_CERT_SIGN, CRL_SIGN, ENCIPHER_ONLY, DECIPHER_ONLY};
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<KeyUsage> forValue(final int value) {
@@ -127,9 +126,8 @@ public enum KeyUsage {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<KeyUsage> value) {

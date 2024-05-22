@@ -96,11 +96,9 @@ final class GXAsn1Settings {
 
     /**
      * Add comment.
-     * 
-     * @param offset
-     *            Offset.
-     * @param value
-     *            Comment value.
+     *
+     * @param offset Offset.
+     * @param value  Comment value.
      */
     public void appendComment(final int offset, final String value) {
         if (comments) {
@@ -159,8 +157,7 @@ final class GXAsn1Settings {
     }
 
     /**
-     * @param value
-     *            Are comments used.
+     * @param value Are comments used.
      */
     public void setComments(final boolean value) {
         comments = value;

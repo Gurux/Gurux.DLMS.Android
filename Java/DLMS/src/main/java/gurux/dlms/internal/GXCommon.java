@@ -83,13 +83,13 @@ import gurux.dlms.objects.enums.SecuritySuite;
 public final class GXCommon {
     private static String zeroes = "00000000000000000000000000000000";
     private static char[] hexArray =
-            { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    private static final char[] BASE_64_ARRAY = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    private static final char[] BASE_64_ARRAY = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a',
             'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
             's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8',
-            '9', '+', '/', '=' };
+            '9', '+', '/', '='};
 
     /*
      * Constructor.
@@ -99,9 +99,9 @@ public final class GXCommon {
     }
 
     @SuppressWarnings("squid:S2386")
-    public static final byte[] LLC_SEND_BYTES = { (byte) 0xE6, (byte) 0xE6, 0x00 };
+    public static final byte[] LLC_SEND_BYTES = {(byte) 0xE6, (byte) 0xE6, 0x00};
     @SuppressWarnings("squid:S2386")
-    public static final byte[] LLC_REPLY_BYTES = { (byte) 0xE6, (byte) 0xE7, 0x00 };
+    public static final byte[] LLC_REPLY_BYTES = {(byte) 0xE6, (byte) 0xE7, 0x00};
 
     /*
      * Convert string to byte array.
@@ -141,9 +141,8 @@ public final class GXCommon {
 
     /**
      * Convert string to byte array.
-     * 
-     * @param value
-     *            Hex string.
+     *
+     * @param value Hex string.
      * @return byte array.
      */
     @SuppressWarnings("squid:S3034")
@@ -210,7 +209,7 @@ public final class GXCommon {
      * Convert byte array to hex string.
      */
     public static String toHex(final byte[] bytes, final boolean addSpace, final int index,
-            final int count) {
+                               final int count) {
         if (bytes == null || bytes.length == 0 || count == 0) {
             return "";
         }
@@ -241,9 +240,8 @@ public final class GXCommon {
 
     /**
      * Is string hex string.
-     * 
-     * @param value
-     *            String value.
+     *
+     * @param value String value.
      * @return Return true, if string is hex string.
      */
     public static boolean isHexString(final String value) {
@@ -263,9 +261,8 @@ public final class GXCommon {
 
     /**
      * Convert byte array to Base64 string.
-     * 
-     * @param value
-     *            Byte array to convert.
+     *
+     * @param value Byte array to convert.
      * @return Base64 string.
      */
     public static String toBase64(final byte[] value) {
@@ -299,7 +296,7 @@ public final class GXCommon {
 
     /**
      * Get index of given char.
-     * 
+     *
      * @param ch
      * @return
      */
@@ -327,9 +324,8 @@ public final class GXCommon {
 
     /**
      * Convert Base64 string to byte array.
-     * 
-     * @param input
-     *            Base64 string.
+     *
+     * @param input Base64 string.
      * @return Converted byte array.
      */
     public static byte[] fromBase64(final String input) {
@@ -399,9 +395,8 @@ public final class GXCommon {
 
     /**
      * Return how many bytes object count takes.
-     * 
-     * @param count
-     *            Value
+     *
+     * @param count Value
      * @return Value size in bytes.
      */
     public static int getObjectCountSizeInBytes(final int count) {
@@ -418,11 +413,9 @@ public final class GXCommon {
 
     /**
      * Add string to byte buffer.
-     * 
-     * @param value
-     *            String to add.
-     * @param bb
-     *            Byte buffer where string is added.
+     *
+     * @param value String to add.
+     * @param bb    Byte buffer where string is added.
      */
     public static void addString(final String value, final GXByteBuffer bb) {
         bb.setUInt8((byte) DataType.OCTET_STRING.getValue());
@@ -500,17 +493,14 @@ public final class GXCommon {
 
     /**
      * Get data from DLMS frame.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param data
-     *            received data.
-     * @param info
-     *            Data info.
+     *
+     * @param settings DLMS settings.
+     * @param data     received data.
+     * @param info     Data info.
      * @return Received data.
      */
     public static Object getData(final GXDLMSSettings settings, final GXByteBuffer data,
-            final GXDataInfo info) {
+                                 final GXDataInfo info) {
         Object value = null;
         int startIndex = data.position();
         if (data.position() == data.size()) {
@@ -534,75 +524,75 @@ public final class GXCommon {
             return null;
         }
         switch (info.getType()) {
-        case ARRAY:
-        case STRUCTURE:
-            value = getArray(settings, data, info, startIndex);
-            break;
-        case BOOLEAN:
-            value = getBoolean(data, info);
-            break;
-        case BITSTRING:
-            value = getBitString(data, info);
-            break;
-        case INT32:
-            value = getInt32(data, info);
-            break;
-        case UINT32:
-            value = getUInt32(settings, data, info);
-            break;
-        case STRING:
-            value = getString(data, info, knownType);
-            break;
-        case STRING_UTF8:
-            value = getUtfString(data, info, knownType);
-            break;
-        case OCTET_STRING:
-            value = getOctetString(settings, data, info, knownType);
-            break;
-        case BCD:
-            value = getBcd(data, info);
-            break;
-        case INT8:
-            value = getInt8(data, info);
-            break;
-        case INT16:
-            value = getInt16(data, info);
-            break;
-        case UINT8:
-            value = getUInt8(settings, data, info);
-            break;
-        case UINT16:
-            value = getUInt16(settings, data, info);
-            break;
-        case COMPACT_ARRAY:
-            value = getCompactArray(settings, data, info);
-            break;
-        case INT64:
-            value = getInt64(data, info);
-            break;
-        case UINT64:
-            value = getUInt64(settings, data, info);
-            break;
-        case ENUM:
-            value = getEnum(data, info);
-            break;
-        case FLOAT32:
-            value = getFloat(data, info);
-            break;
-        case FLOAT64:
-            value = getDouble(data, info);
-            break;
-        case DATETIME:
-            value = getDateTime(settings, data, info);
-            break;
-        case DATE:
-            value = getDate(data, info);
-            break;
-        case TIME:
-            value = getTime(data, info);
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid data type.");
+            case ARRAY:
+            case STRUCTURE:
+                value = getArray(settings, data, info, startIndex);
+                break;
+            case BOOLEAN:
+                value = getBoolean(data, info);
+                break;
+            case BITSTRING:
+                value = getBitString(data, info);
+                break;
+            case INT32:
+                value = getInt32(data, info);
+                break;
+            case UINT32:
+                value = getUInt32(settings, data, info);
+                break;
+            case STRING:
+                value = getString(data, info, knownType);
+                break;
+            case STRING_UTF8:
+                value = getUtfString(data, info, knownType);
+                break;
+            case OCTET_STRING:
+                value = getOctetString(settings, data, info, knownType);
+                break;
+            case BCD:
+                value = getBcd(data, info);
+                break;
+            case INT8:
+                value = getInt8(data, info);
+                break;
+            case INT16:
+                value = getInt16(data, info);
+                break;
+            case UINT8:
+                value = getUInt8(settings, data, info);
+                break;
+            case UINT16:
+                value = getUInt16(settings, data, info);
+                break;
+            case COMPACT_ARRAY:
+                value = getCompactArray(settings, data, info);
+                break;
+            case INT64:
+                value = getInt64(data, info);
+                break;
+            case UINT64:
+                value = getUInt64(settings, data, info);
+                break;
+            case ENUM:
+                value = getEnum(data, info);
+                break;
+            case FLOAT32:
+                value = getFloat(data, info);
+                break;
+            case FLOAT64:
+                value = getDouble(data, info);
+                break;
+            case DATETIME:
+                value = getDateTime(settings, data, info);
+                break;
+            case DATE:
+                value = getDate(data, info);
+                break;
+            case TIME:
+                value = getTime(data, info);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid data type.");
         }
         return value;
     }
@@ -653,17 +643,14 @@ public final class GXCommon {
 
     /**
      * Get array from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
-     * @param index
-     *            starting index.
+     *
+     * @param buff  Received DLMS data.
+     * @param info  Data info.
+     * @param index starting index.
      * @return Object array.
      */
     private static Object getArray(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info, final int index) {
+                                   final GXDataInfo info, final int index) {
         if (info.getCount() == 0) {
             info.setCount(GXCommon.getObjectCount(buff));
         }
@@ -709,11 +696,9 @@ public final class GXCommon {
 
     /**
      * Get time from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return Parsed time.
      */
     private static Object getTime(final GXByteBuffer buff, final GXDataInfo info) {
@@ -756,11 +741,9 @@ public final class GXCommon {
 
     /**
      * Get date from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return Parsed date.
      */
     private static Object getDate(final GXByteBuffer buff, final GXDataInfo info) {
@@ -833,11 +816,9 @@ public final class GXCommon {
 
     /**
      * Get the number of days in that month.
-     * 
-     * @param year
-     *            Year.
-     * @param month
-     *            Month.
+     *
+     * @param year  Year.
+     * @param month Month.
      * @return Number of days in month.
      */
     public static int daysInMonth(final int year, final int month) {
@@ -848,15 +829,13 @@ public final class GXCommon {
 
     /**
      * Get date and time from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return Parsed date and time.
      */
     private static Object getDateTime(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info) {
+                                      final GXDataInfo info) {
         Object value = null;
         java.util.Set<DateTimeSkips> skip = new HashSet<DateTimeSkips>();
 
@@ -1001,11 +980,9 @@ public final class GXCommon {
 
     /**
      * Get double value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return Parsed double value.
      */
     private static Object getDouble(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1031,11 +1008,9 @@ public final class GXCommon {
 
     /**
      * Get float value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return Parsed float value.
      */
     private static Object getFloat(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1062,11 +1037,9 @@ public final class GXCommon {
 
     /**
      * Get enumeration value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed enumeration value.
      */
     private static Object getEnum(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1086,15 +1059,13 @@ public final class GXCommon {
 
     /**
      * Get UInt64 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed UInt64 value.
      */
     private static Object getUInt64(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info) {
+                                    final GXDataInfo info) {
         // If there is not enough data available.
         if (buff.size() - buff.position() < 8) {
             info.setComplete(false);
@@ -1114,11 +1085,9 @@ public final class GXCommon {
 
     /**
      * Get Int64 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed Int64 value.
      */
     private static Object getInt64(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1138,15 +1107,13 @@ public final class GXCommon {
 
     /**
      * Get UInt16 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed UInt16 value.
      */
     private static Object getUInt16(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info) {
+                                    final GXDataInfo info) {
         Object value;
         // If there is not enough data available.
         if (buff.size() - buff.position() < 2) {
@@ -1168,7 +1135,7 @@ public final class GXCommon {
 
     @SuppressWarnings("squid:S1172")
     private static void getCompactArrayItem(final GXDLMSSettings settings, GXByteBuffer buff,
-            List<?> dt, List<Object> list, int len) {
+                                            List<?> dt, List<Object> list, int len) {
         List<Object> tmp2 = new ArrayList<Object>();
         for (Object it : dt) {
             if (it instanceof DataType) {
@@ -1181,7 +1148,7 @@ public final class GXCommon {
     }
 
     private static void getCompactArrayItem(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final DataType dt, final List<Object> list, final int len) {
+                                            final DataType dt, final List<Object> list, final int len) {
         GXDataInfo tmp = new GXDataInfo();
         tmp.setType(dt);
         int start = buff.position();
@@ -1265,15 +1232,13 @@ public final class GXCommon {
 
     /**
      * Get compact array value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed UInt16 value.
      */
     private static Object getCompactArray(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info) {
+                                          final GXDataInfo info) {
         // If there is not enough data available.
         if (buff.size() - buff.position() < 2) {
             info.setComplete(false);
@@ -1404,15 +1369,13 @@ public final class GXCommon {
 
     /**
      * Get UInt8 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed UInt8 value.
      */
     private static Object getUInt8(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info) {
+                                   final GXDataInfo info) {
         int value;
         // If there is not enough data available.
         if (buff.size() - buff.position() < 1) {
@@ -1434,11 +1397,9 @@ public final class GXCommon {
 
     /**
      * Get Int16 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed Int16 value.
      */
     private static Object getInt16(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1458,11 +1419,9 @@ public final class GXCommon {
 
     /**
      * Get Int8 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed Int8 value.
      */
     private static Object getInt8(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1482,11 +1441,9 @@ public final class GXCommon {
 
     /**
      * Get BCD value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed BCD value.
      */
     private static Object getBcd(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1505,15 +1462,13 @@ public final class GXCommon {
 
     /**
      * Get UTF string value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed UTF string value.
      */
     private static Object getUtfString(final GXByteBuffer buff, final GXDataInfo info,
-            final boolean knownType) {
+                                       final boolean knownType) {
         Object value;
         int len;
         if (knownType) {
@@ -1546,15 +1501,13 @@ public final class GXCommon {
 
     /**
      * Get octet string value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed octet string value.
      */
     private static Object getOctetString(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info, final boolean knownType) {
+                                         final GXDataInfo info, final boolean knownType) {
         Object value;
         int len;
         if (knownType) {
@@ -1625,15 +1578,13 @@ public final class GXCommon {
 
     /**
      * Get string value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed string value.
      */
     private static String getString(final GXByteBuffer buff, final GXDataInfo info,
-            final boolean knownType) {
+                                    final boolean knownType) {
         String value;
         int len;
         if (knownType) {
@@ -1664,15 +1615,13 @@ public final class GXCommon {
 
     /**
      * Get UInt32 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed UInt32 value.
      */
     private static Object getUInt32(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDataInfo info) {
+                                    final GXDataInfo info) {
         // If there is not enough data available.
         if (buff.size() - buff.position() < 4) {
             info.setComplete(false);
@@ -1692,11 +1641,9 @@ public final class GXCommon {
 
     /**
      * Get Int32 value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed Int32 value.
      */
     private static Object getInt32(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1715,11 +1662,9 @@ public final class GXCommon {
 
     /**
      * Get bit string value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed bit string value.
      */
     private static GXBitString getBitString(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1749,11 +1694,9 @@ public final class GXCommon {
 
     /**
      * Get boolean value from DLMS data.
-     * 
-     * @param buff
-     *            Received DLMS data.
-     * @param info
-     *            Data info.
+     *
+     * @param buff Received DLMS data.
+     * @param info Data info.
      * @return parsed boolean value.
      */
     private static Object getBoolean(final GXByteBuffer buff, final GXDataInfo info) {
@@ -1772,9 +1715,8 @@ public final class GXCommon {
 
     /**
      * Get HDLC address from byte array.
-     * 
-     * @param buff
-     *            byte array.
+     *
+     * @param buff byte array.
      * @return HDLC address.
      */
     public static int getHDLCAddress(final GXByteBuffer buff) {
@@ -1808,7 +1750,7 @@ public final class GXCommon {
      * @param value Added Value.
      */
     public static void setData(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final DataType dataType, final Object value) {
+                               final DataType dataType, final Object value) {
         // If value is enum get integer value.
         if (value instanceof Enum) {
             throw new IllegalArgumentException("Value can't be enum. Give integer value.");
@@ -1822,102 +1764,99 @@ public final class GXCommon {
             buff.setUInt8(dataType.getValue());
         }
         switch (dataType) {
-        case NONE:
-            break;
-        case BOOLEAN:
-            if (Boolean.parseBoolean(value.toString())) {
-                buff.setUInt8(1);
-            } else {
-                buff.setUInt8(0);
-            }
-            break;
-        case INT8:
-        case UINT8:
-        case ENUM:
-            buff.setUInt8(((Number) value).byteValue());
-            break;
-        case INT16:
-        case UINT16:
-            buff.setUInt16(((Number) value).shortValue());
-            break;
-        case INT32:
-        case UINT32:
-            buff.setUInt32(((Number) value).intValue());
-            break;
-        case INT64:
-        case UINT64:
-            buff.setUInt64(((Number) value).longValue());
-            break;
-        case FLOAT32:
-            buff.setFloat(((Number) value).floatValue());
-            break;
-        case FLOAT64:
-            buff.setDouble(((Number) value).doubleValue());
-            break;
-        case BITSTRING:
-            setBitString(buff, value, true);
-            break;
-        case STRING:
-            setString(buff, value);
-            break;
-        case STRING_UTF8:
-            setUtfString(buff, value);
-            break;
-        case OCTET_STRING:
-            if (value instanceof GXDate) {
-                // Add size
-                buff.setUInt8(5);
-                setDate(settings, buff, value);
-            } else if (value instanceof GXTime) {
-                // Add size
-                buff.setUInt8(4);
-                setTime(settings, buff, value);
-            } else if (value instanceof GXDateTime || value instanceof java.util.Date
-                    || value instanceof java.util.Calendar) {
-                // Date an calendar are always written as date time.
-                buff.setUInt8(12);
+            case NONE:
+                break;
+            case BOOLEAN:
+                if (Boolean.parseBoolean(value.toString())) {
+                    buff.setUInt8(1);
+                } else {
+                    buff.setUInt8(0);
+                }
+                break;
+            case INT8:
+            case UINT8:
+            case ENUM:
+                buff.setUInt8(((Number) value).byteValue());
+                break;
+            case INT16:
+            case UINT16:
+                buff.setUInt16(((Number) value).shortValue());
+                break;
+            case INT32:
+            case UINT32:
+                buff.setUInt32(((Number) value).intValue());
+                break;
+            case INT64:
+            case UINT64:
+                buff.setUInt64(((Number) value).longValue());
+                break;
+            case FLOAT32:
+                buff.setFloat(((Number) value).floatValue());
+                break;
+            case FLOAT64:
+                buff.setDouble(((Number) value).doubleValue());
+                break;
+            case BITSTRING:
+                setBitString(buff, value, true);
+                break;
+            case STRING:
+                setString(buff, value);
+                break;
+            case STRING_UTF8:
+                setUtfString(buff, value);
+                break;
+            case OCTET_STRING:
+                if (value instanceof GXDate) {
+                    // Add size
+                    buff.setUInt8(5);
+                    setDate(settings, buff, value);
+                } else if (value instanceof GXTime) {
+                    // Add size
+                    buff.setUInt8(4);
+                    setTime(settings, buff, value);
+                } else if (value instanceof GXDateTime || value instanceof java.util.Date
+                        || value instanceof java.util.Calendar) {
+                    // Date an calendar are always written as date time.
+                    buff.setUInt8(12);
+                    setDateTime(settings, buff, value);
+                } else {
+                    setOctetString(buff, value);
+                }
+                break;
+            case ARRAY:
+            case STRUCTURE:
+                setArray(settings, buff, value);
+                break;
+            case BCD:
+                setBcd(buff, value);
+                break;
+            case COMPACT_ARRAY:
+                // Compact array is not work with java because we don't know data
+                // types of each element. Java is not support unsigned values.
+                throw new IllegalArgumentException("Invalid data type.");
+            case DATETIME:
                 setDateTime(settings, buff, value);
-            } else {
-                setOctetString(buff, value);
-            }
-            break;
-        case ARRAY:
-        case STRUCTURE:
-            setArray(settings, buff, value);
-            break;
-        case BCD:
-            setBcd(buff, value);
-            break;
-        case COMPACT_ARRAY:
-            // Compact array is not work with java because we don't know data
-            // types of each element. Java is not support unsigned values.
-            throw new IllegalArgumentException("Invalid data type.");
-        case DATETIME:
-            setDateTime(settings, buff, value);
-            break;
-        case DATE:
-            setDate(settings, buff, value);
-            break;
-        case TIME:
-            setTime(settings, buff, value);
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid data type.");
+                break;
+            case DATE:
+                setDate(settings, buff, value);
+                break;
+            case TIME:
+                setTime(settings, buff, value);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid data type.");
         }
     }
 
     /**
      * Convert time to DLMS bytes.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param settings DLMS settings.
+     * @param buff     Byte buffer where data is write.
+     * @param value    Added value.
      */
     private static void setTime(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final Object value) {
+                                final Object value) {
         java.util.Set<DateTimeSkips> skip = new HashSet<DateTimeSkips>();
         java.util.Calendar tm = java.util.Calendar.getInstance();
         if (value instanceof GXDateTime) {
@@ -1968,16 +1907,13 @@ public final class GXCommon {
 
     /**
      * Convert date to DLMS bytes.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param settings DLMS settings.
+     * @param buff     Byte buffer where data is write.
+     * @param value    Added value.
      */
     private static void setDate(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final Object value) {
+                                final Object value) {
         GXDateTime dt;
         if (value instanceof GXDateTime) {
             dt = (GXDateTime) value;
@@ -2065,14 +2001,12 @@ public final class GXCommon {
 
     /**
      * Convert date time to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param buff  Byte buffer where data is write.
+     * @param value Added value.
      */
     private static void setDateTime(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final Object value) {
+                                    final Object value) {
         GXDateTime dt = getDateTime(value);
         java.util.Calendar tm = dt.getMeterCalendar();
         // Add additional date time skips.
@@ -2175,11 +2109,9 @@ public final class GXCommon {
 
     /**
      * Convert BCD to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param buff  Byte buffer where data is write.
+     * @param value Added value.
      */
     private static void setBcd(final GXByteBuffer buff, final Object value) {
         // Standard supports only size of byte.
@@ -2188,14 +2120,12 @@ public final class GXCommon {
 
     /**
      * Convert Array to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param buff  Byte buffer where data is write.
+     * @param value Added value.
      */
     private static void setArray(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final Object value) {
+                                 final Object value) {
         if (value != null) {
             List<?> arr;
             if (value instanceof List<?>) {
@@ -2217,11 +2147,9 @@ public final class GXCommon {
 
     /**
      * Split string to array.
-     * 
-     * @param str
-     *            String to split.
-     * @param separators
-     *            Separators.
+     *
+     * @param str        String to split.
+     * @param separators Separators.
      * @return Split values.
      */
     public static List<String> split(final String str, final char[] separators) {
@@ -2247,11 +2175,9 @@ public final class GXCommon {
 
     /**
      * Split string to array.
-     * 
-     * @param str
-     *            String to split.
-     * @param separator
-     *            Separator.
+     *
+     * @param str       String to split.
+     * @param separator Separator.
      * @return Split values.
      */
     public static List<String> split(final String str, final char separator) {
@@ -2271,11 +2197,9 @@ public final class GXCommon {
 
     /**
      * Split string to array.
-     * 
-     * @param str
-     *            String to split.
-     * @param separator
-     *            Separator.
+     *
+     * @param str       String to split.
+     * @param separator Separator.
      * @return Split values.
      */
     public static List<String> split(final String str, final String separator) {
@@ -2295,11 +2219,9 @@ public final class GXCommon {
 
     /**
      * Convert Octet string to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param buff  Byte buffer where data is write.
+     * @param value Added value.
      */
     private static void setOctetString(final GXByteBuffer buff, final Object value) {
         if (value instanceof String) {
@@ -2318,11 +2240,9 @@ public final class GXCommon {
 
     /**
      * Convert UTF string to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param buff  Byte buffer where data is write.
+     * @param value Added value.
      */
     private static void setUtfString(final GXByteBuffer buff, final Object value) {
         if (value != null) {
@@ -2336,11 +2256,9 @@ public final class GXCommon {
 
     /**
      * Convert ASCII string to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param value
-     *            Added value.
+     *
+     * @param buff  Byte buffer where data is write.
+     * @param value Added value.
      */
     private static void setString(final GXByteBuffer buff, final Object value) {
         if (value != null) {
@@ -2354,16 +2272,13 @@ public final class GXCommon {
 
     /**
      * Convert Bit string to DLMS bytes.
-     * 
-     * @param buff
-     *            Byte buffer where data is write.
-     * @param val1
-     *            Added value.
-     * @param addCount
-     *            Is bit count added.
+     *
+     * @param buff     Byte buffer where data is write.
+     * @param val1     Added value.
+     * @param addCount Is bit count added.
      */
     public static void setBitString(final GXByteBuffer buff, final Object val1,
-            final boolean addCount) {
+                                    final boolean addCount) {
         Object value = val1;
         if (value instanceof GXBitString) {
             value = ((GXBitString) value).getValue();
@@ -2409,76 +2324,74 @@ public final class GXCommon {
 
     /**
      * Get data type in bytes.
-     * 
-     * @param type
-     *            Data type.
+     *
+     * @param type Data type.
      * @return Size of data type in bytes.
      */
     public static int getDataTypeSize(final DataType type) {
         int size = -1;
         switch (type) {
-        case BCD:
-            size = 1;
-            break;
-        case BOOLEAN:
-            size = 1;
-            break;
-        case DATE:
-            size = 5;
-            break;
-        case DATETIME:
-            size = 12;
-            break;
-        case ENUM:
-            size = 1;
-            break;
-        case FLOAT32:
-            size = 4;
-            break;
-        case FLOAT64:
-            size = 8;
-            break;
-        case INT16:
-            size = 2;
-            break;
-        case INT32:
-            size = 4;
-            break;
-        case INT64:
-            size = 8;
-            break;
-        case INT8:
-            size = 1;
-            break;
-        case NONE:
-            size = 0;
-            break;
-        case TIME:
-            size = 4;
-            break;
-        case UINT16:
-            size = 2;
-            break;
-        case UINT32:
-            size = 4;
-            break;
-        case UINT64:
-            size = 8;
-            break;
-        case UINT8:
-            size = 1;
-            break;
-        default:
-            break;
+            case BCD:
+                size = 1;
+                break;
+            case BOOLEAN:
+                size = 1;
+                break;
+            case DATE:
+                size = 5;
+                break;
+            case DATETIME:
+                size = 12;
+                break;
+            case ENUM:
+                size = 1;
+                break;
+            case FLOAT32:
+                size = 4;
+                break;
+            case FLOAT64:
+                size = 8;
+                break;
+            case INT16:
+                size = 2;
+                break;
+            case INT32:
+                size = 4;
+                break;
+            case INT64:
+                size = 8;
+                break;
+            case INT8:
+                size = 1;
+                break;
+            case NONE:
+                size = 0;
+                break;
+            case TIME:
+                size = 4;
+                break;
+            case UINT16:
+                size = 2;
+                break;
+            case UINT32:
+                size = 4;
+                break;
+            case UINT64:
+                size = 8;
+                break;
+            case UINT8:
+                size = 1;
+                break;
+            default:
+                break;
         }
         return size;
     }
 
     /**
      * Convert logical name byte array to string.
-     * 
-     * @param value
-     *            Logical name as a byte array.
+     *
+     * @param value Logical name as a byte array.
      * @return Logical name as a string.
      */
     public static String toLogicalName(final Object value) {
@@ -2498,9 +2411,8 @@ public final class GXCommon {
 
     /**
      * Convert logical name to byte array.
-     * 
-     * @param value
-     *            Logical name.
+     *
+     * @param value Logical name.
      * @return Logical name as byte array.
      */
     public static byte[] logicalNameToBytes(final String value) {
@@ -2527,9 +2439,8 @@ public final class GXCommon {
 
     /**
      * Convert integer list to array.
-     * 
-     * @param list
-     *            Integer list to convert.
+     *
+     * @param list Integer list to convert.
      * @return Integer array.
      */
     public static int[] toIntArray(final List<Integer> list) {
@@ -2544,9 +2455,8 @@ public final class GXCommon {
 
     /**
      * Convert short list to array.
-     * 
-     * @param list
-     *            Integer list to convert.
+     *
+     * @param list Integer list to convert.
      * @return Integer array.
      */
     public static short[] toShortArray(final List<Short> list) {
@@ -2608,9 +2518,8 @@ public final class GXCommon {
 
     /**
      * Check is string ASCII string.
-     * 
-     * @param value
-     *            ASCII string.
+     *
+     * @param value ASCII string.
      * @return Is ASCII string
      */
     public static boolean isAscii(final String value) {
@@ -2629,9 +2538,8 @@ public final class GXCommon {
 
     /**
      * Encrypt Flag name to two bytes.
-     * 
-     * @param flagName
-     *            3 letter Flag name.
+     *
+     * @param flagName 3 letter Flag name.
      * @return Encrypted Flag name.
      */
     @SuppressWarnings("unused")
@@ -2649,9 +2557,8 @@ public final class GXCommon {
 
     /**
      * Decrypt two bytes to Flag name.
-     * 
-     * @param value
-     *            Encrypted Flag value.
+     *
+     * @param value Encrypted Flag value.
      * @return Flag name.
      */
     public static String decryptManufacturer(final int value) {
@@ -2661,7 +2568,7 @@ public final class GXCommon {
         char c1 = (char) ((tmp & 0x1f) + 0x40);
         tmp = (tmp >> 5);
         char c2 = (char) ((tmp & 0x1f) + 0x40);
-        return new String(new char[] { c2, c1, c });
+        return new String(new char[]{c2, c1, c});
     }
 
     static String idisSystemTitleToString(final byte[] st, final boolean addComments) {
@@ -2670,7 +2577,7 @@ public final class GXCommon {
         sb.append("IDIS system title:");
         sb.append(newline);
         sb.append("Manufacturer Code: ");
-        sb.append(new String(new char[] { (char) st[0], (char) st[1], (char) st[2] }));
+        sb.append(new String(new char[]{(char) st[0], (char) st[1], (char) st[2]}));
         sb.append(newline);
         sb.append(" Function type: ");
         int ft = st[4] >> 4;
@@ -2711,11 +2618,11 @@ public final class GXCommon {
         sb.append("DLMS system title:");
         sb.append(newline);
         sb.append("Manufacturer Code: ");
-        sb.append(new String(new char[] { (char) st[0], (char) st[1], (char) st[2] }));
+        sb.append(new String(new char[]{(char) st[0], (char) st[1], (char) st[2]}));
         sb.append(newline);
         sb.append("Serial number: ");
-        sb.append(new String(new char[] { (char) st[3], (char) st[4], (char) st[5], (char) st[6],
-                (char) st[7] }));
+        sb.append(new String(new char[]{(char) st[3], (char) st[4], (char) st[5], (char) st[6],
+                (char) st[7]}));
         sb.append(newline);
         return sb.toString();
     }
@@ -2732,12 +2639,12 @@ public final class GXCommon {
             sb.append(decryptManufacturer(m));
             sb.append(newline);
             sb.append("Serial number: ");
-            sb.append(toHex(new byte[] { st[7], st[6], st[5], st[4], st[3], st[2] }, false));
+            sb.append(toHex(new byte[]{st[7], st[6], st[5], st[4], st[3], st[2]}, false));
             sb.append(newline);
         } else {
             int m = (st[0] << 8 | st[1]);
             sb.append(decryptManufacturer(m));
-            sb.append(toHex(new byte[] { st[7], st[6], st[5], st[4], st[3], st[2] }, false));
+            sb.append(toHex(new byte[]{st[7], st[6], st[5], st[4], st[3], st[2]}, false));
         }
         return sb.toString();
     }
@@ -2752,17 +2659,14 @@ public final class GXCommon {
 
     /**
      * Convert system title to string.
-     * 
-     * @param standard
-     *            Used standard.
-     * @param st
-     *            System title.
-     * @param addComments
-     *            Are comments added.
+     *
+     * @param standard    Used standard.
+     * @param st          System title.
+     * @param addComments Are comments added.
      * @return System title in string format.
      */
     public static String systemTitleToString(final Standard standard, final byte[] st,
-            final boolean addComments) {
+                                             final boolean addComments) {
         if (st == null || st.length != 8) {
             return "";
         }
@@ -2778,49 +2682,45 @@ public final class GXCommon {
 
     public static boolean isCiphered(final short cmd) {
         switch (cmd) {
-        case Command.GLO_READ_REQUEST:
-        case Command.GLO_WRITE_REQUEST:
-        case Command.GLO_GET_REQUEST:
-        case Command.GLO_SET_REQUEST:
-        case Command.GLO_READ_RESPONSE:
-        case Command.GLO_WRITE_RESPONSE:
-        case Command.GLO_GET_RESPONSE:
-        case Command.GLO_SET_RESPONSE:
-        case Command.GLO_METHOD_REQUEST:
-        case Command.GLO_METHOD_RESPONSE:
-        case Command.DED_GET_REQUEST:
-        case Command.DED_SET_REQUEST:
-        case Command.DED_READ_RESPONSE:
-        case Command.DED_GET_RESPONSE:
-        case Command.DED_SET_RESPONSE:
-        case Command.DED_METHOD_REQUEST:
-        case Command.DED_METHOD_RESPONSE:
-        case Command.GENERAL_GLO_CIPHERING:
-        case Command.GENERAL_DED_CIPHERING:
-        case Command.AARE:
-        case Command.AARQ:
-        case Command.GLO_CONFIRMED_SERVICE_ERROR:
-        case Command.DED_CONFIRMED_SERVICE_ERROR:
-        case Command.GENERAL_CIPHERING:
-        case Command.RELEASE_REQUEST:
-        case Command.GENERAL_SIGNING:
-            return true;
-        default:
-            return false;
+            case Command.GLO_READ_REQUEST:
+            case Command.GLO_WRITE_REQUEST:
+            case Command.GLO_GET_REQUEST:
+            case Command.GLO_SET_REQUEST:
+            case Command.GLO_READ_RESPONSE:
+            case Command.GLO_WRITE_RESPONSE:
+            case Command.GLO_GET_RESPONSE:
+            case Command.GLO_SET_RESPONSE:
+            case Command.GLO_METHOD_REQUEST:
+            case Command.GLO_METHOD_RESPONSE:
+            case Command.DED_GET_REQUEST:
+            case Command.DED_SET_REQUEST:
+            case Command.DED_READ_RESPONSE:
+            case Command.DED_GET_RESPONSE:
+            case Command.DED_SET_RESPONSE:
+            case Command.DED_METHOD_REQUEST:
+            case Command.DED_METHOD_RESPONSE:
+            case Command.GENERAL_GLO_CIPHERING:
+            case Command.GENERAL_DED_CIPHERING:
+            case Command.AARE:
+            case Command.AARQ:
+            case Command.GLO_CONFIRMED_SERVICE_ERROR:
+            case Command.DED_CONFIRMED_SERVICE_ERROR:
+            case Command.GENERAL_CIPHERING:
+            case Command.RELEASE_REQUEST:
+            case Command.GENERAL_SIGNING:
+                return true;
+            default:
+                return false;
         }
     }
 
     /**
      * Encrypt or decrypt the data using external Hardware Security Module.
-     * 
-     * @param certificateType
-     *            Certificate type.
-     * @param Data
-     *            Data.
-     * @param encrypt
-     *            Is data encrypted or decrypted.
-     * @param keyType
-     *            Key type.
+     *
+     * @param certificateType Certificate type.
+     * @param Data            Data.
+     * @param encrypt         Is data encrypted or decrypted.
+     * @param keyType         Key type.
      * @return
      */
     public static byte[] crypt(final GXDLMSSettings settings, final CertificateType certificateType,

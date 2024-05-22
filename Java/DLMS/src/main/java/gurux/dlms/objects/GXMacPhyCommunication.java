@@ -86,8 +86,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            EUI is the EUI-48 of the other device.
+     * @param value EUI is the EUI-48 of the other device.
      */
     public final void setEui(final byte[] value) {
         eui = value;
@@ -101,8 +100,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The tx power of GPDU packets sent to the device.
+     * @param value The tx power of GPDU packets sent to the device.
      */
     public final void setTxPower(final byte value) {
         txPower = value;
@@ -116,8 +114,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The Tx coding of GPDU packets sent to the device.
+     * @param value The Tx coding of GPDU packets sent to the device.
      */
     public final void setTxCoding(final byte value) {
         txCoding = value;
@@ -131,8 +128,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The Rx coding of GPDU packets received from the device.
+     * @param value The Rx coding of GPDU packets received from the device.
      */
     public final void setRxCoding(final byte value) {
         rxCoding = value;
@@ -146,8 +142,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The Rx power level of GPDU packets received from the device.
+     * @param value The Rx power level of GPDU packets received from the device.
      */
     public final void setRxLvl(final byte value) {
         rxLvl = value;
@@ -161,8 +156,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            SNR of GPDU packets received from the device.
+     * @param value SNR of GPDU packets received from the device.
      */
     public final void setSnr(final byte value) {
         snr = value;
@@ -176,8 +170,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The number of times the Tx power was modified.
+     * @param value The number of times the Tx power was modified.
      */
     public final void setTxPowerModified(final byte value) {
         txPowerModified = value;
@@ -191,8 +184,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The number of times the Tx coding was modified.
+     * @param value The number of times the Tx coding was modified.
      */
     public final void setTxCodingModified(final byte value) {
         txCodingModified = value;
@@ -206,8 +198,7 @@ public class GXMacPhyCommunication {
     }
 
     /**
-     * @param value
-     *            The number of times the Rx coding was modified.
+     * @param value The number of times the Rx coding was modified.
      */
     public final void setRxCodingModified(final byte value) {
         rxCodingModified = value;

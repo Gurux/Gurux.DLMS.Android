@@ -44,55 +44,55 @@ public enum PkcsObjectIdentifier implements GXOid {
      */
     RsaEncryption("1.2.840.113549.1.1.1"),
     /**
-     * 
+     *
      */
     MD2WithRsaEncryption("1.2.840.113549.1.1.2"),
     /**
-     * 
+     *
      */
     MD4WithRsaEncryption("1.2.840.113549.1.1.3"),
     /**
-     * 
+     *
      */
     MD5WithRsaEncryption("1.2.840.113549.1.1.4"),
     /**
-     * 
+     *
      */
     Sha1WithRsaEncryption("1.2.840.113549.1.1.5"),
     /**
-     * 
+     *
      */
     SrsaOaepEncryptionSet("1.2.840.113549.1.1.6"),
     /**
-     * 
+     *
      */
     IdRsaesOaep("1.2.840.113549.1.1.7"),
     /**
-     * 
+     *
      */
     IdMgf1("1.2.840.113549.1.1.8"),
     /**
-     * 
+     *
      */
     IdPSpecified("1.2.840.113549.1.1.9"),
     /**
-     * 
+     *
      */
     IdRsassaPss("1.2.840.113549.1.1.10"),
     /**
-     * 
+     *
      */
     Sha256WithRsaEncryption("1.2.840.113549.1.1.11"),
     /**
-     * 
+     *
      */
     Sha384WithRsaEncryption("1.2.840.113549.1.1.12"),
     /**
-     * 
+     *
      */
     Sha512WithRsaEncryption("1.2.840.113549.1.1.13"),
     /**
-     * 
+     *
      */
     Sha224WithRsaEncryption("1.2.840.113549.1.1.14"),
     //
@@ -101,7 +101,7 @@ public enum PkcsObjectIdentifier implements GXOid {
     //
 
     /**
-     * 
+     *
      */
     DhKeyAgree1ment("1.2.840.113549.1.3.1"),
     //
@@ -110,35 +110,35 @@ public enum PkcsObjectIdentifier implements GXOid {
     //
 
     /**
-     * 
+     *
      */
     PbeWithMD2AndDesCbc("1.2.840.113549.1.5.1"),
     /**
-     * 
+     *
      */
     PbeWithMD2AndRC2Cbc("1.2.840.113549.1.5.4"),
     /**
-     * 
+     *
      */
     PbeWithMD5AndDesCbc("1.2.840.113549.1.5.3"),
     /**
-     * 
+     *
      */
     PbeWithMD5AndRC2Cbc("1.2.840.113549.1.5.6"),
     /**
-     * 
+     *
      */
     PbeWithSha1AndDesCbc("1.2.840.113549.1.5.10"),
     /**
-     * 
+     *
      */
     PbeWithSha1AndRC2Cbc("1.2.840.113549.1.5.11"),
     /**
-     * 
+     *
      */
     IdPbeS2("1.2.840.113549.1.5.13"),
     /**
-     * 
+     *
      */
     IdPbkdf2("1.2.840.113549.1.5.12"),
 
@@ -321,7 +321,7 @@ public enum PkcsObjectIdentifier implements GXOid {
     private static java.util.HashMap<String, PkcsObjectIdentifier> mappings;
 
     private static java.util.HashMap<String, PkcsObjectIdentifier>
-            getMappings() {
+    getMappings() {
         synchronized (PkcsObjectIdentifier.class) {
             if (mappings == null) {
                 mappings =

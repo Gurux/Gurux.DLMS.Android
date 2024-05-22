@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -59,10 +58,10 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
     private BaudRate communicationSpeed;
 
     static final String[] defultProfiles() {
-        return new String[] { "OK", "CONNECT", "RING", "NO CARRIER", "ERROR", "CONNECT 1200",
+        return new String[]{"OK", "CONNECT", "RING", "NO CARRIER", "ERROR", "CONNECT 1200",
                 "NO DIAL TONE", "BUSY", "NO ANSWER", "CONNECT 600", "CONNECT 2400", "CONNECT 4800",
                 "CONNECT 9600", "CONNECT 14 400", "CONNECT 28 800", "CONNECT 33 600",
-                "CONNECT 56 000" };
+                "CONNECT 56 000"};
     }
 
     /**
@@ -77,9 +76,8 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSModemConfiguration(final String ln) {
         super(ObjectType.MODEM_CONFIGURATION, ln, 0);
@@ -90,11 +88,9 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSModemConfiguration(final String ln, final int sn) {
         super(ObjectType.MODEM_CONFIGURATION, ln, 0);
@@ -129,8 +125,8 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getCommunicationSpeed(), getInitialisationStrings(),
-                getModemProfile() };
+        return new Object[]{getLogicalName(), getCommunicationSpeed(), getInitialisationStrings(),
+                getModemProfile()};
     }
 
     /*
@@ -334,8 +330,8 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Communication Speed", "Initialisation Strings",
-                "Modem Profile" };
+        return new String[]{"Logical Name", "Communication Speed", "Initialisation Strings",
+                "Modem Profile"};
     }
 
     @Override

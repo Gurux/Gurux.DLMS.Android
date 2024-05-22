@@ -45,7 +45,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * Byte array class is used to save received bytes.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXByteBuffer {
@@ -72,9 +72,8 @@ public class GXByteBuffer {
 
     /**
      * Constructor.
-     * 
-     * @param capacity
-     *            Buffer capacity.
+     *
+     * @param capacity Buffer capacity.
      */
     public GXByteBuffer(final int capacity) {
         capacity(capacity);
@@ -82,9 +81,8 @@ public class GXByteBuffer {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Byte array to attach.
+     *
+     * @param value Byte array to attach.
      */
     public GXByteBuffer(final byte[] value) {
         capacity(value.length);
@@ -93,9 +91,8 @@ public class GXByteBuffer {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Byte array to attach.
+     *
+     * @param value Byte array to attach.
      */
     public GXByteBuffer(final GXByteBuffer value) {
         capacity(value.size - value.position);
@@ -112,9 +109,8 @@ public class GXByteBuffer {
 
     /**
      * Allocate new size for the array in bytes.
-     * 
-     * @param capacity
-     *            Buffer capacity.
+     *
+     * @param capacity Buffer capacity.
      */
     public final void capacity(final int capacity) {
         if (capacity == 0) {
@@ -139,7 +135,7 @@ public class GXByteBuffer {
 
     /**
      * Buffer capacity.
-     * 
+     *
      * @return Buffer capacity.
      */
     public final int capacity() {
@@ -150,8 +146,7 @@ public class GXByteBuffer {
     }
 
     /**
-     * @param value
-     *            Buffer position.
+     * @param value Buffer position.
      */
     public final void position(final int value) {
         if (value < 0 || value > size()) {
@@ -175,8 +170,7 @@ public class GXByteBuffer {
     }
 
     /**
-     * @param value
-     *            Buffer size.
+     * @param value Buffer size.
      */
     public final void size(final int value) {
         if (value < 0 || value > capacity()) {
@@ -204,11 +198,9 @@ public class GXByteBuffer {
 
     /**
      * Returns sub array from byte buffer.
-     * 
-     * @param index
-     *            Start index.
-     * @param count
-     *            Byte count.
+     *
+     * @param index Start index.
+     * @param count Byte count.
      * @return Sub array.
      */
     public final byte[] subArray(final int index, final int count) {
@@ -221,13 +213,10 @@ public class GXByteBuffer {
 
     /**
      * Move content from source to destination.
-     * 
-     * @param srcPos
-     *            Source position.
-     * @param destPos
-     *            Destination position.
-     * @param count
-     *            Item count.
+     *
+     * @param srcPos  Source position.
+     * @param destPos Destination position.
+     * @param count   Item count.
      */
     public final void move(final int srcPos, final int destPos, final int count) {
         if (count < 0) {
@@ -258,9 +247,8 @@ public class GXByteBuffer {
     /**
      * Push the given byte into this buffer at the current position, and then
      * increments the position.
-     * 
-     * @param item
-     *            The byte to be added.
+     *
+     * @param item The byte to be added.
      */
     public final void setUInt8(final int item) {
 
@@ -271,9 +259,8 @@ public class GXByteBuffer {
     /**
      * Push the given data type into this buffer at the current position, and
      * then increments the position.
-     * 
-     * @param item
-     *            The UInt8 value to be added.
+     *
+     * @param item The UInt8 value to be added.
      */
     public final void setUInt8(final DataType item) {
         setUInt8(item.getValue());
@@ -282,11 +269,9 @@ public class GXByteBuffer {
     /**
      * Set the UInt8 value into this buffer for given position, and then
      * increments the position.
-     * 
-     * @param index
-     *            Buffer index where value is set.
-     * @param item
-     *            The UInt8 value to be added.
+     *
+     * @param index Buffer index where value is set.
+     * @param item  The UInt8 value to be added.
      */
     public final void setUInt8(final int index, final int item) {
 
@@ -299,9 +284,8 @@ public class GXByteBuffer {
     /**
      * Push the UInt16 value into this buffer at the current position, and then
      * increments the position.
-     * 
-     * @param item
-     *            The UInt16 value to be added.
+     *
+     * @param item The UInt16 value to be added.
      */
     public final void setUInt16(final int item) {
         setUInt16(size, item);
@@ -311,11 +295,9 @@ public class GXByteBuffer {
     /**
      * Set the UInt16 value into this buffer for the given position, and then
      * increments the position.
-     * 
-     * @param index
-     *            Buffer index where value is set.
-     * @param item
-     *            The UInt16 value to be added.
+     *
+     * @param index Buffer index where value is set.
+     * @param item  The UInt16 value to be added.
      */
     public final void setUInt16(final int index, final int item) {
 
@@ -329,9 +311,8 @@ public class GXByteBuffer {
     /**
      * Push the UInt32 value into this buffer at the current position, and then
      * increments the position.
-     * 
-     * @param item
-     *            The UInt32 value to be added.
+     *
+     * @param item The UInt32 value to be added.
      */
     public final void setUInt32(final long item) {
 
@@ -342,11 +323,9 @@ public class GXByteBuffer {
     /**
      * Set the UInt32 value into this buffer for the given position, and then
      * increments the position.
-     * 
-     * @param index
-     *            Buffer index where value is set.
-     * @param item
-     *            The UInt32 value to be added.
+     *
+     * @param index Buffer index where value is set.
+     * @param item  The UInt32 value to be added.
      */
     public final void setUInt32(final int index, final long item) {
 
@@ -362,9 +341,8 @@ public class GXByteBuffer {
     /**
      * Push the UInt64 value into this buffer at the current position, and then
      * increments the position.
-     * 
-     * @param item
-     *            The UInt64 value to be added.
+     *
+     * @param item The UInt64 value to be added.
      */
     public final void setUInt64(final long item) {
 
@@ -375,11 +353,9 @@ public class GXByteBuffer {
     /**
      * Set the UInt64 value into this buffer for the given position, and then
      * increments the position.
-     * 
-     * @param index
-     *            Buffer index where value is set.
-     * @param item
-     *            The UInt64 value to be added.
+     *
+     * @param index Buffer index where value is set.
+     * @param item  The UInt64 value to be added.
      */
     public final void setUInt64(final int index, final long item) {
 
@@ -399,9 +375,8 @@ public class GXByteBuffer {
     /**
      * Push the float value into this buffer at the current position, and then
      * increments the position.
-     * 
-     * @param value
-     *            Float value to be added.
+     *
+     * @param value Float value to be added.
      */
     public final void setFloat(final float value) {
         setFloat(size, value);
@@ -411,11 +386,9 @@ public class GXByteBuffer {
     /**
      * Set the float value into this buffer for the given position, and then
      * increments the position.
-     * 
-     * @param index
-     *            Buffer index where value is set.
-     * @param value
-     *            The float value to be added.
+     *
+     * @param index Buffer index where value is set.
+     * @param value The float value to be added.
      */
 
     public final void setFloat(final int index, final float value) {
@@ -426,9 +399,8 @@ public class GXByteBuffer {
     /**
      * Push the double value into this buffer at the current position, and then
      * increments the position.
-     * 
-     * @param value
-     *            Double value to be added.
+     *
+     * @param value Double value to be added.
      */
     public final void setDouble(final double value) {
         setDouble(size, value);
@@ -438,11 +410,9 @@ public class GXByteBuffer {
     /**
      * Set the double value into this buffer for the given position, and then
      * increments the position.
-     * 
-     * @param index
-     *            Buffer index where value is set.
-     * @param value
-     *            The double value to be added.
+     *
+     * @param index Buffer index where value is set.
+     * @param value The double value to be added.
      */
     public final void setDouble(final int index, final double value) {
         long tmp = Double.doubleToLongBits(value);
@@ -467,9 +437,8 @@ public class GXByteBuffer {
 
     /**
      * Get UInt8 value from byte buffer from the given index..
-     * 
-     * @param index
-     *            Buffer index.
+     *
+     * @param index Buffer index.
      * @return UInt8 value.
      */
     public final short getUInt8(final int index) {
@@ -497,9 +466,8 @@ public class GXByteBuffer {
 
     /**
      * Get UInt16 value from byte buffer from the given index..
-     * 
-     * @param index
-     *            Buffer index.
+     *
+     * @param index Buffer index.
      * @return UInt16 value.
      */
     public final int getUInt16(final int index) {
@@ -511,7 +479,7 @@ public class GXByteBuffer {
 
     /**
      * Get Int32 value from the current position.
-     * 
+     *
      * @return Int32 value.
      */
     public final long getUInt32() {
@@ -522,7 +490,7 @@ public class GXByteBuffer {
 
     /**
      * Get UInt24 value from the current position.
-     * 
+     *
      * @return Int32 value.
      */
     public final int getUInt24() {
@@ -533,7 +501,7 @@ public class GXByteBuffer {
 
     /**
      * Get Int32 value from the current position.
-     * 
+     *
      * @return Int32 value.
      */
     public final int getInt32() {
@@ -544,9 +512,8 @@ public class GXByteBuffer {
 
     /**
      * Get UInt32 value from byte buffer from the given index..
-     * 
-     * @param index
-     *            Buffer index.
+     *
+     * @param index Buffer index.
      * @return UInt32 value.
      */
 
@@ -560,9 +527,8 @@ public class GXByteBuffer {
 
     /**
      * Get UInt24 value from byte buffer from the given index..
-     * 
-     * @param index
-     *            Buffer index.
+     *
+     * @param index Buffer index.
      * @return UInt24 value.
      */
     public final int getUInt24(final int index) {
@@ -575,9 +541,8 @@ public class GXByteBuffer {
 
     /**
      * Get UInt32 value from byte buffer from the given index..
-     * 
-     * @param index
-     *            Buffer index.
+     *
+     * @param index Buffer index.
      * @return UInt32 value.
      */
     public final long getUInt32(final int index) {
@@ -617,9 +582,8 @@ public class GXByteBuffer {
 
     /**
      * Get Int64 value from byte buffer using the index.
-     * 
-     * @param index
-     *            Byte index.
+     *
+     * @param index Byte index.
      * @return Int64 value.
      */
     public final long getInt64(final int index) {
@@ -642,8 +606,7 @@ public class GXByteBuffer {
     }
 
     /**
-     * @param value
-     *            The data to set
+     * @param value The data to set
      */
     public final void setData(final byte[] value) {
         data = value;
@@ -660,9 +623,8 @@ public class GXByteBuffer {
 
     /**
      * Get UInt64 value from byte buffer using index.
-     * 
-     * @param index
-     *            Byte index.
+     *
+     * @param index Byte index.
      * @return UInt64 value.
      */
     public final BigInteger getUInt64(final int index) {
@@ -676,9 +638,8 @@ public class GXByteBuffer {
 
     /**
      * Check is string ASCII string.
-     * 
-     * @param value
-     *            String value.
+     *
+     * @param value String value.
      * @return Is ASCII string.
      */
     public static boolean isAsciiString(final String value) {
@@ -690,9 +651,8 @@ public class GXByteBuffer {
 
     /**
      * Check is byte buffer ASCII string.
-     * 
-     * @param value
-     *            Byte array.
+     *
+     * @param value Byte array.
      * @return Is ASCII string.
      */
     public static boolean isAsciiString(byte[] value) {
@@ -708,9 +668,8 @@ public class GXByteBuffer {
 
     /**
      * Get string value from byte buffer.
-     * 
-     * @param count
-     *            Amount of the chars to get.
+     *
+     * @param count Amount of the chars to get.
      * @return String value.
      */
     public final String getString(final int count) {
@@ -721,11 +680,9 @@ public class GXByteBuffer {
 
     /**
      * Get string value from byte buffer.
-     * 
-     * @param index
-     *            Byte index.
-     * @param count
-     *            Amount of the chars to get.
+     *
+     * @param index Byte index.
+     * @param count Amount of the chars to get.
      * @return String value.
      */
     public final String getString(final int index, final int count) {
@@ -734,13 +691,10 @@ public class GXByteBuffer {
 
     /**
      * Get string value from byte buffer.
-     * 
-     * @param index
-     *            Byte index.
-     * @param count
-     *            Amount of the chars to get.
-     * @param charsetName
-     *            charset name.
+     *
+     * @param index       Byte index.
+     * @param count       Amount of the chars to get.
+     * @param charsetName charset name.
      * @return String value.
      */
     public final String getString(final int index, final int count, final String charsetName) {
@@ -766,9 +720,8 @@ public class GXByteBuffer {
 
     /**
      * Append the given byte array into this buffer.
-     * 
-     * @param value
-     *            Data to append.
+     *
+     * @param value Data to append.
      */
     public final void set(final byte[] value) {
         if (value != null) {
@@ -779,11 +732,9 @@ public class GXByteBuffer {
     /**
      * Push the given byte array into this buffer at the current position, and
      * then increments the position.
-     * 
-     * @param index
-     *            Byte index.
-     * @param value
-     *            The value to be added.
+     *
+     * @param index Byte index.
+     * @param value The value to be added.
      */
     public final void set(final int index, final byte[] value) {
         if (value != null) {
@@ -794,13 +745,10 @@ public class GXByteBuffer {
 
     /**
      * Set new value to byte array.
-     * 
-     * @param value
-     *            Byte array to add.
-     * @param index
-     *            Byte index.
-     * @param count
-     *            Byte count.
+     *
+     * @param value Byte array to add.
+     * @param index Byte index.
+     * @param count Byte count.
      */
     public final void set(final byte[] value, final int index, final int count) {
         if (value != null && count != 0) {
@@ -813,8 +761,7 @@ public class GXByteBuffer {
     }
 
     /**
-     * @param value
-     *            Set new value to byte array.
+     * @param value Set new value to byte array.
      */
     public final void set(final GXByteBuffer value) {
         if (value != null) {
@@ -824,11 +771,9 @@ public class GXByteBuffer {
 
     /**
      * Set new value to byte array.
-     * 
-     * @param value
-     *            Byte array to add.
-     * @param count
-     *            Byte count.
+     *
+     * @param value Byte array to add.
+     * @param count Byte count.
      */
     public final void set(final GXByteBuffer value, final int count) {
         if (size + count > capacity()) {
@@ -843,9 +788,8 @@ public class GXByteBuffer {
 
     /**
      * Add new object to the byte buffer.
-     * 
-     * @param value
-     *            Value to add.
+     *
+     * @param value Value to add.
      */
     public final void add(final Object value) {
         if (value != null) {
@@ -886,8 +830,7 @@ public class GXByteBuffer {
     }
 
     /**
-     * @param target
-     *            get bytes from byte buffer.
+     * @param target get bytes from byte buffer.
      */
     public final void get(final byte[] target) {
         if (size - position < target.length) {
@@ -900,9 +843,8 @@ public class GXByteBuffer {
     /**
      * Compares, whether two given arrays are similar starting from current
      * position.
-     * 
-     * @param arr
-     *            Array to compare.
+     *
+     * @param arr Array to compare.
      * @return True, if arrays are similar. False, if the arrays differ.
      */
     public final boolean compare(final byte[] arr) {
@@ -940,9 +882,8 @@ public class GXByteBuffer {
     /**
      * Push the given hex string as byte array into this buffer at the current
      * position, and then increments the position.
-     * 
-     * @param value
-     *            The hex string to be added.
+     *
+     * @param value The hex string to be added.
      */
     public final void setHexString(final String value) {
         set(GXCommon.hexToBytes(value));
@@ -951,11 +892,9 @@ public class GXByteBuffer {
     /**
      * Push the given hex string as byte array into this buffer at the current
      * position, and then increments the position.
-     * 
-     * @param index
-     *            Byte index.
-     * @param value
-     *            The hex string to be added.
+     *
+     * @param index Byte index.
+     * @param value The hex string to be added.
      */
     public final void setHexString(final int index, final String value) {
         set(index, GXCommon.hexToBytes(value));
@@ -964,13 +903,10 @@ public class GXByteBuffer {
     /**
      * Push the given hex string as byte array into this buffer at the current
      * position, and then increments the position.
-     * 
-     * @param value
-     *            Byte array to add.
-     * @param index
-     *            Byte index.
-     * @param count
-     *            Byte count.
+     *
+     * @param value Byte array to add.
+     * @param index Byte index.
+     * @param count Byte count.
      */
     public final void setHexString(final String value, final int index, final int count) {
         set(GXCommon.hexToBytes(value), index, count);
@@ -983,7 +919,7 @@ public class GXByteBuffer {
 
     /**
      * Get remaining data.
-     * 
+     *
      * @return Remaining data as byte array.
      */
     public byte[] remaining() {
@@ -992,9 +928,8 @@ public class GXByteBuffer {
 
     /**
      * Get remaining data as a hex string.
-     * 
-     * @param addSpace
-     *            Add space between bytes.
+     *
+     * @param addSpace Add space between bytes.
      * @return Remaining data as a hex string.
      */
     public String remainingHexString(final boolean addSpace) {
@@ -1003,11 +938,9 @@ public class GXByteBuffer {
 
     /**
      * Get data as hex string.
-     * 
-     * @param addSpace
-     *            Add space between bytes.
-     * @param index
-     *            Byte index.
+     *
+     * @param addSpace Add space between bytes.
+     * @param index    Byte index.
      * @return Data as hex string.
      */
     public final String toHex(final boolean addSpace, final int index) {
@@ -1016,13 +949,10 @@ public class GXByteBuffer {
 
     /**
      * Get data as hex string.
-     * 
-     * @param addSpace
-     *            Add space between bytes.
-     * @param index
-     *            Byte index.
-     * @param count
-     *            Byte count.
+     *
+     * @param addSpace Add space between bytes.
+     * @param index    Byte index.
+     * @param count    Byte count.
      * @return Data as hex string.
      */
     public final String toHex(final boolean addSpace, final int index, final int count) {

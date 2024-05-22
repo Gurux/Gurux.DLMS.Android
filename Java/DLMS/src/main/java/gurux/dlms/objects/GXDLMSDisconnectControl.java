@@ -73,9 +73,8 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSDisconnectControl(final String ln) {
         this(ln, 0);
@@ -83,11 +82,9 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSDisconnectControl(final String ln, final int sn) {
         super(ObjectType.DISCONNECT_CONTROL, ln, sn);
@@ -103,8 +100,7 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Output state of COSEM Disconnect Control object.
+     * @param value Output state of COSEM Disconnect Control object.
      */
     public final void setOutputState(final boolean value) {
         outputState = value;
@@ -118,8 +114,7 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Control state of COSEM Disconnect Control object.
+     * @param value Control state of COSEM Disconnect Control object.
      */
     public final void setControlState(final ControlState value) {
         controlState = value;
@@ -133,8 +128,7 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Control mode of COSEM Disconnect Control object.
+     * @param value Control mode of COSEM Disconnect Control object.
      */
     public final void setControlMode(final ControlMode value) {
         controlMode = value;
@@ -143,24 +137,16 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
     /**
      * Forces the disconnect control object into 'disconnected' state if remote
      * disconnection is enabled.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] remoteDisconnect(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -182,8 +168,8 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getOutputState(),
-                getControlState(), getControlMode() };
+        return new Object[]{getLogicalName(), getOutputState(),
+                getControlState(), getControlMode()};
     }
 
     @Override
@@ -240,7 +226,7 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
 
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -259,7 +245,7 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
 
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
@@ -315,12 +301,12 @@ public class GXDLMSDisconnectControl extends GXDLMSObject
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Output State", "Control State",
-                "Control Mode" };
+        return new String[]{"Logical Name", "Output State", "Control State",
+                "Control Mode"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Remote disconnect", "Remote reconnect" };
+        return new String[]{"Remote disconnect", "Remote reconnect"};
     }
 }

@@ -40,31 +40,25 @@ package gurux.dlms;
 public interface IGXCryptoNotifier {
     /**
      * Notifies Un-ciphered PDU.
-     * 
-     * @param sender
-     *            The source of the event.
-     * @param data
-     *            Un-ciphered PDU.
+     *
+     * @param sender The source of the event.
+     * @param data   Un-ciphered PDU.
      */
     void onPduEventHandler(Object sender, byte[] data);
 
     /**
      * Called when the public or private key is needed and it's unknown.
-     * 
-     * @param sender
-     *            Sender
-     * @param args
-     *            Arguments
+     *
+     * @param sender Sender
+     * @param args   Arguments
      */
     void onKey(Object sender, GXCryptoKeyParameter args);
 
     /**
      * Called to encrypt or decrypt the ciphered data.
-     * 
-     * @param sender
-     *            Sender
-     * @param args
-     *            Arguments
+     *
+     * @param sender Sender
+     * @param args   Arguments
      */
     void onCrypto(Object sender, GXCryptoKeyParameter args);
 };

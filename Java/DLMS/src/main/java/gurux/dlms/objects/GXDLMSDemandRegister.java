@@ -82,9 +82,8 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSDemandRegister(final String ln) {
         this(ln, 0);
@@ -92,11 +91,9 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSDemandRegister(final String ln, final int sn) {
         super(ObjectType.DEMAND_REGISTER, ln, sn);
@@ -111,8 +108,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Current average value of COSEM Data object.
+     * @param value Current average value of COSEM Data object.
      */
     public final void setCurrentAverageValue(final Object value) {
         currentAverageValue = value;
@@ -126,8 +122,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Last average value of COSEM Data object.
+     * @param value Last average value of COSEM Data object.
      */
     public final void setLastAverageValue(final Object value) {
         lastAverageValue = value;
@@ -141,8 +136,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Scaler of COSEM Register object.
+     * @param value Scaler of COSEM Register object.
      */
     public final void setScaler(final double value) {
         scaler = (int) Math.log10(value);
@@ -156,8 +150,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Unit of COSEM Register object.
+     * @param value Unit of COSEM Register object.
      */
     public final void setUnit(final Unit value) {
         unit = value.getValue();
@@ -171,8 +164,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Status of COSEM Register object.
+     * @param value Status of COSEM Register object.
      */
     public final void setStatus(final Object value) {
         status = value;
@@ -186,8 +178,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Capture time of COSEM Register object.
+     * @param value Capture time of COSEM Register object.
      */
     public final void setCaptureTime(final GXDateTime value) {
         captureTime = value;
@@ -201,8 +192,7 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Current start time of COSEM Register object.
+     * @param value Current start time of COSEM Register object.
      */
     public final void setStartTimeCurrent(final GXDateTime value) {
         startTimeCurrent = value;
@@ -226,22 +216,15 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Reset value.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      */
     public final byte[][] reset(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -251,22 +234,15 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Next period.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      */
     public final byte[][] nextPeriod(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -277,9 +253,9 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object[] getValues() {
         String str = "Scaler: " + String.valueOf(getScaler()) + " Unit: " + getUnit().toString();
-        return new Object[] { getLogicalName(), getCurrentAverageValue(), getLastAverageValue(),
+        return new Object[]{getLogicalName(), getCurrentAverageValue(), getLastAverageValue(),
                 str, getStatus(), getCaptureTime(), getStartTimeCurrent(), getPeriod(),
-                getNumberOfPeriods() };
+                getNumberOfPeriods()};
     }
 
     @Override
@@ -590,13 +566,13 @@ public class GXDLMSDemandRegister extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Current Average Value", "Last Average Value",
+        return new String[]{"Logical Name", "Current Average Value", "Last Average Value",
                 "Scaler and Unit", "Status", "Capture Time", "Start Time Current", "Period",
-                "Number Of Periods" };
+                "Number Of Periods"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset", "Next period" };
+        return new String[]{"Reset", "Next period"};
     }
 }

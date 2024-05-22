@@ -49,14 +49,12 @@ public class GXDLMSDayProfile {
 
     /**
      * Constructor.
-     * 
-     * @param day
-     *            Integer value of the day.
-     * @param schedules
-     *            Collection of schedules.
+     *
+     * @param day       Integer value of the day.
+     * @param schedules Collection of schedules.
      */
     public GXDLMSDayProfile(final int day,
-            final GXDLMSDayProfileAction[] schedules) {
+                            final GXDLMSDayProfileAction[] schedules) {
         setDayId(day);
         setDaySchedules(schedules);
     }
@@ -69,8 +67,7 @@ public class GXDLMSDayProfile {
     }
 
     /**
-     * @param value
-     *            User defined identifier, identifying the current day_profile.
+     * @param value User defined identifier, identifying the current day_profile.
      */
     public final void setDayId(final int value) {
         dayId = value;

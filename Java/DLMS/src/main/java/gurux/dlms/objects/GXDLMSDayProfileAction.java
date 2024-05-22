@@ -53,16 +53,13 @@ public class GXDLMSDayProfileAction {
 
     /**
      * Constructor.
-     * 
-     * @param startTime
-     *            Start time.
-     * @param scriptLogicalName
-     *            Logical name.
-     * @param scriptSelector
-     *            Script selector.
+     *
+     * @param startTime         Start time.
+     * @param scriptLogicalName Logical name.
+     * @param scriptSelector    Script selector.
      */
     public GXDLMSDayProfileAction(final GXTime startTime,
-            final String scriptLogicalName, final int scriptSelector) {
+                                  final String scriptLogicalName, final int scriptSelector) {
         setStartTime(startTime);
         setScriptLogicalName(scriptLogicalName);
         setScriptSelector(scriptSelector);
@@ -76,8 +73,7 @@ public class GXDLMSDayProfileAction {
     }
 
     /**
-     * @param value
-     *            Defines the time when the script is to be executed.
+     * @param value Defines the time when the script is to be executed.
      */
     public final void setStartTime(final GXTime value) {
         time = value;
@@ -91,8 +87,7 @@ public class GXDLMSDayProfileAction {
     }
 
     /**
-     * @param value
-     *            Defines the logical name of the "Script table" object.
+     * @param value Defines the logical name of the "Script table" object.
      */
     public final void setScriptLogicalName(final String value) {
         logicalName = value;
@@ -106,8 +101,7 @@ public class GXDLMSDayProfileAction {
     }
 
     /**
-     * @param value
-     *            Defines the script_identifier of the script to be executed.
+     * @param value Defines the script_identifier of the script to be executed.
      */
     public final void setScriptSelector(final int value) {
         selector = value;

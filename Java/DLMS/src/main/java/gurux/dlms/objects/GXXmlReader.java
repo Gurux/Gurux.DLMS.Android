@@ -95,11 +95,9 @@ public class GXXmlReader implements AutoCloseable {
 
     /**
      * Constructor.
-     * 
-     * @param s
-     *            Input stream.
-     * @throws XMLStreamException
-     *             Invalid XML stream.
+     *
+     * @param s Input stream.
+     * @throws XMLStreamException Invalid XML stream.
      */
     public GXXmlReader(final InputStream s) throws XmlPullParserException {
         reader = Xml.newPullParser();
@@ -109,13 +107,10 @@ public class GXXmlReader implements AutoCloseable {
 
     /**
      * Constructor.
-     * 
-     * @param filename
-     *            File name.
-     * @throws XMLStreamException
-     *             Invalid XML stream.
-     * @throws FileNotFoundException
-     *             File not found.
+     *
+     * @param filename File name.
+     * @throws XMLStreamException    Invalid XML stream.
+     * @throws FileNotFoundException File not found.
      */
     public GXXmlReader(final String filename)
             throws XmlPullParserException, FileNotFoundException {
@@ -128,8 +123,8 @@ public class GXXmlReader implements AutoCloseable {
     /**
      * @return Name of current tag.
      */
-    public String getName(){
-       throw new RuntimeException("XML reader is not supported at the moment.");
+    public String getName() {
+        throw new RuntimeException("XML reader is not supported at the moment.");
     }
 
     private void getNext() throws XMLStreamException {
@@ -150,7 +145,7 @@ public class GXXmlReader implements AutoCloseable {
     }
 
     public final boolean isStartElement(final String name,
-            final boolean getNext) throws XMLStreamException {
+                                        final boolean getNext) throws XMLStreamException {
         throw new UnsupportedOperationException("XML reader is not supported at the moment.");
     }
 
@@ -168,7 +163,7 @@ public class GXXmlReader implements AutoCloseable {
     }
 
     public final int readElementContentAsInt(final String name,
-            final int defaultValue) throws XMLStreamException {
+                                             final int defaultValue) throws XMLStreamException {
         throw new UnsupportedOperationException("XML reader is not supported at the moment.");
     }
 
@@ -178,7 +173,7 @@ public class GXXmlReader implements AutoCloseable {
     }
 
     public final long readElementContentAsLong(final String name,
-            final long defaultValue) throws XMLStreamException {
+                                               final long defaultValue) throws XMLStreamException {
         getNext();
         throw new UnsupportedOperationException("XML reader is not supported at the moment.");
     }
@@ -189,12 +184,12 @@ public class GXXmlReader implements AutoCloseable {
     }
 
     public final long readElementContentAsULong(final String name,
-            final long defaultValue) throws XMLStreamException {
+                                                final long defaultValue) throws XMLStreamException {
         throw new UnsupportedOperationException("XML reader is not supported at the moment.");
     }
 
     public final double readElementContentAsDouble(final String name,
-            final double defaultValue) throws XMLStreamException {
+                                                   final double defaultValue) throws XMLStreamException {
         throw new UnsupportedOperationException("XML reader is not supported at the moment.");
     }
 
@@ -215,7 +210,7 @@ public class GXXmlReader implements AutoCloseable {
     }
 
     public final Object readElementContentAsObject(final String name,
-            final Object defaultValue, final GXDLMSObject obj, final int index)
+                                                   final Object defaultValue, final GXDLMSObject obj, final int index)
             throws XMLStreamException {
         getNext();
         if (name.compareToIgnoreCase(getName()) == 0) {
@@ -249,43 +244,43 @@ public class GXXmlReader implements AutoCloseable {
             } else {
                 str = getText();
                 switch (uiType) {
-                case OCTET_STRING:
-                    if (!str.isEmpty()) {
-                        ret = GXDLMSTranslator.hexToBytes(str);
-                    }
-                    break;
-                case DATETIME:
-                    if (!str.isEmpty()) {
-                        if (dt == DataType.OCTET_STRING) {
-                            ret = new GXDateTimeOS(str, Locale.ROOT);
-                        } else {
-                            ret = new GXDateTime(str, Locale.ROOT);
+                    case OCTET_STRING:
+                        if (!str.isEmpty()) {
+                            ret = GXDLMSTranslator.hexToBytes(str);
                         }
-                    }
-                    break;
-                case DATE:
-                    if (!str.isEmpty()) {
-                        if (dt == DataType.OCTET_STRING) {
-                            ret = new GXDateOS(str, Locale.ROOT);
-                        } else {
-                            ret = new GXDate(str, Locale.ROOT);
+                        break;
+                    case DATETIME:
+                        if (!str.isEmpty()) {
+                            if (dt == DataType.OCTET_STRING) {
+                                ret = new GXDateTimeOS(str, Locale.ROOT);
+                            } else {
+                                ret = new GXDateTime(str, Locale.ROOT);
+                            }
                         }
-                    }
-                    break;
-                case TIME:
-                    if (!str.isEmpty()) {
-                        if (dt == DataType.OCTET_STRING) {
-                            ret = new GXTimeOS(str, Locale.ROOT);
-                        } else {
-                            ret = new GXTime(str, Locale.ROOT);
+                        break;
+                    case DATE:
+                        if (!str.isEmpty()) {
+                            if (dt == DataType.OCTET_STRING) {
+                                ret = new GXDateOS(str, Locale.ROOT);
+                            } else {
+                                ret = new GXDate(str, Locale.ROOT);
+                            }
                         }
-                    }
-                    break;
-                case NONE:
-                    ret = defaultValue;
-                    break;
-                default:
-                    ret = GXDLMSConverter.changeType(str, uiType);
+                        break;
+                    case TIME:
+                        if (!str.isEmpty()) {
+                            if (dt == DataType.OCTET_STRING) {
+                                ret = new GXTimeOS(str, Locale.ROOT);
+                            } else {
+                                ret = new GXTime(str, Locale.ROOT);
+                            }
+                        }
+                        break;
+                    case NONE:
+                        ret = defaultValue;
+                        break;
+                    default:
+                        ret = GXDLMSConverter.changeType(str, uiType);
                 }
             }
             return ret;
@@ -313,15 +308,17 @@ public class GXXmlReader implements AutoCloseable {
     }
 
     public final GXTime readElementContentAsTime(final String name) {
-            throw new UnsupportedOperationException("XML reader is not supported at the moment.");
+        throw new UnsupportedOperationException("XML reader is not supported at the moment.");
     }
 
-    private String getText()  {
-            throw new UnsupportedOperationException("XML reader is not supported at the moment.");    }
+    private String getText() {
+        throw new UnsupportedOperationException("XML reader is not supported at the moment.");
+    }
 
     public final String readElementContentAsString(final String name,
-            final String defaultValue) {
-            throw new UnsupportedOperationException("XML reader is not supported at the moment.");    }
+                                                   final String defaultValue) {
+        throw new UnsupportedOperationException("XML reader is not supported at the moment.");
+    }
 
     @Override
     public final String toString() {

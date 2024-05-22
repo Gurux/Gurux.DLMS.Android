@@ -56,7 +56,7 @@ public class GXChargeTable {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Index.
      */
     public final String getIndex() {
@@ -66,9 +66,8 @@ public class GXChargeTable {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Index.
+     *
+     * @param value Index.
      */
     public final void setIndex(final String value) {
         index = value;
@@ -77,7 +76,7 @@ public class GXChargeTable {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Charge per unit.
      */
     public final short getChargePerUnit() {
@@ -87,9 +86,8 @@ public class GXChargeTable {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Charge per unit.
+     *
+     * @param value Charge per unit.
      */
     public final void setChargePerUnit(final short value) {
         chargePerUnit = value;

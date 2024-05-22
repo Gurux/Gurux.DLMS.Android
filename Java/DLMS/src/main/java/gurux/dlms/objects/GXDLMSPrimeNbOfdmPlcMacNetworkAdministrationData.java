@@ -94,9 +94,8 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData(final String ln) {
         this(ln, 0);
@@ -104,14 +103,12 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData(final String ln,
-            final int sn) {
+                                                            final int sn) {
         super(ObjectType.PRIME_NB_OFDM_PLC_MAC_NETWORK_ADMINISTRATION_DATA, ln,
                 sn);
     }
@@ -124,8 +121,7 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
     }
 
     /**
-     * @param value
-     *            List of entries in multicast switching table.
+     * @param value List of entries in multicast switching table.
      */
     public final void setMulticastEntries(final GXMacMulticastEntry[] value) {
         multicastEntries = value;
@@ -139,8 +135,7 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
     }
 
     /**
-     * @param value
-     *            Switch table.
+     * @param value Switch table.
      */
     public final void setSwitchTable(final short[] value) {
         switchTable = value;
@@ -154,8 +149,7 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
     }
 
     /**
-     * @param value
-     *            List of entries in multicast switching table.
+     * @param value List of entries in multicast switching table.
      */
     public final void setDirectTable(final GXMacDirectTable[] value) {
         directTable = value;
@@ -169,8 +163,7 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
     }
 
     /**
-     * @param value
-     *            List of available switches.
+     * @param value List of available switches.
      */
     public final void setAvailableSwitches(final GXMacAvailableSwitch[] value) {
         availableSwitches = value;
@@ -184,8 +177,7 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
     }
 
     /**
-     * @param value
-     *            List of PHY communication parameters.
+     * @param value List of PHY communication parameters.
      */
     public final void setCommunications(final GXMacPhyCommunication[] value) {
         communications = value;
@@ -193,24 +185,16 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
 
     /**
      * Reset the values.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -221,13 +205,13 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), multicastEntries, switchTable,
-                directTable, availableSwitches, communications };
+        return new Object[]{getLogicalName(), multicastEntries, switchTable,
+                directTable, availableSwitches, communications};
     }
 
     @Override
     public final byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             multicastEntries = null;
             switchTable = null;
@@ -295,17 +279,17 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-            return DataType.ARRAY;
-        default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                return DataType.ARRAY;
+            default:
+                throw new IllegalArgumentException(
+                        "getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -424,23 +408,23 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return getMulticastEntries(settings);
-        case 3:
-            return getSwitchTable(settings);
-        case 4:
-            return getDirectTable(settings);
-        case 5:
-            return getAvailableSwitches(settings);
-        case 6:
-            return getCommunications(settings);
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return getMulticastEntries(settings);
+            case 3:
+                return getSwitchTable(settings);
+            case 4:
+                return getDirectTable(settings);
+            case 5:
+                return getAvailableSwitches(settings);
+            case 6:
+                return getCommunications(settings);
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -532,29 +516,29 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            multicastEntries = setMulticastEntry((List<?>) e.getValue());
-            break;
-        case 3:
-            switchTable = setSwitchTable((List<?>) e.getValue());
-            break;
-        case 4:
-            directTable = setDirectTable((List<?>) e.getValue());
-            break;
-        case 5:
-            availableSwitches = setAvailableSwitches((List<?>) e.getValue());
-            break;
-        case 6:
-            communications = setCommunications((List<?>) e.getValue());
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                multicastEntries = setMulticastEntry((List<?>) e.getValue());
+                break;
+            case 3:
+                switchTable = setSwitchTable((List<?>) e.getValue());
+                break;
+            case 4:
+                directTable = setDirectTable((List<?>) e.getValue());
+                break;
+            case 5:
+                availableSwitches = setAvailableSwitches((List<?>) e.getValue());
+                break;
+            case 6:
+                communications = setCommunications((List<?>) e.getValue());
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -774,13 +758,13 @@ public class GXDLMSPrimeNbOfdmPlcMacNetworkAdministrationData
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "MulticastEntries", "SwitchTable",
-                "DirectTable", "AvailableSwitches", "Communications" };
+        return new String[]{"Logical Name", "MulticastEntries", "SwitchTable",
+                "DirectTable", "AvailableSwitches", "Communications"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset" };
+        return new String[]{"Reset"};
     }
 }

@@ -43,7 +43,7 @@ import gurux.dlms.objects.GXDLMSTcpUdpSetup;
 
 /**
  * Implements secured DLMS server.
- * 
+ *
  * @author Gurux Ltd.
  */
 public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
@@ -54,14 +54,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param logicalNameReferencing
-     *            Is logical name referencing used.
-     * @param type
-     *            Interface type.
+     *
+     * @param logicalNameReferencing Is logical name referencing used.
+     * @param type                   Interface type.
      */
     public GXDLMSSecureServer2(final boolean logicalNameReferencing,
-            final InterfaceType type) {
+                               final InterfaceType type) {
         super(logicalNameReferencing, type);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -69,14 +67,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Association logical name.
-     * @param type
-     *            Interface type.
+     *
+     * @param ln   Association logical name.
+     * @param type Interface type.
      */
     public GXDLMSSecureServer2(final GXDLMSAssociationLogicalName ln,
-            final InterfaceType type) {
+                               final InterfaceType type) {
         super(ln, type);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -84,14 +80,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param sn
-     *            Association short name.
-     * @param type
-     *            Interface type.
+     *
+     * @param sn   Association short name.
+     * @param type Interface type.
      */
     public GXDLMSSecureServer2(final GXDLMSAssociationShortName sn,
-            final InterfaceType type) {
+                               final InterfaceType type) {
         super(sn, type);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -99,14 +93,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Association logical name.
-     * @param hdlc
-     *            HDLC settings.
+     *
+     * @param ln   Association logical name.
+     * @param hdlc HDLC settings.
      */
     public GXDLMSSecureServer2(final GXDLMSAssociationLogicalName ln,
-            final GXDLMSHdlcSetup hdlc) {
+                               final GXDLMSHdlcSetup hdlc) {
         super(ln, hdlc);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -114,14 +106,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param sn
-     *            Association short name.
-     * @param hdlc
-     *            HDLC settings.
+     *
+     * @param sn   Association short name.
+     * @param hdlc HDLC settings.
      */
     public GXDLMSSecureServer2(final GXDLMSAssociationShortName sn,
-            final GXDLMSHdlcSetup hdlc) {
+                               final GXDLMSHdlcSetup hdlc) {
         super(sn, hdlc);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -129,14 +119,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Association logical name.
-     * @param wrapper
-     *            Wrapper settings.
+     *
+     * @param ln      Association logical name.
+     * @param wrapper Wrapper settings.
      */
     public GXDLMSSecureServer2(final GXDLMSAssociationLogicalName ln,
-            final GXDLMSTcpUdpSetup wrapper) {
+                               final GXDLMSTcpUdpSetup wrapper) {
         super(ln, wrapper);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -144,14 +132,12 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
 
     /**
      * Constructor.
-     * 
-     * @param sn
-     *            Association short name.
-     * @param wrapper
-     *            Wrapper settings.
+     *
+     * @param sn      Association short name.
+     * @param wrapper Wrapper settings.
      */
     public GXDLMSSecureServer2(final GXDLMSAssociationShortName sn,
-            final GXDLMSTcpUdpSetup wrapper) {
+                               final GXDLMSTcpUdpSetup wrapper) {
         super(sn, wrapper);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -169,8 +155,7 @@ public abstract class GXDLMSSecureServer2 extends GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            Key Encrypting Key, also known as Master key.
+     * @param value Key Encrypting Key, also known as Master key.
      */
     public final void setKek(final byte[] value) {
         getSettings().setKek(value);

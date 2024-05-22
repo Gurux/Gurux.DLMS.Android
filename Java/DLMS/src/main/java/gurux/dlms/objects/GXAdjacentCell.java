@@ -53,8 +53,7 @@ public class GXAdjacentCell {
     }
 
     /**
-     * @param value
-     *            Four-byte cell ID.
+     * @param value Four-byte cell ID.
      */
     public final void setCellId(long value) {
         cellId = value;
@@ -68,8 +67,7 @@ public class GXAdjacentCell {
     }
 
     /**
-     * @param value
-     *            Signal quality.
+     * @param value Signal quality.
      */
     public final void setSignalQuality(final short value) {
         signalQuality = value;

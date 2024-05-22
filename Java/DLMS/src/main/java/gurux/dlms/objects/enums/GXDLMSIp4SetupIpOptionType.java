@@ -82,7 +82,7 @@ public enum GXDLMSIp4SetupIpOptionType {
     private static HashMap<Integer, GXDLMSIp4SetupIpOptionType> mappings;
 
     private static java.util.HashMap<Integer, GXDLMSIp4SetupIpOptionType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (GXDLMSIp4SetupIpOptionType.class) {
                 if (mappings == null) {

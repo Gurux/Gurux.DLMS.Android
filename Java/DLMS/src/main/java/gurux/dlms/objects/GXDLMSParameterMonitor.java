@@ -86,9 +86,8 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSParameterMonitor(final String ln) {
         this(ln, 0);
@@ -102,8 +101,7 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
     }
 
     /**
-     * @param value
-     *            Changed parameter.
+     * @param value Changed parameter.
      */
     public final void setChangedParameter(final GXDLMSTarget value) {
         changedParameter = value;
@@ -117,8 +115,7 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
     }
 
     /**
-     * @param value
-     *            Capture time.
+     * @param value Capture time.
      */
     public final void setCaptureTime(final Date value) {
         captureTime = value;
@@ -132,8 +129,7 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
     }
 
     /**
-     * @param value
-     *            Changed Parameter
+     * @param value Changed Parameter
      */
     public final void setParameters(final List<GXDLMSTarget> value) {
         parameters = value;
@@ -141,11 +137,9 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSParameterMonitor(final String ln, final int sn) {
         super(ObjectType.PARAMETER_MONITOR, ln, sn);
@@ -155,33 +149,24 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), changedParameter, captureTime, parameters };
+        return new Object[]{getLogicalName(), changedParameter, captureTime, parameters};
     }
 
     /**
      * Inserts a new entry in the table.
-     * 
-     * @param client
-     *            DLMS Client.
-     * @param entry
-     *            Removed entry.
+     *
+     * @param client DLMS Client.
+     * @param entry  Removed entry.
      * @return If a special day with the same index or with the same date as an
-     *         already defined day is inserted, the old entry will be
-     *         overwritten.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * already defined day is inserted, the old entry will be
+     * overwritten.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] insert(GXDLMSClient client, GXDLMSTarget entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -199,26 +184,17 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
 
     /**
      * Deletes an entry from the table.
-     * 
-     * @param client
-     *            DLMS Client.
-     * @param entry
-     *            Removed entry.
+     *
+     * @param client DLMS Client.
+     * @param entry  Removed entry.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] delete(GXDLMSClient client, GXDLMSTarget entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -324,16 +300,16 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-            return DataType.STRUCTURE;
-        case 3:
-            return DataType.OCTET_STRING;
-        case 4:
-            return DataType.ARRAY;
-        default:
-            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+                return DataType.STRUCTURE;
+            case 3:
+                return DataType.OCTET_STRING;
+            case 4:
+                return DataType.ARRAY;
+            default:
+                throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -343,55 +319,55 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
     @Override
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2: {
-            GXByteBuffer data = new GXByteBuffer();
-            data.setUInt8(DataType.STRUCTURE.getValue());
-            data.setUInt8(4);
-            if (changedParameter == null) {
-                GXCommon.setData(settings, data, DataType.UINT16, 0);
-                GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                        new byte[] { 0, 0, 0, 0, 0, 0 });
-                GXCommon.setData(settings, data, DataType.INT8, 1);
-                GXCommon.setData(settings, data, DataType.NONE, null);
-            } else {
-                GXCommon.setData(settings, data, DataType.UINT16,
-                        changedParameter.getTarget().getObjectType().getValue());
-                GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                        GXCommon.logicalNameToBytes(changedParameter.getTarget().getLogicalName()));
-                GXCommon.setData(settings, data, DataType.INT8,
-                        changedParameter.getAttributeIndex());
-                GXCommon.setData(settings, data,
-                        GXDLMSConverter.getDLMSDataType(changedParameter.getValue()),
-                        changedParameter.getValue());
-            }
-            return data.array();
-        }
-        case 3:
-            return captureTime;
-        case 4: {
-            GXByteBuffer data = new GXByteBuffer();
-            data.setUInt8(DataType.ARRAY.getValue());
-            if (parameters == null) {
-                data.setUInt8(0);
-            } else {
-                data.setUInt8(parameters.size());
-                for (GXDLMSTarget it : parameters) {
-                    data.setUInt8(DataType.STRUCTURE.getValue());
-                    data.setUInt8(3);
-                    GXCommon.setData(settings, data, DataType.UINT16,
-                            it.getTarget().getObjectType().getValue());
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2: {
+                GXByteBuffer data = new GXByteBuffer();
+                data.setUInt8(DataType.STRUCTURE.getValue());
+                data.setUInt8(4);
+                if (changedParameter == null) {
+                    GXCommon.setData(settings, data, DataType.UINT16, 0);
                     GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                            GXCommon.logicalNameToBytes(it.getTarget().getLogicalName()));
-                    GXCommon.setData(settings, data, DataType.INT8, it.getAttributeIndex());
+                            new byte[]{0, 0, 0, 0, 0, 0});
+                    GXCommon.setData(settings, data, DataType.INT8, 1);
+                    GXCommon.setData(settings, data, DataType.NONE, null);
+                } else {
+                    GXCommon.setData(settings, data, DataType.UINT16,
+                            changedParameter.getTarget().getObjectType().getValue());
+                    GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                            GXCommon.logicalNameToBytes(changedParameter.getTarget().getLogicalName()));
+                    GXCommon.setData(settings, data, DataType.INT8,
+                            changedParameter.getAttributeIndex());
+                    GXCommon.setData(settings, data,
+                            GXDLMSConverter.getDLMSDataType(changedParameter.getValue()),
+                            changedParameter.getValue());
                 }
+                return data.array();
             }
-            return data.array();
-        }
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 3:
+                return captureTime;
+            case 4: {
+                GXByteBuffer data = new GXByteBuffer();
+                data.setUInt8(DataType.ARRAY.getValue());
+                if (parameters == null) {
+                    data.setUInt8(0);
+                } else {
+                    data.setUInt8(parameters.size());
+                    for (GXDLMSTarget it : parameters) {
+                        data.setUInt8(DataType.STRUCTURE.getValue());
+                        data.setUInt8(3);
+                        GXCommon.setData(settings, data, DataType.UINT16,
+                                it.getTarget().getObjectType().getValue());
+                        GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                                GXCommon.logicalNameToBytes(it.getTarget().getLogicalName()));
+                        GXCommon.setData(settings, data, DataType.INT8, it.getAttributeIndex());
+                    }
+                }
+                return data.array();
+            }
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -402,68 +378,68 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2: {
-            changedParameter = new GXDLMSTarget();
-            if (e.getValue() instanceof List<?>) {
-                List<?> tmp = (List<?>) e.getValue();
-                if (tmp.size() != 4) {
-                    throw new GXDLMSException("Invalid structure format.");
-                }
-                ObjectType type = ObjectType.forValue(((Number) tmp.get(0)).intValue());
-                String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
-                changedParameter.setTarget(settings.getObjects().findByLN(type, ln));
-                if (changedParameter.getTarget() == null) {
-                    changedParameter.setTarget(GXDLMSClient.createObject(type));
-                    changedParameter.getTarget().setLogicalName(ln);
-                }
-                changedParameter.setAttributeIndex(((Number) tmp.get(2)).intValue());
-                changedParameter.setValue(tmp.get(3));
-            }
-            break;
-        }
-
-        case 3:
-            if (e.getValue() == null) {
-                captureTime = new Date(0);
-            } else {
-                GXDateTime tmp;
-                if (e.getValue() instanceof byte[]) {
-                    tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                            DataType.DATETIME, e.getSettings());
-                } else {
-                    tmp = (GXDateTime) e.getValue();
-                }
-                captureTime = tmp.getLocalCalendar().getTime();
-            }
-            break;
-        case 4: {
-            parameters.clear();
-            if (e.getValue() != null) {
-                for (Object i : (List<?>) e.getValue()) {
-                    List<?> tmp = (List<?>) i;
-                    if (tmp.size() != 3) {
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2: {
+                changedParameter = new GXDLMSTarget();
+                if (e.getValue() instanceof List<?>) {
+                    List<?> tmp = (List<?>) e.getValue();
+                    if (tmp.size() != 4) {
                         throw new GXDLMSException("Invalid structure format.");
                     }
-                    GXDLMSTarget obj = new GXDLMSTarget();
                     ObjectType type = ObjectType.forValue(((Number) tmp.get(0)).intValue());
                     String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
-                    obj.setTarget(settings.getObjects().findByLN(type, ln));
-                    if (obj.getTarget() == null) {
-                        obj.setTarget(GXDLMSClient.createObject(type));
-                        obj.getTarget().setLogicalName(GXCommon.toLogicalName((byte[]) tmp.get(1)));
+                    changedParameter.setTarget(settings.getObjects().findByLN(type, ln));
+                    if (changedParameter.getTarget() == null) {
+                        changedParameter.setTarget(GXDLMSClient.createObject(type));
+                        changedParameter.getTarget().setLogicalName(ln);
                     }
-                    obj.setAttributeIndex(((Number) tmp.get(2)).intValue());
-                    parameters.add(obj);
+                    changedParameter.setAttributeIndex(((Number) tmp.get(2)).intValue());
+                    changedParameter.setValue(tmp.get(3));
                 }
+                break;
             }
-            break;
-        }
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+
+            case 3:
+                if (e.getValue() == null) {
+                    captureTime = new Date(0);
+                } else {
+                    GXDateTime tmp;
+                    if (e.getValue() instanceof byte[]) {
+                        tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                                DataType.DATETIME, e.getSettings());
+                    } else {
+                        tmp = (GXDateTime) e.getValue();
+                    }
+                    captureTime = tmp.getLocalCalendar().getTime();
+                }
+                break;
+            case 4: {
+                parameters.clear();
+                if (e.getValue() != null) {
+                    for (Object i : (List<?>) e.getValue()) {
+                        List<?> tmp = (List<?>) i;
+                        if (tmp.size() != 3) {
+                            throw new GXDLMSException("Invalid structure format.");
+                        }
+                        GXDLMSTarget obj = new GXDLMSTarget();
+                        ObjectType type = ObjectType.forValue(((Number) tmp.get(0)).intValue());
+                        String ln = GXCommon.toLogicalName((byte[]) tmp.get(1));
+                        obj.setTarget(settings.getObjects().findByLN(type, ln));
+                        if (obj.getTarget() == null) {
+                            obj.setTarget(GXDLMSClient.createObject(type));
+                            obj.getTarget().setLogicalName(GXCommon.toLogicalName((byte[]) tmp.get(1)));
+                        }
+                        obj.setAttributeIndex(((Number) tmp.get(2)).intValue());
+                        parameters.add(obj);
+                    }
+                }
+                break;
+            }
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -538,12 +514,12 @@ public class GXDLMSParameterMonitor extends GXDLMSObject implements IGXDLMSBase 
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "ChangedParameter", "CaptureTime", "Parameters" };
+        return new String[]{"Logical Name", "ChangedParameter", "CaptureTime", "Parameters"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Add parameter", "Delete parameter" };
+        return new String[]{"Add parameter", "Delete parameter"};
     }
 }

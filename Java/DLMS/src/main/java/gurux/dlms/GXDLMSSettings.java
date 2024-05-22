@@ -71,7 +71,7 @@ import gurux.dlms.objects.enums.SecuritySuite;
 
 /**
  * This class includes DLMS communication settings.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXDLMSSettings {
@@ -418,8 +418,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Ephemeral Block cipher key.
+     * @param value Ephemeral Block cipher key.
      */
     public final void setEphemeralBlockCipherKey(final byte[] value) {
         ephemeralBlockCipherKey = value;
@@ -433,8 +432,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Ephemeral broadcast block cipher key.
+     * @param value Ephemeral broadcast block cipher key.
      */
     public final void setEphemeralBroadcastBlockCipherKey(final byte[] value) {
         ephemeralBroadcastBlockCipherKey = value;
@@ -448,8 +446,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Ephemeral authentication key.
+     * @param value Ephemeral authentication key.
      */
     public final void setEphemeralAuthenticationKey(final byte[] value) {
         ephemeralAuthenticationKey = value;
@@ -477,8 +474,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Cipher interface that is used to cipher PDU.
+     * @param value Cipher interface that is used to cipher PDU.
      */
     final void setCipher(final GXICipher value) {
         cipher = value;
@@ -499,8 +495,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Client to Server challenge.
+     * @param value Client to Server challenge.
      */
     public final void setCtoSChallenge(final byte[] value) {
         if (!customChallenges || ctoSChallenge == null) {
@@ -516,8 +511,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Server to Client challenge.
+     * @param value Server to Client challenge.
      */
     public final void setStoCChallenge(final byte[] value) {
         if (!customChallenges || stoCChallenge == null) {
@@ -533,8 +527,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Used authentication.
+     * @param value Used authentication.
      */
     public final void setAuthentication(final Authentication value) {
         authentication = value;
@@ -548,8 +541,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Sets password.
+     * @param value Sets password.
      */
     public final void setPassword(final byte[] value) {
         password = value;
@@ -563,8 +555,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Used DLMS version number.
+     * @param value Used DLMS version number.
      */
     public final void setDlmsVersionNumber(final int value) {
         dlmsVersionNumber = value;
@@ -578,8 +569,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Is connected to the meter.
+     * @param value Is connected to the meter.
      */
     public final void setConnected(final int value) {
         connected = (byte) value;
@@ -644,9 +634,8 @@ public class GXDLMSSettings {
 
     /**
      * Increase receiver sequence.
-     * 
-     * @param value
-     *            Frame value.
+     *
+     * @param value Frame value.
      * @return Increased receiver frame sequence.
      */
     static byte increaseReceiverSequence(final short value) {
@@ -655,9 +644,8 @@ public class GXDLMSSettings {
 
     /**
      * Increase sender sequence.
-     * 
-     * @param value
-     *            Frame value.
+     *
+     * @param value Frame value.
      * @return Increased sender frame sequence.
      */
     static short increaseSendSequence(final short value) {
@@ -665,8 +653,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param first
-     *            Is this first packet.
+     * @param first Is this first packet.
      * @return Generated I-frame
      */
     final byte getNextSend(final boolean first) {
@@ -696,7 +683,7 @@ public class GXDLMSSettings {
 
     /**
      * Gets current block index.
-     * 
+     *
      * @return Current block index.
      */
     final int getBlockIndex() {
@@ -706,7 +693,7 @@ public class GXDLMSSettings {
     /**
      * Gets starting block index in HDLC framing. Default is One based, but some
      * meters use Zero based value. Usually this is not used.
-     * 
+     *
      * @return Current block index.
      */
     final int getStartingPacketIndex() {
@@ -716,9 +703,8 @@ public class GXDLMSSettings {
     /**
      * Set starting block index in HDLC framing. Default is One based, but some
      * meters use Zero based value. Usually this is not used.
-     * 
-     * @param value
-     *            Zero based starting index.
+     *
+     * @param value Zero based starting index.
      */
     public final void setStartingPacketIndex(final int value) {
         startingPacketIndex = value;
@@ -727,9 +713,8 @@ public class GXDLMSSettings {
 
     /**
      * Sets current block index.
-     * 
-     * @param value
-     *            Block index.
+     *
+     * @param value Block index.
      */
     final void setBlockIndex(final int value) {
         blockIndex = value;
@@ -743,8 +728,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Block number acknowledged in GBT.
+     * @param value Block number acknowledged in GBT.
      */
     public final void setBlockNumberAck(final int value) {
         blockNumberAck = value;
@@ -773,8 +757,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Is server or client.
+     * @param value Is server or client.
      */
     public final void setServer(final boolean value) {
         server = value;
@@ -795,8 +778,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Gateway settings.
+     * @param value Gateway settings.
      */
     public final void setGateway(final GXDLMSGateway value) {
         gateway = value;
@@ -810,16 +792,14 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            PLC settings.
+     * @param value PLC settings.
      */
     public final void setPlc(GXPlcSettings value) {
         plc = value;
     }
 
     /**
-     * @param value
-     *            HDLC connection settings.
+     * @param value HDLC connection settings.
      */
     public final void setLimits(final GXHdlcSettings value) {
         hdlcSettings = value;
@@ -833,8 +813,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Used interface.
+     * @param value Used interface.
      */
     public final void setInterfaceType(final InterfaceType value) {
         interfaceType = value;
@@ -853,8 +832,7 @@ public class GXDLMSSettings {
     private int gbtCount;
 
     /**
-     * @param value
-     *            General Block Transfer count in server.
+     * @param value General Block Transfer count in server.
      */
     public final void setGbtCount(final int value) {
         gbtCount = value;
@@ -868,8 +846,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Client address.
+     * @param value Client address.
      */
     public final void setClientAddress(final int value) {
         clientAddress = value;
@@ -877,16 +854,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Server address size in bytes. If it is Zero it is counted
-     *         automatically.
+     * automatically.
      */
     public final int getServerAddressSize() {
         return serverAddressSize;
     }
 
     /**
-     * @param value
-     *            Server address size in bytes. If it is Zero it is counted
-     *            automatically.
+     * @param value Server address size in bytes. If it is Zero it is counted
+     *              automatically.
      */
     public final void setServerAddressSize(final int value) {
         serverAddressSize = value;
@@ -900,8 +876,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Server address.
+     * @param value Server address.
      */
     public final void setServerAddress(final int value) {
         serverAddress = value;
@@ -915,8 +890,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            DLMS version number.
+     * @param value DLMS version number.
      */
     public final void setDLMSVersion(final int value) {
         dlmsVersionNumber = value;
@@ -930,8 +904,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Maximum PDU size.
+     * @param value Maximum PDU size.
      */
     public final void setMaxPduSize(final int value) {
         maxPduSize = value;
@@ -945,8 +918,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Server maximum PDU size.
+     * @param value Server maximum PDU size.
      */
     public final void setMaxServerPDUSize(final int value) {
         maxServerPDUSize = value;
@@ -960,8 +932,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Is Logical Name Referencing used.
+     * @param value Is Logical Name Referencing used.
      */
     public final void setUseLogicalNameReferencing(final boolean value) {
         if (useLogicalNameReferencing != value) {
@@ -983,8 +954,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Used priority.
+     * @param value Used priority.
      */
     public final void setPriority(final Priority value) {
         priority = value;
@@ -998,8 +968,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Used service class.
+     * @param value Used service class.
      */
     public final void setServiceClass(final ServiceClass value) {
         serviceClass = value;
@@ -1010,11 +979,11 @@ public class GXDLMSSettings {
             // Update security settings.
             if (assignedAssociation.getSecuritySetupReference() != null
                     && (assignedAssociation.getApplicationContextName()
-                            .getContextId() == ApplicationContextName.LOGICAL_NAME_WITH_CIPHERING
-                            || assignedAssociation.getAuthenticationMechanismName()
-                                    .getMechanismId() == Authentication.HIGH_GMAC
-                            || assignedAssociation.getAuthenticationMechanismName()
-                                    .getMechanismId() == Authentication.HIGH_ECDSA)) {
+                    .getContextId() == ApplicationContextName.LOGICAL_NAME_WITH_CIPHERING
+                    || assignedAssociation.getAuthenticationMechanismName()
+                    .getMechanismId() == Authentication.HIGH_GMAC
+                    || assignedAssociation.getAuthenticationMechanismName()
+                    .getMechanismId() == Authentication.HIGH_ECDSA)) {
                 GXDLMSSecuritySetup ss = (GXDLMSSecuritySetup) assignedAssociation.getObjectList()
                         .findByLN(ObjectType.SECURITY_SETUP,
                                 assignedAssociation.getSecuritySetupReference());
@@ -1076,8 +1045,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Current association of the server.
+     * @param value Current association of the server.
      */
     public final void setAssignedAssociation(final GXDLMSAssociationLogicalName value) {
         if (assignedAssociation != null) {
@@ -1115,8 +1083,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            update invoke ID.
+     * @param value update invoke ID.
      */
     final void updateInvokeId(final short value) {
         if ((value & 0x80) != 0) {
@@ -1133,8 +1100,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Invoke ID.
+     * @param value Invoke ID.
      */
     public final void setInvokeID(final int value) {
         if (value > 0xF) {
@@ -1151,8 +1117,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Invoke ID.
+     * @param value Invoke ID.
      */
     public final void setLongInvokeID(final long value) {
         if (value < 0) {
@@ -1176,8 +1141,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Is custom challenges used.
+     * @param value Is custom challenges used.
      */
     public final void setUseCustomChallenge(final boolean value) {
         customChallenges = value;
@@ -1199,8 +1163,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Source system title.
+     * @param value Source system title.
      */
     public final void setSourceSystemTitle(final byte[] value) {
         if (value != null && value.length != 0 && value.length != 8) {
@@ -1217,8 +1180,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Key Encrypting Key, also known as Master key.
+     * @param value Key Encrypting Key, also known as Master key.
      */
     public final void setKek(final byte[] value) {
         kek = value;
@@ -1232,8 +1194,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Data count.
+     * @param value Data count.
      */
     public final void setCount(final long value) {
         if (value < 0) {
@@ -1250,8 +1211,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Long data index
+     * @param value Long data index
      */
     public final void setIndex(final long value) {
         if (value < 0) {
@@ -1268,8 +1228,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Target ephemeral public key .
+     * @param value Target ephemeral public key .
      */
     public void setTargetEphemeralKey(final PublicKey value) {
         targetEphemeralKey = value;
@@ -1283,8 +1242,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Proposed conformance block.
+     * @param value Proposed conformance block.
      */
     public void setProposedConformance(final Set<Conformance> value) {
         proposedConformance = value;
@@ -1292,16 +1250,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Server tells what functionality is available and client will know
-     *         it.
+     * it.
      */
     public Set<Conformance> getNegotiatedConformance() {
         return negotiatedConformance;
     }
 
     /**
-     * @param value
-     *            Server tells what functionality is available and client will
-     *            know it.
+     * @param value Server tells what functionality is available and client will
+     *              know it.
      */
     public void setNegotiatedConformance(final Set<Conformance> value) {
         negotiatedConformance = value;
@@ -1322,8 +1279,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            HDLC settings.
+     * @param value HDLC settings.
      */
     public void setHdlc(final GXDLMSHdlcSetup value) {
         hdlc = value;
@@ -1337,8 +1293,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Wrapper settings.
+     * @param value Wrapper settings.
      */
     public void setWrapper(final GXDLMSTcpUdpSetup value) {
         wrapper = value;
@@ -1352,8 +1307,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            GBT window size.
+     * @param value GBT window size.
      */
     public final void setGbtWindowSize(final byte value) {
         gbtWindowSize = value;
@@ -1367,8 +1321,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            User id is the identifier of the user.
+     * @param value User id is the identifier of the user.
      */
     public final void setUserId(final int value) {
         userId = value;
@@ -1378,7 +1331,7 @@ public class GXDLMSSettings {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
+     *
      * @return True, if UTC time is used.
      */
     public boolean getUseUtc2NormalTime() {
@@ -1389,9 +1342,8 @@ public class GXDLMSSettings {
      * * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
-     * @param value
-     *            True, if UTC time is used.
+     *
+     * @param value True, if UTC time is used.
      */
     public void setUseUtc2NormalTime(final boolean value) {
         useUtc2NormalTime = value;
@@ -1399,16 +1351,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Some meters expect that Invocation Counter is increased for
-     *         Authentication when connection is established.
+     * Authentication when connection is established.
      */
     public boolean getIncreaseInvocationCounterForGMacAuthentication() {
         return increaseInvocationCounterForGMacAuthentication;
     }
 
     /**
-     * @param value
-     *            Some meters expect that Invocation Counter is increased for
-     *            Authentication when connection is established.
+     * @param value Some meters expect that Invocation Counter is increased for
+     *              Authentication when connection is established.
      */
     public void setIncreaseInvocationCounterForGMacAuthentication(final boolean value) {
         increaseInvocationCounterForGMacAuthentication = value;
@@ -1416,16 +1367,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Skipped date time fields. This value can be used if meter can't
-     *         handle deviation or status.
+     * handle deviation or status.
      */
     public java.util.Set<DateTimeSkips> getDateTimeSkips() {
         return dateTimeSkips;
     }
 
     /**
-     * @param value
-     *            Skipped date time fields. This value can be used if meter
-     *            can't handle deviation or status.
+     * @param value Skipped date time fields. This value can be used if meter
+     *              can't handle deviation or status.
      */
     public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
         dateTimeSkips = value;
@@ -1433,16 +1383,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Skipped date time fields on read. This value can be used if meter
-     *         returns invalid deviation on read.
+     * returns invalid deviation on read.
      */
     public java.util.Set<DateTimeSkips> getDateTimeSkipsOnRead() {
         return readDateTimeSkips;
     }
 
     /**
-     * @param value
-     *            Skipped date time fields on read. This value can be used if
-     *            meter returns invalid deviation on read.
+     * @param value Skipped date time fields on read. This value can be used if
+     *              meter returns invalid deviation on read.
      */
     public void setDateTimeSkipsOnRead(final java.util.Set<DateTimeSkips> value) {
         readDateTimeSkips = value;
@@ -1456,8 +1405,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Used standard.
+     * @param value Used standard.
      */
     public void setStandard(final Standard value) {
         standard = value;
@@ -1471,8 +1419,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Protocol version.
+     * @param value Protocol version.
      */
     public void setProtocolVersion(final String value) {
         protocolVersion = value;
@@ -1486,8 +1433,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Pre-established system title.
+     * @param value Pre-established system title.
      */
     public void setPreEstablishedSystemTitle(final byte[] value) {
         preEstablishedSystemTitle = value;
@@ -1501,8 +1447,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            the command to set
+     * @param value the command to set
      */
     public void setCommand(final int value) {
         command = value;
@@ -1516,8 +1461,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            the commandType to set
+     * @param value the commandType to set
      */
     public void setCommandType(final byte value) {
         commandType = value;
@@ -1531,8 +1475,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Quality of service.
+     * @param value Quality of service.
      */
     public void setQualityOfService(final byte value) {
         qualityOfService = value;
@@ -1546,8 +1489,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Auto increase Invoke ID.
+     * @param value Auto increase Invoke ID.
      */
     public final void setAutoIncreaseInvokeID(final boolean value) {
         autoIncreaseInvokeID = value;
@@ -1561,8 +1503,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            The version can be used for backward compatibility.
+     * @param value The version can be used for backward compatibility.
      */
     public void setVersion(final int value) {
         if (value != 3 && value != 4) {
@@ -1573,16 +1514,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Server is using push client address when sending push messages.
-     *         Client address is used if PushAddress is zero.
+     * Client address is used if PushAddress is zero.
      */
     public int getPushClientAddress() {
         return pushClientAddress;
     }
 
     /**
-     * @param value
-     *            Server is using push client address when sending push
-     *            messages. Client address is used if PushAddress is zero.
+     * @param value Server is using push client address when sending push
+     *              messages. Client address is used if PushAddress is zero.
      */
     public void setPushClientAddress(final int value) {
         pushClientAddress = value;
@@ -1596,8 +1536,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            XML needs list of certificates to decrypt the data.
+     * @param value XML needs list of certificates to decrypt the data.
      */
     public void setKeys(final List<Map.Entry<GXPkcs8, GXx509Certificate>> value) {
         keys = value;
@@ -1652,7 +1591,7 @@ public class GXDLMSSettings {
 
     /**
      * Encrypt or decrypt the data using external Hardware Security Module.
-     * 
+     *
      * @param certificateType
      * @param Data
      * @param encrypt
@@ -1698,8 +1637,7 @@ public class GXDLMSSettings {
     }
 
     /**
-     * @param value
-     *            Size of the challenge.
+     * @param value Size of the challenge.
      */
     public void setChallengeSize(byte value) {
         if (authentication == Authentication.HIGH_ECDSA && value < 32) {
@@ -1714,16 +1652,15 @@ public class GXDLMSSettings {
 
     /**
      * @return Overwrite attribute access rights if association view tells wrong
-     *         access rights and they need to be overwritten.
+     * access rights and they need to be overwritten.
      */
     public final boolean getOverwriteAttributeAccessRights() {
         return overwriteAttributeAccessRights;
     }
 
     /**
-     * @param value
-     *            Overwrite attribute access rights if association view tells
-     *            wrong access rights and they need to be overwritten.
+     * @param value Overwrite attribute access rights if association view tells
+     *              wrong access rights and they need to be overwritten.
      */
     public final void setOverwriteAttributeAccessRights(boolean value) {
         overwriteAttributeAccessRights = value;

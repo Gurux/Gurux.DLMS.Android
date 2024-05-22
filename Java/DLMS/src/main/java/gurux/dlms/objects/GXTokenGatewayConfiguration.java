@@ -56,7 +56,7 @@ public class GXTokenGatewayConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
+     *
      * @return Credit reference.
      */
     public final String getCreditReference() {
@@ -66,9 +66,8 @@ public class GXTokenGatewayConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
-     * @param value
-     *            Credit reference.
+     *
+     * @param value Credit reference.
      */
     public final void setCreditReference(String value) {
         creditReference = value;
@@ -77,7 +76,7 @@ public class GXTokenGatewayConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
+     *
      * @return Token proportion.
      */
     public final byte getTokenProportion() {
@@ -87,9 +86,8 @@ public class GXTokenGatewayConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
-     * @param value
-     *            Token proportion.
+     *
+     * @param value Token proportion.
      */
     public final void setTokenProportion(byte value) {
         tokenProportion = value;

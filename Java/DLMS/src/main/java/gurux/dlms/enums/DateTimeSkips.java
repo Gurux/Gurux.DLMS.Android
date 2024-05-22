@@ -111,16 +111,15 @@ public enum DateTimeSkips {
      * @return Get enumeration constant values.
      */
     private static DateTimeSkips[] getEnumConstants() {
-        return new DateTimeSkips[] { YEAR, MONTH, DAY, DAY_OF_WEEK, HOUR,
-                MINUTE, SECOND, MILLISECOND, DEVITATION, STATUS };
+        return new DateTimeSkips[]{YEAR, MONTH, DAY, DAY_OF_WEEK, HOUR,
+                MINUTE, SECOND, MILLISECOND, DEVITATION, STATUS};
 
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<DateTimeSkips> forValue(final int value) {
@@ -136,9 +135,8 @@ public enum DateTimeSkips {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<DateTimeSkips> value) {

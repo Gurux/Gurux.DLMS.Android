@@ -71,6 +71,7 @@ import gurux.dlms.internal.GXCommon;
 public class GXManufacturerCollection
         extends java.util.ArrayList<GXManufacturer> implements Parcelable {
     public static final Creator<UsbDevice> CREATOR = null;
+
     /**
      * * Find manufacturer settings by manufacturer id.
      *
@@ -93,8 +94,7 @@ public class GXManufacturerCollection
     public static boolean isFirstRun(final Context context) {
         File dir = context.getFilesDir();
         String[] files = dir.list();
-        if ( files != null)
-        {
+        if (files != null) {
             for (String it : files) {
                 if (it.equalsIgnoreCase("files.xml")) {
                     return false;
@@ -110,7 +110,7 @@ public class GXManufacturerCollection
      * @param context Context.
      * @return Returns true if there are any updates available.
      */
-    public  boolean isUpdatesAvailable(final Context context) throws Exception {
+    public boolean isUpdatesAvailable(final Context context) throws Exception {
         if (isFirstRun(context)) {
             return true;
         }
@@ -166,8 +166,7 @@ public class GXManufacturerCollection
                     }
                     mException[0] = null;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 mUpdates[0] = true;
                 mException[0] = e;
             }
@@ -175,8 +174,7 @@ public class GXManufacturerCollection
         });
         thread.start();
         completed.waitOne(60000);
-        if (mException[0] != null)
-        {
+        if (mException[0] != null) {
             throw mException[0];
         }
         return mUpdates[0];
@@ -254,8 +252,7 @@ public class GXManufacturerCollection
         });
         thread.start();
         completed.waitOne(60000);
-        if (exception[0] != null)
-        {
+        if (exception[0] != null) {
             throw exception[0];
         }
     }
@@ -324,14 +321,11 @@ public class GXManufacturerCollection
                 } else if (target.equalsIgnoreCase("Identification")) {
                     man.setIdentification(readText(parser));
                 } else if (target.equalsIgnoreCase("Name")) {
-                    if (att != null)
-                    {
+                    if (att != null) {
                         att.setName(readText(parser));
-                    }else if (authentication != null)
-                    {
+                    } else if (authentication != null) {
                         authentication.setName(readText(parser));
-                    }else
-                    {
+                    } else {
                         man.setName(readText(parser));
                     }
                 } else if (target.equalsIgnoreCase("UseLN")) {
@@ -420,8 +414,7 @@ public class GXManufacturerCollection
                     man.setBlockCipherKey(GXCommon.hexToBytes(readText(parser)));
                 } else if (target.equalsIgnoreCase("AuthenticationKey")) {
                     man.setAuthenticationKey(GXCommon.hexToBytes(readText(parser)));
-                }
-                else if (target.equalsIgnoreCase("SupporterdInterfaces")) {
+                } else if (target.equalsIgnoreCase("SupporterdInterfaces")) {
                     man.getSupporterdInterfaces().addAll(InterfaceType.getInterfaceTypes(Integer.parseInt(readText(parser))));
                 }
             }

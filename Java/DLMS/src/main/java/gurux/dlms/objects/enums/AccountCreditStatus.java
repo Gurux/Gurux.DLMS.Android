@@ -99,7 +99,7 @@ public enum AccountCreditStatus {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, AccountCreditStatus> getMappings() {
@@ -113,9 +113,8 @@ public enum AccountCreditStatus {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     AccountCreditStatus(final int value) {
         intValue = value;
@@ -124,7 +123,7 @@ public enum AccountCreditStatus {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -133,9 +132,8 @@ public enum AccountCreditStatus {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static AccountCreditStatus forValue(final int value) {

@@ -79,7 +79,7 @@ public enum TokenStatusCode {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -88,9 +88,8 @@ public enum TokenStatusCode {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static TokenStatusCode forValue(int value) {

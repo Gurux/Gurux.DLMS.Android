@@ -38,7 +38,7 @@ import java.lang.annotation.Native;
 
 public class GXUInt16 extends Number implements Comparable<GXUInt16> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private int value;
@@ -64,9 +64,8 @@ public class GXUInt16 extends Number implements Comparable<GXUInt16> {
 
     /**
      * Constructor.
-     * 
-     * @param val
-     *            Initial value.
+     *
+     * @param val Initial value.
      */
     public GXUInt16(final int val) {
         value = val;

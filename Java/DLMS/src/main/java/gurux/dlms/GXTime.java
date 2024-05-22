@@ -53,9 +53,8 @@ public class GXTime extends GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXTime(final Date forvalue) {
         super(forvalue);
@@ -67,9 +66,8 @@ public class GXTime extends GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXTime(final GXDateTime forvalue) {
         super(forvalue.getLocalCalendar());
@@ -83,27 +81,22 @@ public class GXTime extends GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param hour
-     *            Used hour.
-     * @param minute
-     *            Used minute.
-     * @param second
-     *            Used second.
-     * @param millisecond
-     *            Used millisecond.
+     *
+     * @param hour        Used hour.
+     * @param minute      Used minute.
+     * @param second      Used second.
+     * @param millisecond Used millisecond.
      */
     public GXTime(final int hour, final int minute, final int second,
-            final int millisecond) {
+                  final int millisecond) {
         super(-1, -1, -1, hour, minute, second, millisecond);
         getSkip().add(DateTimeSkips.DAY_OF_WEEK);
     }
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
+     *
+     * @param value Date time value as a string.
      */
     public GXTime(final String value) {
         this(value, null);
@@ -111,11 +104,9 @@ public class GXTime extends GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param locale
-     *            Used locale.
+     *
+     * @param value  Date time value as a string.
+     * @param locale Used locale.
      */
     public GXTime(final String value, final Locale locale) {
         super(value, locale);

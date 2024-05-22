@@ -71,8 +71,7 @@ public class GXDLMSTarget {
     }
 
     /**
-     * @param value
-     *            Attribute Index of COSEM object.
+     * @param value Attribute Index of COSEM object.
      */
     public final void setAttributeIndex(final int value) {
         attributeIndex = value;
@@ -86,8 +85,7 @@ public class GXDLMSTarget {
     }
 
     /**
-     * @param value
-     *            Data index of COSEM object. All targets don't use this.
+     * @param value Data index of COSEM object. All targets don't use this.
      */
     public final void setDataIndex(final int value) {
         dataIndex = value;
@@ -101,8 +99,7 @@ public class GXDLMSTarget {
     }
 
     /**
-     * @param value
-     *            Data value of COSEM object. All targets don't use this.
+     * @param value Data value of COSEM object. All targets don't use this.
      */
     public final void setValue(final Object value) {
         _value = value;
@@ -117,11 +114,9 @@ public class GXDLMSTarget {
 
     /**
      * Constructor.
-     * 
-     * @param target
-     *            Target object.
-     * @param attributeIndex
-     *            Attribute index.
+     *
+     * @param target         Target object.
+     * @param attributeIndex Attribute index.
      */
     public GXDLMSTarget(final GXDLMSObject target, final int attributeIndex) {
         setTarget(target);
@@ -130,16 +125,13 @@ public class GXDLMSTarget {
 
     /**
      * Constructor.
-     * 
-     * @param target
-     *            Target object.
-     * @param attributeIndex
-     *            Attribute index.
-     * @param dataIndex
-     *            Data Index.
+     *
+     * @param target         Target object.
+     * @param attributeIndex Attribute index.
+     * @param dataIndex      Data Index.
      */
     public GXDLMSTarget(final GXDLMSObject target, final int attributeIndex,
-            final int dataIndex) {
+                        final int dataIndex) {
         setTarget(target);
         setAttributeIndex(attributeIndex);
         setDataIndex(dataIndex);

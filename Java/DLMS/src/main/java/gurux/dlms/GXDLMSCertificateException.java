@@ -48,9 +48,8 @@ public class GXDLMSCertificateException extends RuntimeException {
 
     /**
      * DLMS certificate exception constructor.
-     * 
-     * @param message
-     *            Exception message.
+     *
+     * @param message Exception message.
      */
     public GXDLMSCertificateException(final String message) {
         super(message);

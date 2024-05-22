@@ -70,8 +70,7 @@ public class GXCurrency {
     }
 
     /**
-     * @param value
-     *            Currency name.
+     * @param value Currency name.
      */
     public final void setName(final String value) {
         name = value;
@@ -85,8 +84,7 @@ public class GXCurrency {
     }
 
     /**
-     * @param value
-     *            Currency scale.
+     * @param value Currency scale.
      */
     public final void setScale(final short value) {
         scale = value;
@@ -100,8 +98,7 @@ public class GXCurrency {
     }
 
     /**
-     * @param value
-     *            Currency unit.
+     * @param value Currency unit.
      */
     public final void setUnit(final Currency value) {
         unit = value;

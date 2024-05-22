@@ -112,9 +112,8 @@ public class GXDLMSObject {
 
     /**
      * Validate logical name.
-     * 
-     * @param value
-     *            Logical Name.
+     *
+     * @param value Logical Name.
      */
     public static void validateLogicalName(final String value) {
         GXCommon.logicalNameToBytes(value);
@@ -148,9 +147,8 @@ public class GXDLMSObject {
 
     /**
      * Returns time when attribute was last time read. -
-     * 
-     * @param attributeIndex
-     *            Attribute index.
+     *
+     * @param attributeIndex Attribute index.
      * @return Is attribute read only.
      */
     protected final java.util.Date getLastReadTime(final int attributeIndex) {
@@ -173,7 +171,7 @@ public class GXDLMSObject {
 
     /**
      * Logical or Short Name of DLMS object.
-     * 
+     *
      * @return Logical or Short Name of DLMS object.
      */
     @Override
@@ -198,8 +196,7 @@ public class GXDLMSObject {
     }
 
     /**
-     * @param value
-     *            Interface type of the COSEM object.
+     * @param value Interface type of the COSEM object.
      */
     public final void setObjectType(final ObjectType value) {
         objectType = value;
@@ -213,8 +210,7 @@ public class GXDLMSObject {
     }
 
     /**
-     * @param value
-     *            DLMS version number.
+     * @param value DLMS version number.
      */
     public final void setVersion(final int value) {
         version = value;
@@ -224,7 +220,7 @@ public class GXDLMSObject {
      * The base name of the object, if using SN. When using SN referencing,
      * retrieves the base name of the DLMS object. When using LN referencing,
      * the value is 0.
-     * 
+     *
      * @return The base name of the object.
      */
     public final int getShortName() {
@@ -235,9 +231,8 @@ public class GXDLMSObject {
      * The base name of the object, if using SN. When using SN referencing,
      * retrieves the base name of the DLMS object. When using LN referencing,
      * the value is 0.
-     * 
-     * @param value
-     *            The base name of the object.
+     *
+     * @param value The base name of the object.
      */
     public final void setShortName(final int value) {
         shortName = value;
@@ -245,7 +240,7 @@ public class GXDLMSObject {
 
     /**
      * Logical or Short Name of DLMS object.
-     * 
+     *
      * @return Logical or Short Name of DLMS object
      */
     public final Object getName() {
@@ -263,8 +258,7 @@ public class GXDLMSObject {
     }
 
     /**
-     * @param value
-     *            Logical Name of COSEM object.
+     * @param value Logical Name of COSEM object.
      */
     public final void setLogicalName(final String value) {
         logicalName = value;
@@ -278,8 +272,7 @@ public class GXDLMSObject {
     }
 
     /**
-     * @param value
-     *            Description of COSEM object.
+     * @param value Description of COSEM object.
      */
     public final void setDescription(final String value) {
         description = value;
@@ -301,9 +294,8 @@ public class GXDLMSObject {
 
     /**
      * Returns is attribute read only. -
-     * 
-     * @param index
-     *            Attribute index.
+     *
+     * @param index Attribute index.
      * @return Is attribute read only.
      */
     public final AccessMode getAccess(final int index) {
@@ -319,11 +311,9 @@ public class GXDLMSObject {
 
     /**
      * Set attribute access.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param access
-     *            Attribute access.
+     *
+     * @param index  Attribute index.
+     * @param access Attribute access.
      */
     public final void setAccess(final int index, final AccessMode access) {
         GXDLMSAttributeSettings att = attributes.find(index);
@@ -337,9 +327,8 @@ public class GXDLMSObject {
 
     /**
      * Returns is attribute read only. -
-     * 
-     * @param index
-     *            Attribute index.
+     *
+     * @param index Attribute index.
      * @return Is attribute read only.
      */
     public final java.util.Set<AccessMode3> getAccess3(final int index) {
@@ -360,11 +349,9 @@ public class GXDLMSObject {
 
     /**
      * Set attribute access.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param access
-     *            Attribute access.
+     *
+     * @param index  Attribute index.
+     * @param access Attribute access.
      */
     public final void setAccess3(final int index, final java.util.Set<AccessMode3> access) {
         GXDLMSAttributeSettings att = attributes.find(index);
@@ -387,9 +374,8 @@ public class GXDLMSObject {
 
     /**
      * Returns is Method attribute read only. -
-     * 
-     * @param index
-     *            Method Attribute index.
+     *
+     * @param index Method Attribute index.
      * @return Is attribute read only.
      */
     public final MethodAccessMode getMethodAccess(final int index) {
@@ -402,11 +388,9 @@ public class GXDLMSObject {
 
     /**
      * Set Method attribute access.
-     * 
-     * @param index
-     *            Method index.
-     * @param access
-     *            Method access mode.
+     *
+     * @param index  Method index.
+     * @param access Method access mode.
      */
     public final void setMethodAccess(final int index, final MethodAccessMode access) {
         GXDLMSAttributeSettings att = getMethodAttributes().find(index);
@@ -419,9 +403,8 @@ public class GXDLMSObject {
 
     /**
      * Returns is Method attribute read only. -
-     * 
-     * @param index
-     *            Method Attribute index.
+     *
+     * @param index Method Attribute index.
      * @return Is attribute read only.
      */
     public final java.util.Set<MethodAccessMode3> getMethodAccess3(final int index) {
@@ -436,14 +419,12 @@ public class GXDLMSObject {
 
     /**
      * Set Method attribute access.
-     * 
-     * @param index
-     *            Method index.
-     * @param access
-     *            Method access mode.
+     *
+     * @param index  Method index.
+     * @param access Method access mode.
      */
     public final void setMethodAccess3(final int index,
-            final java.util.Set<MethodAccessMode3> access) {
+                                       final java.util.Set<MethodAccessMode3> access) {
         GXDLMSAttributeSettings att = getMethodAttributes().find(index);
         if (att == null) {
             att = new GXDLMSAttributeSettings(index);
@@ -454,9 +435,8 @@ public class GXDLMSObject {
 
     /**
      * Returns device data type of selected attribute index.
-     * 
-     * @param index
-     *            Attribute index of the object.
+     *
+     * @param index Attribute index of the object.
      * @return Device data type of the object.
      */
     public DataType getDataType(final int index) {
@@ -469,9 +449,8 @@ public class GXDLMSObject {
 
     /**
      * Returns UI data type of selected index.
-     * 
-     * @param index
-     *            Attribute index of the object.
+     *
+     * @param index Attribute index of the object.
      * @return UI data type of the object.
      */
     public DataType getUIDataType(final int index) {
@@ -500,11 +479,9 @@ public class GXDLMSObject {
 
     /**
      * Get value.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param e
-     *            Value event parameters.
+     *
+     * @param settings DLMS settings.
+     * @param e        Value event parameters.
      * @return Value of given attribute.
      */
     public Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
@@ -513,11 +490,9 @@ public class GXDLMSObject {
 
     /**
      * Set value of given attribute.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param e
-     *            Value event parameters.
+     *
+     * @param settings DLMS settings.
+     * @param e        Value event parameters.
      */
     public void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         throw new UnsupportedOperationException("setValue");
@@ -525,24 +500,16 @@ public class GXDLMSObject {
 
     /**
      * Server calls this invokes method.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param e
-     *            Value event parameters.
+     *
+     * @param settings DLMS settings.
+     * @param e        Value event parameters.
      * @return Generated bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     // CHECKSTYLE:OFF
     public byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e)
@@ -555,11 +522,9 @@ public class GXDLMSObject {
 
     /**
      * Set data type.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param type
-     *            Data type-
+     *
+     * @param index Attribute index.
+     * @param type  Data type-
      */
     public final void setDataType(final int index, final DataType type) {
         GXDLMSAttributeSettings att = attributes.find(index);
@@ -572,11 +537,9 @@ public class GXDLMSObject {
 
     /**
      * Set UI data type.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param type
-     *            Data type-
+     *
+     * @param index Attribute index.
+     * @param type  Data type-
      */
     public final void setUIDataType(final int index, final DataType type) {
         GXDLMSAttributeSettings att = attributes.find(index);
@@ -589,11 +552,9 @@ public class GXDLMSObject {
 
     /**
      * Set if attribute is static.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param isStatic
-     *            Is attribute static.
+     *
+     * @param index    Attribute index.
+     * @param isStatic Is attribute static.
      */
     public final void setStatic(final int index, final boolean isStatic) {
         GXDLMSAttributeSettings att = attributes.find(index);
@@ -606,9 +567,8 @@ public class GXDLMSObject {
 
     /**
      * Is attribute static.
-     * 
-     * @param index
-     *            Attribute index.
+     *
+     * @param index Attribute index.
      * @return True, if attribute is static.
      */
     public final boolean getStatic(final int index) {
@@ -623,9 +583,8 @@ public class GXDLMSObject {
     /**
      * Server calls this when it's started.<br>
      * This is reserved for internal use. Do not use.
-     * 
-     * @param server
-     *            Server.
+     *
+     * @param server Server.
      */
     public void start(final GXDLMSServerBase server) {
 
@@ -634,11 +593,9 @@ public class GXDLMSObject {
     /**
      * Server calls this when it's closed.<br>
      * This is reserved for internal use. Do not use.
-     * 
-     * @param server
-     *            Server.
-     * @throws Exception
-     *             Occurred exception.
+     *
+     * @param server Server.
+     * @throws Exception Occurred exception.
      */
     public void stop(final GXDLMSServerBase server) throws Exception {
 
@@ -646,7 +603,7 @@ public class GXDLMSObject {
 
     /**
      * Creates and returns a copy of this object.
-     * 
+     *
      * @return Cloned object.
      */
     public final GXDLMSObject clone() {
@@ -676,11 +633,9 @@ public class GXDLMSObject {
 
     /**
      * Check are content of the objects equal.
-     * 
-     * @param obj1
-     *            Object.
-     * @param obj2
-     *            Object.
+     *
+     * @param obj1 Object.
+     * @param obj2 Object.
      * @return True, if content of the objects is equal.
      */
     public static final boolean equals(final GXDLMSObject obj1, final GXDLMSObject obj2) {

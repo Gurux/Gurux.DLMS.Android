@@ -406,185 +406,185 @@ public final class Command {
     public static String toString(final int value) {
         String str;
         switch (value) {
-        case Command.NONE:
-            str = "None";
-            break;
-        case Command.INITIATE_REQUEST:
-            str = "InitiateRequest";
-            break;
-        case Command.INITIATE_RESPONSE:
-            str = "InitiateResponse";
-            break;
-        case Command.READ_REQUEST:
-            str = "ReadRequest";
-            break;
-        case Command.READ_RESPONSE:
-            str = "ReadResponse";
-            break;
-        case Command.WRITE_REQUEST:
-            str = "WriteRequest";
-            break;
-        case Command.WRITE_RESPONSE:
-            str = "WriteResponse";
-            break;
-        case Command.GET_REQUEST:
-            str = "GetRequest";
-            break;
-        case Command.GET_RESPONSE:
-            str = "GetResponse";
-            break;
-        case Command.SET_REQUEST:
-            str = "SetRequest";
-            break;
-        case Command.SET_RESPONSE:
-            str = "SetResponse";
-            break;
-        case Command.METHOD_REQUEST:
-            str = "MethodRequest";
-            break;
-        case Command.METHOD_RESPONSE:
-            str = "MethodResponse";
-            break;
-        case Command.UNACCEPTABLE_FRAME:
-            str = "UnacceptableFrame";
-            break;
-        case Command.SNRM:
-            str = "Snrm";
-            break;
-        case Command.UA:
-            str = "Ua";
-            break;
-        case Command.AARQ:
-            str = "Aarq";
-            break;
-        case Command.AARE:
-            str = "Aare";
-            break;
-        case Command.DISCONNECT_REQUEST:
-            str = "Disc";
-            break;
-        case Command.RELEASE_REQUEST:
-            str = "DisconnectRequest";
-            break;
-        case Command.RELEASE_RESPONSE:
-            str = "DisconnectResponse";
-            break;
-        case Command.CONFIRMED_SERVICE_ERROR:
-            str = "ConfirmedServiceError";
-            break;
-        case Command.EXCEPTION_RESPONSE:
-            str = "ExceptionResponse";
-            break;
-        case Command.GENERAL_BLOCK_TRANSFER:
-            str = "GeneralBlockTransfer";
-            break;
-        case Command.ACCESS_REQUEST:
-            str = "AccessRequest";
-            break;
-        case Command.ACCESS_RESPONSE:
-            str = "AccessResponse";
-            break;
-        case Command.DATA_NOTIFICATION:
-            str = "DataNotification";
-            break;
-        case Command.GLO_GET_REQUEST:
-            str = "GloGetRequest";
-            break;
-        case Command.GLO_GET_RESPONSE:
-            str = "GloGetResponse";
-            break;
-        case Command.GLO_SET_REQUEST:
-            str = "GloSetRequest";
-            break;
-        case Command.GLO_SET_RESPONSE:
-            str = "GloSetResponse";
-            break;
-        case Command.GLO_EVENT_NOTIFICATION_REQUEST:
-            str = "GloEventNotificationRequest";
-            break;
-        case Command.GLO_METHOD_REQUEST:
-            str = "GloMethodRequest";
-            break;
-        case Command.GLO_METHOD_RESPONSE:
-            str = "GloMethodResponse";
-            break;
-        case Command.GLO_INITIATE_REQUEST:
-            str = "GloInitiateRequest";
-            break;
-        case Command.GLO_READ_REQUEST:
-            str = "GloReadRequest";
-            break;
-        case Command.GLO_WRITE_REQUEST:
-            str = "GloWriteRequest";
-            break;
-        case Command.GLO_INITIATE_RESPONSE:
-            str = "GloInitiateResponse";
-            break;
-        case Command.GLO_READ_RESPONSE:
-            str = "GloReadResponse";
-            break;
-        case Command.GLO_WRITE_RESPONSE:
-            str = "GloWriteResponse";
-            break;
-        case Command.GENERAL_GLO_CIPHERING:
-            str = "GeneralGloCiphering";
-            break;
-        case Command.GENERAL_DED_CIPHERING:
-            str = "GeneralDedCiphering";
-            break;
-        case Command.GENERAL_CIPHERING:
-            str = "GeneralCiphering";
-            break;
-        case Command.INFORMATION_REPORT:
-            str = "InformationReport";
-            break;
-        case Command.EVENT_NOTIFICATION:
-            str = "EventNotification";
-            break;
-        case Command.DED_GET_REQUEST:
-            str = "DedGetRequest";
-            break;
-        case DED_GET_RESPONSE:
-            str = "DedGetResponse";
-            break;
-        case DED_SET_REQUEST:
-            str = "DedSetRequest";
-            break;
-        case DED_SET_RESPONSE:
-            str = "DedSetResponse";
-            break;
-        case DED_EVENT_NOTIFICATION:
-            str = "DedEventNotification";
-            break;
-        case DED_METHOD_REQUEST:
-            str = "DedMethodRequest";
-            break;
-        case GATEWAY_REQUEST:
-            str = "GatewayRequest";
-            break;
-        case GATEWAY_RESPONSE:
-            str = "GatewayResponse";
-            break;
-        case DISCOVER_REQUEST:
-            str = "DiscoverRequest";
-            break;
-        case DISCOVER_REPORT:
-            str = "DiscoverReport";
-            break;
-        case REGISTER_REQUEST:
-            str = "RegisterRequest";
-            break;
-        case PING_REQUEST:
-            str = "PingRequest ";
-            break;
-        case PING_RESPONSE:
-            str = "PingResponse";
-            break;
-        case REPEAT_CALL_REQUEST:
-            str = "RepeatCallRequest";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case Command.NONE:
+                str = "None";
+                break;
+            case Command.INITIATE_REQUEST:
+                str = "InitiateRequest";
+                break;
+            case Command.INITIATE_RESPONSE:
+                str = "InitiateResponse";
+                break;
+            case Command.READ_REQUEST:
+                str = "ReadRequest";
+                break;
+            case Command.READ_RESPONSE:
+                str = "ReadResponse";
+                break;
+            case Command.WRITE_REQUEST:
+                str = "WriteRequest";
+                break;
+            case Command.WRITE_RESPONSE:
+                str = "WriteResponse";
+                break;
+            case Command.GET_REQUEST:
+                str = "GetRequest";
+                break;
+            case Command.GET_RESPONSE:
+                str = "GetResponse";
+                break;
+            case Command.SET_REQUEST:
+                str = "SetRequest";
+                break;
+            case Command.SET_RESPONSE:
+                str = "SetResponse";
+                break;
+            case Command.METHOD_REQUEST:
+                str = "MethodRequest";
+                break;
+            case Command.METHOD_RESPONSE:
+                str = "MethodResponse";
+                break;
+            case Command.UNACCEPTABLE_FRAME:
+                str = "UnacceptableFrame";
+                break;
+            case Command.SNRM:
+                str = "Snrm";
+                break;
+            case Command.UA:
+                str = "Ua";
+                break;
+            case Command.AARQ:
+                str = "Aarq";
+                break;
+            case Command.AARE:
+                str = "Aare";
+                break;
+            case Command.DISCONNECT_REQUEST:
+                str = "Disc";
+                break;
+            case Command.RELEASE_REQUEST:
+                str = "DisconnectRequest";
+                break;
+            case Command.RELEASE_RESPONSE:
+                str = "DisconnectResponse";
+                break;
+            case Command.CONFIRMED_SERVICE_ERROR:
+                str = "ConfirmedServiceError";
+                break;
+            case Command.EXCEPTION_RESPONSE:
+                str = "ExceptionResponse";
+                break;
+            case Command.GENERAL_BLOCK_TRANSFER:
+                str = "GeneralBlockTransfer";
+                break;
+            case Command.ACCESS_REQUEST:
+                str = "AccessRequest";
+                break;
+            case Command.ACCESS_RESPONSE:
+                str = "AccessResponse";
+                break;
+            case Command.DATA_NOTIFICATION:
+                str = "DataNotification";
+                break;
+            case Command.GLO_GET_REQUEST:
+                str = "GloGetRequest";
+                break;
+            case Command.GLO_GET_RESPONSE:
+                str = "GloGetResponse";
+                break;
+            case Command.GLO_SET_REQUEST:
+                str = "GloSetRequest";
+                break;
+            case Command.GLO_SET_RESPONSE:
+                str = "GloSetResponse";
+                break;
+            case Command.GLO_EVENT_NOTIFICATION_REQUEST:
+                str = "GloEventNotificationRequest";
+                break;
+            case Command.GLO_METHOD_REQUEST:
+                str = "GloMethodRequest";
+                break;
+            case Command.GLO_METHOD_RESPONSE:
+                str = "GloMethodResponse";
+                break;
+            case Command.GLO_INITIATE_REQUEST:
+                str = "GloInitiateRequest";
+                break;
+            case Command.GLO_READ_REQUEST:
+                str = "GloReadRequest";
+                break;
+            case Command.GLO_WRITE_REQUEST:
+                str = "GloWriteRequest";
+                break;
+            case Command.GLO_INITIATE_RESPONSE:
+                str = "GloInitiateResponse";
+                break;
+            case Command.GLO_READ_RESPONSE:
+                str = "GloReadResponse";
+                break;
+            case Command.GLO_WRITE_RESPONSE:
+                str = "GloWriteResponse";
+                break;
+            case Command.GENERAL_GLO_CIPHERING:
+                str = "GeneralGloCiphering";
+                break;
+            case Command.GENERAL_DED_CIPHERING:
+                str = "GeneralDedCiphering";
+                break;
+            case Command.GENERAL_CIPHERING:
+                str = "GeneralCiphering";
+                break;
+            case Command.INFORMATION_REPORT:
+                str = "InformationReport";
+                break;
+            case Command.EVENT_NOTIFICATION:
+                str = "EventNotification";
+                break;
+            case Command.DED_GET_REQUEST:
+                str = "DedGetRequest";
+                break;
+            case DED_GET_RESPONSE:
+                str = "DedGetResponse";
+                break;
+            case DED_SET_REQUEST:
+                str = "DedSetRequest";
+                break;
+            case DED_SET_RESPONSE:
+                str = "DedSetResponse";
+                break;
+            case DED_EVENT_NOTIFICATION:
+                str = "DedEventNotification";
+                break;
+            case DED_METHOD_REQUEST:
+                str = "DedMethodRequest";
+                break;
+            case GATEWAY_REQUEST:
+                str = "GatewayRequest";
+                break;
+            case GATEWAY_RESPONSE:
+                str = "GatewayResponse";
+                break;
+            case DISCOVER_REQUEST:
+                str = "DiscoverRequest";
+                break;
+            case DISCOVER_REPORT:
+                str = "DiscoverReport";
+                break;
+            case REGISTER_REQUEST:
+                str = "RegisterRequest";
+                break;
+            case PING_REQUEST:
+                str = "PingRequest ";
+                break;
+            case PING_RESPONSE:
+                str = "PingResponse";
+                break;
+            case REPEAT_CALL_REQUEST:
+                str = "RepeatCallRequest";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }

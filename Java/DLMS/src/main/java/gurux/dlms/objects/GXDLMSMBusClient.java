@@ -87,9 +87,8 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSMBusClient(final String ln) {
         this(ln, 0);
@@ -97,11 +96,9 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSMBusClient(final String ln, final int sn) {
         super(ObjectType.MBUS_CLIENT, ln, sn);
@@ -111,18 +108,17 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Provides reference to an "M-Bus master port setup" object, used
-     *         to configure an M-Bus port, each interface allowing to exchange
-     *         data with one or more M-Bus slave devices
+     * to configure an M-Bus port, each interface allowing to exchange
+     * data with one or more M-Bus slave devices
      */
     public final String getMBusPortReference() {
         return mBusPortReference;
     }
 
     /**
-     * @param value
-     *            Provides reference to an "M-Bus master port setup" object,
-     *            used to configure an M-Bus port, each interface allowing to
-     *            exchange data with one or more M-Bus slave devices
+     * @param value Provides reference to an "M-Bus master port setup" object,
+     *              used to configure an M-Bus port, each interface allowing to
+     *              exchange data with one or more M-Bus slave devices
      */
     public final void setMBusPortReference(final String value) {
         mBusPortReference = value;
@@ -226,24 +222,16 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Installs a slave device.
-     * 
-     * @param client
-     *            DLMS client settings.
-     * @param primaryAddress
-     *            Primary address.
+     *
+     * @param client         DLMS client settings.
+     * @param primaryAddress Primary address.
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] slaveInstall(final GXDLMSClient client, byte primaryAddress)
@@ -255,22 +243,15 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * De-installs a slave device.
-     * 
-     * @param client
-     *            DLMS client settings.
+     *
+     * @param client DLMS client settings.
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] slaveDeInstall(final GXDLMSClient client) throws InvalidKeyException,
@@ -281,22 +262,15 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Captures values.
-     * 
-     * @param client
-     *            DLMS client settings.
+     *
+     * @param client DLMS client settings.
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] capture(final GXDLMSClient client) throws InvalidKeyException,
@@ -307,22 +281,15 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Resets alarm state of the M-Bus slave device.
-     * 
-     * @param client
-     *            DLMS client settings.
+     *
+     * @param client DLMS client settings.
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] resetAlarm(final GXDLMSClient client) throws InvalidKeyException,
@@ -333,22 +300,15 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Synchronize the clock.
-     * 
-     * @param client
-     *            DLMS client settings.
+     *
+     * @param client DLMS client settings.
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] synchronizeClock(final GXDLMSClient client) throws InvalidKeyException,
@@ -359,24 +319,16 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Sends data to the M-Bus slave device.
-     * 
-     * @param client
-     *            DLMS client settings.
-     * @param data
-     *            data to send
+     *
+     * @param client DLMS client settings.
+     * @param data   data to send
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] sendData(final GXDLMSClient client, final GXMBusClientData[] data)
@@ -404,24 +356,16 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Sets the encryption key in the M-Bus client and enables encrypted
      * communication with the M-Bus slave device.
-     * 
-     * @param client
-     *            DLMS client settings.
-     * @param encryptionKey
-     *            encryption key
+     *
+     * @param client        DLMS client settings.
+     * @param encryptionKey encryption key
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] setEncryptionKey(GXDLMSClient client, byte[] encryptionKey)
@@ -441,24 +385,16 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Transfers an encryption key to the M-Bus slave device.
-     * 
-     * @param client
-     *            DLMS client settings.
-     * @param encryptionKey
-     *            encryption key
+     *
+     * @param client        DLMS client settings.
+     * @param encryptionKey encryption key
      * @return Generated DLMS data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] transferKey(GXDLMSClient client, byte[] encryptionKey)
@@ -479,13 +415,13 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object[] getValues() {
         if (getVersion() == 0) {
-            return new Object[] { getLogicalName(), mBusPortReference, captureDefinition,
+            return new Object[]{getLogicalName(), mBusPortReference, captureDefinition,
                     capturePeriod, primaryAddress, identificationNumber, manufacturerID,
-                    dataHeaderVersion, deviceType, accessNumber, status, alarm };
+                    dataHeaderVersion, deviceType, accessNumber, status, alarm};
         }
-        return new Object[] { getLogicalName(), mBusPortReference, captureDefinition, capturePeriod,
+        return new Object[]{getLogicalName(), mBusPortReference, captureDefinition, capturePeriod,
                 primaryAddress, identificationNumber, manufacturerID, dataHeaderVersion, deviceType,
-                accessNumber, status, alarm, configuration, encryptionKeyStatus };
+                accessNumber, status, alarm, configuration, encryptionKeyStatus};
     }
 
     /*
@@ -813,19 +749,19 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public String[] getNames() {
         if (version == 0) {
-            return new String[] { "Logical Name", "MBus Port Reference", "Capture Definition",
+            return new String[]{"Logical Name", "MBus Port Reference", "Capture Definition",
                     "Capture Period", "Primary Address", "Identification Number", "Manufacturer ID",
-                    "Version", "Device Type", "Access Number", "Status", "Alarm" };
+                    "Version", "Device Type", "Access Number", "Status", "Alarm"};
         }
-        return new String[] { "Logical Name", "MBus Port Reference", "Capture Definition",
+        return new String[]{"Logical Name", "MBus Port Reference", "Capture Definition",
                 "Capture Period", "Primary Address", "Identification Number", "Manufacturer ID",
                 "Version", "Device Type", "Access Number", "Status", "Alarm", "Configuration",
-                "Encryption Key Status" };
+                "Encryption Key Status"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Slave install", "Slave deinstall", "Capture", "Reset alarm",
-                "Synchronize clock", "Data send", "Set encryption key", "Transfer key" };
+        return new String[]{"Slave install", "Slave deinstall", "Capture", "Reset alarm",
+                "Synchronize clock", "Data send", "Set encryption key", "Transfer key"};
     }
 }

@@ -50,9 +50,8 @@ public class GXDateOS extends GXDate {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXDateOS(final Date forvalue) {
         super(forvalue);
@@ -60,9 +59,8 @@ public class GXDateOS extends GXDate {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Date value.
+     *
+     * @param value Date value.
      */
     public GXDateOS(final GXDateTime value) {
         super(value);
@@ -70,13 +68,10 @@ public class GXDateOS extends GXDate {
 
     /**
      * Constructor.
-     * 
-     * @param year
-     *            Used year.
-     * @param month
-     *            Used month.
-     * @param day
-     *            Used day.
+     *
+     * @param year  Used year.
+     * @param month Used month.
+     * @param day   Used day.
      */
     public GXDateOS(final int year, final int month, final int day) {
         super(year, month, day);
@@ -84,9 +79,8 @@ public class GXDateOS extends GXDate {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
+     *
+     * @param value Date time value as a string.
      */
     public GXDateOS(final String value) {
         super(value, null);
@@ -94,11 +88,9 @@ public class GXDateOS extends GXDate {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param locale
-     *            Used locale.
+     *
+     * @param value  Date time value as a string.
+     * @param locale Used locale.
      */
     public GXDateOS(final String value, final Locale locale) {
         super(value, locale);

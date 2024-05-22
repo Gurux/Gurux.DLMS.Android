@@ -87,8 +87,8 @@ class GXDLMSSNParameters {
      * @return Generated messages.
      */
     GXDLMSSNParameters(final GXDLMSSettings forSettings, final int forCommand, final int forCount,
-            final int forCommandType, final GXByteBuffer forAttributeDescriptor,
-            final GXByteBuffer forData) {
+                       final int forCommandType, final GXByteBuffer forAttributeDescriptor,
+                       final GXByteBuffer forData) {
         settings = forSettings;
         blockIndex = (short) settings.getBlockIndex();
         command = forCommand;
@@ -124,8 +124,7 @@ class GXDLMSSNParameters {
     }
 
     /**
-     * @param value
-     *            Request type.
+     * @param value Request type.
      */
     public void setRequestType(final int value) {
         requestType = value;
@@ -153,8 +152,7 @@ class GXDLMSSNParameters {
     }
 
     /**
-     * @param value
-     *            the time to set
+     * @param value the time to set
      */
     public final void setTime(final GXDateTime value) {
         time = value;
@@ -168,8 +166,7 @@ class GXDLMSSNParameters {
     }
 
     /**
-     * @param value
-     *            the multipleBlocks to set
+     * @param value the multipleBlocks to set
      */
     void setMultipleBlocks(final boolean value) {
         multipleBlocks = value;
@@ -183,8 +180,7 @@ class GXDLMSSNParameters {
     }
 
     /**
-     * @param value
-     *            Block index.
+     * @param value Block index.
      */
     void setBlockIndex(final int value) {
         blockIndex = value;

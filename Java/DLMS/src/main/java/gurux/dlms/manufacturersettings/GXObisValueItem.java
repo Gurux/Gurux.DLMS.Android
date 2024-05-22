@@ -46,11 +46,9 @@ public class GXObisValueItem {
 
     /**
      * Constructor.
-     * 
-     * @param devValue
-     *            Device value.
-     * @param userValue
-     *            Value that is shown to the user.
+     *
+     * @param devValue  Device value.
+     * @param userValue Value that is shown to the user.
      */
     public GXObisValueItem(final Object devValue, final String userValue) {
         setValue(devValue);
@@ -65,8 +63,7 @@ public class GXObisValueItem {
     }
 
     /**
-     * @param val
-     *            Value that is read from or written to the Device.
+     * @param val Value that is read from or written to the Device.
      */
     public final void setValue(final Object val) {
         value = val;
@@ -80,8 +77,7 @@ public class GXObisValueItem {
     }
 
     /**
-     * @param val
-     *            Value that is shown to the user.
+     * @param val Value that is shown to the user.
      */
     public final void setUIValue(final String val) {
         uiValue = val;

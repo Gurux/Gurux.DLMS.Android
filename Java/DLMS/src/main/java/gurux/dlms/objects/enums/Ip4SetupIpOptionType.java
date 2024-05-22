@@ -82,7 +82,7 @@ public enum Ip4SetupIpOptionType {
     private static HashMap<Integer, Ip4SetupIpOptionType> mappings;
 
     private static java.util.HashMap<Integer, Ip4SetupIpOptionType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (Ip4SetupIpOptionType.class) {
                 if (mappings == null) {

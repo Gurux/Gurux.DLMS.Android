@@ -37,110 +37,110 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum AccessMode3 {
-	/**
-	 * No access.
-	 */
-	NO_ACCESS(0),
-	/*
-	 * The client is allowed only reading from the server. <p> This is used in
-	 * version 1. </p>
-	 */
-	READ(1),
-	/*
-	 * The client is allowed only writing to the server.
-	 */
-	WRITE(2),
+    /**
+     * No access.
+     */
+    NO_ACCESS(0),
+    /*
+     * The client is allowed only reading from the server. <p> This is used in
+     * version 1. </p>
+     */
+    READ(1),
+    /*
+     * The client is allowed only writing to the server.
+     */
+    WRITE(2),
 
-	/**
-	 * Request messages are authenticated.
-	 */
-	AUTHENTICATED_REQUEST(4),
+    /**
+     * Request messages are authenticated.
+     */
+    AUTHENTICATED_REQUEST(4),
 
-	/**
-	 * Request messages are encrypted.
-	 */
-	ENCRYPTED_REQUEST(8),
+    /**
+     * Request messages are encrypted.
+     */
+    ENCRYPTED_REQUEST(8),
 
-	/**
-	 * Request messages are digitally signed.
-	 */
-	DIGITALLY_SIGNED_REQUEST(16),
+    /**
+     * Request messages are digitally signed.
+     */
+    DIGITALLY_SIGNED_REQUEST(16),
 
-	/**
-	 * Response messages are authenticated.
-	 */
-	AUTHENTICATED_RESPONSE(32),
+    /**
+     * Response messages are authenticated.
+     */
+    AUTHENTICATED_RESPONSE(32),
 
-	/**
-	 * Response messages are encrypted.
-	 */
-	ENCRYPTED_RESPONSE(64),
+    /**
+     * Response messages are encrypted.
+     */
+    ENCRYPTED_RESPONSE(64),
 
-	/**
-	 * Response messages are digitally signed.
-	 */
-	DIGITALLY_SIGNED_RESPONSE(128);
+    /**
+     * Response messages are digitally signed.
+     */
+    DIGITALLY_SIGNED_RESPONSE(128);
 
-	private int value;
-	private static java.util.HashMap<Integer, AccessMode3> mappings;
+    private int value;
+    private static java.util.HashMap<Integer, AccessMode3> mappings;
 
-	private static java.util.HashMap<Integer, AccessMode3> getMappings() {
-		synchronized (AccessMode.class) {
-			if (mappings == null) {
-				mappings = new java.util.HashMap<Integer, AccessMode3>();
-			}
-		}
-		return mappings;
-	}
+    private static java.util.HashMap<Integer, AccessMode3> getMappings() {
+        synchronized (AccessMode.class) {
+            if (mappings == null) {
+                mappings = new java.util.HashMap<Integer, AccessMode3>();
+            }
+        }
+        return mappings;
+    }
 
-	AccessMode3(final int mode) {
-		this.value = mode;
-		getMappings().put(mode, this);
-	}
+    AccessMode3(final int mode) {
+        this.value = mode;
+        getMappings().put(mode, this);
+    }
 
-	/*
-	 * Get integer value for enum.
-	 */
-	public final int getValue() {
-		return value;
-	}
+    /*
+     * Get integer value for enum.
+     */
+    public final int getValue() {
+        return value;
+    }
 
-	/**
-	 * @return Get enumeration constant values.
-	 */
-	private static AccessMode3[] getEnumConstants() {
-		return new AccessMode3[] { READ, WRITE, AUTHENTICATED_REQUEST, ENCRYPTED_REQUEST, DIGITALLY_SIGNED_REQUEST,
-				AUTHENTICATED_RESPONSE, ENCRYPTED_RESPONSE, DIGITALLY_SIGNED_RESPONSE };
-	}
+    /**
+     * @return Get enumeration constant values.
+     */
+    private static AccessMode3[] getEnumConstants() {
+        return new AccessMode3[]{READ, WRITE, AUTHENTICATED_REQUEST, ENCRYPTED_REQUEST, DIGITALLY_SIGNED_REQUEST,
+                AUTHENTICATED_RESPONSE, ENCRYPTED_RESPONSE, DIGITALLY_SIGNED_RESPONSE};
+    }
 
-	/**
-	 * Converts the integer value to enumerated value.
-	 * 
-	 * @param value The integer value, which is read from the device.
-	 * @return The enumerated value, which represents the integer.
-	 */
-	public static java.util.Set<AccessMode3> forValue(final int value) {
-		Set<AccessMode3> types = new HashSet<AccessMode3>();
-		AccessMode3[] enums = getEnumConstants();
-		for (int pos = 0; pos != enums.length; ++pos) {
-			if ((enums[pos].value & value) == enums[pos].value) {
-				types.add(enums[pos]);
-			}
-		}
-		return types;
-	}
+    /**
+     * Converts the integer value to enumerated value.
+     *
+     * @param value The integer value, which is read from the device.
+     * @return The enumerated value, which represents the integer.
+     */
+    public static java.util.Set<AccessMode3> forValue(final int value) {
+        Set<AccessMode3> types = new HashSet<AccessMode3>();
+        AccessMode3[] enums = getEnumConstants();
+        for (int pos = 0; pos != enums.length; ++pos) {
+            if ((enums[pos].value & value) == enums[pos].value) {
+                types.add(enums[pos]);
+            }
+        }
+        return types;
+    }
 
-	/**
-	 * Converts the enumerated value to integer value.
-	 * 
-	 * @param value The enumerated value.
-	 * @return The integer value.
-	 */
-	public static int toInteger(final Set<AccessMode3> value) {
-		int tmp = 0;
-		for (AccessMode3 it : value) {
-			tmp |= it.getValue();
-		}
-		return tmp;
-	}
+    /**
+     * Converts the enumerated value to integer value.
+     *
+     * @param value The enumerated value.
+     * @return The integer value.
+     */
+    public static int toInteger(final Set<AccessMode3> value) {
+        int tmp = 0;
+        for (AccessMode3 it : value) {
+            tmp |= it.getValue();
+        }
+        return tmp;
+    }
 }

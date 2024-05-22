@@ -76,7 +76,7 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     public GXDLMSRegister(final ObjectType type, final String ln,
-            final int sn) {
+                          final int sn) {
         super(type, ln, sn);
         setScaler(1);
         setUnit(Unit.NONE);
@@ -84,9 +84,8 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSRegister(final String ln) {
         this(ObjectType.REGISTER, ln, 0);
@@ -94,11 +93,9 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSRegister(final String ln, final int sn) {
         this(ObjectType.REGISTER, ln, sn);
@@ -112,8 +109,7 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Scaler of COSEM Register object.
+     * @param value Scaler of COSEM Register object.
      */
     public final void setScaler(final double value) {
         scaler = (int) Math.log10(value);
@@ -127,8 +123,7 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Unit of COSEM Register object.
+     * @param value Unit of COSEM Register object.
      */
     public final void setUnit(final Unit value) {
         unit = value.getValue();
@@ -136,7 +131,7 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Get value of COSEM Register object.
-     * 
+     *
      * @return Value of COSEM Register object.
      */
     public final Object getValue() {
@@ -145,9 +140,8 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Set value of COSEM Register object.
-     * 
-     * @param value
-     *            Value of COSEM Register object.
+     *
+     * @param value Value of COSEM Register object.
      */
     public final void setValue(final Object value) {
         objectValue = value;
@@ -155,24 +149,16 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Reset value.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -188,13 +174,13 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
         String str = "Scaler: " + formatter.format(getScaler());
         str += " Unit: ";
         str += getUnit().toString();
-        return new Object[] { getLogicalName(), getValue(), str };
+        return new Object[]{getLogicalName(), getValue(), str};
     }
     // CHECKSTYLE:ON
 
     @Override
     public byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                         final ValueEventArgs e) {
         // Resets the value to the default value.
         // The default value is an instance specific constant.
         if (e.getIndex() == 1) {
@@ -279,7 +265,7 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
      * Returns value of given attribute.
      */
     public Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                           final ValueEventArgs e) {
         // CHECKSTYLE:ON
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
@@ -313,7 +299,7 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                         final ValueEventArgs e) {
         // CHECKSTYLE:ON
 
         if (e.getIndex() == 1) {
@@ -373,13 +359,13 @@ public class GXDLMSRegister extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Value", "Scaler and Unit" };
+        return new String[]{"Logical Name", "Value", "Scaler and Unit"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset" };
+        return new String[]{"Reset"};
     }
 
 }

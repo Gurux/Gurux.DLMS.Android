@@ -37,10 +37,9 @@ package gurux.dlms.objects;
 import gurux.dlms.GXDLMSSettings;
 
 public interface IGXDLMSSettings {
-	/**
-	 * 
-	 * @param settings Update settings for the COSEM objects.
-	 */
-	void setSettings(GXDLMSSettings settings);
+    /**
+     * @param settings Update settings for the COSEM objects.
+     */
+    void setSettings(GXDLMSSettings settings);
 
 }

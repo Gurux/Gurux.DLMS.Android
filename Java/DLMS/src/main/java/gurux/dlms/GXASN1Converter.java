@@ -5,7 +5,7 @@
 package gurux.dlms;
 
 /*
- * ASN1 converter. This class is used to convert 
+ * ASN1 converter. This class is used to convert
  * public and private keys to byte array and vice verse.
  */
 public final class GXASN1Converter {
@@ -18,9 +18,8 @@ public final class GXASN1Converter {
 
     /**
      * Convert bytes to ASN.1 DER.
-     * 
-     * @param data
-     *            bytes to convert.
+     *
+     * @param data bytes to convert.
      * @return ASN.1 DER
      */
     public static byte[] encode(final byte[] data) {
@@ -36,9 +35,8 @@ public final class GXASN1Converter {
 
     /**
      * Convert ASN.1 DER to bytes.
-     * 
-     * @param der
-     *            ASN.1 DER bytes.
+     *
+     * @param der ASN.1 DER bytes.
      * @return bytes from DER structure.
      */
     public static byte[] getBytes(final byte[] der) {

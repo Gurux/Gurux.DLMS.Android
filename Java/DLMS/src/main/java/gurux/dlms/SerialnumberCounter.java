@@ -54,17 +54,17 @@ final class SerialNumberCounter {
         int last = 0, index = 0;
         for (char ch : expressions.toCharArray()) {
             switch (ch) {
-            case '%':
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-                values.add(expressions.substring(last, index));
-                values.add(String.valueOf(ch));
-                last = index + 1;
-                break;
-            default:
-                break;
+                case '%':
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    values.add(expressions.substring(last, index));
+                    values.add(String.valueOf(ch));
+                    last = index + 1;
+                    break;
+                default:
+                    break;
             }
             ++index;
         }
@@ -117,9 +117,8 @@ final class SerialNumberCounter {
 
     /**
      * Produce formatted String by the given math expression.
-     * 
-     * @param expression
-     *            Unformatted math expression.
+     *
+     * @param expression Unformatted math expression.
      * @return Formatted math expression.
      */
     private static String formatString(final String expression) {

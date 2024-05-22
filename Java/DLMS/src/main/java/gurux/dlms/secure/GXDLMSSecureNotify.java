@@ -39,7 +39,7 @@ import gurux.dlms.enums.InterfaceType;
 
 /**
  * This class is used to send data notify and push messages to the clients.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXDLMSSecureNotify extends GXDLMSNotify {
@@ -51,19 +51,15 @@ public class GXDLMSSecureNotify extends GXDLMSNotify {
 
     /**
      * Constructor.
-     * 
-     * @param useLogicalNameReferencing
-     *            Is Logical Name referencing used.
-     * @param clientAddress
-     *            Server address.
-     * @param serverAddress
-     *            Client address.
-     * @param interfaceType
-     *            Object type.
+     *
+     * @param useLogicalNameReferencing Is Logical Name referencing used.
+     * @param clientAddress             Server address.
+     * @param serverAddress             Client address.
+     * @param interfaceType             Object type.
      */
     public GXDLMSSecureNotify(final boolean useLogicalNameReferencing,
-            final int clientAddress, final int serverAddress,
-            final InterfaceType interfaceType) {
+                              final int clientAddress, final int serverAddress,
+                              final InterfaceType interfaceType) {
         super(useLogicalNameReferencing, clientAddress, serverAddress,
                 interfaceType);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());

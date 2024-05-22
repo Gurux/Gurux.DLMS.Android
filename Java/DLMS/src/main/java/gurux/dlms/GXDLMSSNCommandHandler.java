@@ -36,9 +36,9 @@ final class GXDLMSSNCommandHandler {
 
     // CHECKSTYLE:OFF
     private static void handleRead(final GXDLMSSettings settings, final GXDLMSServerBase server,
-            final byte type, final GXByteBuffer data, final List<ValueEventArgs> list,
-            final List<ValueEventArgs> reads, final GXByteBuffer replyData,
-            final GXDLMSTranslatorStructure xml, final int cipheredCommand) throws Exception {
+                                   final byte type, final GXByteBuffer data, final List<ValueEventArgs> list,
+                                   final List<ValueEventArgs> reads, final GXByteBuffer replyData,
+                                   final GXDLMSTranslatorStructure xml, final int cipheredCommand) throws Exception {
         // CHECKSTYLE:ON
         // GetRequest normal
         int sn = data.getInt16();
@@ -103,13 +103,12 @@ final class GXDLMSSNCommandHandler {
 
     /**
      * Handle read Block in blocks.
-     * 
-     * @param data
-     *            Received data.
+     *
+     * @param data Received data.
      */
     private static void handleReadBlockNumberAccess(final GXDLMSSettings settings,
-            final GXDLMSServerBase server, final GXByteBuffer data, final GXByteBuffer replyData,
-            final GXDLMSTranslatorStructure xml) throws Exception {
+                                                    final GXDLMSServerBase server, final GXByteBuffer data, final GXByteBuffer replyData,
+                                                    final GXDLMSTranslatorStructure xml) throws Exception {
         int blockNumber = data.getUInt16();
         if (xml != null) {
             xml.appendStartTag(Command.READ_REQUEST,
@@ -173,15 +172,13 @@ final class GXDLMSSNCommandHandler {
 
     /**
      * Get data for Read command.
-     * 
-     * @param list
-     *            received objects.
-     * @param data
-     *            Data as byte array.
+     *
+     * @param list received objects.
+     * @param data Data as byte array.
      * @return Response type.
      */
     private static byte getReadData(final GXDLMSSettings settings, final ValueEventArgs[] list,
-            final GXByteBuffer data)
+                                    final GXByteBuffer data)
             throws InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         Object value;
@@ -221,9 +218,9 @@ final class GXDLMSSNCommandHandler {
     }
 
     private static void handleReadDataBlockAccess(final GXDLMSSettings settings,
-            final GXDLMSServerBase server, final int command, final GXByteBuffer data,
-            final int cnt, final GXByteBuffer replyData, final GXDLMSTranslatorStructure xml,
-            final int cipheredCommand) throws Exception {
+                                                  final GXDLMSServerBase server, final int command, final GXByteBuffer data,
+                                                  final int cnt, final GXByteBuffer replyData, final GXDLMSTranslatorStructure xml,
+                                                  final int cipheredCommand) throws Exception {
         GXByteBuffer bb = new GXByteBuffer();
         short lastBlock = data.getUInt8();
         int blockNumber = data.getUInt16();
@@ -306,8 +303,8 @@ final class GXDLMSSNCommandHandler {
      * @param data Received data.
      */
     static void handleReadRequest(final GXDLMSSettings settings, final GXDLMSServerBase server,
-            final GXByteBuffer data, final GXByteBuffer replyData,
-            final GXDLMSTranslatorStructure xml, final int cipheredCommand) throws Exception {
+                                  final GXByteBuffer data, final GXByteBuffer replyData,
+                                  final GXDLMSTranslatorStructure xml, final int cipheredCommand) throws Exception {
         GXByteBuffer bb = new GXByteBuffer();
         int cnt = 0xFF;
         byte type;
@@ -330,28 +327,28 @@ final class GXDLMSSNCommandHandler {
             for (int pos = 0; pos != cnt; ++pos) {
                 type = (byte) data.getUInt8();
                 switch (type) {
-                case VariableAccessSpecification.VARIABLE_NAME:
-                case VariableAccessSpecification.PARAMETERISED_ACCESS:
-                    handleRead(settings, server, type, data, list, reads, replyData, xml,
-                            cipheredCommand);
-                    break;
-                case VariableAccessSpecification.BLOCK_NUMBER_ACCESS:
-                    handleReadBlockNumberAccess(settings, server, data, replyData, xml);
-                    if (xml != null) {
-                        xml.appendEndTag(Command.READ_REQUEST);
-                    }
-                    return;
-                case VariableAccessSpecification.READ_DATA_BLOCK_ACCESS:
-                    handleReadDataBlockAccess(settings, server, Command.READ_RESPONSE, data, cnt,
-                            replyData, xml, cipheredCommand);
-                    if (xml != null) {
-                        xml.appendEndTag(Command.READ_REQUEST);
-                    }
-                    return;
-                default:
-                    returnSNError(settings, Command.READ_RESPONSE, ErrorCode.READ_WRITE_DENIED,
-                            replyData);
-                    return;
+                    case VariableAccessSpecification.VARIABLE_NAME:
+                    case VariableAccessSpecification.PARAMETERISED_ACCESS:
+                        handleRead(settings, server, type, data, list, reads, replyData, xml,
+                                cipheredCommand);
+                        break;
+                    case VariableAccessSpecification.BLOCK_NUMBER_ACCESS:
+                        handleReadBlockNumberAccess(settings, server, data, replyData, xml);
+                        if (xml != null) {
+                            xml.appendEndTag(Command.READ_REQUEST);
+                        }
+                        return;
+                    case VariableAccessSpecification.READ_DATA_BLOCK_ACCESS:
+                        handleReadDataBlockAccess(settings, server, Command.READ_RESPONSE, data, cnt,
+                                replyData, xml, cipheredCommand);
+                        if (xml != null) {
+                            xml.appendEndTag(Command.READ_REQUEST);
+                        }
+                        return;
+                    default:
+                        returnSNError(settings, Command.READ_RESPONSE, ErrorCode.READ_WRITE_DENIED,
+                                replyData);
+                        return;
                 }
             }
             if (reads.size() != 0) {
@@ -383,7 +380,7 @@ final class GXDLMSSNCommandHandler {
     }
 
     private static void returnSNError(final GXDLMSSettings settings, final int cmd,
-            final ErrorCode error, final GXByteBuffer replyData)
+                                      final ErrorCode error, final GXByteBuffer replyData)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         GXByteBuffer bb = new GXByteBuffer();
@@ -395,11 +392,11 @@ final class GXDLMSSNCommandHandler {
 
     /**
      * Find Short Name object.
-     * 
+     *
      * @param sn
      */
     private static GXSNInfo findSNObject(final GXDLMSServerBase server,
-            final GXDLMSSettings settings, final int sn) throws Exception {
+                                         final GXDLMSSettings settings, final int sn) throws Exception {
         GXSNInfo i = new GXSNInfo();
         int[] offset = new int[1], count = new int[1];
         for (GXDLMSObject it : settings.getObjects()) {
@@ -434,8 +431,8 @@ final class GXDLMSSNCommandHandler {
      * @return Reply.
      */
     static void handleWriteRequest(final GXDLMSSettings settings, final GXDLMSServerBase server,
-            final GXByteBuffer data, final GXByteBuffer replyData,
-            final GXDLMSTranslatorStructure xml, final int cipheredCommand) throws Exception {
+                                   final GXByteBuffer data, final GXByteBuffer replyData,
+                                   final GXDLMSTranslatorStructure xml, final int cipheredCommand) throws Exception {
         short type;
         Object value;
         // Get object count.
@@ -453,32 +450,32 @@ final class GXDLMSSNCommandHandler {
         for (int pos = 0; pos != cnt; ++pos) {
             type = data.getUInt8();
             switch (type) {
-            case VariableAccessSpecification.VARIABLE_NAME:
-                int sn = data.getUInt16();
-                if (xml != null) {
-                    xml.appendLine(Command.WRITE_REQUEST << 8 | type, "Value",
-                            xml.integerToHex(sn, 4));
-                } else {
-                    GXSNInfo i = findSNObject(server, server.getSettings(), sn);
-                    targets.add(i);
-                    // If target is unknown.
-                    if (i == null) {
-                        // Device reports a undefined object.
-                        results.setUInt8(ErrorCode.UNDEFINED_OBJECT.getValue());
+                case VariableAccessSpecification.VARIABLE_NAME:
+                    int sn = data.getUInt16();
+                    if (xml != null) {
+                        xml.appendLine(Command.WRITE_REQUEST << 8 | type, "Value",
+                                xml.integerToHex(sn, 4));
                     } else {
-                        results.setUInt8(ErrorCode.OK.getValue());
+                        GXSNInfo i = findSNObject(server, server.getSettings(), sn);
+                        targets.add(i);
+                        // If target is unknown.
+                        if (i == null) {
+                            // Device reports a undefined object.
+                            results.setUInt8(ErrorCode.UNDEFINED_OBJECT.getValue());
+                        } else {
+                            results.setUInt8(ErrorCode.OK.getValue());
+                        }
                     }
-                }
-                break;
-            case VariableAccessSpecification.WRITE_DATA_BLOCK_ACCESS:
-                handleReadDataBlockAccess(settings, server, Command.WRITE_RESPONSE, data, cnt,
-                        replyData, xml, cipheredCommand);
-                if (xml == null) {
-                    return;
-                }
-            default:
-                // Device reports a HW error.
-                results.setUInt8(ErrorCode.HARDWARE_FAULT.getValue());
+                    break;
+                case VariableAccessSpecification.WRITE_DATA_BLOCK_ACCESS:
+                    handleReadDataBlockAccess(settings, server, Command.WRITE_RESPONSE, data, cnt,
+                            replyData, xml, cipheredCommand);
+                    if (xml == null) {
+                        return;
+                    }
+                default:
+                    // Device reports a HW error.
+                    results.setUInt8(ErrorCode.HARDWARE_FAULT.getValue());
             }
         }
         if (xml != null) {
@@ -540,7 +537,7 @@ final class GXDLMSSNCommandHandler {
                 if (access) {
                     if (target.isAction()) {
                         e.setParameters(value);
-                        ValueEventArgs[] actions = new ValueEventArgs[] { e };
+                        ValueEventArgs[] actions = new ValueEventArgs[]{e};
                         server.notifyAction(actions);
                         if (!e.getHandled()) {
                             byte[] reply = target.getItem().invoke(settings, e);
@@ -558,13 +555,13 @@ final class GXDLMSSNCommandHandler {
                         }
                     } else {
                         e.setValue(value);
-                        server.notifyWrite(new ValueEventArgs[] { e });
+                        server.notifyWrite(new ValueEventArgs[]{e});
                         if (e.getError() != ErrorCode.OK) {
                             results.setUInt8(pos, e.getError().getValue());
                         } else if (!e.getHandled()) {
                             target.getItem().setValue(settings, e);
                         }
-                        server.notifyPostWrite(new ValueEventArgs[] { e });
+                        server.notifyPostWrite(new ValueEventArgs[]{e});
                     }
                 } else {
                     results.setUInt8(pos, ErrorCode.READ_WRITE_DENIED.getValue());
@@ -598,7 +595,7 @@ final class GXDLMSSNCommandHandler {
      * @param list Received information report objects.
      */
     static void handleInformationReport(final GXDLMSSettings settings, final GXReplyData reply,
-            final List<Entry<GXDLMSObject, Integer>> list) throws Exception {
+                                        final List<Entry<GXDLMSObject, Integer>> list) throws Exception {
         reply.setTime(null);
         int len = reply.getData().getUInt8();
         byte[] tmp = null;

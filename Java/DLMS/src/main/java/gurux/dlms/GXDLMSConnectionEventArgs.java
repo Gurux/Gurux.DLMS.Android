@@ -51,8 +51,7 @@ public class GXDLMSConnectionEventArgs {
     }
 
     /**
-     * @param value
-     *            Server ID that client try to use to make connection.
+     * @param value Server ID that client try to use to make connection.
      */
     public final void setServerID(final long value) {
         serverID = value;

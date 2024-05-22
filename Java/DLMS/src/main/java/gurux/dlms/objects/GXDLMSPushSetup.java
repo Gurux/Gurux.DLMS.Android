@@ -85,9 +85,8 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSPushSetup(final String ln) {
         this(ln, 0);
@@ -95,11 +94,9 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSPushSetup(final String ln, final int sn) {
         super(ObjectType.PUSH_SETUP, ln, sn);
@@ -135,8 +132,8 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Defines the list of attributes or objects to be pushed. Upon a
-     *         call of the push (data) method the selected attributes are sent
-     *         to the destination defined in getSendDestinationAndMethod.
+     * call of the push (data) method the selected attributes are sent
+     * to the destination defined in getSendDestinationAndMethod.
      */
     public final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> getPushObjectList() {
         return pushObjectList;
@@ -144,8 +141,8 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Contains the start and end date/time stamp when the communication
-     *         window(s) for the push become active (for the start instant), or
-     *         inactive (for the end instant).
+     * window(s) for the push become active (for the start instant), or
+     * inactive (for the end instant).
      */
     public final List<Map.Entry<GXDateTime, GXDateTime>> getCommunicationWindow() {
         return communicationWindow;
@@ -153,10 +150,10 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return To avoid simultaneous network connections of a lot of devices at
-     *         ex-actly the same point in time, a randomisation interval in
-     *         seconds can be defined. This means that the push operation is not
-     *         started imme-diately at the beginning of the first communication
-     *         window but started randomly delayed.
+     * ex-actly the same point in time, a randomisation interval in
+     * seconds can be defined. This means that the push operation is not
+     * started imme-diately at the beginning of the first communication
+     * window but started randomly delayed.
      */
     public final int getRandomisationStartInterval() {
         return randomisationStartInterval;
@@ -168,21 +165,20 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return The maximum number of re-trials in case of unsuccessful push
-     *         attempts. After a successful push no further push attempts are
-     *         made until the push setup is triggered again. A value of 0 means
-     *         no repetitions, i.e. only the initial connection attempt is made.
+     * attempts. After a successful push no further push attempts are
+     * made until the push setup is triggered again. A value of 0 means
+     * no repetitions, i.e. only the initial connection attempt is made.
      */
     public final int getNumberOfRetries() {
         return numberOfRetries;
     }
 
     /**
-     * @param value
-     *            The maximum number of re-trials in case of unsuccessful push
-     *            attempts. After a successful push no further push attempts are
-     *            made until the push setup is triggered again. A value of 0
-     *            means no repetitions, i.e. only the initial connection attempt
-     *            is made.
+     * @param value The maximum number of re-trials in case of unsuccessful push
+     *              attempts. After a successful push no further push attempts are
+     *              made until the push setup is triggered again. A value of 0
+     *              means no repetitions, i.e. only the initial connection attempt
+     *              is made.
      */
     public final void setNumberOfRetries(final byte value) {
         numberOfRetries = value;
@@ -198,18 +194,16 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), pushObjectList,
+        return new Object[]{getLogicalName(), pushObjectList,
                 service + " " + destination + " " + message, communicationWindow,
-                randomisationStartInterval, numberOfRetries, repetitionDelay };
+                randomisationStartInterval, numberOfRetries, repetitionDelay};
     }
 
     /**
      * Get received objects from push message.
-     * 
-     * @param client
-     *            GXDLMSClient used to update the values.
-     * @param values
-     *            Received values.
+     *
+     * @param client GXDLMSClient used to update the values.
+     * @param values Received values.
      */
     public void getPushValues(final GXDLMSClient client, final List<?> values) {
         if (values.size() != pushObjectList.size()) {
@@ -535,14 +529,14 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Object List", "Send Destination And Method",
+        return new String[]{"Logical Name", "Object List", "Send Destination And Method",
                 "Communication Window", "Randomisation Start Interval", "Number Of Retries",
-                "Repetition Delay" };
+                "Repetition Delay"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Push" };
+        return new String[]{"Push"};
     }
 }

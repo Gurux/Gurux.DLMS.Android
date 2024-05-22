@@ -56,7 +56,7 @@ public enum GXDLMSPppSetupLcpOptionType {
     private static HashMap<Integer, GXDLMSPppSetupLcpOptionType> mappings;
 
     private static java.util.HashMap<Integer, GXDLMSPppSetupLcpOptionType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (GXDLMSPppSetupLcpOptionType.class) {
                 if (mappings == null) {

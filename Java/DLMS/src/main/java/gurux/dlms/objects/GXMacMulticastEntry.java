@@ -52,8 +52,7 @@ public class GXMacMulticastEntry {
     }
 
     /**
-     * @param value
-     *            LCID of multicast group
+     * @param value LCID of multicast group
      */
     public final void setId(final byte value) {
         id = value;
@@ -67,8 +66,7 @@ public class GXMacMulticastEntry {
     }
 
     /**
-     * @param value
-     *            Number of child nodes.
+     * @param value Number of child nodes.
      */
     public final void setMembers(final short value) {
         members = value;

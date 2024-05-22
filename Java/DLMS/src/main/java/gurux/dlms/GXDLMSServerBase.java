@@ -187,8 +187,7 @@ public class GXDLMSServerBase {
     }
 
     /**
-     * @param value
-     *            Current association of the server.
+     * @param value Current association of the server.
      */
     public final void setAssignedAssociation(final GXDLMSAssociationLogicalName value) {
         settings.setAssignedAssociation(value);
@@ -208,7 +207,7 @@ public class GXDLMSServerBase {
      * @param type Interface type.
      */
     public GXDLMSServerBase(final Object forOwner, final boolean logicalNameReferencing,
-            final InterfaceType type) {
+                            final InterfaceType type) {
         settings = new GXDLMSSettings(true,
                 this instanceof IGXCryptoNotifier ? (IGXCryptoNotifier) this : null);
         owner = forOwner;
@@ -243,7 +242,7 @@ public class GXDLMSServerBase {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
+     *
      * @return True, if UTC time is used.
      */
     public boolean getUseUtc2NormalTime() {
@@ -254,9 +253,8 @@ public class GXDLMSServerBase {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
-     * @param value
-     *            True, if UTC time is used.
+     *
+     * @param value True, if UTC time is used.
      */
     public void setUseUtc2NormalTime(final boolean value) {
         settings.setUseUtc2NormalTime(value);
@@ -264,16 +262,15 @@ public class GXDLMSServerBase {
 
     /**
      * @return Skipped date time fields. This value can be used if meter can't
-     *         handle deviation or status.
+     * handle deviation or status.
      */
     public java.util.Set<DateTimeSkips> getDateTimeSkips() {
         return settings.getDateTimeSkips();
     }
 
     /**
-     * @param value
-     *            Skipped date time fields. This value can be used if meter
-     *            can't handle deviation or status.
+     * @param value Skipped date time fields. This value can be used if meter
+     *              can't handle deviation or status.
      */
     public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
         settings.setDateTimeSkips(value);
@@ -325,9 +322,8 @@ public class GXDLMSServerBase {
 
     /**
      * Close server.
-     * 
-     * @throws Exception
-     *             Occurred exception.
+     *
+     * @throws Exception Occurred exception.
      */
     public void close() throws Exception {
         for (GXDLMSObject it : settings.getObjects()) {
@@ -391,9 +387,8 @@ public class GXDLMSServerBase {
 
     /**
      * Update short names.
-     * 
-     * @param force
-     *            Force update.
+     *
+     * @param force Force update.
      */
     final void updateShortNames(final boolean force) {
         int sn = 0xA0;
@@ -426,7 +421,7 @@ public class GXDLMSServerBase {
      * @return Reply to the client.
      */
     private void handleAarqRequest(final GXByteBuffer data,
-            final GXDLMSConnectionEventArgs connectionInfo) throws Exception {
+                                   final GXDLMSConnectionEventArgs connectionInfo) throws Exception {
         AssociationResult result = AssociationResult.ACCEPTED;
         GXByteBuffer error = null;
         settings.setCtoSChallenge(null);
@@ -496,7 +491,7 @@ public class GXDLMSServerBase {
                     if (owner instanceof GXDLMSServer) {
                         if (getAssignedAssociation() != null
                                 && getAssignedAssociation().getAuthenticationMechanismName()
-                                        .getMechanismId() != settings.getAuthentication()) {
+                                .getMechanismId() != settings.getAuthentication()) {
                             ret = SourceDiagnostic.NOT_SUPPORTED;
                         } else {
                             GXDLMSServer b = (GXDLMSServer) owner;
@@ -506,7 +501,7 @@ public class GXDLMSServerBase {
                     } else {
                         if (getAssignedAssociation() != null
                                 && getAssignedAssociation().getAuthenticationMechanismName()
-                                        .getMechanismId() != settings.getAuthentication()) {
+                                .getMechanismId() != settings.getAuthentication()) {
                             ret = SourceDiagnostic.NOT_SUPPORTED;
                         } else {
                             GXDLMSServer2 b = (GXDLMSServer2) owner;
@@ -588,15 +583,13 @@ public class GXDLMSServerBase {
 
     /**
      * Handles release request.
-     * 
-     * @param data
-     *            Received data.
-     * @param connectionInfo
-     *            Connection info.
+     *
+     * @param data           Received data.
+     * @param connectionInfo Connection info.
      */
     @SuppressWarnings("squid:S1172")
     private void handleReleaseRequest(final GXByteBuffer data,
-            final GXDLMSConnectionEventArgs connectionInfo)
+                                      final GXDLMSConnectionEventArgs connectionInfo)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         // Return error if connection is not established.
@@ -756,25 +749,17 @@ public class GXDLMSServerBase {
 
     /**
      * Handles client request.
-     * 
-     * @param sr
-     *            Server reply.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     *
+     * @param sr Server reply.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
-    @SuppressWarnings({ "squid:S00112", "squid:S1193", "squid:S1066", "squid:S1141" })
+    @SuppressWarnings({"squid:S00112", "squid:S1193", "squid:S1066", "squid:S1141"})
     public final void handleRequest(GXServerReply sr) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -840,7 +825,7 @@ public class GXDLMSServerBase {
 
                 if (first || info.getCommand() == Command.SNRM
                         || (settings.getInterfaceType() == InterfaceType.WRAPPER
-                                && info.getCommand() == Command.AARQ)) {
+                        && info.getCommand() == Command.AARQ)) {
                     if (owner instanceof GXDLMSServer) {
                         GXDLMSServer b = (GXDLMSServer) owner;
                         // Check is data send to this server.
@@ -980,28 +965,28 @@ public class GXDLMSServerBase {
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         short cmd;
         switch (command) {
-        case Command.READ_REQUEST:
-            cmd = Command.READ_RESPONSE;
-            break;
-        case Command.WRITE_REQUEST:
-            cmd = Command.WRITE_RESPONSE;
-            break;
-        case Command.GET_REQUEST:
-            cmd = Command.GET_RESPONSE;
-            break;
-        case Command.SET_REQUEST:
-            cmd = Command.SET_RESPONSE;
-            break;
-        case Command.METHOD_REQUEST:
-            cmd = Command.METHOD_RESPONSE;
-            break;
-        case Command.GENERAL_CIPHERING:
-            cmd = Command.GENERAL_CIPHERING;
-            break;
-        default:
-            // Return HW error and close connection.
-            cmd = Command.NONE;
-            break;
+            case Command.READ_REQUEST:
+                cmd = Command.READ_RESPONSE;
+                break;
+            case Command.WRITE_REQUEST:
+                cmd = Command.WRITE_RESPONSE;
+                break;
+            case Command.GET_REQUEST:
+                cmd = Command.GET_RESPONSE;
+                break;
+            case Command.SET_REQUEST:
+                cmd = Command.SET_RESPONSE;
+                break;
+            case Command.METHOD_REQUEST:
+                cmd = Command.METHOD_RESPONSE;
+                break;
+            case Command.GENERAL_CIPHERING:
+                cmd = Command.GENERAL_CIPHERING;
+                break;
+            default:
+                // Return HW error and close connection.
+                cmd = Command.NONE;
+                break;
         }
         if (settings.getUseLogicalNameReferencing()) {
             GXDLMSLNParameters p = new GXDLMSLNParameters(settings, 0, cmd, 1, null, null,
@@ -1028,7 +1013,7 @@ public class GXDLMSServerBase {
      * @return Response for the client.
      */
     private byte[] handleCommand(final int cmd, final GXByteBuffer data, final GXServerReply sr,
-            final int cipheredCommand) throws Exception {
+                                 final int cipheredCommand) throws Exception {
         byte frame = 0;
         if (GXDLMS.useHdlc(settings.getInterfaceType()) && replyData.size() != 0) {
             // Get next frame.
@@ -1047,112 +1032,112 @@ public class GXDLMSServerBase {
             replyData.setUInt8(ExceptionServiceError.SERVICE_NOT_SUPPORTED.getValue());
         } else {
             switch (cmd) {
-            case Command.ACCESS_REQUEST:
-                if (!settings.getNegotiatedConformance().contains(Conformance.ACCESS)) {
-                    invalidCommand = true;
-                } else {
-                    GXDLMSLNCommandHandler.handleAccessRequest(settings, this, data, replyData,
-                            null, cipheredCommand);
-                }
-                break;
-            case Command.SET_REQUEST:
-                if (!settings.getNegotiatedConformance().contains(Conformance.SET)) {
-                    invalidCommand = true;
-                } else {
-                    GXDLMSLNCommandHandler.handleSetRequest(settings, this, data, replyData, null,
-                            cipheredCommand);
-                }
-                break;
-            case Command.WRITE_REQUEST:
-                if (!settings.getNegotiatedConformance().contains(Conformance.WRITE)) {
-                    invalidCommand = true;
-                } else {
-                    GXDLMSSNCommandHandler.handleWriteRequest(settings, this, data, replyData, null,
-                            cipheredCommand);
-                }
-                break;
-            case Command.GET_REQUEST:
-                if (!settings.getNegotiatedConformance().contains(Conformance.GET)) {
-                    invalidCommand = true;
-                } else {
-                    if (data.size() != 0) {
-                        GXDLMSLNCommandHandler.handleGetRequest(settings, this, data, replyData,
+                case Command.ACCESS_REQUEST:
+                    if (!settings.getNegotiatedConformance().contains(Conformance.ACCESS)) {
+                        invalidCommand = true;
+                    } else {
+                        GXDLMSLNCommandHandler.handleAccessRequest(settings, this, data, replyData,
                                 null, cipheredCommand);
                     }
-                }
-                break;
-            case Command.READ_REQUEST:
-                if (!settings.getNegotiatedConformance().contains(Conformance.READ)) {
-                    invalidCommand = true;
-                } else {
-                    GXDLMSSNCommandHandler.handleReadRequest(settings, this, data, replyData, null,
-                            cipheredCommand);
-                }
-                break;
-            case Command.METHOD_REQUEST:
-                if (!settings.getNegotiatedConformance().contains(Conformance.ACTION)) {
-                    invalidCommand = true;
-                } else {
-                    GXDLMSLNCommandHandler.handleMethodRequest(settings, this, data,
-                            sr.getConnectionInfo(), replyData, null, cipheredCommand);
-                }
-                break;
-            case Command.SNRM:
-                handleSnrmRequest(data);
-                frame = (byte) Command.UA;
-                break;
-            case Command.AARQ:
-                handleAarqRequest(data, sr.getConnectionInfo());
-                settings.updateSecuritySettings(settings.getSourceSystemTitle());
-                if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
-                    notifyConnected(sr.getConnectionInfo());
-                }
-                break;
-            case Command.RELEASE_REQUEST:
-                handleReleaseRequest(data, sr.getConnectionInfo());
-                if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
+                    break;
+                case Command.SET_REQUEST:
+                    if (!settings.getNegotiatedConformance().contains(Conformance.SET)) {
+                        invalidCommand = true;
+                    } else {
+                        GXDLMSLNCommandHandler.handleSetRequest(settings, this, data, replyData, null,
+                                cipheredCommand);
+                    }
+                    break;
+                case Command.WRITE_REQUEST:
+                    if (!settings.getNegotiatedConformance().contains(Conformance.WRITE)) {
+                        invalidCommand = true;
+                    } else {
+                        GXDLMSSNCommandHandler.handleWriteRequest(settings, this, data, replyData, null,
+                                cipheredCommand);
+                    }
+                    break;
+                case Command.GET_REQUEST:
+                    if (!settings.getNegotiatedConformance().contains(Conformance.GET)) {
+                        invalidCommand = true;
+                    } else {
+                        if (data.size() != 0) {
+                            GXDLMSLNCommandHandler.handleGetRequest(settings, this, data, replyData,
+                                    null, cipheredCommand);
+                        }
+                    }
+                    break;
+                case Command.READ_REQUEST:
+                    if (!settings.getNegotiatedConformance().contains(Conformance.READ)) {
+                        invalidCommand = true;
+                    } else {
+                        GXDLMSSNCommandHandler.handleReadRequest(settings, this, data, replyData, null,
+                                cipheredCommand);
+                    }
+                    break;
+                case Command.METHOD_REQUEST:
+                    if (!settings.getNegotiatedConformance().contains(Conformance.ACTION)) {
+                        invalidCommand = true;
+                    } else {
+                        GXDLMSLNCommandHandler.handleMethodRequest(settings, this, data,
+                                sr.getConnectionInfo(), replyData, null, cipheredCommand);
+                    }
+                    break;
+                case Command.SNRM:
+                    handleSnrmRequest(data);
+                    frame = (byte) Command.UA;
+                    break;
+                case Command.AARQ:
+                    handleAarqRequest(data, sr.getConnectionInfo());
+                    settings.updateSecuritySettings(settings.getSourceSystemTitle());
+                    if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
+                        notifyConnected(sr.getConnectionInfo());
+                    }
+                    break;
+                case Command.RELEASE_REQUEST:
+                    handleReleaseRequest(data, sr.getConnectionInfo());
+                    if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
+                        settings.setConnected(settings.getConnected() & ~ConnectionState.DLMS);
+                        if (owner instanceof GXDLMSServer) {
+                            ((GXDLMSServer) owner).disconnected(sr.getConnectionInfo());
+                        } else {
+                            ((GXDLMSServer2) owner).onDisconnected(sr.getConnectionInfo());
+                        }
+                    }
+                    break;
+                case Command.DISCONNECT_REQUEST:
+                    replyData.clear();
+                    generateDisconnectRequest();
+                    if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
+                        if (owner instanceof GXDLMSServer) {
+                            ((GXDLMSServer) owner).disconnected(sr.getConnectionInfo());
+                        } else {
+                            ((GXDLMSServer2) owner).onDisconnected(sr.getConnectionInfo());
+                        }
+                    }
                     settings.setConnected(settings.getConnected() & ~ConnectionState.DLMS);
-                    if (owner instanceof GXDLMSServer) {
-                        ((GXDLMSServer) owner).disconnected(sr.getConnectionInfo());
-                    } else {
-                        ((GXDLMSServer2) owner).onDisconnected(sr.getConnectionInfo());
+                    frame = Command.UA;
+                    break;
+                case Command.GENERAL_BLOCK_TRANSFER:
+                    if (!handleGeneralBlockTransfer(data, sr, info.getCipheredCommand())) {
+                        return null;
                     }
-                }
-                break;
-            case Command.DISCONNECT_REQUEST:
-                replyData.clear();
-                generateDisconnectRequest();
-                if ((settings.getConnected() & ConnectionState.DLMS) != 0) {
-                    if (owner instanceof GXDLMSServer) {
-                        ((GXDLMSServer) owner).disconnected(sr.getConnectionInfo());
-                    } else {
-                        ((GXDLMSServer2) owner).onDisconnected(sr.getConnectionInfo());
-                    }
-                }
-                settings.setConnected(settings.getConnected() & ~ConnectionState.DLMS);
-                frame = Command.UA;
-                break;
-            case Command.GENERAL_BLOCK_TRANSFER:
-                if (!handleGeneralBlockTransfer(data, sr, info.getCipheredCommand())) {
-                    return null;
-                }
-                break;
-            case Command.DISCOVER_REQUEST:
-                settings.getPlc().parseDiscoverRequest(data);
-                boolean newMeter = settings.getPlc().getMacSourceAddress() == 0xFFE
-                        && settings.getPlc().getMacDestinationAddress() == 0xFFF;
-                return settings.getPlc().discoverReport(settings.getPlc().getSystemTitle(),
-                        newMeter);
-            case Command.REGISTER_REQUEST:
-                settings.getPlc().parseRegisterRequest(data);
-                return settings.getPlc().discoverReport(settings.getPlc().getSystemTitle(), false);
-            case Command.PING_REQUEST:
-                break;
-            case Command.NONE:
-                // Client wants to get next block.
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid command: " + String.valueOf(cmd));
+                    break;
+                case Command.DISCOVER_REQUEST:
+                    settings.getPlc().parseDiscoverRequest(data);
+                    boolean newMeter = settings.getPlc().getMacSourceAddress() == 0xFFE
+                            && settings.getPlc().getMacDestinationAddress() == 0xFFF;
+                    return settings.getPlc().discoverReport(settings.getPlc().getSystemTitle(),
+                            newMeter);
+                case Command.REGISTER_REQUEST:
+                    settings.getPlc().parseRegisterRequest(data);
+                    return settings.getPlc().discoverReport(settings.getPlc().getSystemTitle(), false);
+                case Command.PING_REQUEST:
+                    break;
+                case Command.NONE:
+                    // Client wants to get next block.
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid command: " + String.valueOf(cmd));
             }
             if (invalidCommand) {
                 replyData.clear();
@@ -1169,14 +1154,14 @@ public class GXDLMSServerBase {
         }
         if (cmd == Command.DISCONNECT_REQUEST
                 || (settings.getInterfaceType() == InterfaceType.WRAPPER
-                        && cmd == Command.RELEASE_REQUEST)) {
+                && cmd == Command.RELEASE_REQUEST)) {
             reset();
         }
         return reply;
     }
 
     private boolean handleGeneralBlockTransfer(final GXByteBuffer data, final GXServerReply sr,
-            final int cipheredCommand) throws Exception {
+                                               final int cipheredCommand) throws Exception {
         short bc = 0;
         int blockNumber = 0, blockNumberAck = 0;
         // BlockControl
@@ -1262,9 +1247,9 @@ public class GXDLMSServerBase {
      * @return
      */
     static byte[] generateConfirmedServiceError(final ConfirmedServiceError service,
-            final ServiceError type, final int code) {
-        return new byte[] { (byte) Command.CONFIRMED_SERVICE_ERROR, (byte) service.getValue(),
-                (byte) type.getValue(), (byte) code };
+                                                final ServiceError type, final int code) {
+        return new byte[]{(byte) Command.CONFIRMED_SERVICE_ERROR, (byte) service.getValue(),
+                (byte) type.getValue(), (byte) code};
     }
 
     final GXDLMSObject notifyFindObject(final ObjectType objectType, final int sn, final String ln)
@@ -1431,8 +1416,7 @@ public class GXDLMSServerBase {
     }
 
     /**
-     * @param value
-     *            HDLC settings.
+     * @param value HDLC settings.
      */
     public void setHdlc(final GXDLMSHdlcSetup value) {
         settings.setHdlc(value);

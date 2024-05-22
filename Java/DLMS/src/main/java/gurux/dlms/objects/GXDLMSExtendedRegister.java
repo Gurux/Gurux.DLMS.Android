@@ -38,7 +38,6 @@ import java.text.NumberFormat;
 import java.util.Calendar;
 
 
-
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
@@ -61,9 +60,8 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSExtendedRegister(final String ln) {
         super(ObjectType.EXTENDED_REGISTER, ln, 0);
@@ -71,11 +69,9 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSExtendedRegister(final String ln, final int sn) {
         super(ObjectType.EXTENDED_REGISTER, ln, sn);
@@ -89,8 +85,7 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
     }
 
     /**
-     * @param value
-     *            Status of COSEM Extended Register object.
+     * @param value Status of COSEM Extended Register object.
      */
     public final void setStatus(final Object value) {
         status = value;
@@ -104,8 +99,7 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
     }
 
     /**
-     * @param value
-     *            Capture time of COSEM Extended Register object.
+     * @param value Capture time of COSEM Extended Register object.
      */
     public final void setCaptureTime(final GXDateTime value) {
         captureTime = value;
@@ -125,7 +119,7 @@ public class GXDLMSExtendedRegister extends GXDLMSRegister {
         String str = "Scaler: " + formatter.format(getScaler());
         str += " Unit: ";
         str += getUnit().toString();
-        return new Object[] { getLogicalName(), getValue(), str, getStatus(), getCaptureTime() };
+        return new Object[]{getLogicalName(), getValue(), str, getStatus(), getCaptureTime()};
     }
 
     @Override

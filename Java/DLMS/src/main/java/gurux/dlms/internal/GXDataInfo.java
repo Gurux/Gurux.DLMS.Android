@@ -39,7 +39,7 @@ import gurux.dlms.enums.DataType;
 
 /**
  * This class is used in DLMS data parsing.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXDataInfo {
@@ -70,8 +70,7 @@ public class GXDataInfo {
     }
 
     /**
-     * @param value
-     *            Last array index.
+     * @param value Last array index.
      */
     public final void setIndex(final int value) {
         this.index = value;
@@ -85,8 +84,7 @@ public class GXDataInfo {
     }
 
     /**
-     * @param value
-     *            Items count in array.
+     * @param value Items count in array.
      */
     public final void setCount(final int value) {
         count = value;
@@ -100,8 +98,7 @@ public class GXDataInfo {
     }
 
     /**
-     * @param value
-     *            Object data type.
+     * @param value Object data type.
      */
     public final void setType(final DataType value) {
         type = value;
@@ -115,8 +112,7 @@ public class GXDataInfo {
     }
 
     /**
-     * @param value
-     *            Is data parsed to the end.
+     * @param value Is data parsed to the end.
      */
     public final void setComplete(final boolean value) {
         complete = value;

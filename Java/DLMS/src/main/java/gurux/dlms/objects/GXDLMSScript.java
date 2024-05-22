@@ -65,8 +65,7 @@ public class GXDLMSScript {
     }
 
     /**
-     * @param value
-     *            Script identifier.
+     * @param value Script identifier.
      */
     public final void setId(final int value) {
         id = value;

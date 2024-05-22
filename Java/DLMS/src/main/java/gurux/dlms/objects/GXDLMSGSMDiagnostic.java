@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -101,9 +100,8 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSGSMDiagnostic(final String ln) {
         this(ln, 0);
@@ -111,11 +109,9 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSGSMDiagnostic(final String ln, final int sn) {
         super(ObjectType.GSM_DIAGNOSTIC, ln, sn);
@@ -135,8 +131,7 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Name of network operator.
+     * @param value Name of network operator.
      */
     public final void setOperator(final String value) {
         operator = value;
@@ -150,8 +145,7 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Registration status of the modem.
+     * @param value Registration status of the modem.
      */
     public final void setStatus(final GsmStatus value) {
         status = value;
@@ -165,8 +159,7 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Registration status of the modem.
+     * @param value Registration status of the modem.
      */
     public final void setCircuitSwitchStatus(final GsmCircuitSwitchStatus value) {
         circuitSwitchStatus = value;
@@ -180,8 +173,7 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Registration status of the modem.
+     * @param value Registration status of the modem.
      */
     public final void setPacketSwitchStatus(final GsmPacketSwitchStatus value) {
         packetSwitchStatus = value;
@@ -210,8 +202,7 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Date and time when the data have been last captured.
+     * @param value Date and time when the data have been last captured.
      */
     public final void setCaptureTime(final GXDateTime value) {
         captureTime = value;
@@ -261,8 +252,8 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), operator, status, circuitSwitchStatus,
-                packetSwitchStatus, cellInfo, adjacentCells, captureTime };
+        return new Object[]{getLogicalName(), operator, status, circuitSwitchStatus,
+                packetSwitchStatus, cellInfo, adjacentCells, captureTime};
     }
 
     /*
@@ -284,24 +275,24 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-            return DataType.STRING;
-        case 3:
-            return DataType.ENUM;
-        case 4:
-            return DataType.ENUM;
-        case 5:
-            return DataType.ENUM;
-        case 6:
-            return DataType.STRUCTURE;
-        case 7:
-            return DataType.ARRAY;
-        case 8:
-            return DataType.DATETIME;
-        default:
-            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+                return DataType.STRING;
+            case 3:
+                return DataType.ENUM;
+            case 4:
+                return DataType.ENUM;
+            case 5:
+                return DataType.ENUM;
+            case 6:
+                return DataType.STRUCTURE;
+            case 7:
+                return DataType.ARRAY;
+            case 8:
+                return DataType.DATETIME;
+            default:
+                throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
 
         }
     }
@@ -313,61 +304,61 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         GXByteBuffer bb;
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            if (operator == null) {
-                return null;
-            }
-            return operator.getBytes();
-        case 3:
-            if (status == null) {
-                return 0;
-            }
-            return status.ordinal();
-        case 4:
-            return circuitSwitchStatus.ordinal();
-        case 5:
-            return packetSwitchStatus.ordinal();
-        case 6:
-            bb = new GXByteBuffer();
-            bb.setUInt8(DataType.STRUCTURE.getValue());
-            if (getVersion() == 0) {
-                bb.setUInt8(4);
-                GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getCellId());
-            } else {
-                bb.setUInt8(7);
-                GXCommon.setData(settings, bb, DataType.UINT32, cellInfo.getCellId());
-            }
-            GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getLocationId());
-            GXCommon.setData(settings, bb, DataType.UINT8, cellInfo.getSignalQuality());
-            GXCommon.setData(settings, bb, DataType.UINT8, cellInfo.getBer());
-            if (getVersion() > 0) {
-                GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getMobileCountryCode());
-                GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getMobileNetworkCode());
-                GXCommon.setData(settings, bb, DataType.UINT32, cellInfo.getChannelNumber());
-            }
-            return bb.array();
-        case 7:
-            bb = new GXByteBuffer();
-            bb.setUInt8(DataType.ARRAY.getValue());
-            if (adjacentCells == null) {
-                bb.setUInt8(0);
-            } else {
-                bb.setUInt8((byte) adjacentCells.size());
-            }
-            for (GXAdjacentCell it : adjacentCells) {
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                if (operator == null) {
+                    return null;
+                }
+                return operator.getBytes();
+            case 3:
+                if (status == null) {
+                    return 0;
+                }
+                return status.ordinal();
+            case 4:
+                return circuitSwitchStatus.ordinal();
+            case 5:
+                return packetSwitchStatus.ordinal();
+            case 6:
+                bb = new GXByteBuffer();
                 bb.setUInt8(DataType.STRUCTURE.getValue());
-                bb.setUInt8(2);
-                GXCommon.setData(settings, bb,
-                        getVersion() == 0 ? DataType.UINT16 : DataType.UINT32, it.getCellId());
-                GXCommon.setData(settings, bb, DataType.UINT8, it.getSignalQuality());
-            }
-            return bb.array();
-        case 8:
-            return captureTime;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
+                if (getVersion() == 0) {
+                    bb.setUInt8(4);
+                    GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getCellId());
+                } else {
+                    bb.setUInt8(7);
+                    GXCommon.setData(settings, bb, DataType.UINT32, cellInfo.getCellId());
+                }
+                GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getLocationId());
+                GXCommon.setData(settings, bb, DataType.UINT8, cellInfo.getSignalQuality());
+                GXCommon.setData(settings, bb, DataType.UINT8, cellInfo.getBer());
+                if (getVersion() > 0) {
+                    GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getMobileCountryCode());
+                    GXCommon.setData(settings, bb, DataType.UINT16, cellInfo.getMobileNetworkCode());
+                    GXCommon.setData(settings, bb, DataType.UINT32, cellInfo.getChannelNumber());
+                }
+                return bb.array();
+            case 7:
+                bb = new GXByteBuffer();
+                bb.setUInt8(DataType.ARRAY.getValue());
+                if (adjacentCells == null) {
+                    bb.setUInt8(0);
+                } else {
+                    bb.setUInt8((byte) adjacentCells.size());
+                }
+                for (GXAdjacentCell it : adjacentCells) {
+                    bb.setUInt8(DataType.STRUCTURE.getValue());
+                    bb.setUInt8(2);
+                    GXCommon.setData(settings, bb,
+                            getVersion() == 0 ? DataType.UINT16 : DataType.UINT32, it.getCellId());
+                    GXCommon.setData(settings, bb, DataType.UINT8, it.getSignalQuality());
+                }
+                return bb.array();
+            case 8:
+                return captureTime;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
         }
         return null;
     }
@@ -378,67 +369,67 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            if (e.getValue() instanceof byte[]) {
-                operator = new String((byte[]) e.getValue());
-            } else if (operator instanceof String) {
-                operator = (String) e.getValue();
-            } else if (operator == null) {
-                operator = null;
-            } else {
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                if (e.getValue() instanceof byte[]) {
+                    operator = new String((byte[]) e.getValue());
+                } else if (operator instanceof String) {
+                    operator = (String) e.getValue();
+                } else if (operator == null) {
+                    operator = null;
+                } else {
+                    e.setError(ErrorCode.READ_WRITE_DENIED);
+                }
+                break;
+            case 3:
+                status = GsmStatus.values()[((Number) e.getValue()).intValue()];
+                break;
+            case 4:
+                circuitSwitchStatus =
+                        GsmCircuitSwitchStatus.values()[((Number) e.getValue()).intValue()];
+                break;
+            case 5:
+                packetSwitchStatus = GsmPacketSwitchStatus.values()[((Number) e.getValue()).intValue()];
+                break;
+            case 6:
+                if (e.getValue() != null) {
+                    List<?> tmp = (List<?>) e.getValue();
+                    cellInfo.setCellId(((Number) tmp.get(0)).longValue());
+                    cellInfo.setLocationId(((Number) tmp.get(1)).intValue());
+                    cellInfo.setSignalQuality(((Number) tmp.get(2)).intValue());
+                    cellInfo.setBer(((Number) tmp.get(3)).intValue());
+                    if (getVersion() > 0) {
+                        cellInfo.setMobileCountryCode(((Number) tmp.get(4)).intValue());
+                        cellInfo.setMobileNetworkCode(((Number) tmp.get(5)).intValue());
+                        cellInfo.setChannelNumber(((Number) tmp.get(6)).intValue());
+                    }
+                }
+                break;
+            case 7:
+                adjacentCells.clear();
+                if (e.getValue() != null) {
+                    for (Object it : (List<?>) e.getValue()) {
+                        List<?> tmp = (List<?>) it;
+                        GXAdjacentCell ac = new GXAdjacentCell();
+                        ac.setCellId(((Number) tmp.get(0)).longValue());
+                        ac.setSignalQuality(((Number) tmp.get(1)).shortValue());
+                        adjacentCells.add(ac);
+                    }
+                }
+                break;
+            case 8:
+                if (e.getValue() instanceof byte[]) {
+                    captureTime = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                            DataType.DATETIME, e.getSettings());
+                } else {
+                    captureTime = (GXDateTime) e.getValue();
+                }
+                break;
+            default:
                 e.setError(ErrorCode.READ_WRITE_DENIED);
-            }
-            break;
-        case 3:
-            status = GsmStatus.values()[((Number) e.getValue()).intValue()];
-            break;
-        case 4:
-            circuitSwitchStatus =
-                    GsmCircuitSwitchStatus.values()[((Number) e.getValue()).intValue()];
-            break;
-        case 5:
-            packetSwitchStatus = GsmPacketSwitchStatus.values()[((Number) e.getValue()).intValue()];
-            break;
-        case 6:
-            if (e.getValue() != null) {
-                List<?> tmp = (List<?>) e.getValue();
-                cellInfo.setCellId(((Number) tmp.get(0)).longValue());
-                cellInfo.setLocationId(((Number) tmp.get(1)).intValue());
-                cellInfo.setSignalQuality(((Number) tmp.get(2)).intValue());
-                cellInfo.setBer(((Number) tmp.get(3)).intValue());
-                if (getVersion() > 0) {
-                    cellInfo.setMobileCountryCode(((Number) tmp.get(4)).intValue());
-                    cellInfo.setMobileNetworkCode(((Number) tmp.get(5)).intValue());
-                    cellInfo.setChannelNumber(((Number) tmp.get(6)).intValue());
-                }
-            }
-            break;
-        case 7:
-            adjacentCells.clear();
-            if (e.getValue() != null) {
-                for (Object it : (List<?>) e.getValue()) {
-                    List<?> tmp = (List<?>) it;
-                    GXAdjacentCell ac = new GXAdjacentCell();
-                    ac.setCellId(((Number) tmp.get(0)).longValue());
-                    ac.setSignalQuality(((Number) tmp.get(1)).shortValue());
-                    adjacentCells.add(ac);
-                }
-            }
-            break;
-        case 8:
-            if (e.getValue() instanceof byte[]) {
-                captureTime = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                        DataType.DATETIME, e.getSettings());
-            } else {
-                captureTime = (GXDateTime) e.getValue();
-            }
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+                break;
         }
     }
 
@@ -504,8 +495,8 @@ public class GXDLMSGSMDiagnostic extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Operator", "Status", "CircuitSwitchStatus",
-                "PacketSwitchStatus", "CellInfo", "AdjacentCells", "CaptureTime" };
+        return new String[]{"Logical Name", "Operator", "Status", "CircuitSwitchStatus",
+                "PacketSwitchStatus", "CellInfo", "AdjacentCells", "CaptureTime"};
 
     }
 

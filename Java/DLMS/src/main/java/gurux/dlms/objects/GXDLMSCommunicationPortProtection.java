@@ -106,9 +106,8 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSCommunicationPortProtection(final String ln) {
         this(ln, 0);
@@ -116,11 +115,9 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSCommunicationPortProtection(final String ln, final int sn) {
         super(ObjectType.COMMUNICATION_PORT_PROTECTION, ln, sn);
@@ -138,8 +135,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            Controls the protection mode.
+     * @param value Controls the protection mode.
      */
     public final void setProtectionMode(final ProtectionMode value) {
         protectionMode = value;
@@ -147,16 +143,15 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
 
     /**
      * @return Number of allowed failed communication attempts before port is
-     *         disabled.
+     * disabled.
      */
     public final int getAllowedFailedAttempts() {
         return allowedFailedAttempts;
     }
 
     /**
-     * @param value
-     *            Number of allowed failed communication attempts before port is
-     *            disabled.
+     * @param value Number of allowed failed communication attempts before port is
+     *              disabled.
      */
     public final void setAllowedFailedAttempts(final int value) {
         allowedFailedAttempts = value;
@@ -170,8 +165,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            The lockout time.
+     * @param value The lockout time.
      */
     public final void setInitialLockoutTime(final long value) {
         initialLockoutTime = value;
@@ -179,16 +173,15 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
 
     /**
      * @return Holds a factor that controls how the lockout time is increased
-     *         with each failed attempt.
+     * with each failed attempt.
      */
     public final byte getSteepnessFactor() {
         return steepnessFactor;
     }
 
     /**
-     * @param value
-     *            Holds a factor that controls how the lockout time is increased
-     *            with each failed attempt.
+     * @param value Holds a factor that controls how the lockout time is increased
+     *              with each failed attempt.
      */
     public final void setSteepnessFactor(final byte value) {
         steepnessFactor = value;
@@ -202,8 +195,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            The lockout time.
+     * @param value The lockout time.
      */
     public final void setMaxLockoutTime(final long value) {
         maxLockoutTime = value;
@@ -217,8 +209,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            The communication port being protected
+     * @param value The communication port being protected
      */
     public final void setPort(final GXDLMSObject value) {
         port = value;
@@ -232,8 +223,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            Current protection status.
+     * @param value Current protection status.
      */
     public final void setProtectionStatus(final ProtectionStatus value) {
         protectionStatus = value;
@@ -247,8 +237,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            Failed attempts.
+     * @param value Failed attempts.
      */
     public final void setFailedAttempts(final long value) {
         failedAttempts = value;
@@ -262,8 +251,7 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     /**
-     * @param value
-     *            Total failed attempts.
+     * @param value Total failed attempts.
      */
     public final void setCumulativeFailedAttempts(final long value) {
         cumulativeFailedAttempts = value;
@@ -272,24 +260,16 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     /**
      * Resets FailedAttempts and current lockout time to zero. Protection status
      * is set to unlocked.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -299,9 +279,9 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), protectionMode, allowedFailedAttempts,
+        return new Object[]{getLogicalName(), protectionMode, allowedFailedAttempts,
                 initialLockoutTime, steepnessFactor, maxLockoutTime, port, protectionStatus,
-                failedAttempts, cumulativeFailedAttempts };
+                failedAttempts, cumulativeFailedAttempts};
     }
 
     /*
@@ -374,38 +354,38 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     public final DataType getDataType(final int index) {
         DataType ret;
         switch (index) {
-        case 1:
-            ret = DataType.OCTET_STRING;
-            break;
-        case 2:
-            ret = DataType.ENUM;
-            break;
-        case 3:
-            ret = DataType.UINT16;
-            break;
-        case 4:
-            ret = DataType.UINT32;
-            break;
-        case 5:
-            ret = DataType.UINT8;
-            break;
-        case 6:
-            ret = DataType.UINT32;
-            break;
-        case 7:
-            ret = DataType.OCTET_STRING;
-            break;
-        case 8:
-            ret = DataType.ENUM;
-            break;
-        case 9:
-            ret = DataType.UINT32;
-            break;
-        case 10:
-            ret = DataType.UINT32;
-            break;
-        default:
-            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
+            case 1:
+                ret = DataType.OCTET_STRING;
+                break;
+            case 2:
+                ret = DataType.ENUM;
+                break;
+            case 3:
+                ret = DataType.UINT16;
+                break;
+            case 4:
+                ret = DataType.UINT32;
+                break;
+            case 5:
+                ret = DataType.UINT8;
+                break;
+            case 6:
+                ret = DataType.UINT32;
+                break;
+            case 7:
+                ret = DataType.OCTET_STRING;
+                break;
+            case 8:
+                ret = DataType.ENUM;
+                break;
+            case 9:
+                ret = DataType.UINT32;
+                break;
+            case 10:
+                ret = DataType.UINT32;
+                break;
+            default:
+                throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
         return ret;
     }
@@ -417,44 +397,44 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         Object ret;
         switch (e.getIndex()) {
-        case 1:
-            ret = GXCommon.logicalNameToBytes(getLogicalName());
-            break;
-        case 2:
-            ret = getProtectionMode().ordinal();
-            break;
-        case 3:
-            ret = getAllowedFailedAttempts();
-            break;
-        case 4:
-            ret = getInitialLockoutTime();
-            break;
-        case 5:
-            ret = getSteepnessFactor();
-            break;
-        case 6:
-            ret = getMaxLockoutTime();
-            break;
-        case 7:
-            if (getPort() == null) {
-                ret = GXCommon.logicalNameToBytes("");
-            } else {
-                ret = GXCommon.logicalNameToBytes(port.getLogicalName());
-            }
-            break;
-        case 8:
-            ret = getProtectionStatus().ordinal();
-            break;
-        case 9:
-            ret = getFailedAttempts();
-            break;
-        case 10:
-            ret = getCumulativeFailedAttempts();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            ret = null;
-            break;
+            case 1:
+                ret = GXCommon.logicalNameToBytes(getLogicalName());
+                break;
+            case 2:
+                ret = getProtectionMode().ordinal();
+                break;
+            case 3:
+                ret = getAllowedFailedAttempts();
+                break;
+            case 4:
+                ret = getInitialLockoutTime();
+                break;
+            case 5:
+                ret = getSteepnessFactor();
+                break;
+            case 6:
+                ret = getMaxLockoutTime();
+                break;
+            case 7:
+                if (getPort() == null) {
+                    ret = GXCommon.logicalNameToBytes("");
+                } else {
+                    ret = GXCommon.logicalNameToBytes(port.getLogicalName());
+                }
+                break;
+            case 8:
+                ret = getProtectionStatus().ordinal();
+                break;
+            case 9:
+                ret = getFailedAttempts();
+                break;
+            case 10:
+                ret = getCumulativeFailedAttempts();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                ret = null;
+                break;
         }
         return ret;
     }
@@ -465,40 +445,40 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            protectionMode = ProtectionMode.values()[((Number) e.getValue()).byteValue()];
-            break;
-        case 3:
-            allowedFailedAttempts = ((Number) e.getValue()).intValue();
-            break;
-        case 4:
-            initialLockoutTime = ((Number) e.getValue()).longValue();
-            break;
-        case 5:
-            steepnessFactor = ((Number) e.getValue()).byteValue();
-            break;
-        case 6:
-            maxLockoutTime = ((Number) e.getValue()).longValue();
-            break;
-        case 7:
-            port = settings.getObjects().findByLN(ObjectType.NONE,
-                    GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 8:
-            protectionStatus = ProtectionStatus.values()[((Number) e.getValue()).intValue()];
-            break;
-        case 9:
-            failedAttempts = ((Number) e.getValue()).longValue();
-            break;
-        case 10:
-            cumulativeFailedAttempts = ((Number) e.getValue()).longValue();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                protectionMode = ProtectionMode.values()[((Number) e.getValue()).byteValue()];
+                break;
+            case 3:
+                allowedFailedAttempts = ((Number) e.getValue()).intValue();
+                break;
+            case 4:
+                initialLockoutTime = ((Number) e.getValue()).longValue();
+                break;
+            case 5:
+                steepnessFactor = ((Number) e.getValue()).byteValue();
+                break;
+            case 6:
+                maxLockoutTime = ((Number) e.getValue()).longValue();
+                break;
+            case 7:
+                port = settings.getObjects().findByLN(ObjectType.NONE,
+                        GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 8:
+                protectionStatus = ProtectionStatus.values()[((Number) e.getValue()).intValue()];
+                break;
+            case 9:
+                failedAttempts = ((Number) e.getValue()).longValue();
+                break;
+            case 10:
+                cumulativeFailedAttempts = ((Number) e.getValue()).longValue();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -549,13 +529,13 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Protection mode", "Allowed failed attempts",
+        return new String[]{"Logical Name", "Protection mode", "Allowed failed attempts",
                 "Initial lockout time", "Steepness factor", "Max lockout time", "Port",
-                "Protection status", "Failed attempts", "Cumulative failed attempts" };
+                "Protection status", "Failed attempts", "Cumulative failed attempts"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset" };
+        return new String[]{"Reset"};
     }
 }

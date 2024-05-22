@@ -38,23 +38,23 @@ import java.util.HashMap;
 
 public enum PppSetupIPCPOptionType {
     /*
-     * 
+     *
      */
     IP_COMPRESSION_PROTOCOL(2),
     /*
-     * 
+     *
      */
     PREF_LOCAL_IP(3),
     /*
-     * 
+     *
      */
     PREF_PEER_IP(20),
     /*
-     * 
+     *
      */
     GAO(21),
     /*
-     * 
+     *
      */
     USIP(22);
 

@@ -39,7 +39,7 @@ import gurux.dlms.objects.GXDLMSObject;
 /**
  * Server uses this class to find Short Name object and attribute index. This
  * class is reserved for internal use.
- * 
+ *
  * @author Gurux Ltd.
  */
 class GXSNInfo {
@@ -67,8 +67,7 @@ class GXSNInfo {
     }
 
     /**
-     * @param value
-     *            The index to set
+     * @param value The index to set
      */
     public final void setIndex(final int value) {
         index = value;
@@ -82,8 +81,7 @@ class GXSNInfo {
     }
 
     /**
-     * @param value
-     *            Is action.
+     * @param value Is action.
      */
     public final void setAction(final boolean value) {
         action = value;
@@ -97,8 +95,7 @@ class GXSNInfo {
     }
 
     /**
-     * @param value
-     *            The item to set
+     * @param value The item to set
      */
     public final void setItem(final GXDLMSObject value) {
         item = value;

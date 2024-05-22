@@ -117,28 +117,20 @@ class GXDLMSLNParameters {
 
     /**
      * Constructor.
-     * 
-     * @param forSettings
-     *            DLMS settings.
-     * @param forInvokeId
-     *            Invoke ID.
-     * @param forCommand
-     *            Command.
-     * @param forCommandType
-     *            Command type.
-     * @param forAttributeDescriptor
-     *            Attribute descriptor.
-     * @param forData
-     *            Data.
-     * @param forStatus
-     *            Status.
-     * @param forCipheredCommand
-     *            Ciphered command.
+     *
+     * @param forSettings            DLMS settings.
+     * @param forInvokeId            Invoke ID.
+     * @param forCommand             Command.
+     * @param forCommandType         Command type.
+     * @param forAttributeDescriptor Attribute descriptor.
+     * @param forData                Data.
+     * @param forStatus              Status.
+     * @param forCipheredCommand     Ciphered command.
      */
     GXDLMSLNParameters(final GXDLMSSettings forSettings, final long forInvokeId,
-            final int forCommand, final int forCommandType,
-            final GXByteBuffer forAttributeDescriptor, final GXByteBuffer forData,
-            final int forStatus, int forCipheredCommand) {
+                       final int forCommand, final int forCommandType,
+                       final GXByteBuffer forAttributeDescriptor, final GXByteBuffer forData,
+                       final int forStatus, int forCipheredCommand) {
         settings = forSettings;
         invokeId = forInvokeId;
         setBlockIndex(settings.getBlockIndex());
@@ -191,8 +183,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            the requestType to set
+     * @param value the requestType to set
      */
     public final void setRequestType(final int value) {
         requestType = value;
@@ -220,8 +211,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            the time to set
+     * @param value the time to set
      */
     public final void setTime(final GXDateTime value) {
         time = value;
@@ -235,8 +225,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            Status to set
+     * @param value Status to set
      */
     public final void setStatus(final int value) {
         status = value;
@@ -250,8 +239,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            the multipleBlocks to set
+     * @param value the multipleBlocks to set
      */
     void setMultipleBlocks(final boolean value) {
         multipleBlocks = value;
@@ -265,8 +253,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            Block index.
+     * @param value Block index.
      */
     void setLastBlock(final boolean value) {
         lastBlock = value;
@@ -280,8 +267,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            the blockIndex to set
+     * @param value the blockIndex to set
      */
     void setBlockIndex(final int value) {
         blockIndex = value;
@@ -289,16 +275,15 @@ class GXDLMSLNParameters {
 
     /**
      * @return Get Invoke ID and priority. This can be used for Priority
-     *         Management.
+     * Management.
      */
     public final long getInvokeId() {
         return invokeId;
     }
 
     /**
-     * @param value
-     *            Set Invoke ID and priority. This can be used for Priority
-     *            Management.
+     * @param value Set Invoke ID and priority. This can be used for Priority
+     *              Management.
      */
     public final void setInvokeId(final long value) {
         invokeId = value;
@@ -312,8 +297,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            GBT block number.
+     * @param value GBT block number.
      */
     final void setBlockNumber(final int value) {
         blockNumber = value;
@@ -327,8 +311,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            GBT block number ACK.
+     * @param value GBT block number ACK.
      */
     final void setBlockNumberAck(final int value) {
         blockNumberAck = value;
@@ -342,8 +325,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            Is GBT streaming in use.
+     * @param value Is GBT streaming in use.
      */
     final void setStreaming(boolean value) {
         streaming = value;
@@ -357,8 +339,7 @@ class GXDLMSLNParameters {
     }
 
     /**
-     * @param value
-     *            GBT Window size. This is for internal use.
+     * @param value GBT Window size. This is for internal use.
      */
     public final void setWindowSize(byte value) {
         windowSize = value;

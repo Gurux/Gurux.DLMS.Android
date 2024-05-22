@@ -70,16 +70,15 @@ public enum DateTimeExtraInfo {
      * @return Get enumeration constant values.
      */
     private static DateTimeExtraInfo[] getEnumConstants() {
-        return new DateTimeExtraInfo[] { DST_BEGIN, DST_END, LAST_DAY,
-                LAST_DAY2 };
+        return new DateTimeExtraInfo[]{DST_BEGIN, DST_END, LAST_DAY,
+                LAST_DAY2};
 
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<DateTimeExtraInfo> forValue(final int value) {
@@ -95,9 +94,8 @@ public enum DateTimeExtraInfo {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<DateTimeExtraInfo> value) {

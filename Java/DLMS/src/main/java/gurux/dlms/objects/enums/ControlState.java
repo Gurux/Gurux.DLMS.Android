@@ -57,17 +57,17 @@ public enum ControlState {
     public String toString() {
         String str;
         switch (ordinal()) {
-        case 0:// DISCONNECTED
-            str = "Disconnected";
-            break;
-        case 1:// CONNECTED
-            str = "Connected";
-            break;
-        case 2:// READY_FOR_RECONNECTION
-            str = "Ready For reconnection";
-            break;
-        default:
-            str = "Unknown";
+            case 0:// DISCONNECTED
+                str = "Disconnected";
+                break;
+            case 1:// CONNECTED
+                str = "Connected";
+                break;
+            case 2:// READY_FOR_RECONNECTION
+                str = "Ready For reconnection";
+                break;
+            default:
+                str = "Unknown";
         }
         return str;
     }

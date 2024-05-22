@@ -60,7 +60,7 @@ public class GXDLMSConfirmedServiceError extends RuntimeException {
      * Constructor for Confirmed ServiceError.
      */
     GXDLMSConfirmedServiceError(final ConfirmedServiceError service,
-            final ServiceError type, final int value) {
+                                final ServiceError type, final int value) {
         super("ServiceError " + getConfirmedServiceError(service)
                 + " exception. " + getServiceError(type) + " "
                 + getServiceErrorValue(type, (byte) value));
@@ -91,73 +91,73 @@ public class GXDLMSConfirmedServiceError extends RuntimeException {
     }
 
     private static String
-            getConfirmedServiceError(final ConfirmedServiceError stateError) {
+    getConfirmedServiceError(final ConfirmedServiceError stateError) {
         switch (stateError) {
-        case INITIATE_ERROR:
-            return "Initiate Error";
-        case READ:
-            return "Read";
-        case WRITE:
-            return "Write";
-        default:
-            break;
+            case INITIATE_ERROR:
+                return "Initiate Error";
+            case READ:
+                return "Read";
+            case WRITE:
+                return "Write";
+            default:
+                break;
         }
         return "";
     }
 
     private static String getServiceError(final ServiceError error) {
         switch (error) {
-        case APPLICATION_REFERENCE:
-            return "Application reference";
-        case HARDWARE_RESOURCE:
-            return "Hardware resource";
-        case VDE_STATE_ERROR:
-            return "Vde state error";
-        case SERVICE:
-            return "Service";
-        case DEFINITION:
-            return "Definition";
-        case ACCESS:
-            return "Access";
-        case INITIATE:
-            return "Initiate";
-        case LOAD_DATASET:
-            return "Load dataset";
-        case TASK:
-            return "Task";
-        case OTHER_ERROR:
-            return "Other Error";
-        default:
-            break;
+            case APPLICATION_REFERENCE:
+                return "Application reference";
+            case HARDWARE_RESOURCE:
+                return "Hardware resource";
+            case VDE_STATE_ERROR:
+                return "Vde state error";
+            case SERVICE:
+                return "Service";
+            case DEFINITION:
+                return "Definition";
+            case ACCESS:
+                return "Access";
+            case INITIATE:
+                return "Initiate";
+            case LOAD_DATASET:
+                return "Load dataset";
+            case TASK:
+                return "Task";
+            case OTHER_ERROR:
+                return "Other Error";
+            default:
+                break;
         }
         return "";
     }
 
     private static String getServiceErrorValue(final ServiceError error,
-            final byte value) {
+                                               final byte value) {
         switch (error) {
-        case APPLICATION_REFERENCE:
-            return ApplicationReference.forValue(value).toString();
-        case HARDWARE_RESOURCE:
-            return HardwareResource.forValue(value).toString();
-        case VDE_STATE_ERROR:
-            return VdeStateError.forValue(value).toString();
-        case SERVICE:
-            return Service.forValue(value).toString();
-        case DEFINITION:
-            return Definition.forValue(value).toString();
-        case ACCESS:
-            return Access.forValue(value).toString();
-        case INITIATE:
-            return Initiate.forValue(value).toString();
-        case LOAD_DATASET:
-            return LoadDataSet.forValue(value).toString();
-        case TASK:
-            return Task.forValue(value).toString();
-        case OTHER_ERROR:
-            return String.valueOf(value);
-        default:
-            break;
+            case APPLICATION_REFERENCE:
+                return ApplicationReference.forValue(value).toString();
+            case HARDWARE_RESOURCE:
+                return HardwareResource.forValue(value).toString();
+            case VDE_STATE_ERROR:
+                return VdeStateError.forValue(value).toString();
+            case SERVICE:
+                return Service.forValue(value).toString();
+            case DEFINITION:
+                return Definition.forValue(value).toString();
+            case ACCESS:
+                return Access.forValue(value).toString();
+            case INITIATE:
+                return Initiate.forValue(value).toString();
+            case LOAD_DATASET:
+                return LoadDataSet.forValue(value).toString();
+            case TASK:
+                return Task.forValue(value).toString();
+            case OTHER_ERROR:
+                return String.valueOf(value);
+            default:
+                break;
         }
         return "";
     }

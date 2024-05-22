@@ -75,8 +75,7 @@ public class GXDLMSScriptAction {
     }
 
     /**
-     * @param value
-     *            Executed object.
+     * @param value Executed object.
      */
     public final void setTarget(final GXDLMSObject value) {
         target = value;
@@ -90,8 +89,7 @@ public class GXDLMSScriptAction {
     }
 
     /**
-     * @param value
-     *            Defines which action to be applied to the referenced object.
+     * @param value Defines which action to be applied to the referenced object.
      */
     public final void setType(final ScriptActionType value) {
         type = value;
@@ -106,8 +104,7 @@ public class GXDLMSScriptAction {
     }
 
     /**
-     * @param value
-     *            Executed object type.
+     * @param value Executed object type.
      * @deprecated use {@link #setTarget} instead.
      */
     public final void setObjectType(final ObjectType value) {
@@ -123,8 +120,7 @@ public class GXDLMSScriptAction {
     }
 
     /**
-     * @param value
-     *            Logical name of executed object.
+     * @param value Logical name of executed object.
      * @deprecated use {@link #setTarget} instead.
      */
     public final void setLogicalName(final String value) {
@@ -133,16 +129,15 @@ public class GXDLMSScriptAction {
 
     /**
      * @return Defines which attribute of the selected object is affected; or
-     *         which specific method is to be executed.
+     * which specific method is to be executed.
      */
     public final int getIndex() {
         return index;
     }
 
     /**
-     * @param value
-     *            Defines which attribute of the selected object is affected; or
-     *            which specific method is to be executed.
+     * @param value Defines which attribute of the selected object is affected; or
+     *              which specific method is to be executed.
      */
     public final void setIndex(final int value) {
         index = value;
@@ -156,13 +151,11 @@ public class GXDLMSScriptAction {
     }
 
     /**
-     * @param value
-     *            Parameter is service specific.
-     * @param dataType
-     *            Data type.
+     * @param value    Parameter is service specific.
+     * @param dataType Data type.
      */
     public final void setParameter(final Object value,
-            final DataType dataType) {
+                                   final DataType dataType) {
         parameter = value;
         parameterType = dataType;
     }

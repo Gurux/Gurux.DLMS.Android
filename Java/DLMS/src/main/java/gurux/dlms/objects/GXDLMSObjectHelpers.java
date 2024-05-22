@@ -45,6 +45,15 @@ final class GXDLMSObjectHelpers {
 
     }
 
+    public static short[] toShortArray(final List<Short> list) {
+        short[] ret = new short[list.size()];
+        int i = -1;
+        for (Short e : list) {
+            ret[++i] = e.shortValue();
+        }
+        return ret;
+    }
+
     public static int[] toIntArray(final List<Integer> list) {
         int[] ret = new int[list.size()];
         int i = -1;

@@ -98,9 +98,8 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSNtpSetup(final String ln) {
         this(ln, 0);
@@ -108,11 +107,9 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSNtpSetup(final String ln, final int sn) {
         super(ObjectType.NTP_SETUP, ln, sn);
@@ -129,8 +126,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Is NTP time synchronisation active.
+     * @param value Is NTP time synchronisation active.
      */
     public final void setActivated(final boolean value) {
         activated = value;
@@ -144,8 +140,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            NTP server address.
+     * @param value NTP server address.
      */
     public final void setServerAddress(final String value) {
         serverAddress = value;
@@ -159,8 +154,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            UDP port related to this protocol.
+     * @param value UDP port related to this protocol.
      */
     public final void setPort(final int value) {
         port = value;
@@ -174,8 +168,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Authentication method.
+     * @param value Authentication method.
      */
     public final void setAuthentication(final NtpAuthenticationMethod value) {
         authentication = value;
@@ -189,8 +182,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Symmetric keys for authentication.
+     * @param value Symmetric keys for authentication.
      */
     public final void setKeys(final Map<Long, byte[]> value) {
         keys = value;
@@ -204,8 +196,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Client key (NTP server public key).
+     * @param value Client key (NTP server public key).
      */
     public final void setClientKey(final byte[] value) {
         clientKey = value;
@@ -213,15 +204,14 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), activated, serverAddress, port,
-                authentication, keys, clientKey };
+        return new Object[]{getLogicalName(), activated, serverAddress, port,
+                authentication, keys, clientKey};
     }
 
     /**
      * Synchronizes the time of the DLMS server with the NTP server.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
      * @throws SignatureException
      * @throws BadPaddingException
@@ -240,13 +230,10 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Adds a new symmetric authentication key to authentication key array.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param id
-     *            Authentication key Id.
-     * @param key
-     *            authentication Key.
+     *
+     * @param client DLMS client.
+     * @param id     Authentication key Id.
+     * @param key    authentication Key.
      * @return Action bytes.
      * @throws SignatureException
      * @throws BadPaddingException
@@ -257,7 +244,7 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException
      */
     public final byte[][] addAuthenticationKey(GXDLMSClient client, int id,
-            byte[] key) throws InvalidKeyException, NoSuchAlgorithmException,
+                                               byte[] key) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer bb = new GXByteBuffer();
@@ -273,11 +260,9 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Remove symmetric authentication key.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param id
-     *            Authentication key Id.
+     *
+     * @param client DLMS client.
+     * @param id     Authentication key Id.
      * @return Action bytes.
      * @throws SignatureException
      * @throws BadPaddingException
@@ -362,30 +347,30 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
     public final DataType getDataType(final int index) {
         DataType dt;
         switch (index) {
-        case 1:
-            dt = DataType.OCTET_STRING;
-            break;
-        case 2:
-            dt = DataType.BOOLEAN;
-            break;
-        case 3:
-            dt = DataType.OCTET_STRING;
-            break;
-        case 4:
-            dt = DataType.UINT16;
-            break;
-        case 5:
-            dt = DataType.ENUM;
-            break;
-        case 6:
-            dt = DataType.ARRAY;
-            break;
-        case 7:
-            dt = DataType.OCTET_STRING;
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            case 1:
+                dt = DataType.OCTET_STRING;
+                break;
+            case 2:
+                dt = DataType.BOOLEAN;
+                break;
+            case 3:
+                dt = DataType.OCTET_STRING;
+                break;
+            case 4:
+                dt = DataType.UINT16;
+                break;
+            case 5:
+                dt = DataType.ENUM;
+                break;
+            case 6:
+                dt = DataType.ARRAY;
+                break;
+            case 7:
+                dt = DataType.OCTET_STRING;
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "getDataType failed. Invalid attribute index.");
         }
         return dt;
     }
@@ -395,49 +380,49 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         Object ret;
         switch (e.getIndex()) {
-        case 1:
-            ret = GXCommon.logicalNameToBytes(getLogicalName());
-            break;
-        case 2:
-            ret = activated;
-            break;
-        case 3:
-            ret = serverAddress;
-            break;
-        case 4:
-            ret = port;
-            break;
-        case 5:
-            ret = authentication.ordinal();
-            break;
-        case 6:
-            GXByteBuffer bb = new GXByteBuffer();
-            bb.setUInt8(DataType.ARRAY.getValue());
-            // Add count
-            GXCommon.setObjectCount(keys.size(), bb);
-            for (Object tmp : keys.entrySet()) {
-                @SuppressWarnings("unchecked")
-                Map.Entry<Long, byte[]> it = (Map.Entry<Long, byte[]>) tmp;
-                bb.setUInt8(DataType.STRUCTURE);
-                bb.setUInt8(2); // Count
-                bb.setUInt8(DataType.UINT32.getValue());
-                bb.setUInt32(it.getKey());
-                bb.setUInt8(DataType.OCTET_STRING);
-                GXCommon.setObjectCount(it.getValue().length, bb);
-                bb.set(it.getValue());
-            }
-            ret = bb.array();
-            break;
-        case 7:
-            ret = clientKey;
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            ret = null;
-            break;
+            case 1:
+                ret = GXCommon.logicalNameToBytes(getLogicalName());
+                break;
+            case 2:
+                ret = activated;
+                break;
+            case 3:
+                ret = serverAddress;
+                break;
+            case 4:
+                ret = port;
+                break;
+            case 5:
+                ret = authentication.ordinal();
+                break;
+            case 6:
+                GXByteBuffer bb = new GXByteBuffer();
+                bb.setUInt8(DataType.ARRAY.getValue());
+                // Add count
+                GXCommon.setObjectCount(keys.size(), bb);
+                for (Object tmp : keys.entrySet()) {
+                    @SuppressWarnings("unchecked")
+                    Map.Entry<Long, byte[]> it = (Map.Entry<Long, byte[]>) tmp;
+                    bb.setUInt8(DataType.STRUCTURE);
+                    bb.setUInt8(2); // Count
+                    bb.setUInt8(DataType.UINT32.getValue());
+                    bb.setUInt32(it.getKey());
+                    bb.setUInt8(DataType.OCTET_STRING);
+                    GXCommon.setObjectCount(it.getValue().length, bb);
+                    bb.set(it.getValue());
+                }
+                ret = bb.array();
+                break;
+            case 7:
+                ret = clientKey;
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                ret = null;
+                break;
         }
         return ret;
     }
@@ -447,46 +432,46 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            activated = (Boolean) e.getValue();
-            break;
-        case 3:
-            if (e.getValue() instanceof byte[]) {
-                serverAddress = new String((byte[]) e.getValue());
-            } else if (e.getValue() instanceof String) {
-                serverAddress = (String) e.getValue();
-            } else {
-                serverAddress = null;
-            }
-            break;
-        case 4:
-            port = ((Number) e.getValue()).intValue();
-            break;
-        case 5:
-            authentication = NtpAuthenticationMethod
-                    .values()[((Number) e.getValue()).intValue()];
-            break;
-        case 6: {
-            keys.clear();
-            if (e.getValue() != null) {
-                for (Object tmp : (GXArray) e.getValue()) {
-                    GXStructure it = (GXStructure) tmp;
-                    keys.put((long) it.get(0), (byte[]) it.get(1));
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                activated = (Boolean) e.getValue();
+                break;
+            case 3:
+                if (e.getValue() instanceof byte[]) {
+                    serverAddress = new String((byte[]) e.getValue());
+                } else if (e.getValue() instanceof String) {
+                    serverAddress = (String) e.getValue();
+                } else {
+                    serverAddress = null;
+                }
+                break;
+            case 4:
+                port = ((Number) e.getValue()).intValue();
+                break;
+            case 5:
+                authentication = NtpAuthenticationMethod
+                        .values()[((Number) e.getValue()).intValue()];
+                break;
+            case 6: {
+                keys.clear();
+                if (e.getValue() != null) {
+                    for (Object tmp : (GXArray) e.getValue()) {
+                        GXStructure it = (GXStructure) tmp;
+                        keys.put((long) it.get(0), (byte[]) it.get(1));
+                    }
                 }
             }
-        }
             break;
-        case 7:
-            clientKey = (byte[]) e.getValue();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 7:
+                clientKey = (byte[]) e.getValue();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -538,13 +523,13 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Activated", "ServerAddress",
-                "Port", "Authentication", "Keys", "ClientKey" };
+        return new String[]{"Logical Name", "Activated", "ServerAddress",
+                "Port", "Authentication", "Keys", "ClientKey"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Synchronize", "Add authentication key",
-                "Delete authentication key" };
+        return new String[]{"Synchronize", "Add authentication key",
+                "Delete authentication key"};
     }
 }

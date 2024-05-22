@@ -63,7 +63,7 @@ public enum PaymentMode {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, PaymentMode> getMappings() {
@@ -77,9 +77,8 @@ public enum PaymentMode {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     PaymentMode(final int value) {
         intValue = value;
@@ -88,7 +87,7 @@ public enum PaymentMode {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -97,9 +96,8 @@ public enum PaymentMode {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static PaymentMode forValue(final int value) {

@@ -64,7 +64,7 @@ public enum ConfirmedServiceError {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, ConfirmedServiceError> getMappings() {
@@ -80,9 +80,8 @@ public enum ConfirmedServiceError {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     ConfirmedServiceError(final int value) {
         intValue = value;
@@ -91,7 +90,7 @@ public enum ConfirmedServiceError {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -100,9 +99,8 @@ public enum ConfirmedServiceError {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static ConfirmedServiceError forValue(final int value) {

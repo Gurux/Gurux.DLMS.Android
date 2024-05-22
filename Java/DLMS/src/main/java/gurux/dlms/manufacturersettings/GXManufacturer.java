@@ -62,6 +62,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     private byte[] blockCipherKey;
     private byte[] authenticationKey;
     private java.util.Set<InterfaceType> supporterdInterfaces;
+
     /**
      * Constructor.
      */
@@ -83,7 +84,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     /**
      * Manufacturer Identification. Device returns manufacturer ID when
      * connection to the meter is made.
-     * 
+     *
      * @return Manufacturer Identification.
      */
     public final String getIdentification() {
@@ -91,8 +92,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Manufacturer Identification.
+     * @param value Manufacturer Identification.
      */
     public final void setIdentification(final String value) {
         identification = value;
@@ -106,8 +106,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Real name of the manufacturer.
+     * @param value Real name of the manufacturer.
      */
     public final void setName(final String value) {
         name = value;
@@ -121,8 +120,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Is Logical name referencing used.
+     * @param value Is Logical name referencing used.
      */
     public final void setUseLogicalNameReferencing(final boolean value) {
         useLogicalNameReferencing = value;
@@ -136,8 +134,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Is Keep alive message used.
+     * @param value Is Keep alive message used.
      */
     public final void setInactivityMode(final InactivityMode value) {
         inactivityMode = value;
@@ -151,8 +148,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Is Keep alive message forced for network connection as well.
+     * @param value Is Keep alive message forced for network connection as well.
      */
     public final void setForceInactivity(final boolean value) {
         forceInactivity = value;
@@ -173,8 +169,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Is IEC 62056-47 supported.
+     * @param value Is IEC 62056-47 supported.
      */
     public final void setUseIEC47(final boolean value) {
         useIEC47 = value;
@@ -188,8 +183,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Start protocol.
+     * @param value Start protocol.
      */
     public final void setStartProtocol(final StartProtocolType value) {
         startProtocol = value;
@@ -203,8 +197,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Keep Alive interval.
+     * @param value Keep Alive interval.
      */
     public final void setKeepAliveInterval(final int value) {
         keepAliveInterval = value;
@@ -218,11 +211,10 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Initialize settings.
+     * @param value Initialize settings.
      */
     public final void
-            setSettings(final java.util.ArrayList<GXAuthentication> value) {
+    setSettings(final java.util.ArrayList<GXAuthentication> value) {
         settings = value;
     }
 
@@ -244,13 +236,12 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
 
     /**
      * Get authentication settings.
-     * 
-     * @param authentication
-     *            Authentication type.
+     *
+     * @param authentication Authentication type.
      * @return Authentication settings.
      */
     public final GXAuthentication
-            getAuthentication(final Authentication authentication) {
+    getAuthentication(final Authentication authentication) {
         for (GXAuthentication it : getSettings()) {
             if (it.getType() == authentication) {
                 return it;
@@ -262,8 +253,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     /**
      * Get authentication settings.
      *
-     * @param authentication
-     *            Authentication type.
+     * @param authentication Authentication type.
      * @return Authentication settings.
      */
     public final GXAuthentication getAuthentication(final String authentication) {
@@ -283,8 +273,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Web address where is more information.
+     * @param value Web address where is more information.
      */
     public void setWebAddress(final String value) {
         this.webAddress = value;
@@ -298,8 +287,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Additional info.
+     * @param value Additional info.
      */
     public void setInfo(final String value) {
         info = value;
@@ -313,8 +301,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Used GMAC Security type.
+     * @param value Used GMAC Security type.
      */
     public void setSecurity(final Security value) {
         security = value;
@@ -328,8 +315,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            System Title.
+     * @param value System Title.
      */
     public void setSystemTitle(final byte[] value) {
         systemTitle = value;
@@ -343,8 +329,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            Server System Title.
+     * @param value Server System Title.
      */
     public void setServerSystemTitle(final byte[] value) {
         this.serverSystemTitle = value;
@@ -358,8 +343,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            GMAC block cipher key.
+     * @param value GMAC block cipher key.
      */
     public void setBlockCipherKey(final byte[] value) {
         this.blockCipherKey = value;
@@ -373,8 +357,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     }
 
     /**
-     * @param value
-     *            GMAC authentication key.
+     * @param value GMAC authentication key.
      */
     public void setAuthenticationKey(final byte[] value) {
         this.authenticationKey = value;
@@ -384,8 +367,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
      * @return Supported interface types.
      */
     public java.util.Set<InterfaceType> getSupporterdInterfaces() {
-        if (supporterdInterfaces.isEmpty())
-        {
+        if (supporterdInterfaces.isEmpty()) {
             supporterdInterfaces.add(InterfaceType.HDLC);
         }
         return supporterdInterfaces;

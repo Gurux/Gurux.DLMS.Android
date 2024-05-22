@@ -86,9 +86,8 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters(final String ln) {
         this(ln, 0);
@@ -96,29 +95,26 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters(final String ln,
-            final int sn) {
+                                                     final int sn) {
         super(ObjectType.PRIME_NB_OFDM_PLC_PHYSICAL_LAYER_COUNTERS, ln, sn);
     }
 
     /**
      * @return Number of bursts received on the physical layer for which the CRC
-     *         was incorrect.
+     * was incorrect.
      */
     public final int crcIncorrectCount() {
         return crcIncorrectCount;
     }
 
     /**
-     * @param value
-     *            Number of bursts received on the physical layer for which the
-     *            CRC was incorrect.
+     * @param value Number of bursts received on the physical layer for which the
+     *              CRC was incorrect.
      */
     public final void setCrcIncorrectCount(final int value) {
         crcIncorrectCount = value;
@@ -126,18 +122,17 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
 
     /**
      * @return Number of bursts received on the physical layer for which the CRC
-     *         was correct, but the Protocol field of PHY header had invalid
-     *         value.
+     * was correct, but the Protocol field of PHY header had invalid
+     * value.
      */
     public final int getCrcFailedCount() {
         return crcFailedCount;
     }
 
     /**
-     * @param value
-     *            Number of bursts received on the physical layer for which the
-     *            CRC was correct, but the Protocol field of PHY header had
-     *            invalid value.
+     * @param value Number of bursts received on the physical layer for which the
+     *              CRC was correct, but the Protocol field of PHY header had
+     *              invalid value.
      */
     public final void setCrcFailedCount(final int value) {
         crcFailedCount = value;
@@ -151,8 +146,7 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Number of times when PHY layer received new data to transmit.
+     * @param value Number of times when PHY layer received new data to transmit.
      */
     public final void setTxDropCount(final int value) {
         txDropCount = value;
@@ -160,16 +154,15 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
 
     /**
      * @return Number of times when the PHY layer received new data on the
-     *         channel.
+     * channel.
      */
     public final int getRxDropCount() {
         return rxDropCount;
     }
 
     /**
-     * @param value
-     *            Number of times when the PHY layer received new data on the
-     *            channel.
+     * @param value Number of times when the PHY layer received new data on the
+     *              channel.
      */
     public final void setRxDropCount(final int value) {
         rxDropCount = value;
@@ -177,32 +170,24 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), crcIncorrectCount,
-                crcFailedCount, txDropCount, rxDropCount };
+        return new Object[]{getLogicalName(), crcIncorrectCount,
+                crcFailedCount, txDropCount, rxDropCount};
     }
 
     /**
      * Deallocating the service node address. The value of the
      * ServiceNodeAddress becomes NEW and the value of the BaseNodeAddress
      * becomes 0.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -272,16 +257,16 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            return DataType.UINT16;
-        default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return DataType.UINT16;
+            default:
+                throw new IllegalArgumentException(
+                        "getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -290,21 +275,21 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return crcIncorrectCount;
-        case 3:
-            return crcFailedCount;
-        case 4:
-            return txDropCount;
-        case 5:
-            return rxDropCount;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return crcIncorrectCount;
+            case 3:
+                return crcFailedCount;
+            case 4:
+                return txDropCount;
+            case 5:
+                return rxDropCount;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -314,26 +299,26 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            crcIncorrectCount = ((Number) e.getValue()).intValue();
-            break;
-        case 3:
-            crcFailedCount = ((Number) e.getValue()).intValue();
-            break;
-        case 4:
-            txDropCount = ((Number) e.getValue()).intValue();
-            break;
-        case 5:
-            rxDropCount = ((Number) e.getValue()).intValue();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                crcIncorrectCount = ((Number) e.getValue()).intValue();
+                break;
+            case 3:
+                crcFailedCount = ((Number) e.getValue()).intValue();
+                break;
+            case 4:
+                txDropCount = ((Number) e.getValue()).intValue();
+                break;
+            case 5:
+                rxDropCount = ((Number) e.getValue()).intValue();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -359,13 +344,13 @@ public class GXDLMSPrimeNbOfdmPlcPhysicalLayerCounters extends GXDLMSObject
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "CrcIncorrectCount",
-                "CrcFailedCount", "TxDropCount", "RxDropCount" };
+        return new String[]{"Logical Name", "CrcIncorrectCount",
+                "CrcFailedCount", "TxDropCount", "RxDropCount"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset" };
+        return new String[]{"Reset"};
     }
 }

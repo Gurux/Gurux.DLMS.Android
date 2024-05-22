@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
@@ -138,9 +137,8 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSSFSKPhyMacSetUp(final String ln) {
         this(ln, 0);
@@ -148,11 +146,9 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSSFSKPhyMacSetUp(final String ln, final int sn) {
         super(ObjectType.SFSK_PHY_MAC_SETUP, ln, sn);
@@ -167,11 +163,10 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Initiator electrical phase.
+     * @param value Initiator electrical phase.
      */
     public final void
-            setInitiatorElectricalPhase(final InitiatorElectricalPhase value) {
+    setInitiatorElectricalPhase(final InitiatorElectricalPhase value) {
         initiatorElectricalPhase = value;
     }
 
@@ -183,27 +178,25 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Delta electrical phase.
+     * @param value Delta electrical phase.
      */
     public final void
-            setDeltaElectricalPhase(final DeltaElectricalPhase value) {
+    setDeltaElectricalPhase(final DeltaElectricalPhase value) {
         deltaElectricalPhase = value;
     }
 
     /**
      * @return Corresponds to the maximum allowed gain bound to be used by the
-     *         server system in the receiving mode. The default unit is dB.
+     * server system in the receiving mode. The default unit is dB.
      */
     public final byte getMaxReceivingGain() {
         return maxReceivingGain;
     }
 
     /**
-     * @param value
-     *            Corresponds to the maximum allowed gain bound to be used by
-     *            the server system in the receiving mode. The default unit is
-     *            dB.
+     * @param value Corresponds to the maximum allowed gain bound to be used by
+     *              the server system in the receiving mode. The default unit is
+     *              dB.
      */
     public final void setMaxReceivingGain(final byte value) {
         maxReceivingGain = value;
@@ -211,16 +204,15 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Corresponds to the maximum attenuation bound to be used by the
-     *         server system in the transmitting mode.The default unit is dB.
+     * server system in the transmitting mode.The default unit is dB.
      */
     public final byte getMaxTransmittingGain() {
         return maxTransmittingGain;
     }
 
     /**
-     * @param value
-     *            Corresponds to the maximum attenuation bound to be used by the
-     *            server system in the transmitting mode.The default unit is dB.
+     * @param value Corresponds to the maximum attenuation bound to be used by the
+     *              server system in the transmitting mode.The default unit is dB.
      */
     public final void setMaxTransmittingGain(final byte value) {
         maxTransmittingGain = value;
@@ -228,18 +220,17 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Intelligent search initiator process. If the value of the
-     *         initiator signal is above the value of this attribute, a fast
-     *         synchronization process is possible.
+     * initiator signal is above the value of this attribute, a fast
+     * synchronization process is possible.
      */
     public final byte getSearchInitiatorThreshold() {
         return searchInitiatorThreshold;
     }
 
     /**
-     * @param value
-     *            Intelligent search initiator process. If the value of the
-     *            initiator signal is above the value of this attribute, a fast
-     *            synchronization process is possible.
+     * @param value Intelligent search initiator process. If the value of the
+     *              initiator signal is above the value of this attribute, a fast
+     *              synchronization process is possible.
      */
     public final void setSearchInitiatorThreshold(final byte value) {
         searchInitiatorThreshold = value;
@@ -253,8 +244,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Mark frequency required for S-FSK modulation.
+     * @param value Mark frequency required for S-FSK modulation.
      */
     public final void setMarkFrequency(final long value) {
         markFrequency = value;
@@ -268,8 +258,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Space frequency required for S-FSK modulation.
+     * @param value Space frequency required for S-FSK modulation.
      */
     public final void setSpaceFrequency(final long value) {
         spaceFrequency = value;
@@ -283,8 +272,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Mac Address.
+     * @param value Mac Address.
      */
     public final void setMacAddress(final int value) {
         macAddress = value;
@@ -298,8 +286,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            MAC group addresses.
+     * @param value MAC group addresses.
      */
     public final void setMacGroupAddresses(final int[] value) {
         macGroupAddresses = value;
@@ -313,8 +300,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Specifies are all frames repeated.
+     * @param value Specifies are all frames repeated.
      */
     public final void setRepeater(final Repeater value) {
         repeater = value;
@@ -328,8 +314,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Repeater status.
+     * @param value Repeater status.
      */
     public final void setRepeaterStatus(final boolean value) {
         repeaterStatus = value;
@@ -343,8 +328,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Min delta credit.
+     * @param value Min delta credit.
      */
     public final void setMinDeltaCredit(final byte value) {
         minDeltaCredit = value;
@@ -358,8 +342,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Initiator MAC address.
+     * @param value Initiator MAC address.
      */
     public final void setInitiatorMacAddress(final int value) {
         initiatorMacAddress = value;
@@ -373,8 +356,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Synchronization locked/unlocked state.
+     * @param value Synchronization locked/unlocked state.
      */
     public final void setSynchronizationLocked(boolean value) {
         synchronizationLocked = value;
@@ -388,8 +370,7 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Transmission speed supported by the physical device.
+     * @param value Transmission speed supported by the physical device.
      */
     public final void setTransmissionSpeed(BaudRate value) {
         transmissionSpeed = value;
@@ -397,12 +378,12 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), initiatorElectricalPhase,
+        return new Object[]{getLogicalName(), initiatorElectricalPhase,
                 deltaElectricalPhase, maxReceivingGain, maxTransmittingGain,
                 searchInitiatorThreshold,
-                new Object[] { markFrequency, spaceFrequency }, macAddress,
+                new Object[]{markFrequency, spaceFrequency}, macAddress,
                 macGroupAddresses, repeater, repeaterStatus, minDeltaCredit,
-                initiatorMacAddress, synchronizationLocked, transmissionSpeed };
+                initiatorMacAddress, synchronizationLocked, transmissionSpeed};
     }
 
     /*
@@ -495,38 +476,38 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
         DataType ret;
         // LogicalName
         switch (index) {
-        case 1:
-            ret = DataType.OCTET_STRING;
-            break;
-        case 4:
-        case 5:
-        case 6:
-        case 12:
-            ret = DataType.UINT8;
-            break;
-        case 7:
-            ret = DataType.STRUCTURE;
-            break;
-        case 8:
-        case 13:
-            ret = DataType.UINT16;
-            break;
-        case 9:
-            ret = DataType.ARRAY;
-            break;
-        case 2:
-        case 3:
-        case 10:
-        case 15:
-            ret = DataType.ENUM;
-            break;
-        case 11:
-        case 14:
-            ret = DataType.BOOLEAN;
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            case 1:
+                ret = DataType.OCTET_STRING;
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 12:
+                ret = DataType.UINT8;
+                break;
+            case 7:
+                ret = DataType.STRUCTURE;
+                break;
+            case 8:
+            case 13:
+                ret = DataType.UINT16;
+                break;
+            case 9:
+                ret = DataType.ARRAY;
+                break;
+            case 2:
+            case 3:
+            case 10:
+            case 15:
+                ret = DataType.ENUM;
+                break;
+            case 11:
+            case 14:
+                ret = DataType.BOOLEAN;
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "getDataType failed. Invalid attribute index.");
         }
         return ret;
     }
@@ -536,75 +517,75 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         Object ret;
         switch (e.getIndex()) {
-        case 1:
-            ret = GXCommon.logicalNameToBytes(getLogicalName());
-            break;
-        case 2:
-            ret = initiatorElectricalPhase.ordinal();
-            break;
-        case 3:
-            ret = deltaElectricalPhase.ordinal();
-            break;
-        case 4:
-            ret = maxReceivingGain;
-            break;
-        case 5:
-            ret = maxTransmittingGain;
-            break;
-        case 6:
-            ret = searchInitiatorThreshold;
-            break;
-        case 7: {
-            GXByteBuffer bb = new GXByteBuffer();
-            bb.setUInt8(DataType.STRUCTURE.getValue());
-            bb.setUInt8(2);
-            GXCommon.setData(settings, bb, DataType.UINT32, markFrequency);
-            GXCommon.setData(settings, bb, DataType.UINT32, spaceFrequency);
-            ret = bb.array();
-            break;
-        }
-        case 8:
-            ret = macAddress;
-            break;
-        case 9: {
-            GXByteBuffer bb = new GXByteBuffer();
-            bb.setUInt8(DataType.ARRAY.getValue());
-            if (macGroupAddresses == null) {
-                bb.setUInt8(0);
-            } else {
-                GXCommon.setObjectCount(macGroupAddresses.length, bb);
-                for (int it : macGroupAddresses) {
-                    GXCommon.setData(settings, bb, DataType.UINT16, it);
-                }
+            case 1:
+                ret = GXCommon.logicalNameToBytes(getLogicalName());
+                break;
+            case 2:
+                ret = initiatorElectricalPhase.ordinal();
+                break;
+            case 3:
+                ret = deltaElectricalPhase.ordinal();
+                break;
+            case 4:
+                ret = maxReceivingGain;
+                break;
+            case 5:
+                ret = maxTransmittingGain;
+                break;
+            case 6:
+                ret = searchInitiatorThreshold;
+                break;
+            case 7: {
+                GXByteBuffer bb = new GXByteBuffer();
+                bb.setUInt8(DataType.STRUCTURE.getValue());
+                bb.setUInt8(2);
+                GXCommon.setData(settings, bb, DataType.UINT32, markFrequency);
+                GXCommon.setData(settings, bb, DataType.UINT32, spaceFrequency);
+                ret = bb.array();
+                break;
             }
-            ret = bb.array();
-            break;
-        }
-        case 10:
-            ret = repeater.ordinal();
-            break;
-        case 11:
-            ret = repeaterStatus;
-            break;
-        case 12:
-            ret = minDeltaCredit;
-            break;
-        case 13:
-            ret = initiatorMacAddress;
-            break;
-        case 14:
-            ret = synchronizationLocked;
-            break;
-        case 15:
-            ret = transmissionSpeed.ordinal();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            ret = null;
-            break;
+            case 8:
+                ret = macAddress;
+                break;
+            case 9: {
+                GXByteBuffer bb = new GXByteBuffer();
+                bb.setUInt8(DataType.ARRAY.getValue());
+                if (macGroupAddresses == null) {
+                    bb.setUInt8(0);
+                } else {
+                    GXCommon.setObjectCount(macGroupAddresses.length, bb);
+                    for (int it : macGroupAddresses) {
+                        GXCommon.setData(settings, bb, DataType.UINT16, it);
+                    }
+                }
+                ret = bb.array();
+                break;
+            }
+            case 10:
+                ret = repeater.ordinal();
+                break;
+            case 11:
+                ret = repeaterStatus;
+                break;
+            case 12:
+                ret = minDeltaCredit;
+                break;
+            case 13:
+                ret = initiatorMacAddress;
+                break;
+            case 14:
+                ret = synchronizationLocked;
+                break;
+            case 15:
+                ret = transmissionSpeed.ordinal();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                ret = null;
+                break;
         }
         return ret;
     }
@@ -614,75 +595,75 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            initiatorElectricalPhase = InitiatorElectricalPhase
-                    .values()[((Number) e.getValue()).byteValue()];
-            break;
-        case 3:
-            deltaElectricalPhase = DeltaElectricalPhase
-                    .values()[((Number) e.getValue()).byteValue()];
-            break;
-        case 4:
-            maxReceivingGain = ((Number) e.getValue()).byteValue();
-            break;
-        case 5:
-            maxTransmittingGain = ((Number) e.getValue()).byteValue();
-            break;
-        case 6:
-            searchInitiatorThreshold = ((Number) e.getValue()).byteValue();
-            break;
-        case 7: {
-            if (e.getValue() != null) {
-                List<?> arr = (List<?>) e.getValue();
-                markFrequency = ((Number) arr.get(0)).intValue();
-                spaceFrequency = ((Number) arr.get(1)).intValue();
-            } else {
-                markFrequency = 0;
-                spaceFrequency = 0;
-            }
-
-            break;
-        }
-        case 8:
-            macAddress = ((Number) e.getValue()).intValue();
-            break;
-        case 9: {
-            List<Integer> list = new ArrayList<Integer>();
-            if (e.getValue() != null) {
-                for (Object it : (List<?>) e.getValue()) {
-                    list.add(((Number) it).intValue());
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                initiatorElectricalPhase = InitiatorElectricalPhase
+                        .values()[((Number) e.getValue()).byteValue()];
+                break;
+            case 3:
+                deltaElectricalPhase = DeltaElectricalPhase
+                        .values()[((Number) e.getValue()).byteValue()];
+                break;
+            case 4:
+                maxReceivingGain = ((Number) e.getValue()).byteValue();
+                break;
+            case 5:
+                maxTransmittingGain = ((Number) e.getValue()).byteValue();
+                break;
+            case 6:
+                searchInitiatorThreshold = ((Number) e.getValue()).byteValue();
+                break;
+            case 7: {
+                if (e.getValue() != null) {
+                    List<?> arr = (List<?>) e.getValue();
+                    markFrequency = ((Number) arr.get(0)).intValue();
+                    spaceFrequency = ((Number) arr.get(1)).intValue();
+                } else {
+                    markFrequency = 0;
+                    spaceFrequency = 0;
                 }
+
+                break;
             }
-            macGroupAddresses = GXCommon.toIntArray(list);
-            break;
-        }
-        case 10:
-            repeater = Repeater.values()[((Number) e.getValue()).byteValue()];
-            break;
-        case 11:
-            repeaterStatus = (Boolean) e.getValue();
-            break;
-        case 12:
-            minDeltaCredit = ((Number) e.getValue()).byteValue();
-            break;
-        case 13:
-            initiatorMacAddress = ((Number) e.getValue()).intValue();
-            break;
-        case 14:
-            synchronizationLocked = (Boolean) e.getValue();
-            break;
-        case 15:
-            transmissionSpeed =
-                    BaudRate.values()[((Number) e.getValue()).byteValue()];
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 8:
+                macAddress = ((Number) e.getValue()).intValue();
+                break;
+            case 9: {
+                List<Integer> list = new ArrayList<Integer>();
+                if (e.getValue() != null) {
+                    for (Object it : (List<?>) e.getValue()) {
+                        list.add(((Number) it).intValue());
+                    }
+                }
+                macGroupAddresses = GXCommon.toIntArray(list);
+                break;
+            }
+            case 10:
+                repeater = Repeater.values()[((Number) e.getValue()).byteValue()];
+                break;
+            case 11:
+                repeaterStatus = (Boolean) e.getValue();
+                break;
+            case 12:
+                minDeltaCredit = ((Number) e.getValue()).byteValue();
+                break;
+            case 13:
+                initiatorMacAddress = ((Number) e.getValue()).intValue();
+                break;
+            case 14:
+                synchronizationLocked = (Boolean) e.getValue();
+                break;
+            case 15:
+                transmissionSpeed =
+                        BaudRate.values()[((Number) e.getValue()).byteValue()];
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -758,12 +739,12 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "InitiatorElectricalPhase",
+        return new String[]{"Logical Name", "InitiatorElectricalPhase",
                 "DeltaElectricalPhase", "MaxReceivingGain",
                 "MaxTransmittingGain", "SearchInitiatorThreshold", "Frequency",
                 "MacAddress", "MacGroupAddresses", "Repeater", "RepeaterStatus",
                 "MinDeltaCredit", "InitiatorMacAddress",
-                "SynchronizationLocked", "TransmissionSpeed" };
+                "SynchronizationLocked", "TransmissionSpeed"};
 
     }
 

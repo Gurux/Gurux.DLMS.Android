@@ -152,7 +152,7 @@ public enum ErrorCode {
 
     /**
      * Get mappings.
-     * 
+     *
      * @return Hash map of enumeration and integer values.
      */
     private static HashMap<Integer, ErrorCode> getMappings() {
@@ -166,9 +166,8 @@ public enum ErrorCode {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value for enumerator.
+     *
+     * @param value Integer value for enumerator.
      */
     ErrorCode(final int value) {
         intValue = value;
@@ -179,7 +178,7 @@ public enum ErrorCode {
 
     /**
      * Get enemerator's integer value.
-     * 
+     *
      * @return Integer value of enumerator.
      */
     public int getValue() {
@@ -188,9 +187,8 @@ public enum ErrorCode {
 
     /**
      * Get enumerator from integer value.
-     * 
-     * @param value
-     *            integer value.
+     *
+     * @param value integer value.
      * @return Enumerator value.
      */
     public static ErrorCode forValue(final int value) {

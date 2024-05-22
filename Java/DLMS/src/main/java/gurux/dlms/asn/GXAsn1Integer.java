@@ -43,7 +43,7 @@ import gurux.dlms.GXByteBuffer;
  */
 public class GXAsn1Integer extends Number {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     /**
@@ -60,9 +60,8 @@ public class GXAsn1Integer extends Number {
 
     /**
      * Constructor
-     * 
-     * @param data
-     *            Integer value.
+     *
+     * @param data Integer value.
      */
     public GXAsn1Integer(final long data) {
         GXByteBuffer bb = new GXByteBuffer();
@@ -72,9 +71,8 @@ public class GXAsn1Integer extends Number {
 
     /**
      * Constructor
-     * 
-     * @param data
-     *            Integer.
+     *
+     * @param data Integer.
      */
     public GXAsn1Integer(final byte[] data) {
         if (data == null) {
@@ -85,13 +83,10 @@ public class GXAsn1Integer extends Number {
 
     /**
      * Constructor
-     * 
-     * @param data
-     *            Data.
-     * @param index
-     *            Index.
-     * @param count
-     *            Count.
+     *
+     * @param data  Data.
+     * @param index Index.
+     * @param count Count.
      */
     public GXAsn1Integer(final byte[] data, final int index, final int count) {
         if (data == null || data.length < index + count) {
@@ -103,9 +98,8 @@ public class GXAsn1Integer extends Number {
 
     /**
      * Constructor
-     * 
-     * @param data
-     *            Integer.
+     *
+     * @param data Integer.
      */
     public GXAsn1Integer(final String data) {
         if (data == null) {
@@ -141,20 +135,20 @@ public class GXAsn1Integer extends Number {
     public final String toString() {
         String str;
         switch (value.length) {
-        case 1:
-            str = String.valueOf(toByte());
-            break;
-        case 2:
-            str = String.valueOf(toShort());
-            break;
-        case 4:
-            str = String.valueOf(intValue());
-            break;
-        case 8:
-            str = String.valueOf(longValue());
-            break;
-        default:
-            str = new BigInteger(value).toString();
+            case 1:
+                str = String.valueOf(toByte());
+                break;
+            case 2:
+                str = String.valueOf(toShort());
+                break;
+            case 4:
+                str = String.valueOf(intValue());
+                break;
+            case 8:
+                str = String.valueOf(longValue());
+                break;
+            default:
+                str = new BigInteger(value).toString();
         }
         return str;
     }

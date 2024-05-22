@@ -55,7 +55,7 @@ public enum TokenDelivery {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -64,9 +64,8 @@ public enum TokenDelivery {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static TokenDelivery forValue(int value) {

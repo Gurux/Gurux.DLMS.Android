@@ -65,11 +65,11 @@ enum ReleaseResponseReason {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static java.util.HashMap<Integer, ReleaseResponseReason>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (ReleaseResponseReason.class) {
                 if (mappings == null) {
@@ -82,9 +82,8 @@ enum ReleaseResponseReason {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     ReleaseResponseReason(final int value) {
         intValue = value;
@@ -93,7 +92,7 @@ enum ReleaseResponseReason {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -102,9 +101,8 @@ enum ReleaseResponseReason {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static ReleaseResponseReason forValue(final int value) {

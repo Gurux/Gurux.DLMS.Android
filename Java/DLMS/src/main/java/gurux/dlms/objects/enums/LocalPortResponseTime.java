@@ -52,7 +52,7 @@ public enum LocalPortResponseTime {
     private static java.util.HashMap<Integer, LocalPortResponseTime> mappings;
 
     private static java.util.HashMap<Integer, LocalPortResponseTime>
-            getMappings() {
+    getMappings() {
         synchronized (LocalPortResponseTime.class) {
             if (mappings == null) {
                 mappings =

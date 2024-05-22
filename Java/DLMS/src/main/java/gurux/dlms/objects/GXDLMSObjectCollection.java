@@ -177,16 +177,14 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
                     } else if ("Description".compareToIgnoreCase(target) == 0) {
                         String data = readText(parser);
                         obj.setDescription(data);
-                    }
-                    else if ("DataTypes".compareToIgnoreCase(target) == 0 ||
+                    } else if ("DataTypes".compareToIgnoreCase(target) == 0 ||
                             "UIDataTypes".compareToIgnoreCase(target) == 0) {
                         event = parser.next();
                     } else if ("DataType".compareToIgnoreCase(target) == 0) {
                         index = Integer.parseInt(parser.getAttributeValue(0));
                         DataType dt = DataType.forValue(Integer.parseInt(readText(parser)));
                         obj.setDataType(index, dt);
-                    }
-                    else if ("UIDataType".compareToIgnoreCase(target) == 0) {
+                    } else if ("UIDataType".compareToIgnoreCase(target) == 0) {
                         index = Integer.parseInt(parser.getAttributeValue(0));
                         DataType dt = DataType.forValue(Integer.parseInt(readText(parser)));
                         obj.setUIDataType(index, dt);
@@ -232,8 +230,7 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
             }
             //Append data types.
             sb.append("<DataTypes>");
-            for(int pos = 1; pos <= it.getAttributeCount(); ++pos)
-            {
+            for (int pos = 1; pos <= it.getAttributeCount(); ++pos) {
                 sb.append("<DataType index=\"");
                 sb.append(pos + "\">");
                 sb.append(it.getDataType(pos).getValue());
@@ -244,8 +241,7 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
             sb.append(nl);
             //Append UI data types.
             sb.append("<UIDataTypes>");
-            for(int pos = 1; pos <= it.getAttributeCount(); ++pos)
-            {
+            for (int pos = 1; pos <= it.getAttributeCount(); ++pos) {
                 sb.append("<UIDataType index=\"");
                 sb.append(pos + "\">");
                 sb.append(it.getUIDataType(pos).getValue());

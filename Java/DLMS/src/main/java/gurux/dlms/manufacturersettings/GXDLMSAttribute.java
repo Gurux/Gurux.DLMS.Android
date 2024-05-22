@@ -39,9 +39,8 @@ import gurux.dlms.enums.DataType;
 public class GXDLMSAttribute extends GXDLMSAttributeSettings {
     /**
      * Constructor.
-     * 
-     * @param index
-     *            Attribute index.
+     *
+     * @param index Attribute index.
      */
     public GXDLMSAttribute(final int index) {
         this(index, DataType.NONE, DataType.NONE, 0);
@@ -56,11 +55,9 @@ public class GXDLMSAttribute extends GXDLMSAttributeSettings {
 
     /**
      * Constructor.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param uiType
-     *            UI Data type.
+     *
+     * @param index  Attribute index.
+     * @param uiType UI Data type.
      */
     public GXDLMSAttribute(final int index, final DataType uiType) {
         this(index, DataType.NONE, uiType, 0);
@@ -68,33 +65,26 @@ public class GXDLMSAttribute extends GXDLMSAttributeSettings {
 
     /**
      * Constructor.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param type
-     *            Data type.
-     * @param uiType
-     *            UI data type.
+     *
+     * @param index  Attribute index.
+     * @param type   Data type.
+     * @param uiType UI data type.
      */
     public GXDLMSAttribute(final int index, final DataType type,
-            final DataType uiType) {
+                           final DataType uiType) {
         this(index, type, uiType, 0);
     }
 
     /**
      * Constructor.
-     * 
-     * @param index
-     *            Attribute index.
-     * @param type
-     *            Data type.
-     * @param uiType
-     *            UI data type.
-     * @param order
-     *            Order.
+     *
+     * @param index  Attribute index.
+     * @param type   Data type.
+     * @param uiType UI data type.
+     * @param order  Order.
      */
     public GXDLMSAttribute(final int index, final DataType type,
-            final DataType uiType, final int order) {
+                           final DataType uiType, final int order) {
         setIndex(index);
         setType(type);
         setUIType(uiType);

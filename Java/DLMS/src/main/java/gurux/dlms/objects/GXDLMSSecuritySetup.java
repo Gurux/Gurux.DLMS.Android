@@ -162,9 +162,8 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSSecuritySetup(final String ln) {
         this(ln, 0);
@@ -172,11 +171,9 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSSecuritySetup(final String ln, final int sn) {
         super(ObjectType.SECURITY_SETUP, ln, sn);
@@ -185,11 +182,11 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         setVersion(1);
         // If Broadcast block cipher key is not defined GUEK is used.
         gbek = null;
-        guek = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
-                0x0C, 0x0D, 0x0E, 0x0F };
-        gak = new byte[] { (byte) 0xD0, (byte) 0xD1, (byte) 0xD2, (byte) 0xD3, (byte) 0xD4,
+        guek = new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
+                0x0C, 0x0D, 0x0E, 0x0F};
+        gak = new byte[]{(byte) 0xD0, (byte) 0xD1, (byte) 0xD2, (byte) 0xD3, (byte) 0xD4,
                 (byte) 0xD5, (byte) 0xD6, (byte) 0xD7, (byte) 0xD8, (byte) 0xD9, (byte) 0xDA,
-                (byte) 0xDB, (byte) 0xDC, (byte) 0xDD, (byte) 0xDE, (byte) 0xDF };
+                (byte) 0xDB, (byte) 0xDC, (byte) 0xDD, (byte) 0xDE, (byte) 0xDF};
         setKek("1111111111111111".getBytes());
     }
 
@@ -201,8 +198,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Block cipher key.
+     * @param value Block cipher key.
      */
     public void setGuek(final byte[] value) {
         if (getVersion() < 2 && value != null && value.length != 16 && value.length != 0) {
@@ -219,8 +215,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Broadcast block cipher key.
+     * @param value Broadcast block cipher key.
      */
     public void setGbek(final byte[] value) {
         if (getVersion() < 2 && value != null && value.length != 16 && value.length != 0) {
@@ -238,8 +233,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Authentication key.
+     * @param value Authentication key.
      */
     public void setGak(final byte[] value) {
         if (getVersion() < 2 && value != null && value.length != 16 && value.length != 0) {
@@ -256,8 +250,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Master key.
+     * @param value Master key.
      */
     public void setKek(final byte[] value) {
         kek = value;
@@ -271,8 +264,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Security policy for version 1.
+     * @param value Security policy for version 1.
      */
     public final void setSecurityPolicy(final Set<SecurityPolicy> value) {
         securityPolicy = value;
@@ -286,8 +278,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Security suite.
+     * @param value Security suite.
      */
     public final void setSecuritySuite(final SecuritySuite value) {
         securitySuite = value;
@@ -301,8 +292,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Client system title.
+     * @param value Client system title.
      */
     public final void setClientSystemTitle(final byte[] value) {
         clientSystemTitle = value;
@@ -316,8 +306,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Server system title.
+     * @param value Server system title.
      */
     public final void setServerSystemTitle(final byte[] value) {
         serverSystemTitle = value;
@@ -332,33 +321,24 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), securityPolicy, securitySuite, clientSystemTitle,
-                serverSystemTitle, certificates };
+        return new Object[]{getLogicalName(), securityPolicy, securitySuite, clientSystemTitle,
+                serverSystemTitle, certificates};
     }
 
     /**
      * Activates and strengthens the security policy for version 0 Security
      * Setup Object.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param security
-     *            New security level.
+     *
+     * @param client   DLMS client that is used to generate action.
+     * @param security New security level.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] activate(final GXDLMSClient client, final SecurityPolicy security)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -370,26 +350,17 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Activates and strengthens the security policy for version 1 Security
      * Setup Object.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param security
-     *            New security level.
+     *
+     * @param client   DLMS client that is used to generate action.
+     * @param security New security level.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] activate(final GXDLMSClient client, final Set<SecurityPolicy> security)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -400,9 +371,8 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Parse GXx509Certificate from data that meter sends.
-     * 
-     * @param data
-     *            Meter data.
+     *
+     * @param data Meter data.
      * @return Generated GXx509Certificate.
      */
     public static GXPkcs10 parseCertificate(final GXByteBuffer data) {
@@ -413,31 +383,21 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Updates one or more global keys.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param kek
-     *            Master key, also known as Key Encrypting Key.
-     * @param list
-     *            List of Global key types and keys.
+     *
+     * @param client DLMS client that is used to generate action.
+     * @param kek    Master key, also known as Key Encrypting Key.
+     * @param list   List of Global key types and keys.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] globalKeyTransfer(final GXDLMSClient client, final byte[] kek,
-            final List<GXSimpleEntry<GlobalKeyType, byte[]>> list) throws InvalidKeyException,
+                                            final List<GXSimpleEntry<GlobalKeyType, byte[]>> list) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (list == null || list.isEmpty()) {
@@ -459,29 +419,20 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Agree on one or more symmetric keys using the key agreement algorithm.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param list
-     *            List of keys.
+     *
+     * @param client DLMS client that is used to generate action.
+     * @param list   List of keys.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] keyAgreement(final GXDLMSClient client,
-            final List<GXSimpleEntry<GlobalKeyType, byte[]>> list) throws InvalidKeyException,
+                                       final List<GXSimpleEntry<GlobalKeyType, byte[]>> list) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (list == null || list.isEmpty()) {
@@ -502,26 +453,17 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Agree on one or more symmetric keys using the key agreement algorithm.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param type
-     *            Global key type.
+     *
+     * @param client DLMS client that is used to generate action.
+     * @param type   Global key type.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] keyAgreement(final GXDLMSSecureClient client, final GlobalKeyType type)
             throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
@@ -552,27 +494,18 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Generates an asymmetric key pair as required by the security suite.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param type
-     *            New certificate type.
+     *
+     * @param client DLMS client that is used to generate action.
+     * @param type   New certificate type.
      * @return Generated action. * @throws BadPaddingException. Bad padding
-     *         exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generateKeyPair(final GXDLMSClient client, final CertificateType type)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -583,27 +516,18 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Ask Server sends the Certificate Signing Request (CSR) data.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param type
-     *            identifies the key pair for which the certificate will be
-     *            requested.
+     *
+     * @param client DLMS client that is used to generate action.
+     * @param type   identifies the key pair for which the certificate will be
+     *               requested.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generateCertificate(final GXDLMSClient client, final CertificateType type)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -614,30 +538,21 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Imports an X.509 v3 certificate of a public key.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param certificate
-     *            X.509 v3 certificate.
+     *
+     * @param client      DLMS client that is used to generate action.
+     * @param certificate X.509 v3 certificate.
      * @return Generated action. * @throws BadPaddingException. Bad padding
-     *         exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] importCertificate(final GXDLMSClient client,
-            final GXx509Certificate certificate) throws InvalidKeyException,
+                                            final GXx509Certificate certificate) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         return importCertificate(client, certificate.getEncoded());
@@ -645,26 +560,17 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Imports an X.509 v3 certificate of a public key.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param key
-     *            Public key.
+     *
+     * @param client DLMS client that is used to generate action.
+     * @param key    Public key.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] importCertificate(final GXDLMSClient client, final byte[] key)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -675,33 +581,22 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Exports an X.509 v3 certificate from the server using entity information.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param entity
-     *            Certificate entity.
-     * @param type
-     *            Certificate type.
-     * @param systemTitle
-     *            System title.
+     *
+     * @param client      DLMS client that is used to generate action.
+     * @param entity      Certificate entity.
+     * @param type        Certificate type.
+     * @param systemTitle System title.
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] exportCertificateByEntity(final GXDLMSSecureClient client,
-            final CertificateEntity entity, final CertificateType type, final byte[] systemTitle)
+                                                    final CertificateEntity entity, final CertificateType type, final byte[] systemTitle)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -730,31 +625,21 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Exports an X.509 v3 certificate from the server using serial information.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param serialNumber
-     *            Serial number.
-     * @param issuer
-     *            Issuer
+     *
+     * @param client       DLMS client that is used to generate action.
+     * @param serialNumber Serial number.
+     * @param issuer       Issuer
      * @return Generated action.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] exportCertificateBySerial(final GXDLMSSecureClient client,
-            final BigInteger serialNumber, final String issuer) throws InvalidKeyException,
+                                                    final BigInteger serialNumber, final String issuer) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer bb = new GXByteBuffer();
@@ -775,34 +660,23 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Removes X.509 v3 certificate from the server using entity.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param entity
-     *            Certificate entity type.
-     * @param type
-     *            Certificate type.
-     * @param systemTitle
-     *            System title.
+     *
+     * @param client      DLMS client that is used to generate action.
+     * @param entity      Certificate entity type.
+     * @param type        Certificate type.
+     * @param systemTitle System title.
      * @return Generated action. * @throws BadPaddingException. Bad padding
-     *         exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] removeCertificateByEntity(final GXDLMSSecureClient client,
-            final CertificateEntity entity, final CertificateType type, final byte[] systemTitle)
+                                                    final CertificateEntity entity, final CertificateType type, final byte[] systemTitle)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -828,32 +702,22 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Removes X.509 v3 certificate from the server using serial number.
-     * 
-     * @param client
-     *            DLMS client that is used to generate action.
-     * @param serialNumber
-     *            Serial number.
-     * @param issuer
-     *            Issuer.
+     *
+     * @param client       DLMS client that is used to generate action.
+     * @param serialNumber Serial number.
+     * @param issuer       Issuer.
      * @return Generated action. * @throws BadPaddingException. Bad padding
-     *         exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] removeCertificateBySerial(final GXDLMSSecureClient client,
-            final String serialNumber, final String issuer) throws InvalidKeyException,
+                                                    final String serialNumber, final String issuer) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer bb = new GXByteBuffer();
@@ -878,31 +742,31 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
             throw new IllegalArgumentException("Invalid Security Suite Version.");
         }
         switch (e.getIndex()) {
-        case 1:
-            securityActivate(settings, e);
-            break;
-        case 2:
-            keyTransfer(settings, e);
-            break;
-        case 3:
-            return invokeKeyAgreement(settings, e);
-        case 4:
-            generateKeyPair(settings, e);
-            break;
-        case 5:
-            return generateCertificateRequest(settings, e);
-        case 6:
-            importCertificate(settings, e);
-            break;
-        case 7:
-            return exportCertificate(e);
-        case 8:
-            removeCertificate(e);
-            break;
-        default:
-            // Invalid type
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                securityActivate(settings, e);
+                break;
+            case 2:
+                keyTransfer(settings, e);
+                break;
+            case 3:
+                return invokeKeyAgreement(settings, e);
+            case 4:
+                generateKeyPair(settings, e);
+                break;
+            case 5:
+                return generateCertificateRequest(settings, e);
+            case 6:
+                importCertificate(settings, e);
+                break;
+            case 7:
+                return exportCertificate(e);
+            case 8:
+                removeCertificate(e);
+                break;
+            default:
+                // Invalid type
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         // Return standard reply.
         return null;
@@ -969,7 +833,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         if (usage != KeyUsage.KEY_AGREEMENT.getValue()
                 && usage != KeyUsage.DIGITAL_SIGNATURE.getValue()
                 && usage != (KeyUsage.KEY_AGREEMENT.getValue()
-                        | KeyUsage.DIGITAL_SIGNATURE.getValue())) {
+                | KeyUsage.DIGITAL_SIGNATURE.getValue())) {
             // At least one bit must be used.
             e.setError(ErrorCode.INCONSISTENT_CLASS);
         } else {
@@ -988,7 +852,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     private byte[] generateCertificateRequest(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                              final ValueEventArgs e) {
         CertificateType key = CertificateType.forValue(((Number) e.getParameters()).intValue());
         byte[] st = getServerSystemTitle();
         if (st == null) {
@@ -997,17 +861,17 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         try {
             KeyPair kp = null;
             switch (key) {
-            case DIGITAL_SIGNATURE:
-                kp = signingKey;
-                break;
-            case KEY_AGREEMENT:
-                kp = keyAgreement;
-                break;
-            case TLS:
-                kp = tls;
-                break;
-            default:
-                break;
+                case DIGITAL_SIGNATURE:
+                    kp = signingKey;
+                    break;
+                case KEY_AGREEMENT:
+                    kp = keyAgreement;
+                    break;
+                case TLS:
+                    kp = tls;
+                    break;
+                default:
+                    break;
             }
             if (kp == null) {
                 e.setError(ErrorCode.INCONSISTENT_CLASS);
@@ -1027,16 +891,16 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
         try {
             KeyPair value = GXEcdsa.generateKeyPair(Ecc.P256);
             switch (key) {
-            case DIGITAL_SIGNATURE:
-                signingKey = value;
-                break;
-            case KEY_AGREEMENT:
-                keyAgreement = value;
-            case TLS:
-                tls = value;
-                break;
-            default:
-                e.setError(ErrorCode.INCONSISTENT_CLASS);
+                case DIGITAL_SIGNATURE:
+                    signingKey = value;
+                    break;
+                case KEY_AGREEMENT:
+                    keyAgreement = value;
+                case TLS:
+                    tls = value;
+                    break;
+                default:
+                    e.setError(ErrorCode.INCONSISTENT_CLASS);
             }
         } catch (Exception e1) {
             e.setError(ErrorCode.INCONSISTENT_CLASS);
@@ -1107,21 +971,21 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
                             "GUEK: {0}", kdf);
                     settings.getCipher().setSigning(Signing.EPHEMERAL_UNIFIED_MODEL);
                     switch (GlobalKeyType.values()[keyId]) {
-                    case BROADCAST_ENCRYPTION:
-                        gbek = kdf.array();
-                        break;
-                    case UNICAST_ENCRYPTION:
-                        guek = kdf.array();
-                        break;
-                    case AUTHENTICATION:
-                        gak = kdf.array();
-                        break;
-                    case KEK:
-                        kek = kdf.array();
-                        break;
-                    default:
-                        e.setError(ErrorCode.INCONSISTENT_CLASS);
-                        break;
+                        case BROADCAST_ENCRYPTION:
+                            gbek = kdf.array();
+                            break;
+                        case UNICAST_ENCRYPTION:
+                            guek = kdf.array();
+                            break;
+                        case AUTHENTICATION:
+                            gak = kdf.array();
+                            break;
+                        case KEK:
+                            kek = kdf.array();
+                            break;
+                        default:
+                            e.setError(ErrorCode.INCONSISTENT_CLASS);
+                            break;
                     }
                     return bb.array();
                 }
@@ -1141,20 +1005,20 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
                 GlobalKeyType type = GlobalKeyType.values()[((Number) item.get(0)).intValue()];
                 byte[] data = (byte[]) item.get(1);
                 switch (type) {
-                case BROADCAST_ENCRYPTION:
-                    gbek = GXDLMSSecureClient.decrypt(settings.getKek(), data);
-                    break;
-                case UNICAST_ENCRYPTION:
-                    guek = GXDLMSSecureClient.decrypt(settings.getKek(), data);
-                    break;
-                case AUTHENTICATION:
-                    gak = GXDLMSSecureClient.decrypt(settings.getKek(), data);
-                    break;
-                case KEK:
-                    kek = GXDLMSSecureClient.decrypt(settings.getKek(), data);
-                    break;
-                default:
-                    e.setError(ErrorCode.INCONSISTENT_CLASS);
+                    case BROADCAST_ENCRYPTION:
+                        gbek = GXDLMSSecureClient.decrypt(settings.getKek(), data);
+                        break;
+                    case UNICAST_ENCRYPTION:
+                        guek = GXDLMSSecureClient.decrypt(settings.getKek(), data);
+                        break;
+                    case AUTHENTICATION:
+                        gak = GXDLMSSecureClient.decrypt(settings.getKek(), data);
+                        break;
+                    case KEK:
+                        kek = GXDLMSSecureClient.decrypt(settings.getKek(), data);
+                        break;
+                    default:
+                        e.setError(ErrorCode.INCONSISTENT_CLASS);
                 }
             }
         } catch (Exception ex) {
@@ -1213,34 +1077,34 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
                     List<?> item = (List<?>) tmp;
                     GlobalKeyType type = GlobalKeyType.values()[((Number) item.get(0)).intValue()];
                     switch (type) {
-                    case UNICAST_ENCRYPTION:
-                        if (e.getIndex() == 2) {
-                            settings.getCipher().setBlockCipherKey(guek);
+                        case UNICAST_ENCRYPTION:
+                            if (e.getIndex() == 2) {
+                                settings.getCipher().setBlockCipherKey(guek);
 
-                        } else {
-                            settings.setEphemeralBlockCipherKey(guek);
-                        }
-                        break;
-                    case BROADCAST_ENCRYPTION:
-                        if (e.getIndex() == 2) {
-                            settings.getCipher().setBroadcastBlockCipherKey(gbek);
-                        } else {
-                            settings.setEphemeralBroadcastBlockCipherKey(gbek);
-                        }
-                        break;
-                    case AUTHENTICATION:
-                        // if settings.Cipher is null non secure server is used.
-                        if (e.getIndex() == 2) {
-                            settings.getCipher().setAuthenticationKey(gak);
-                        } else {
-                            settings.setEphemeralAuthenticationKey(gak);
-                        }
-                        break;
-                    case KEK:
-                        settings.setKek(kek);
-                        break;
-                    default:
-                        e.setError(ErrorCode.INCONSISTENT_CLASS);
+                            } else {
+                                settings.setEphemeralBlockCipherKey(guek);
+                            }
+                            break;
+                        case BROADCAST_ENCRYPTION:
+                            if (e.getIndex() == 2) {
+                                settings.getCipher().setBroadcastBlockCipherKey(gbek);
+                            } else {
+                                settings.setEphemeralBroadcastBlockCipherKey(gbek);
+                            }
+                            break;
+                        case AUTHENTICATION:
+                            // if settings.Cipher is null non secure server is used.
+                            if (e.getIndex() == 2) {
+                                settings.getCipher().setAuthenticationKey(gak);
+                            } else {
+                                settings.setEphemeralAuthenticationKey(gak);
+                            }
+                            break;
+                        case KEK:
+                            settings.setKek(kek);
+                            break;
+                        default:
+                            e.setError(ErrorCode.INCONSISTENT_CLASS);
                     }
                 }
             }
@@ -1251,15 +1115,11 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Find certificate using entity information.
-     * 
-     * @param certificates
-     *            Certificate collection.
-     * @param entity
-     *            Certificate entity type.
-     * @param type
-     *            Certificate type.
-     * @param systemtitle
-     *            System title.
+     *
+     * @param certificates Certificate collection.
+     * @param entity       Certificate entity type.
+     * @param type         Certificate type.
+     * @param systemtitle  System title.
      * @return
      */
     private static GXx509Certificate findCertificateByEntity(
@@ -1624,12 +1484,12 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Security Policy", "Security Suite",
-                "Client System Title", "Server System Title" };
+        return new String[]{"Logical Name", "Security Policy", "Security Suite",
+                "Client System Title", "Server System Title"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Security activate", "Key transfer" };
+        return new String[]{"Security activate", "Key transfer"};
     }
 }

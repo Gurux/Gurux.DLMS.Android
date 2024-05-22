@@ -71,7 +71,7 @@ public class GXUnitCharge {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Charge per unit scaling.
      */
     public final GXChargePerUnitScaling getChargePerUnitScaling() {
@@ -81,19 +81,18 @@ public class GXUnitCharge {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Charge per unit scaling.
+     *
+     * @param value Charge per unit scaling.
      */
     public final void
-            setChargePerUnitScaling(final GXChargePerUnitScaling value) {
+    setChargePerUnitScaling(final GXChargePerUnitScaling value) {
         chargePerUnitScaling = value;
     }
 
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Commodity
      */
     public final GXCommodity getCommodity() {
@@ -103,9 +102,8 @@ public class GXUnitCharge {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Commodity
+     *
+     * @param value Commodity
      */
     public final void setCommodity(final GXCommodity value) {
         commodity = value;
@@ -114,7 +112,7 @@ public class GXUnitCharge {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Charge tables.
      */
     public final GXChargeTable[] getChargeTables() {
@@ -124,9 +122,8 @@ public class GXUnitCharge {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Charge tables.
+     *
+     * @param value Charge tables.
      */
     public final void setChargeTables(final GXChargeTable[] value) {
         chargeTables = value;

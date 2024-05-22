@@ -55,7 +55,7 @@ public class GXChargePerUnitScaling {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Commodity scale.
      */
     public final short getCommodityScale() {
@@ -65,9 +65,8 @@ public class GXChargePerUnitScaling {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Commodity scale.
+     *
+     * @param value Commodity scale.
      */
     public final void setCommodityScale(final short value) {
         commodityScale = value;
@@ -76,7 +75,7 @@ public class GXChargePerUnitScaling {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Price scale.
      */
     public final short getPriceScale() {
@@ -86,9 +85,8 @@ public class GXChargePerUnitScaling {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Price scale.
+     *
+     * @param value Price scale.
      */
     public final void setPriceScale(final short value) {
         priceScale = value;

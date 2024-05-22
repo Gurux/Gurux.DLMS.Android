@@ -51,7 +51,7 @@ public enum MBusEncryptionMode {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, MBusEncryptionMode> getMappings() {
@@ -67,9 +67,8 @@ public enum MBusEncryptionMode {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     MBusEncryptionMode(final int value) {
         intValue = value;
@@ -78,7 +77,7 @@ public enum MBusEncryptionMode {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -87,9 +86,8 @@ public enum MBusEncryptionMode {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static MBusEncryptionMode forValue(final int value) {

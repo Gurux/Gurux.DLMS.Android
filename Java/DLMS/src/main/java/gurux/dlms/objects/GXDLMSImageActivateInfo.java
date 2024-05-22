@@ -47,16 +47,15 @@ public class GXDLMSImageActivateInfo {
 
     /**
      * @return Image_size is the size of the Image(s) to be activated. Expressed
-     *         in octets;
+     * in octets;
      */
     public final long getSize() {
         return size;
     }
 
     /**
-     * @param value
-     *            Image_size is the size of the Image(s) to be activated.
-     *            Expressed in octets;
+     * @param value Image_size is the size of the Image(s) to be activated.
+     *              Expressed in octets;
      */
     public final void setSize(final long value) {
         size = value;
@@ -64,18 +63,17 @@ public class GXDLMSImageActivateInfo {
 
     /**
      * @return Image identification is the identification of the Image(s) to be
-     *         activated, and may contain information like manufacturer, device
-     *         type, version information, etc.
+     * activated, and may contain information like manufacturer, device
+     * type, version information, etc.
      */
     public final byte[] getIdentification() {
         return identification;
     }
 
     /**
-     * @param value
-     *            Image identification is the identification of the Image(s) to
-     *            be activated, and may contain information like manufacturer,
-     *            device type, version information, etc.
+     * @param value Image identification is the identification of the Image(s) to
+     *              be activated, and may contain information like manufacturer,
+     *              device type, version information, etc.
      */
     public final void setIdentification(final byte[] value) {
         identification = value;
@@ -89,9 +87,8 @@ public class GXDLMSImageActivateInfo {
     }
 
     /**
-     * @param value
-     *            Image signature is the signature of the Image(s) to be
-     *            activated.
+     * @param value Image signature is the signature of the Image(s) to be
+     *              activated.
      */
     public final void setSignature(final byte[] value) {
         signature = value;
@@ -108,16 +105,13 @@ public class GXDLMSImageActivateInfo {
 
     /**
      * Constructor.
-     * 
-     * @param forSize
-     *            Size.
-     * @param forIdentification
-     *            Identification.
-     * @param forSignature
-     *            Signature.
+     *
+     * @param forSize           Size.
+     * @param forIdentification Identification.
+     * @param forSignature      Signature.
      */
     public GXDLMSImageActivateInfo(final long forSize, final byte[] forIdentification,
-            final byte[] forSignature) {
+                                   final byte[] forSignature) {
         size = forSize;
         identification = forIdentification;
         signature = forSignature;

@@ -41,26 +41,26 @@ import gurux.dlms.objects.enums.CertificateEntity;
 import gurux.dlms.objects.enums.CertificateType;
 
 public class GXDLMSCertificateCollection extends ArrayList<GXDLMSCertificateInfo> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Find certificate with given parameters.
-	 * 
-	 * @param entity      Certificate entity.
-	 * @param type        Certificate type.
-	 * @param systemtitle System title.
-	 * @return
-	 */
-	public GXDLMSCertificateInfo find(final CertificateEntity entity, final CertificateType type,
-			final byte[] systemtitle) {
-		String subject = GXAsn1Converter.systemTitleToSubject(systemtitle);
-		for (GXDLMSCertificateInfo it : this) {
-			if ((it.getEntity() == CertificateEntity.SERVER && entity == CertificateEntity.SERVER)
-					|| (it.getEntity() == CertificateEntity.CLIENT && entity == CertificateEntity.CLIENT)
-							&& it.getSubject().equals(subject)) {
-				return it;
-			}
-		}
-		return null;
-	}
+    /**
+     * Find certificate with given parameters.
+     *
+     * @param entity      Certificate entity.
+     * @param type        Certificate type.
+     * @param systemtitle System title.
+     * @return
+     */
+    public GXDLMSCertificateInfo find(final CertificateEntity entity, final CertificateType type,
+                                      final byte[] systemtitle) {
+        String subject = GXAsn1Converter.systemTitleToSubject(systemtitle);
+        for (GXDLMSCertificateInfo it : this) {
+            if ((it.getEntity() == CertificateEntity.SERVER && entity == CertificateEntity.SERVER)
+                    || (it.getEntity() == CertificateEntity.CLIENT && entity == CertificateEntity.CLIENT)
+                    && it.getSubject().equals(subject)) {
+                return it;
+            }
+        }
+        return null;
+    }
 }

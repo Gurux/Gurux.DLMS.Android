@@ -61,9 +61,9 @@ class GXStandardObisCodeCollection
             // If value is give as hex.
             byte[] tmp2 = GXCommon.hexToBytes(ln);
             if (tmp2.length == 6) {
-                return new int[] { tmp2[0] & 0xFF, tmp2[1] & 0xFF,
+                return new int[]{tmp2[0] & 0xFF, tmp2[1] & 0xFF,
                         tmp2[2] & 0xFF, tmp2[3] & 0xFF, tmp2[4] & 0xFF,
-                        tmp2[5] & 0xFF };
+                        tmp2[5] & 0xFF};
             }
             if (tmp.size() != 6) {
                 throw new IllegalArgumentException("Invalid OBIS Code.");
@@ -80,7 +80,7 @@ class GXStandardObisCodeCollection
     }
 
     public final GXStandardObisCode[] find(final String ln,
-            final ObjectType objectType) {
+                                           final ObjectType objectType) {
         int ic = 0;
         if (objectType != null) {
             ic = objectType.getValue();
@@ -137,7 +137,7 @@ class GXStandardObisCodeCollection
      * Check OBIS code.
      */
     private static boolean equalsObisCode(final String[] obisMask,
-            final int[] ic) {
+                                          final int[] ic) {
         if (ic == null) {
             return true;
         }
@@ -172,32 +172,32 @@ class GXStandardObisCodeCollection
         int value = Integer.parseInt(str.substring(1));
         String tmp = "";
         switch (value) {
-        case 41:
-            tmp = "Absolute temperature";
-            break;
-        case 42:
-            tmp = "Absolute pressure";
-            break;
-        case 44:
-            tmp = "Velocity of sound";
-            break;
-        case 45:
-            tmp = "Density(of gas)";
-            break;
-        case 46:
-            tmp = "Relative density";
-            break;
-        case 47:
-            tmp = "Gauge pressure";
-            break;
-        case 48:
-            tmp = "Differential pressure";
-            break;
-        case 49:
-            tmp = "Density of air";
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid value.");
+            case 41:
+                tmp = "Absolute temperature";
+                break;
+            case 42:
+                tmp = "Absolute pressure";
+                break;
+            case 44:
+                tmp = "Velocity of sound";
+                break;
+            case 45:
+                tmp = "Density(of gas)";
+                break;
+            case 46:
+                tmp = "Relative density";
+                break;
+            case 47:
+                tmp = "Gauge pressure";
+                break;
+            case 48:
+                tmp = "Differential pressure";
+                break;
+            case 49:
+                tmp = "Density of air";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid value.");
         }
         return tmp;
     }
@@ -212,188 +212,188 @@ class GXStandardObisCodeCollection
         }
         int value = Integer.parseInt(str.substring(1));
         switch (value) {
-        case 1:
-            return "Sum Li Active power+ (QI+QIV)";
-        case 2:
-            return "Sum Li Active power- (QII+QIII)";
-        case 3:
-            return "Sum Li Reactive power+ (QI+QII)";
-        case 4:
-            return "Sum Li Reactive power- (QIII+QIV)";
-        case 5:
-            return "Sum Li Reactive power QI";
-        case 6:
-            return "Sum Li Reactive power QII";
-        case 7:
-            return "Sum Li Reactive power QIII";
-        case 8:
-            return "Sum Li Reactive power QIV";
-        case 9:
-            return "Sum Li Apparent power+ (QI+QIV)";
-        case 10:
-            return "Sum Li Apparent power- (QII+QIII)";
-        case 11:
-            return "Current: any phase";
-        case 12:
-            return "Voltage: any phase";
-        case 13:
-            return "Sum Li Power factor";
-        case 14:
-            return "Supply frequency";
-        case 15:
-            return "Sum Li Active power (abs(QI+QIV)+abs(QII+QIII))";
-        case 16:
-            return "Sum Li Active power (abs(QI+QIV)-abs(QII+QIII))";
-        case 17:
-            return "Sum Li Active power QI";
-        case 18:
-            return "Sum Li Active power QII";
-        case 19:
-            return "Sum Li Active power QIII";
-        case 20:
-            return "Sum Li Active power QIV";
-        case 21:
-            return "L1 Active power+ (QI+QIV)";
-        case 22:
-            return "L1 Active power- (QII+QIII)";
-        case 23:
-            return "L1 Reactive power+ (QI+QII)";
-        case 24:
-            return "L1 Reactive power- (QIII+QIV)";
-        case 25:
-            return "L1 Reactive power QI";
-        case 26:
-            return "L1 Reactive power QII";
-        case 27:
-            return "L1 Reactive power QIII";
-        case 28:
-            return "L1 Reactive power QIV";
-        case 29:
-            return "L1 Apparent power+ (QI+QIV)";
-        case 30:
-            return "L1 Apparent power- (QII+QIII)";
-        case 31:
-            return "L1 Current";
-        case 32:
-            return "L1 Voltage";
-        case 33:
-            return "L1 Power factor";
-        case 34:
-            return "L1 Supply frequency";
-        case 35:
-            return "L1 Active power (abs(QI+QIV)+abs(QII+QIII))";
-        case 36:
-            return "L1 Active power (abs(QI+QIV)-abs(QII+QIII))";
-        case 37:
-            return "L1 Active power QI";
-        case 38:
-            return "L1 Active power QII";
-        case 39:
-            return "L1 Active power QIII";
-        case 40:
-            return "L1 Active power QIV";
-        case 41:
-            return "L2 Active power+ (QI+QIV)";
-        case 42:
-            return "L2 Active power- (QII+QIII)";
-        case 43:
-            return "L2 Reactive power+ (QI+QII)";
-        case 44:
-            return "L2 Reactive power- (QIII+QIV)";
-        case 45:
-            return "L2 Reactive power QI";
-        case 46:
-            return "L2 Reactive power QII";
-        case 47:
-            return "L2 Reactive power QIII";
-        case 48:
-            return "L2 Reactive power QIV";
-        case 49:
-            return "L2 Apparent power+ (QI+QIV)";
-        case 50:
-            return "L2 Apparent power- (QII+QIII)";
-        case 51:
-            return "L2 Current";
-        case 52:
-            return "L2 Voltage";
-        case 53:
-            return "L2 Power factor";
-        case 54:
-            return "L2 Supply frequency";
-        case 55:
-            return "L2 Active power (abs(QI+QIV)+abs(QII+QIII))";
-        case 56:
-            return "L2 Active power (abs(QI+QIV)-abs(QI+QIII))";
-        case 57:
-            return "L2 Active power QI";
-        case 58:
-            return "L2 Active power QII";
-        case 59:
-            return "L2 Active power QIII";
-        case 60:
-            return "L2 Active power QIV";
-        case 61:
-            return "L3 Active power+ (QI+QIV)";
-        case 62:
-            return "L3 Active power- (QII+QIII)";
-        case 63:
-            return "L3 Reactive power+ (QI+QII)";
-        case 64:
-            return "L3 Reactive power- (QIII+QIV)";
-        case 65:
-            return "L3 Reactive power QI";
-        case 66:
-            return "L3 Reactive power QII";
-        case 67:
-            return "L3 Reactive power QIII";
-        case 68:
-            return "L3 Reactive power QIV";
-        case 69:
-            return "L3 Apparent power+ (QI+QIV)";
-        case 70:
-            return "L3 Apparent power- (QII+QIII)";
-        case 71:
-            return "L3 Current";
-        case 72:
-            return "L3 Voltage";
-        case 73:
-            return "L3 Power factor";
-        case 74:
-            return "L3 Supply frequency";
-        case 75:
-            return "L3 Active power (abs(QI+QIV)+abs(QII+QIII))";
-        case 76:
-            return "L3 Active power (abs(QI+QIV)-abs(QI+QIII))";
-        case 77:
-            return "L3 Active power QI";
-        case 78:
-            return "L3 Active power QII";
-        case 79:
-            return "L3 Active power QIII";
-        case 80:
-            return "L3 Active power QIV";
-        case 82:
-            return "Unitless quantities (pulses or pieces)";
-        case 84:
-            return "Sum Li Power factor-";
-        case 85:
-            return "L1 Power factor-";
-        case 86:
-            return "L2 Power factor-";
-        case 87:
-            return "L3 Power factor-";
-        case 88:
-            return "Sum Li A2h QI+QII+QIII+QIV";
-        case 89:
-            return "Sum Li V2h QI+QII+QIII+QIV";
-        case 90:
-            return "SLi current (algebraic sum of the - unsigned - value of the currents in all phases)";
-        case 91:
-            return "Lo Current (neutral)";
-        case 92:
-            return "Lo Voltage (neutral)";
-        default:
-            return "";
+            case 1:
+                return "Sum Li Active power+ (QI+QIV)";
+            case 2:
+                return "Sum Li Active power- (QII+QIII)";
+            case 3:
+                return "Sum Li Reactive power+ (QI+QII)";
+            case 4:
+                return "Sum Li Reactive power- (QIII+QIV)";
+            case 5:
+                return "Sum Li Reactive power QI";
+            case 6:
+                return "Sum Li Reactive power QII";
+            case 7:
+                return "Sum Li Reactive power QIII";
+            case 8:
+                return "Sum Li Reactive power QIV";
+            case 9:
+                return "Sum Li Apparent power+ (QI+QIV)";
+            case 10:
+                return "Sum Li Apparent power- (QII+QIII)";
+            case 11:
+                return "Current: any phase";
+            case 12:
+                return "Voltage: any phase";
+            case 13:
+                return "Sum Li Power factor";
+            case 14:
+                return "Supply frequency";
+            case 15:
+                return "Sum Li Active power (abs(QI+QIV)+abs(QII+QIII))";
+            case 16:
+                return "Sum Li Active power (abs(QI+QIV)-abs(QII+QIII))";
+            case 17:
+                return "Sum Li Active power QI";
+            case 18:
+                return "Sum Li Active power QII";
+            case 19:
+                return "Sum Li Active power QIII";
+            case 20:
+                return "Sum Li Active power QIV";
+            case 21:
+                return "L1 Active power+ (QI+QIV)";
+            case 22:
+                return "L1 Active power- (QII+QIII)";
+            case 23:
+                return "L1 Reactive power+ (QI+QII)";
+            case 24:
+                return "L1 Reactive power- (QIII+QIV)";
+            case 25:
+                return "L1 Reactive power QI";
+            case 26:
+                return "L1 Reactive power QII";
+            case 27:
+                return "L1 Reactive power QIII";
+            case 28:
+                return "L1 Reactive power QIV";
+            case 29:
+                return "L1 Apparent power+ (QI+QIV)";
+            case 30:
+                return "L1 Apparent power- (QII+QIII)";
+            case 31:
+                return "L1 Current";
+            case 32:
+                return "L1 Voltage";
+            case 33:
+                return "L1 Power factor";
+            case 34:
+                return "L1 Supply frequency";
+            case 35:
+                return "L1 Active power (abs(QI+QIV)+abs(QII+QIII))";
+            case 36:
+                return "L1 Active power (abs(QI+QIV)-abs(QII+QIII))";
+            case 37:
+                return "L1 Active power QI";
+            case 38:
+                return "L1 Active power QII";
+            case 39:
+                return "L1 Active power QIII";
+            case 40:
+                return "L1 Active power QIV";
+            case 41:
+                return "L2 Active power+ (QI+QIV)";
+            case 42:
+                return "L2 Active power- (QII+QIII)";
+            case 43:
+                return "L2 Reactive power+ (QI+QII)";
+            case 44:
+                return "L2 Reactive power- (QIII+QIV)";
+            case 45:
+                return "L2 Reactive power QI";
+            case 46:
+                return "L2 Reactive power QII";
+            case 47:
+                return "L2 Reactive power QIII";
+            case 48:
+                return "L2 Reactive power QIV";
+            case 49:
+                return "L2 Apparent power+ (QI+QIV)";
+            case 50:
+                return "L2 Apparent power- (QII+QIII)";
+            case 51:
+                return "L2 Current";
+            case 52:
+                return "L2 Voltage";
+            case 53:
+                return "L2 Power factor";
+            case 54:
+                return "L2 Supply frequency";
+            case 55:
+                return "L2 Active power (abs(QI+QIV)+abs(QII+QIII))";
+            case 56:
+                return "L2 Active power (abs(QI+QIV)-abs(QI+QIII))";
+            case 57:
+                return "L2 Active power QI";
+            case 58:
+                return "L2 Active power QII";
+            case 59:
+                return "L2 Active power QIII";
+            case 60:
+                return "L2 Active power QIV";
+            case 61:
+                return "L3 Active power+ (QI+QIV)";
+            case 62:
+                return "L3 Active power- (QII+QIII)";
+            case 63:
+                return "L3 Reactive power+ (QI+QII)";
+            case 64:
+                return "L3 Reactive power- (QIII+QIV)";
+            case 65:
+                return "L3 Reactive power QI";
+            case 66:
+                return "L3 Reactive power QII";
+            case 67:
+                return "L3 Reactive power QIII";
+            case 68:
+                return "L3 Reactive power QIV";
+            case 69:
+                return "L3 Apparent power+ (QI+QIV)";
+            case 70:
+                return "L3 Apparent power- (QII+QIII)";
+            case 71:
+                return "L3 Current";
+            case 72:
+                return "L3 Voltage";
+            case 73:
+                return "L3 Power factor";
+            case 74:
+                return "L3 Supply frequency";
+            case 75:
+                return "L3 Active power (abs(QI+QIV)+abs(QII+QIII))";
+            case 76:
+                return "L3 Active power (abs(QI+QIV)-abs(QI+QIII))";
+            case 77:
+                return "L3 Active power QI";
+            case 78:
+                return "L3 Active power QII";
+            case 79:
+                return "L3 Active power QIII";
+            case 80:
+                return "L3 Active power QIV";
+            case 82:
+                return "Unitless quantities (pulses or pieces)";
+            case 84:
+                return "Sum Li Power factor-";
+            case 85:
+                return "L1 Power factor-";
+            case 86:
+                return "L2 Power factor-";
+            case 87:
+                return "L3 Power factor-";
+            case 88:
+                return "Sum Li A2h QI+QII+QIII+QIV";
+            case 89:
+                return "Sum Li V2h QI+QII+QIII+QIV";
+            case 90:
+                return "SLi current (algebraic sum of the - unsigned - value of the currents in all phases)";
+            case 91:
+                return "Lo Current (neutral)";
+            case 92:
+                return "Lo Voltage (neutral)";
+            default:
+                return "";
         }
     }
     // CHECKSTYLE:ON
@@ -401,10 +401,8 @@ class GXStandardObisCodeCollection
     /**
      * Get OBIS value.
      *
-     * @param formula
-     *            OBIS formula.
-     * @param value
-     *            OBIS value.
+     * @param formula OBIS formula.
+     * @param value   OBIS value.
      * @return OBIS value as integer.
      */
     private static String getObisValue(final String formula, final int value) {
@@ -474,31 +472,31 @@ class GXStandardObisCodeCollection
                     if (begin != -1) {
                         List<String> arr =
                                 GXCommon.split(desc.substring(begin + 2),
-                                        new char[] { '(', ')', '$' });
+                                        new char[]{'(', ')', '$'});
                         desc = desc.substring(0, begin);
                         for (String v : arr) {
                             switch (v.charAt(0)) {
-                            case 'A':
-                                desc += getObisValue(v, obisCode[0]);
-                                break;
-                            case 'B':
-                                desc += getObisValue(v, obisCode[1]);
-                                break;
-                            case 'C':
-                                desc += getObisValue(v, obisCode[2]);
-                                break;
-                            case 'D':
-                                desc += getObisValue(v, obisCode[3]);
-                                break;
-                            case 'E':
-                                desc += getObisValue(v, obisCode[4]);
-                                break;
-                            case 'F':
-                                desc += getObisValue(v, obisCode[5]);
-                                break;
-                            default:
-                                desc += v;
-                                break;
+                                case 'A':
+                                    desc += getObisValue(v, obisCode[0]);
+                                    break;
+                                case 'B':
+                                    desc += getObisValue(v, obisCode[1]);
+                                    break;
+                                case 'C':
+                                    desc += getObisValue(v, obisCode[2]);
+                                    break;
+                                case 'D':
+                                    desc += getObisValue(v, obisCode[3]);
+                                    break;
+                                case 'E':
+                                    desc += getObisValue(v, obisCode[4]);
+                                    break;
+                                case 'F':
+                                    desc += getObisValue(v, obisCode[5]);
+                                    break;
+                                default:
+                                    desc += v;
+                                    break;
                             }
                         }
                     }

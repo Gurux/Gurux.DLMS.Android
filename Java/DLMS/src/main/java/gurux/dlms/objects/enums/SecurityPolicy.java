@@ -94,7 +94,7 @@ public enum SecurityPolicy {
 
     /**
      * Get mappings.
-     * 
+     *
      * @return Hash map of enumeration and integer values.
      */
     private static HashMap<Integer, SecurityPolicy> getMappings() {
@@ -108,9 +108,8 @@ public enum SecurityPolicy {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value for enumerator.
+     *
+     * @param value Integer value for enumerator.
      */
     SecurityPolicy(final int forValue) {
         intValue = forValue;
@@ -121,7 +120,7 @@ public enum SecurityPolicy {
 
     /**
      * Get enemerator's integer value.
-     * 
+     *
      * @return Integer value of enumerator.
      */
     public int getValue() {
@@ -132,18 +131,17 @@ public enum SecurityPolicy {
      * @return Get enumeration constant values.
      */
     private static SecurityPolicy[] getEnumConstants() {
-        return new SecurityPolicy[] { AUTHENTICATED, ENCRYPTED,
+        return new SecurityPolicy[]{AUTHENTICATED, ENCRYPTED,
                 AUTHENTICATED_REQUEST, ENCRYPTED_REQUEST,
                 DIGITALLY_SIGNED_REQUEST, AUTHENTICATED_RESPONSE,
-                ENCRYPTED_RESPONSE, DIGITALLY_SIGNED_RESPONSE };
+                ENCRYPTED_RESPONSE, DIGITALLY_SIGNED_RESPONSE};
 
     }
 
     /**
      * Get enumerator from integer value.
-     * 
-     * @param value
-     *            integer value.
+     *
+     * @param value integer value.
      * @return Enumerator value.
      */
     public static java.util.Set<SecurityPolicy> forValue(final int value) {
@@ -160,9 +158,8 @@ public enum SecurityPolicy {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param forValue
-     *            The enumerated value.
+     *
+     * @param forValue The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final java.util.Set<SecurityPolicy> forValue) {

@@ -37,7 +37,7 @@ public enum MBusCommand {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, MBusCommand> getMappings() {
@@ -53,9 +53,8 @@ public enum MBusCommand {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     MBusCommand(final int value) {
         intValue = value;
@@ -64,7 +63,7 @@ public enum MBusCommand {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -73,9 +72,8 @@ public enum MBusCommand {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static MBusCommand forValue(final int value) {

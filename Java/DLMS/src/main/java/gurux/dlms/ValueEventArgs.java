@@ -147,8 +147,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Object value.
+     * @param value Object value.
      */
     public final void setValue(final Object value) {
         eventValue = value;
@@ -162,8 +161,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Data type of the value.
+     * @param value Data type of the value.
      */
     public final void setDataType(final DataType value) {
         dataType = value;
@@ -177,8 +175,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Is request handled.
+     * @param value Is request handled.
      */
     public final void setHandled(final boolean value) {
         handled = value;
@@ -192,8 +189,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Selector.
+     * @param value Selector.
      */
     public final void setSelector(final int value) {
         selector = value;
@@ -207,8 +203,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Optional parameters.
+     * @param value Optional parameters.
      */
     public final void setParameters(final Object value) {
         parameters = value;
@@ -216,21 +211,16 @@ public class ValueEventArgs {
 
     /**
      * Constructor.
-     * 
-     * @param svr
-     *            DLMS server.
-     * @param eventTarget
-     *            Event target.
-     * @param eventIndex
-     *            Event index.
-     * @param readSelector
-     *            Optional read event selector.
-     * @param forParameters
-     *            Optional parameters.
+     *
+     * @param svr           DLMS server.
+     * @param eventTarget   Event target.
+     * @param eventIndex    Event index.
+     * @param readSelector  Optional read event selector.
+     * @param forParameters Optional parameters.
      */
     public ValueEventArgs(final GXDLMSServerBase svr,
-            final GXDLMSObject eventTarget, final int eventIndex,
-            final int readSelector, final Object forParameters) {
+                          final GXDLMSObject eventTarget, final int eventIndex,
+                          final int readSelector, final Object forParameters) {
         server = svr;
         settings = svr.getSettings();
         dataType = DataType.NONE;
@@ -242,21 +232,16 @@ public class ValueEventArgs {
 
     /**
      * Constructor.
-     * 
-     * @param s
-     *            DLMS settings.
-     * @param eventTarget
-     *            Event target.
-     * @param eventIndex
-     *            Event index.
-     * @param readSelector
-     *            Optional read event selector.
-     * @param forParameters
-     *            Optional parameters.
+     *
+     * @param s             DLMS settings.
+     * @param eventTarget   Event target.
+     * @param eventIndex    Event index.
+     * @param readSelector  Optional read event selector.
+     * @param forParameters Optional parameters.
      */
     public ValueEventArgs(final GXDLMSSettings s,
-            final GXDLMSObject eventTarget, final int eventIndex,
-            final int readSelector, final Object forParameters) {
+                          final GXDLMSObject eventTarget, final int eventIndex,
+                          final int readSelector, final Object forParameters) {
         settings = s;
         dataType = DataType.NONE;
         setTarget(eventTarget);
@@ -267,18 +252,14 @@ public class ValueEventArgs {
 
     /**
      * Constructor.
-     * 
-     * @param eventTarget
-     *            Event target.
-     * @param eventIndex
-     *            Event index.
-     * @param readSelector
-     *            Optional read event selector.
-     * @param forParameters
-     *            Optional parameters.
+     *
+     * @param eventTarget   Event target.
+     * @param eventIndex    Event index.
+     * @param readSelector  Optional read event selector.
+     * @param forParameters Optional parameters.
      */
     public ValueEventArgs(final GXDLMSObject eventTarget, final int eventIndex,
-            final int readSelector, final Object forParameters) {
+                          final int readSelector, final Object forParameters) {
         dataType = DataType.NONE;
         setTarget(eventTarget);
         setIndex(eventIndex);
@@ -294,8 +275,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Occurred error.
+     * @param value Occurred error.
      */
     public final void setError(final ErrorCode value) {
         error = value;
@@ -309,8 +289,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Is action.
+     * @param value Is action.
      */
     public final void setAction(final boolean value) {
         action = value;
@@ -331,8 +310,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Is value max PDU size skipped when converting data to bytes.
+     * @param value Is value max PDU size skipped when converting data to bytes.
      */
     public final void setSkipMaxPduSize(final boolean value) {
         skipMaxPduSize = value;
@@ -346,8 +324,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Is reply handled as byte array or octet string.
+     * @param value Is reply handled as byte array or octet string.
      */
     public void setByteArray(final boolean value) {
         byteArray = value;
@@ -361,8 +338,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            How many rows are read to one PDU.
+     * @param value How many rows are read to one PDU.
      */
     public final void setRowToPdu(final int value) {
         rowToPdu = value;
@@ -376,8 +352,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Rows end index.
+     * @param value Rows end index.
      */
     public final void setRowEndIndex(final long value) {
         rowEndIndex = value;
@@ -391,8 +366,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Rows begin index.
+     * @param value Rows begin index.
      */
     public final void setRowBeginIndex(final long value) {
         rowBeginIndex = value;
@@ -413,8 +387,7 @@ public class ValueEventArgs {
     }
 
     /**
-     * @param value
-     *            Invoke ID.
+     * @param value Invoke ID.
      */
     public final void setInvokeId(final long value) {
         invokeId = value;

@@ -60,11 +60,11 @@ public enum TranslatorOutputType {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static java.util.HashMap<Integer, TranslatorOutputType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (TranslatorOutputType.class) {
                 if (mappings == null) {
@@ -77,9 +77,8 @@ public enum TranslatorOutputType {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     TranslatorOutputType(final int value) {
         intValue = value;
@@ -88,7 +87,7 @@ public enum TranslatorOutputType {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -97,9 +96,8 @@ public enum TranslatorOutputType {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static TranslatorOutputType forValue(final int value) {

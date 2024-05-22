@@ -98,23 +98,23 @@ public enum Standard {
         String str;
         Standard value = Standard.forValue(getValue());
         switch (value) {
-        case DLMS:
-            str = "DLMS";
-            break;
-        case INDIA:
-            str = "INDIA";
-            break;
-        case ITALY:
-            str = "ITALY";
-            break;
-        case SAUDI_ARABIA:
-            str = "SAUDI_ARABIA";
-            break;
-        case IDIS:
-            str = "IDIS";
-            break;
-        default:
-            throw new IllegalArgumentException("Standard");
+            case DLMS:
+                str = "DLMS";
+                break;
+            case INDIA:
+                str = "INDIA";
+                break;
+            case ITALY:
+                str = "ITALY";
+                break;
+            case SAUDI_ARABIA:
+                str = "SAUDI_ARABIA";
+                break;
+            case IDIS:
+                str = "IDIS";
+                break;
+            default:
+                throw new IllegalArgumentException("Standard");
         }
         return str;
     }

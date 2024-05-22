@@ -84,8 +84,8 @@ import gurux.dlms.objects.enums.SecurityPolicy;
 import gurux.dlms.objects.enums.SecuritySuite;
 
 public final class GXSecure {
-    private static final byte[] IV = { (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6,
-            (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6 };
+    private static final byte[] IV = {(byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6,
+            (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6};
 
     /**
      * Default Logger.
@@ -253,7 +253,7 @@ public final class GXSecure {
      * @return Chiphered text.
      */
     public static byte[] secure(final GXDLMSSettings settings, final GXICipher cipher,
-            final long ic, final byte[] data, final byte[] secret)
+                                final long ic, final byte[] data, final byte[] secret)
             throws InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         try {
@@ -276,54 +276,54 @@ public final class GXSecure {
             d = challenge.array();
             MessageDigest md;
             switch (settings.getAuthentication()) {
-            case HIGH_MD5:
-                md = MessageDigest.getInstance("MD5");
-                d = md.digest(d);
-                break;
-            case HIGH_SHA1:
-                md = MessageDigest.getInstance("SHA-1");
-                d = md.digest(d);
-                break;
-            case HIGH_SHA256:
-                md = MessageDigest.getInstance("SHA-256");
-                d = md.digest(d);
-                break;
-            case HIGH_GMAC:
-                // SC is always Security.Authentication.
-                AesGcmParameter p = new AesGcmParameter(settings, 0, Security.AUTHENTICATION,
-                        cipher.getSecuritySuite(), ic, secret, cipher.getBlockCipherKey(),
-                        cipher.getAuthenticationKey());
-                p.setType(CountType.TAG);
-                challenge.clear();
-                challenge.setUInt8(Security.AUTHENTICATION.getValue()
-                        | settings.getCipher().getSecuritySuite().getValue());
-                challenge.setUInt32(p.getInvocationCounter());
-                challenge.set(encryptAesGcm(true, p, d));
-                d = challenge.array();
-                break;
-            case HIGH_ECDSA:
-                Signature sig = Signature.getInstance("SHA256withECDSA");
-                if (cipher.getSigningKeyPair() == null) {
-                    throw new IllegalArgumentException("SigningKeyPair is empty.");
-                }
-                System.out.println(GXCommon
-                        .toHex(GXAsn1Converter.rawValue(cipher.getSigningKeyPair().getPrivate())));
-                sig.initSign(cipher.getSigningKeyPair().getPrivate());
-                sig.update(secret);
-                d = sig.sign();
-                GXAsn1Sequence seq = (GXAsn1Sequence) GXAsn1Converter.fromByteArray(d);
-                GXByteBuffer bb = new GXByteBuffer();
-                bb.set(((GXAsn1Integer) seq.get(0)).getByteArray());
-                if (bb.size() != 32) {
-                    bb.move(1, 0, 32);
-                }
-                bb.set(((GXAsn1Integer) seq.get(1)).getByteArray());
-                if (bb.size() != 64) {
-                    bb.move(33, 32, 32);
-                }
-                d = bb.array();
-                break;
-            default:
+                case HIGH_MD5:
+                    md = MessageDigest.getInstance("MD5");
+                    d = md.digest(d);
+                    break;
+                case HIGH_SHA1:
+                    md = MessageDigest.getInstance("SHA-1");
+                    d = md.digest(d);
+                    break;
+                case HIGH_SHA256:
+                    md = MessageDigest.getInstance("SHA-256");
+                    d = md.digest(d);
+                    break;
+                case HIGH_GMAC:
+                    // SC is always Security.Authentication.
+                    AesGcmParameter p = new AesGcmParameter(settings, 0, Security.AUTHENTICATION,
+                            cipher.getSecuritySuite(), ic, secret, cipher.getBlockCipherKey(),
+                            cipher.getAuthenticationKey());
+                    p.setType(CountType.TAG);
+                    challenge.clear();
+                    challenge.setUInt8(Security.AUTHENTICATION.getValue()
+                            | settings.getCipher().getSecuritySuite().getValue());
+                    challenge.setUInt32(p.getInvocationCounter());
+                    challenge.set(encryptAesGcm(true, p, d));
+                    d = challenge.array();
+                    break;
+                case HIGH_ECDSA:
+                    Signature sig = Signature.getInstance("SHA256withECDSA");
+                    if (cipher.getSigningKeyPair() == null) {
+                        throw new IllegalArgumentException("SigningKeyPair is empty.");
+                    }
+                    System.out.println(GXCommon
+                            .toHex(GXAsn1Converter.rawValue(cipher.getSigningKeyPair().getPrivate())));
+                    sig.initSign(cipher.getSigningKeyPair().getPrivate());
+                    sig.update(secret);
+                    d = sig.sign();
+                    GXAsn1Sequence seq = (GXAsn1Sequence) GXAsn1Converter.fromByteArray(d);
+                    GXByteBuffer bb = new GXByteBuffer();
+                    bb.set(((GXAsn1Integer) seq.get(0)).getByteArray());
+                    if (bb.size() != 32) {
+                        bb.move(1, 0, 32);
+                    }
+                    bb.set(((GXAsn1Integer) seq.get(1)).getByteArray());
+                    if (bb.size() != 64) {
+                        bb.move(33, 32, 32);
+                    }
+                    d = bb.array();
+                    break;
+                default:
             }
             return d;
         } catch (NoSuchAlgorithmException ex) {
@@ -367,8 +367,8 @@ public final class GXSecure {
      * @return Generated KDF.
      */
     public static byte[] generateKDF(final String hashAlg, final byte[] z, final int keyDataLen,
-            final byte[] algorithmID, final byte[] partyUInfo, final byte[] partyVInfo,
-            final byte[] suppPubInfo, final byte[] suppPrivInfo) {
+                                     final byte[] algorithmID, final byte[] partyUInfo, final byte[] partyVInfo,
+                                     final byte[] suppPubInfo, final byte[] suppPrivInfo) {
         GXByteBuffer bb = new GXByteBuffer();
         bb.set(algorithmID);
         bb.set(partyUInfo);
@@ -391,7 +391,7 @@ public final class GXSecure {
      * @return Generated KDF.
      */
     private static byte[] generateKDF(final String hashAlg, final byte[] z, final int keyDataLen,
-            final byte[] otherInfo) {
+                                      final byte[] otherInfo) {
         byte[] key = new byte[keyDataLen / 8];
         try {
             MessageDigest md = MessageDigest.getInstance(hashAlg);
@@ -435,11 +435,9 @@ public final class GXSecure {
 
     /**
      * Get Ephemeral Public Key Signature.
-     * 
-     * @param keyId
-     *            Key ID.
-     * @param ephemeralKey
-     *            Ephemeral key.
+     *
+     * @param keyId        Key ID.
+     * @param ephemeralKey Ephemeral key.
      * @return Ephemeral Public Key Signature.
      */
     public static byte[] getEphemeralPublicKeyData(final int keyId, final PublicKey ephemeralKey) {
@@ -461,7 +459,7 @@ public final class GXSecure {
      * @return Ephemeral Public Key Signature.
      */
     public static byte[] getEphemeralPublicKeySignature(final int keyId,
-            final PublicKey ephemeralKey, final PrivateKey signKey)
+                                                        final PublicKey ephemeralKey, final PrivateKey signKey)
             throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         byte[] epk = getEphemeralPublicKeyData(keyId, ephemeralKey);
         // Add ephemeral public key signature.
@@ -494,7 +492,7 @@ public final class GXSecure {
      * @return Is verify succeeded.
      */
     public static boolean validateEphemeralPublicKeySignature(final byte[] data, final byte[] sign,
-            final PublicKey publicSigningKey)
+                                                              final PublicKey publicSigningKey)
             throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 
         GXAsn1Integer a = new GXAsn1Integer(sign, 0, 32);
@@ -558,7 +556,7 @@ public final class GXSecure {
     }
 
     public static byte[] encryptAesGcm(final boolean encrypt, final AesGcmParameter p,
-            final byte[] data)
+                                       final byte[] data)
             throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException {
         Cipher c = getCipher(p, encrypt || p.getSecurity() != Security.AUTHENTICATION_ENCRYPTION);
@@ -571,18 +569,18 @@ public final class GXSecure {
         // If external Hardware Security Module is used.
         CryptoKeyType keyType;
         switch (p.getSecurity()) {
-        case AUTHENTICATION:
-            keyType = CryptoKeyType.AUTHENTICATION;
-            break;
-        case ENCRYPTION:
-            keyType = CryptoKeyType.BLOCK_CIPHER;
-            break;
-        case AUTHENTICATION_ENCRYPTION:
-            keyType = CryptoKeyType.forValue(CryptoKeyType.AUTHENTICATION.getValue()
-                    | CryptoKeyType.BLOCK_CIPHER.getValue());
-            break;
-        default:
-            throw new IllegalArgumentException("Security");
+            case AUTHENTICATION:
+                keyType = CryptoKeyType.AUTHENTICATION;
+                break;
+            case ENCRYPTION:
+                keyType = CryptoKeyType.BLOCK_CIPHER;
+                break;
+            case AUTHENTICATION_ENCRYPTION:
+                keyType = CryptoKeyType.forValue(CryptoKeyType.AUTHENTICATION.getValue()
+                        | CryptoKeyType.BLOCK_CIPHER.getValue());
+                break;
+            default:
+                throw new IllegalArgumentException("Security");
         }
 
         GXByteBuffer bb = new GXByteBuffer(10 + data.length);
@@ -703,55 +701,55 @@ public final class GXSecure {
             byte[] tmp;
             int len, cmd = data.getUInt8();
             switch (cmd) {
-            case Command.GENERAL_GLO_CIPHERING:
-            case Command.GENERAL_DED_CIPHERING:
-                len = GXCommon.getObjectCount(data);
-                if (len != 0) {
-                    byte[] title = new byte[len];
-                    data.get(title);
-                    p.setSystemTitle(title);
-                }
-                if (p.getSystemTitle() == null || p.getSystemTitle().length != 8) {
-                    if (p.getXml() == null) {
-                        throw new IllegalArgumentException("Invalid sender system title.");
-                    } else {
-                        p.getXml().appendComment("Invalid sender system title.");
+                case Command.GENERAL_GLO_CIPHERING:
+                case Command.GENERAL_DED_CIPHERING:
+                    len = GXCommon.getObjectCount(data);
+                    if (len != 0) {
+                        byte[] title = new byte[len];
+                        data.get(title);
+                        p.setSystemTitle(title);
                     }
-                }
-                break;
-            case Command.GENERAL_CIPHERING:
-            case Command.GLO_INITIATE_REQUEST:
-            case Command.GLO_INITIATE_RESPONSE:
-            case Command.GLO_READ_REQUEST:
-            case Command.GLO_READ_RESPONSE:
-            case Command.GLO_WRITE_REQUEST:
-            case Command.GLO_WRITE_RESPONSE:
-            case Command.GLO_GET_REQUEST:
-            case Command.GLO_GET_RESPONSE:
-            case Command.GLO_SET_REQUEST:
-            case Command.GLO_SET_RESPONSE:
-            case Command.GLO_METHOD_REQUEST:
-            case Command.GLO_METHOD_RESPONSE:
-            case Command.GLO_EVENT_NOTIFICATION_REQUEST:
-            case Command.DED_INITIATE_REQUEST:
-            case Command.DED_INITIATE_RESPONSE:
-            case Command.DED_GET_REQUEST:
-            case Command.DED_GET_RESPONSE:
-            case Command.DED_SET_REQUEST:
-            case Command.DED_SET_RESPONSE:
-            case Command.DED_METHOD_REQUEST:
-            case Command.DED_METHOD_RESPONSE:
-            case Command.DED_EVENT_NOTIFICATION:
-            case Command.DED_READ_REQUEST:
-            case Command.DED_READ_RESPONSE:
-            case Command.DED_WRITE_REQUEST:
-            case Command.DED_WRITE_RESPONSE:
-            case Command.GLO_CONFIRMED_SERVICE_ERROR:
-            case Command.DED_CONFIRMED_SERVICE_ERROR:
-            case Command.GENERAL_SIGNING:
-                break;
-            default:
-                throw new IllegalArgumentException("cryptedData");
+                    if (p.getSystemTitle() == null || p.getSystemTitle().length != 8) {
+                        if (p.getXml() == null) {
+                            throw new IllegalArgumentException("Invalid sender system title.");
+                        } else {
+                            p.getXml().appendComment("Invalid sender system title.");
+                        }
+                    }
+                    break;
+                case Command.GENERAL_CIPHERING:
+                case Command.GLO_INITIATE_REQUEST:
+                case Command.GLO_INITIATE_RESPONSE:
+                case Command.GLO_READ_REQUEST:
+                case Command.GLO_READ_RESPONSE:
+                case Command.GLO_WRITE_REQUEST:
+                case Command.GLO_WRITE_RESPONSE:
+                case Command.GLO_GET_REQUEST:
+                case Command.GLO_GET_RESPONSE:
+                case Command.GLO_SET_REQUEST:
+                case Command.GLO_SET_RESPONSE:
+                case Command.GLO_METHOD_REQUEST:
+                case Command.GLO_METHOD_RESPONSE:
+                case Command.GLO_EVENT_NOTIFICATION_REQUEST:
+                case Command.DED_INITIATE_REQUEST:
+                case Command.DED_INITIATE_RESPONSE:
+                case Command.DED_GET_REQUEST:
+                case Command.DED_GET_RESPONSE:
+                case Command.DED_SET_REQUEST:
+                case Command.DED_SET_RESPONSE:
+                case Command.DED_METHOD_REQUEST:
+                case Command.DED_METHOD_RESPONSE:
+                case Command.DED_EVENT_NOTIFICATION:
+                case Command.DED_READ_REQUEST:
+                case Command.DED_READ_RESPONSE:
+                case Command.DED_WRITE_REQUEST:
+                case Command.DED_WRITE_RESPONSE:
+                case Command.GLO_CONFIRMED_SERVICE_ERROR:
+                case Command.DED_CONFIRMED_SERVICE_ERROR:
+                case Command.GENERAL_SIGNING:
+                    break;
+                default:
+                    throw new IllegalArgumentException("cryptedData");
             }
             int value = 0;
             KeyPair kp = null;
@@ -1034,7 +1032,7 @@ public final class GXSecure {
                 if (p.getAuthenticationKey() == null) {
                     if (args.getAuthenticationKey() == null
                             || (args.getAuthenticationKey().length != 16
-                                    && args.getAuthenticationKey().length != 32)) {
+                            && args.getAuthenticationKey().length != 32)) {
                         throw new Exception("Invalid authentication key.");
                     }
                     p.setAuthenticationKey(args.getAuthenticationKey());

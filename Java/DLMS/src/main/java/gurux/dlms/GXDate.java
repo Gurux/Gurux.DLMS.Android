@@ -56,9 +56,8 @@ public class GXDate extends GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXDate(final Date forvalue) {
         super(forvalue);
@@ -70,9 +69,8 @@ public class GXDate extends GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXDate(final GXDateTime forvalue) {
         super(forvalue.getLocalCalendar());
@@ -86,13 +84,10 @@ public class GXDate extends GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param year
-     *            Used year.
-     * @param month
-     *            Used month.
-     * @param day
-     *            Used day.
+     *
+     * @param year  Used year.
+     * @param month Used month.
+     * @param day   Used day.
      */
     public GXDate(final int year, final int month, final int day) {
         super(year, month, day, -1, -1, -1, -1);
@@ -100,9 +95,8 @@ public class GXDate extends GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
+     *
+     * @param value Date time value as a string.
      */
     public GXDate(final String value) {
         this(value, null);
@@ -110,11 +104,9 @@ public class GXDate extends GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param locale
-     *            Used locale.
+     *
+     * @param value  Date time value as a string.
+     * @param locale Used locale.
      */
     public GXDate(final String value, final Locale locale) {
         super(value, locale);

@@ -36,12 +36,14 @@ package gurux.dlms.objects;
 
 /**
  * Contains the configuration to be used for both routers and hosts to support the Neighbor Discovery protocol for IPv6.
-
+ * <p>
  * Online help: <br>
  * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSIp6Setup
  */
-/** 
-*/
+
+/**
+ *
+ */
 public class GXNeighborDiscoverySetup {
     /**
      * Gives the maximum number of router solicitation retries to be performed
@@ -90,8 +92,7 @@ public class GXNeighborDiscoverySetup {
     }
 
     /**
-     * @param value
-     *            Router advertisement transmission period in seconds.
+     * @param value Router advertisement transmission period in seconds.
      */
     public final void setSendPeriod(final long value) {
         sendPeriod = value;

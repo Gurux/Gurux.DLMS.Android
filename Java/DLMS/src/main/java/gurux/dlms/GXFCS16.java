@@ -46,7 +46,7 @@ class GXFCS16 {
 
     }
 
-    private static int[] fcs16Table = { 0x0000, 0x1189, 0x2312, 0x329B, 0x4624,
+    private static int[] fcs16Table = {0x0000, 0x1189, 0x2312, 0x329B, 0x4624,
             0x57AD, 0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3, 0xCA6C,
             0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108, 0x3393, 0x221A, 0x56A5,
             0x472C, 0x75B7, 0x643E, 0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED,
@@ -86,7 +86,7 @@ class GXFCS16 {
      * Reserved for internal use.
      */
     static final int countFCS16(final byte[] buff, final int offset,
-            final int count) {
+                                final int count) {
         int fcs16 = 0xFFFF;
         for (int pos = offset; pos < offset + count; ++pos) {
             fcs16 = (((fcs16 >> 8)
@@ -99,7 +99,7 @@ class GXFCS16 {
 
     /**
      * Reserved for internal use.
-     * 
+     *
      * @param buff
      * @param index
      * @param count
@@ -108,7 +108,7 @@ class GXFCS16 {
     private static final long CRCPOLY = 3551967744L;
 
     public static int countFCS24(final byte[] buff, final int index,
-            final int count) {
+                                 final int count) {
         byte i, j;
         long crcreg = 0;
         for (j = 0; j < count; ++j) {

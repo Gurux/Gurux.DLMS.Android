@@ -35,9 +35,9 @@
 package gurux.dlms;
 
 enum GXAPDUErrorCode {
-	OK,
-	// Invocation counter value is too small.
-	INVOCATION_COUNTER_TOO_SMALL,
-	// Client try to connect with wrong security.
-	INVALID_DECIPHERING_ERROR
+    OK,
+    // Invocation counter value is too small.
+    INVOCATION_COUNTER_TOO_SMALL,
+    // Client try to connect with wrong security.
+    INVALID_DECIPHERING_ERROR
 }

@@ -85,9 +85,8 @@ public class GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Date value.
+     *
+     * @param value Date value.
      */
     public GXDateTime(final Date value) {
         skip = new HashSet<DateTimeSkips>();
@@ -100,9 +99,8 @@ public class GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Date value.
+     *
+     * @param value Date value.
      */
     public GXDateTime(final Calendar value) {
         skip = new HashSet<DateTimeSkips>();
@@ -114,9 +112,8 @@ public class GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Date value.
+     *
+     * @param value Date value.
      */
     public GXDateTime(final GXDateTime value) {
         skip = new HashSet<DateTimeSkips>();
@@ -133,77 +130,55 @@ public class GXDateTime {
 
     /**
      * Constructor.
-     * 
-     * @param year
-     *            Used year.
-     * @param month
-     *            Used month.
-     * @param day
-     *            Used day.
-     * @param hour
-     *            Used hour.
-     * @param minute
-     *            Used minute.
-     * @param second
-     *            Used second.
-     * @param millisecond
-     *            Used millisecond.
+     *
+     * @param year        Used year.
+     * @param month       Used month.
+     * @param day         Used day.
+     * @param hour        Used hour.
+     * @param minute      Used minute.
+     * @param second      Used second.
+     * @param millisecond Used millisecond.
      */
     public GXDateTime(final int year, final int month, final int day, final int hour,
-            final int minute, final int second, final int millisecond) {
+                      final int minute, final int second, final int millisecond) {
         meterCalendar = Calendar.getInstance();
         init(year, month, day, hour, minute, second, millisecond);
     }
 
     /**
      * Constructor.
-     * 
-     * @param year
-     *            Used year.
-     * @param month
-     *            Used month.
-     * @param day
-     *            Used day.
-     * @param hour
-     *            Used hour.
-     * @param minute
-     *            Used minute.
-     * @param second
-     *            Used second.
-     * @param millisecond
-     *            Used millisecond.
-     * @param timeZone
-     *            Used time Zone.
+     *
+     * @param year        Used year.
+     * @param month       Used month.
+     * @param day         Used day.
+     * @param hour        Used hour.
+     * @param minute      Used minute.
+     * @param second      Used second.
+     * @param millisecond Used millisecond.
+     * @param timeZone    Used time Zone.
      * @deprecated use {@link #GXDateTime} instead.
      */
     @Deprecated
     @SuppressWarnings("squid:S00107")
     public GXDateTime(final int year, final int month, final int day, final int hour,
-            final int minute, final int second, final int millisecond, final int timeZone) {
+                      final int minute, final int second, final int millisecond, final int timeZone) {
         meterCalendar = Calendar.getInstance(getTimeZone(timeZone, true));
         init(year, month, day, hour, minute, second, millisecond);
     }
 
     /**
      * Initialize settings.
-     * 
-     * @param year
-     *            Used year.
-     * @param month
-     *            Used month.
-     * @param day
-     *            Used day.
-     * @param hour
-     *            Used hour.
-     * @param minute
-     *            Used minute.
-     * @param second
-     *            Used second.
-     * @param millisecond
-     *            Used millisecond.
+     *
+     * @param year        Used year.
+     * @param month       Used month.
+     * @param day         Used day.
+     * @param hour        Used hour.
+     * @param minute      Used minute.
+     * @param second      Used second.
+     * @param millisecond Used millisecond.
      */
     protected void init(final int year, final int month, final int day, final int hour,
-            final int minute, final int second, final int millisecond) {
+                        final int minute, final int second, final int millisecond) {
         int y = year;
         int m = month;
         int d = day;
@@ -272,9 +247,8 @@ public class GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
+     *
+     * @param value Date time value as a string.
      */
     public GXDateTime(final String value) {
         this(value, (Locale) null);
@@ -282,11 +256,9 @@ public class GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param locale
-     *            Used locale.
+     *
+     * @param value  Date time value as a string.
+     * @param locale Used locale.
      */
     public GXDateTime(final String value, final Locale locale) {
         if (value != null) {
@@ -307,11 +279,9 @@ public class GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param pattern
-     *            Used date time string pattern.
+     *
+     * @param value   Date time value as a string.
+     * @param pattern Used date time string pattern.
      */
     public GXDateTime(final String value, final String pattern) {
         init(value, pattern, null);
@@ -319,13 +289,10 @@ public class GXDateTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param pattern
-     *            Used date time string pattern.
-     * @param locale
-     *            Used locale.
+     *
+     * @param value   Date time value as a string.
+     * @param pattern Used date time string pattern.
+     * @param locale  Used locale.
      */
     public GXDateTime(final String value, final String pattern, final Locale locale) {
         init(value, pattern, locale);
@@ -346,12 +313,9 @@ public class GXDateTime {
     }
 
     /**
-     * @param value
-     *            date time value as a string.
-     * @param pattern
-     *            Used pattern.
-     * @param locale
-     *            Used locale.
+     * @param value   date time value as a string.
+     * @param pattern Used pattern.
+     * @param locale  Used locale.
      */
     public void init(final String value, final String pattern, final Locale locale) {
         if (skip == null) {
@@ -518,9 +482,8 @@ public class GXDateTime {
 
     /**
      * Used local calendar.
-     * 
-     * @param tz
-     *            Used time zone.
+     *
+     * @param tz Used time zone.
      * @return local calendar with given time zone.
      */
     public final Calendar getLocalCalendar(final TimeZone tz) {
@@ -539,8 +502,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param value
-     *            Used meter calendar.
+     * @param value Used meter calendar.
      */
     public final void setMeterCalendar(final Calendar value) {
         meterCalendar = value;
@@ -557,9 +519,8 @@ public class GXDateTime {
 
     /**
      * Set date time value.
-     * 
-     * @param forvalue
-     *            Used date time value.
+     *
+     * @param forvalue Used date time value.
      * @deprecated use {@link #getLocalCalendar} instead.
      */
     @Deprecated
@@ -569,11 +530,9 @@ public class GXDateTime {
 
     /**
      * Set date time value.
-     * 
-     * @param forvalue
-     *            Used date time value.
-     * @param forDeviation
-     *            Used deviation.
+     *
+     * @param forvalue     Used date time value.
+     * @param forDeviation Used deviation.
      * @deprecated use {@link #setMeterCalendar} instead.
      */
     @Deprecated
@@ -590,16 +549,14 @@ public class GXDateTime {
     }
 
     /**
-     * @param value
-     *            Skipped date time fields.
+     * @param value Skipped date time fields.
      */
     public final void setSkip(final java.util.Set<DateTimeSkips> value) {
         skip = value;
     }
 
     /**
-     * @param value
-     *            Used date time fields.
+     * @param value Used date time fields.
      */
     public final void setUsed(final java.util.Set<DateTimeSkips> value) {
         int val = 0;
@@ -618,8 +575,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param forValue
-     *            Day of week.
+     * @param forValue Day of week.
      */
     public final void setDayOfWeek(final int forValue) {
         dayOfWeek = forValue;
@@ -635,8 +591,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param forValue
-     *            Deviation is time from current time zone to UTC time.
+     * @param forValue Deviation is time from current time zone to UTC time.
      * @deprecated use {@link #setMeterCalendar} instead.
      */
     @Deprecated
@@ -652,8 +607,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param forValue
-     *            Clock status.
+     * @param forValue Clock status.
      */
     public final void setStatus(final java.util.Set<ClockStatus> forValue) {
         status = forValue;
@@ -691,8 +645,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param pattern
-     *            Used pattern.
+     * @param pattern Used pattern.
      * @return Returns date time value as a formatted string.
      */
     public String toFormatString(final String pattern) {
@@ -700,7 +653,7 @@ public class GXDateTime {
     }
 
     private String toFormatString(final String pattern, final boolean useLocalTime,
-            final Locale locale) {
+                                  final Locale locale) {
         StringBuilder format = new StringBuilder();
         // Separate date and time parts.
         format.append(pattern);
@@ -783,8 +736,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param locale
-     *            Used locale,
+     * @param locale Used locale,
      * @return Returns locate time as formatted string.
      */
     public String toFormatString(final Locale locale) {
@@ -792,8 +744,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param locale
-     *            Used locale,
+     * @param locale Used locale,
      * @return Returns Meter time as formatted string.
      */
     public String toFormatMeterString(final Locale locale) {
@@ -801,8 +752,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param pattern
-     *            Used date time string pattern.
+     * @param pattern Used date time string pattern.
      * @return Returns Meter time as formatted string.
      */
     public String toFormatMeterString(final String pattern) {
@@ -836,7 +786,7 @@ public class GXDateTime {
     }
 
     private void remove(final StringBuilder value, final String tag,
-            final boolean removeSeparator) {
+                        final boolean removeSeparator) {
         int pos = value.indexOf(tag);
         if (pos != -1) {
             int len = pos + tag.length();
@@ -860,8 +810,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param locale
-     *            Used locale.
+     * @param locale Used locale.
      * @return Returns local date-time as string.
      */
     public final String toString(final Locale locale) {
@@ -876,8 +825,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param locale
-     *            Used locale.
+     * @param locale Used locale.
      * @return Returns meter's date-time as string.
      */
     public final String toMeterString(final Locale locale) {
@@ -911,8 +859,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param pattern
-     *            Used pattern.
+     * @param pattern Used pattern.
      * @return Returns date time value as the meter time.
      */
     public final String toMeterString(final String pattern) {
@@ -920,8 +867,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param pattern
-     *            Used pattern.
+     * @param pattern Used pattern.
      * @return Date time value as a string.
      */
     public final String toString(final String pattern) {
@@ -929,16 +875,13 @@ public class GXDateTime {
     }
 
     /**
-     * @param pattern
-     *            Used pattern.
-     * @param locale
-     *            Used locale.
-     * @param useLocalTime
-     *            Is UTC deviation used.
+     * @param pattern      Used pattern.
+     * @param locale       Used locale.
+     * @param useLocalTime Is UTC deviation used.
      * @return Date time value as a string.
      */
     private final String toString(final String pattern, final Locale locale,
-            final boolean useLocalTime) {
+                                  final boolean useLocalTime) {
         if (!getSkip().isEmpty()) {
             StringBuilder format = new StringBuilder();
             // Separate date and time parts.
@@ -1062,11 +1005,9 @@ public class GXDateTime {
 
     /**
      * Get difference between given time and run time in ms.
-     * 
-     * @param start
-     *            Start date time.
-     * @param to
-     *            Compared time.
+     *
+     * @param start Start date time.
+     * @param to    Compared time.
      * @return Difference in milliseconds.
      */
     public static long getDifference(final Calendar start, final GXDateTime to) {
@@ -1142,11 +1083,9 @@ public class GXDateTime {
 
     /**
      * Convert deviation to time zone.
-     * 
-     * @param deviation
-     *            Used deviation.
-     * @param dst
-     *            Is daylight saving time used.
+     *
+     * @param deviation Used deviation.
+     * @param dst       Is daylight saving time used.
      * @return Time zone.
      */
     public static TimeZone getTimeZone(final int deviation, final boolean dst) {
@@ -1191,9 +1130,8 @@ public class GXDateTime {
 
     /**
      * Get date time from Epoch time.
-     * 
-     * @param unixTime
-     *            Unix time.
+     *
+     * @param unixTime Unix time.
      * @return Date and time.
      */
     public static GXDateTime fromUnixTime(final long unixTime) {
@@ -1202,9 +1140,8 @@ public class GXDateTime {
 
     /**
      * Convert date time to Epoch time.
-     * 
-     * @param date
-     *            Date and time.
+     *
+     * @param date Date and time.
      * @return Unix time.
      */
     public static long toUnixTime(final java.util.Date date) {
@@ -1213,9 +1150,8 @@ public class GXDateTime {
 
     /**
      * Convert date time to Epoch time.
-     * 
-     * @param date
-     *            Date and time.
+     *
+     * @param date Date and time.
      * @return Unix time.
      */
     public static long toUnixTime(final GXDateTime date) {
@@ -1224,10 +1160,9 @@ public class GXDateTime {
 
     /**
      * Get date time from high resolution clock time.
-     * 
-     * @param highResolution
-     *            High resolution clock time is milliseconds since 1970-01-01
-     *            00:00:00.
+     *
+     * @param highResolution High resolution clock time is milliseconds since 1970-01-01
+     *                       00:00:00.
      * @return Date and time.
      */
     public static GXDateTime fromHighResolutionTime(final long highResolution) {
@@ -1236,9 +1171,8 @@ public class GXDateTime {
 
     /**
      * Convert date time to high resolution time.
-     * 
-     * @param date
-     *            Date and time.
+     *
+     * @param date Date and time.
      * @return High resolution time.
      */
     public static GXUInt64 toHighResolutionTime(final java.util.Date date) {
@@ -1247,9 +1181,8 @@ public class GXDateTime {
 
     /**
      * Convert date time to high resolution time.
-     * 
-     * @param date
-     *            Date and time.
+     *
+     * @param date Date and time.
      * @return High resolution time.
      */
     public static GXUInt64 toHighResolutionTime(final GXDateTime date) {
@@ -1264,8 +1197,7 @@ public class GXDateTime {
     }
 
     /**
-     * @param value
-     *            Date time extra information.
+     * @param value Date time extra information.
      */
     public void setExtra(final java.util.Set<DateTimeExtraInfo> value) {
         extra = value;

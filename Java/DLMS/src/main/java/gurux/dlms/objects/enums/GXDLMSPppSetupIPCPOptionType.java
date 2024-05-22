@@ -38,23 +38,23 @@ import java.util.HashMap;
 
 public enum GXDLMSPppSetupIPCPOptionType {
     /*
-     * 
+     *
      */
     IP_COMPRESSION_PROTOCOL(2),
     /*
-     * 
+     *
      */
     PREF_LOCAL_IP(3),
     /*
-     * 
+     *
      */
     PREF_PEER_IP(20),
     /*
-     * 
+     *
      */
     GAO(21),
     /*
-     * 
+     *
      */
     USIP(22);
 
@@ -62,7 +62,7 @@ public enum GXDLMSPppSetupIPCPOptionType {
     private static HashMap<Integer, GXDLMSPppSetupIPCPOptionType> mappings;
 
     private static HashMap<Integer, GXDLMSPppSetupIPCPOptionType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (GXDLMSPppSetupIPCPOptionType.class) {
                 mappings = new HashMap<Integer, GXDLMSPppSetupIPCPOptionType>();

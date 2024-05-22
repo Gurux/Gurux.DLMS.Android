@@ -35,7 +35,6 @@
 package gurux.dlms.objects;
 
 
-
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
@@ -70,9 +69,8 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject implements IGXDLMSBase
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSIECLocalPortSetup(final String ln) {
         this(ln, 0);
@@ -80,11 +78,9 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject implements IGXDLMSBase
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSIECLocalPortSetup(final String ln, final int sn) {
         super(ObjectType.IEC_LOCAL_PORT_SETUP, ln, sn);
@@ -161,9 +157,9 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject implements IGXDLMSBase
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getDefaultMode(), getDefaultBaudrate(),
+        return new Object[]{getLogicalName(), getDefaultMode(), getDefaultBaudrate(),
                 getProposedBaudrate(), getResponseTime(), getDeviceAddress(), getPassword1(),
-                getPassword2(), getPassword5() };
+                getPassword2(), getPassword5()};
     }
 
     /*
@@ -364,9 +360,9 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject implements IGXDLMSBase
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Default Mode", "Default Baud rate",
+        return new String[]{"Logical Name", "Default Mode", "Default Baud rate",
                 "Proposed Baud rate", "Response Time", "Device Address", "Password 1", "Password 2",
-                "Password 5" };
+                "Password 5"};
     }
 
     @Override

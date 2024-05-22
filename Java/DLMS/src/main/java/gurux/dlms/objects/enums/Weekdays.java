@@ -90,16 +90,15 @@ public enum Weekdays {
      * @return Get enumeration constant values.
      */
     private static Weekdays[] getEnumConstants() {
-        return new Weekdays[] { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY,
-                SATURDAY, SUNDAY };
+        return new Weekdays[]{MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY,
+                SATURDAY, SUNDAY};
 
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<Weekdays> forValue(final int value) {
@@ -115,9 +114,8 @@ public enum Weekdays {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<Weekdays> value) {

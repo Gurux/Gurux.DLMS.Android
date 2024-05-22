@@ -32,7 +32,7 @@ final class TranslatorSimpleTags {
      * Get general tags.
      */
     static void getGeneralTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                               final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.SNRM, "Snrm");
         GXDLMSTranslator.addTag(list, Command.UNACCEPTABLE_FRAME,
                 "UnacceptableFrame");
@@ -135,7 +135,7 @@ final class TranslatorSimpleTags {
      * Get SN tags.
      */
     static void getSnTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                          final HashMap<Integer, String> list) {
         list.put(Command.READ_REQUEST, "ReadRequest");
         list.put(Command.WRITE_REQUEST, "WriteRequest");
         list.put(Command.WRITE_REQUEST << 8 | SingleReadResponse.DATA,
@@ -173,7 +173,7 @@ final class TranslatorSimpleTags {
      * Get LN tags.
      */
     static void getLnTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                          final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.GET_REQUEST, "GetRequest");
         list.put(Command.GET_REQUEST << 8 | GetCommandType.NORMAL,
                 "GetRequestNormal");
@@ -311,7 +311,7 @@ final class TranslatorSimpleTags {
      * Get glo tags.
      */
     static void getGloTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                           final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.GLO_INITIATE_REQUEST,
                 "glo_InitiateRequest");
         GXDLMSTranslator.addTag(list, Command.GLO_INITIATE_RESPONSE,
@@ -348,7 +348,7 @@ final class TranslatorSimpleTags {
      * Get ded tags.
      */
     static void getDedTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                           final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, Command.DED_INITIATE_REQUEST,
                 "ded_InitiateRequest");
         GXDLMSTranslator.addTag(list, Command.DED_INITIATE_RESPONSE,
@@ -375,7 +375,7 @@ final class TranslatorSimpleTags {
      * Get translator tags.
      */
     static void getTranslatorTags(final TranslatorOutputType type,
-            final HashMap<Integer, String> list) {
+                                  final HashMap<Integer, String> list) {
         GXDLMSTranslator.addTag(list, TranslatorTags.WRAPPER, "Wrapper");
         GXDLMSTranslator.addTag(list, TranslatorTags.HDLC, "Hdlc");
         GXDLMSTranslator.addTag(list, TranslatorTags.PDU_DLMS, "Pdu");
@@ -545,57 +545,57 @@ final class TranslatorSimpleTags {
     static String errorCodeToString(final ErrorCode value) {
         String str;
         switch (value) {
-        case ACCESS_VIOLATED:
-            str = "AccessViolated";
-            break;
-        case DATA_BLOCK_NUMBER_INVALID:
-            str = "DataBlockNumberInvalid";
-            break;
-        case DATA_BLOCK_UNAVAILABLE:
-            str = "DataBlockUnavailable";
-            break;
-        case HARDWARE_FAULT:
-            str = "HardwareFault";
-            break;
-        case INCONSISTENT_CLASS:
-            str = "InconsistentClass";
-            break;
-        case LONG_GET_OR_READ_ABORTED:
-            str = "LongGetOrReadAborted";
-            break;
-        case LONG_SET_OR_WRITE_ABORTED:
-            str = "LongSetOrWriteAborted";
-            break;
-        case NO_LONG_GET_OR_READ_IN_PROGRESS:
-            str = "NoLongGetOrReadInProgress";
-            break;
-        case NO_LONG_SET_OR_WRITE_IN_PROGRESS:
-            str = "NoLongSetOrWriteInProgress";
-            break;
-        case OK:
-            str = "Success";
-            break;
-        case OTHER_REASON:
-            str = "OtherReason";
-            break;
-        case READ_WRITE_DENIED:
-            str = "ReadWriteDenied";
-            break;
-        case TEMPORARY_FAILURE:
-            str = "TemporaryFailure";
-            break;
-        case UNAVAILABLE_OBJECT:
-            str = "UnavailableObject";
-            break;
-        case UNDEFINED_OBJECT:
-            str = "UndefinedObject";
-            break;
-        case UNMATCHED_TYPE:
-            str = "UnmatchedType";
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Error code: " + String.valueOf(value));
+            case ACCESS_VIOLATED:
+                str = "AccessViolated";
+                break;
+            case DATA_BLOCK_NUMBER_INVALID:
+                str = "DataBlockNumberInvalid";
+                break;
+            case DATA_BLOCK_UNAVAILABLE:
+                str = "DataBlockUnavailable";
+                break;
+            case HARDWARE_FAULT:
+                str = "HardwareFault";
+                break;
+            case INCONSISTENT_CLASS:
+                str = "InconsistentClass";
+                break;
+            case LONG_GET_OR_READ_ABORTED:
+                str = "LongGetOrReadAborted";
+                break;
+            case LONG_SET_OR_WRITE_ABORTED:
+                str = "LongSetOrWriteAborted";
+                break;
+            case NO_LONG_GET_OR_READ_IN_PROGRESS:
+                str = "NoLongGetOrReadInProgress";
+                break;
+            case NO_LONG_SET_OR_WRITE_IN_PROGRESS:
+                str = "NoLongSetOrWriteInProgress";
+                break;
+            case OK:
+                str = "Success";
+                break;
+            case OTHER_REASON:
+                str = "OtherReason";
+                break;
+            case READ_WRITE_DENIED:
+                str = "ReadWriteDenied";
+                break;
+            case TEMPORARY_FAILURE:
+                str = "TemporaryFailure";
+                break;
+            case UNAVAILABLE_OBJECT:
+                str = "UnavailableObject";
+                break;
+            case UNDEFINED_OBJECT:
+                str = "UndefinedObject";
+                break;
+            case UNMATCHED_TYPE:
+                str = "UnmatchedType";
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Error code: " + String.valueOf(value));
         }
         return str;
     }
@@ -759,38 +759,37 @@ final class TranslatorSimpleTags {
     }
 
     static String getServiceErrorValue(final ServiceError error,
-            final byte value) {
+                                       final byte value) {
         switch (error) {
-        case APPLICATION_REFERENCE:
-            return getApplicationReference()
-                    .get(ApplicationReference.forValue(value));
-        case HARDWARE_RESOURCE:
-            return getHardwareResource().get(HardwareResource.forValue(value));
-        case VDE_STATE_ERROR:
-            return getVdeStateError().get(VdeStateError.forValue(value));
-        case SERVICE:
-            return getService().get(Service.forValue(value));
-        case DEFINITION:
-            return getDefinition().get(Definition.forValue(value));
-        case ACCESS:
-            return getAccess().get(Access.forValue(value));
-        case INITIATE:
-            return getInitiate().get(Initiate.forValue(value));
-        case LOAD_DATASET:
-            return getLoadDataSet().get(LoadDataSet.forValue(value));
-        case TASK:
-            return getTask().get(Task.forValue(value));
-        case OTHER_ERROR:
-            return String.valueOf(value);
-        default:
-            break;
+            case APPLICATION_REFERENCE:
+                return getApplicationReference()
+                        .get(ApplicationReference.forValue(value));
+            case HARDWARE_RESOURCE:
+                return getHardwareResource().get(HardwareResource.forValue(value));
+            case VDE_STATE_ERROR:
+                return getVdeStateError().get(VdeStateError.forValue(value));
+            case SERVICE:
+                return getService().get(Service.forValue(value));
+            case DEFINITION:
+                return getDefinition().get(Definition.forValue(value));
+            case ACCESS:
+                return getAccess().get(Access.forValue(value));
+            case INITIATE:
+                return getInitiate().get(Initiate.forValue(value));
+            case LOAD_DATASET:
+                return getLoadDataSet().get(LoadDataSet.forValue(value));
+            case TASK:
+                return getTask().get(Task.forValue(value));
+            case OTHER_ERROR:
+                return String.valueOf(value);
+            default:
+                break;
         }
         return "";
     }
 
     /**
-     * @param error
-     *            Service error enumeration value.
+     * @param error Service error enumeration value.
      * @return Service error simple XML tag.
      */
     static String serviceErrorToString(final ServiceError error) {
@@ -799,52 +798,49 @@ final class TranslatorSimpleTags {
 
     /**
      * Gets state error description.
-     * 
-     * @param error
-     *            State error enumerator value.
+     *
+     * @param error State error enumerator value.
      * @return State error as an string.
      */
     static String stateErrorToString(final ExceptionStateError error) {
         switch (error) {
-        case SERVICE_NOT_ALLOWED:
-            return "ServiceNotAllowed";
-        case SERVICE_UNKNOWN:
-            return "ServiceUnknown";
-        default:
-            throw new IllegalArgumentException();
+            case SERVICE_NOT_ALLOWED:
+                return "ServiceNotAllowed";
+            case SERVICE_UNKNOWN:
+                return "ServiceUnknown";
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     /**
      * Gets service error description.
-     * 
-     * @param error
-     *            Service error enumerator value.
+     *
+     * @param error Service error enumerator value.
      * @return Service error as an string.
      */
     static String
-            exceptionServiceErrorToString(final ExceptionServiceError error) {
+    exceptionServiceErrorToString(final ExceptionServiceError error) {
         switch (error) {
-        case OPERATION_NOT_POSSIBLE:
-            return "OperationNotPossible";
-        case SERVICE_NOT_SUPPORTED:
-            return "ServiceNotSupported";
-        case OTHER_REASON:
-            return "OtherReason";
-        case PDU_TOO_LONG:
-            return "PduTooLong";
-        case DECIPHERING_ERROR:
-            return "DecipheringError";
-        case INVOCATION_COUNTER_ERROR:
-            return "InvocationCounterError";
-        default:
-            throw new IllegalArgumentException();
+            case OPERATION_NOT_POSSIBLE:
+                return "OperationNotPossible";
+            case SERVICE_NOT_SUPPORTED:
+                return "ServiceNotSupported";
+            case OTHER_REASON:
+                return "OtherReason";
+            case PDU_TOO_LONG:
+                return "PduTooLong";
+            case DECIPHERING_ERROR:
+                return "DecipheringError";
+            case INVOCATION_COUNTER_ERROR:
+                return "InvocationCounterError";
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     /**
-     * @param value
-     *            State error string value.
+     * @param value State error string value.
      * @return State error enum value.
      */
     static ExceptionStateError valueofStateError(final String value) {
@@ -858,12 +854,11 @@ final class TranslatorSimpleTags {
     }
 
     /**
-     * @param value
-     *            Service error string value.
+     * @param value Service error string value.
      * @return Service error enum value.
      */
     static ExceptionServiceError
-            valueOfExceptionServiceError(final String value) {
+    valueOfExceptionServiceError(final String value) {
 
         if ("OperationNotPossible".equalsIgnoreCase(value)) {
             return ExceptionServiceError.OPERATION_NOT_POSSIBLE;
@@ -887,8 +882,7 @@ final class TranslatorSimpleTags {
     }
 
     /**
-     * @param value
-     *            Service error simple XML tag.
+     * @param value Service error simple XML tag.
      * @return Service error enumeration value.
      */
     static ServiceError getServiceError(final String value) {
@@ -1036,38 +1030,38 @@ final class TranslatorSimpleTags {
     static byte getError(final ServiceError serviceError, final String value) {
         int ret = 0;
         switch (serviceError) {
-        case APPLICATION_REFERENCE:
-            ret = getApplicationReference(value);
-            break;
-        case HARDWARE_RESOURCE:
-            ret = getHardwareResource(value);
-            break;
-        case VDE_STATE_ERROR:
-            ret = getVdeStateError(value);
-            break;
-        case SERVICE:
-            ret = getService(value);
-            break;
-        case DEFINITION:
-            ret = getDefinition(value);
-            break;
-        case ACCESS:
-            ret = getAccess(value);
-            break;
-        case INITIATE:
-            ret = getInitiate(value);
-            break;
-        case LOAD_DATASET:
-            ret = getLoadDataSet(value);
-            break;
-        case TASK:
-            ret = getTask(value);
-            break;
-        case OTHER_ERROR:
-            ret = Integer.parseInt(value);
-            break;
-        default:
-            break;
+            case APPLICATION_REFERENCE:
+                ret = getApplicationReference(value);
+                break;
+            case HARDWARE_RESOURCE:
+                ret = getHardwareResource(value);
+                break;
+            case VDE_STATE_ERROR:
+                ret = getVdeStateError(value);
+                break;
+            case SERVICE:
+                ret = getService(value);
+                break;
+            case DEFINITION:
+                ret = getDefinition(value);
+                break;
+            case ACCESS:
+                ret = getAccess(value);
+                break;
+            case INITIATE:
+                ret = getInitiate(value);
+                break;
+            case LOAD_DATASET:
+                ret = getLoadDataSet(value);
+                break;
+            case TASK:
+                ret = getTask(value);
+                break;
+            case OTHER_ERROR:
+                ret = Integer.parseInt(value);
+                break;
+            default:
+                break;
         }
         return (byte) ret;
     }
@@ -1075,80 +1069,80 @@ final class TranslatorSimpleTags {
     static String conformancetoString(final Conformance value) {
         String str;
         switch (value) {
-        case ACCESS:
-            str = "Access";
-            break;
-        case ACTION:
-            str = "Action";
-            break;
-        case ATTRIBUTE_0_SUPPORTED_WITH_GET:
-            str = "Attribute0SupportedWithGet";
-            break;
-        case ATTRIBUTE_0_SUPPORTED_WITH_SET:
-            str = "Attribute0SupportedWithSet";
-            break;
-        case BLOCK_TRANSFER_WITH_ACTION:
-            str = "BlockTransferWithAction";
-            break;
-        case BLOCK_TRANSFER_WITH_GET_OR_READ:
-            str = "BlockTransferWithGetOrRead";
-            break;
-        case BLOCK_TRANSFER_WITH_SET_OR_WRITE:
-            str = "BlockTransferWithSetOrWrite";
-            break;
-        case DATA_NOTIFICATION:
-            str = "DataNotification";
-            break;
-        case EVENT_NOTIFICATION:
-            str = "EventNotification";
-            break;
-        case GENERAL_BLOCK_TRANSFER:
-            str = "GeneralBlockTransfer";
-            break;
-        case GENERAL_PROTECTION:
-            str = "GeneralProtection";
-            break;
-        case GET:
-            str = "Get";
-            break;
-        case INFORMATION_REPORT:
-            str = "InformationReport";
-            break;
-        case MULTIPLE_REFERENCES:
-            str = "MultipleReferences";
-            break;
-        case PARAMETERIZED_ACCESS:
-            str = "ParameterizedAccess";
-            break;
-        case PRIORITY_MGMT_SUPPORTED:
-            str = "PriorityMgmtSupported";
-            break;
-        case READ:
-            str = "Read";
-            break;
-        case RESERVED_SEVEN:
-            str = "ReservedSeven";
-            break;
-        case RESERVED_ZERO:
-            str = "ReservedZero";
-            break;
-        case SELECTIVE_ACCESS:
-            str = "SelectiveAccess";
-            break;
-        case SET:
-            str = "Set";
-            break;
-        case UN_CONFIRMED_WRITE:
-            str = "UnconfirmedWrite";
-            break;
-        case DELTA_VALUE_ENCODING:
-            str = "DeltaValueEncoding";
-            break;
-        case WRITE:
-            str = "Write";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case ACCESS:
+                str = "Access";
+                break;
+            case ACTION:
+                str = "Action";
+                break;
+            case ATTRIBUTE_0_SUPPORTED_WITH_GET:
+                str = "Attribute0SupportedWithGet";
+                break;
+            case ATTRIBUTE_0_SUPPORTED_WITH_SET:
+                str = "Attribute0SupportedWithSet";
+                break;
+            case BLOCK_TRANSFER_WITH_ACTION:
+                str = "BlockTransferWithAction";
+                break;
+            case BLOCK_TRANSFER_WITH_GET_OR_READ:
+                str = "BlockTransferWithGetOrRead";
+                break;
+            case BLOCK_TRANSFER_WITH_SET_OR_WRITE:
+                str = "BlockTransferWithSetOrWrite";
+                break;
+            case DATA_NOTIFICATION:
+                str = "DataNotification";
+                break;
+            case EVENT_NOTIFICATION:
+                str = "EventNotification";
+                break;
+            case GENERAL_BLOCK_TRANSFER:
+                str = "GeneralBlockTransfer";
+                break;
+            case GENERAL_PROTECTION:
+                str = "GeneralProtection";
+                break;
+            case GET:
+                str = "Get";
+                break;
+            case INFORMATION_REPORT:
+                str = "InformationReport";
+                break;
+            case MULTIPLE_REFERENCES:
+                str = "MultipleReferences";
+                break;
+            case PARAMETERIZED_ACCESS:
+                str = "ParameterizedAccess";
+                break;
+            case PRIORITY_MGMT_SUPPORTED:
+                str = "PriorityMgmtSupported";
+                break;
+            case READ:
+                str = "Read";
+                break;
+            case RESERVED_SEVEN:
+                str = "ReservedSeven";
+                break;
+            case RESERVED_ZERO:
+                str = "ReservedZero";
+                break;
+            case SELECTIVE_ACCESS:
+                str = "SelectiveAccess";
+                break;
+            case SET:
+                str = "Set";
+                break;
+            case UN_CONFIRMED_WRITE:
+                str = "UnconfirmedWrite";
+                break;
+            case DELTA_VALUE_ENCODING:
+                str = "DeltaValueEncoding";
+                break;
+            case WRITE:
+                str = "Write";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }
@@ -1210,26 +1204,26 @@ final class TranslatorSimpleTags {
     }
 
     static String
-            releaseResponseReasonToString(final ReleaseResponseReason value) {
+    releaseResponseReasonToString(final ReleaseResponseReason value) {
         String str;
         switch (value) {
-        case NORMAL:
-            str = "Normal";
-            break;
-        case NOT_FINISHED:
-            str = "NotFinished";
-            break;
-        case USER_DEFINED:
-            str = "UserDefined";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case NORMAL:
+                str = "Normal";
+                break;
+            case NOT_FINISHED:
+                str = "NotFinished";
+                break;
+            case USER_DEFINED:
+                str = "UserDefined";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }
 
     static ReleaseResponseReason
-            valueOfReleaseResponseReason(final String value) {
+    valueOfReleaseResponseReason(final String value) {
         ReleaseResponseReason ret;
         if ("Normal".equalsIgnoreCase(value)) {
             ret = ReleaseResponseReason.NORMAL;
@@ -1244,26 +1238,26 @@ final class TranslatorSimpleTags {
     }
 
     static String
-            releaseRequestReasonToString(final ReleaseRequestReason value) {
+    releaseRequestReasonToString(final ReleaseRequestReason value) {
         String str;
         switch (value) {
-        case NORMAL:
-            str = "Normal";
-            break;
-        case URGENT:
-            str = "Urgent";
-            break;
-        case USER_DEFINED:
-            str = "UserDefined";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case NORMAL:
+                str = "Normal";
+                break;
+            case URGENT:
+                str = "Urgent";
+                break;
+            case USER_DEFINED:
+                str = "UserDefined";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }
 
     static ReleaseRequestReason
-            valueOfReleaseRequestReason(final String value) {
+    valueOfReleaseRequestReason(final String value) {
         ReleaseRequestReason ret;
         if ("Normal".equalsIgnoreCase(value)) {
             ret = ReleaseRequestReason.NORMAL;

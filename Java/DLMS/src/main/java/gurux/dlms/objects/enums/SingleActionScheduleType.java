@@ -66,7 +66,7 @@ public enum SingleActionScheduleType {
     private static HashMap<Integer, SingleActionScheduleType> mappings;
 
     private static java.util.HashMap<Integer, SingleActionScheduleType>
-            getMappings() {
+    getMappings() {
         synchronized (SingleActionScheduleType.class) {
             if (mappings == null) {
                 mappings = new HashMap<Integer, SingleActionScheduleType>();

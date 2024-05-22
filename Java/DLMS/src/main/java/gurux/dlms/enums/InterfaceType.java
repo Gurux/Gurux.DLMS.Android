@@ -108,7 +108,7 @@ public enum InterfaceType {
     }
 
     public static InterfaceType[] getEnumConstants() {
-        return new InterfaceType[] { HDLC,
+        return new InterfaceType[]{HDLC,
                 WRAPPER,
                 PDU,
                 WIRELESS_MBUS,

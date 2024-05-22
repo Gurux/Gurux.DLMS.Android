@@ -76,7 +76,7 @@ public class GXCreditChargeConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
+     *
      * @return Credit reference.
      */
     public final String getCreditReference() {
@@ -86,9 +86,8 @@ public class GXCreditChargeConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
-     * @param value
-     *            Credit reference.
+     *
+     * @param value Credit reference.
      */
     public final void setCreditReference(final String value) {
         creditReference = value;
@@ -97,7 +96,7 @@ public class GXCreditChargeConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
+     *
      * @return Charge reference.
      */
     public final String getChargeReference() {
@@ -107,9 +106,8 @@ public class GXCreditChargeConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
-     * @param value
-     *            Charge reference.
+     *
+     * @param value Charge reference.
      */
     public final void setChargeReference(final String value) {
         chargeReference = value;
@@ -118,20 +116,19 @@ public class GXCreditChargeConfiguration {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
+     *
      * @return Collection configuration.
      */
     public final Set<CreditCollectionConfiguration>
-            getCollectionConfiguration() {
+    getCollectionConfiguration() {
         return collectionConfiguration;
     }
 
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSAccount
-     * 
-     * @param value
-     *            Collection configuration.
+     *
+     * @param value Collection configuration.
      */
     public final void setCollectionConfiguration(
             final Set<CreditCollectionConfiguration> value) {
@@ -143,13 +140,12 @@ public class GXCreditChargeConfiguration {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int
-            toInteger(final Set<CreditCollectionConfiguration> value) {
+    toInteger(final Set<CreditCollectionConfiguration> value) {
         if (value == null) {
             return 0;
         }

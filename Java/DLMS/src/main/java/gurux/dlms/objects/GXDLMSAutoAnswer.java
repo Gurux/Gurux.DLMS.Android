@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -74,9 +73,8 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSAutoAnswer(final String ln) {
         this(ln, 0);
@@ -84,11 +82,9 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSAutoAnswer(final String ln, final int sn) {
         super(ObjectType.AUTO_ANSWER, ln, sn);
@@ -155,8 +151,8 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
     public final Object[] getValues() {
         String str = String.valueOf(numberOfRingsInListeningWindow) + "/"
                 + String.valueOf(numberOfRingsOutListeningWindow);
-        return new Object[] { getLogicalName(), getMode(), getListeningWindow(), getStatus(),
-                getNumberOfCalls(), str };
+        return new Object[]{getLogicalName(), getMode(), getListeningWindow(), getStatus(),
+                getNumberOfCalls(), str};
     }
 
     /*
@@ -372,8 +368,8 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Mode", "Listening Window", "Status",
-                "Number Of Calls", "Number Of Rings In Listening Window" };
+        return new String[]{"Logical Name", "Mode", "Listening Window", "Status",
+                "Number Of Calls", "Number Of Rings In Listening Window"};
     }
 
     @Override

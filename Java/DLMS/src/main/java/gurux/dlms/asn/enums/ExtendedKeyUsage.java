@@ -41,66 +41,66 @@ import java.util.Set;
  * Extended key usage.
  */
 public enum ExtendedKeyUsage {
-	/**
-	 * Certificate can be used as an TLS server certificate.
-	 */
-	SERVER_AUTH(1),
-	/**
-	 * Certificate can be used as an TLS client certificate.
-	 */
-	CLIENT_AUTH(2);
+    /**
+     * Certificate can be used as an TLS server certificate.
+     */
+    SERVER_AUTH(1),
+    /**
+     * Certificate can be used as an TLS client certificate.
+     */
+    CLIENT_AUTH(2);
 
-	private int value;
+    private int value;
 
-	/*
-	 * Constructor.
-	 */
-	ExtendedKeyUsage(final int forValue) {
-		value = forValue;
-	}
+    /*
+     * Constructor.
+     */
+    ExtendedKeyUsage(final int forValue) {
+        value = forValue;
+    }
 
-	/*
-	 * Get integer value for enumerator.
-	 */
-	public int getValue() {
-		return value;
-	}
+    /*
+     * Get integer value for enumerator.
+     */
+    public int getValue() {
+        return value;
+    }
 
-	/**
-	 * @return Get enumeration constant values.
-	 */
-	private static ExtendedKeyUsage[] getEnumConstants() {
-		return new ExtendedKeyUsage[] { SERVER_AUTH, CLIENT_AUTH };
-	}
+    /**
+     * @return Get enumeration constant values.
+     */
+    private static ExtendedKeyUsage[] getEnumConstants() {
+        return new ExtendedKeyUsage[]{SERVER_AUTH, CLIENT_AUTH};
+    }
 
-	/**
-	 * Converts the integer value to enumerated value.
-	 * 
-	 * @param value The integer value, which is read from the device.
-	 * @return The enumerated value, which represents the integer.
-	 */
-	public static java.util.Set<ExtendedKeyUsage> forValue(final int value) {
-		Set<ExtendedKeyUsage> types = new HashSet<ExtendedKeyUsage>();
-		ExtendedKeyUsage[] enums = getEnumConstants();
-		for (int pos = 0; pos != enums.length; ++pos) {
-			if ((enums[pos].value & value) == enums[pos].value) {
-				types.add(enums[pos]);
-			}
-		}
-		return types;
-	}
+    /**
+     * Converts the integer value to enumerated value.
+     *
+     * @param value The integer value, which is read from the device.
+     * @return The enumerated value, which represents the integer.
+     */
+    public static java.util.Set<ExtendedKeyUsage> forValue(final int value) {
+        Set<ExtendedKeyUsage> types = new HashSet<ExtendedKeyUsage>();
+        ExtendedKeyUsage[] enums = getEnumConstants();
+        for (int pos = 0; pos != enums.length; ++pos) {
+            if ((enums[pos].value & value) == enums[pos].value) {
+                types.add(enums[pos]);
+            }
+        }
+        return types;
+    }
 
-	/**
-	 * Converts the enumerated value to integer value.
-	 * 
-	 * @param value The enumerated value.
-	 * @return The integer value.
-	 */
-	public static int toInteger(final Set<ExtendedKeyUsage> value) {
-		int tmp = 0;
-		for (ExtendedKeyUsage it : value) {
-			tmp |= it.getValue();
-		}
-		return tmp;
-	}
+    /**
+     * Converts the enumerated value to integer value.
+     *
+     * @param value The enumerated value.
+     * @return The integer value.
+     */
+    public static int toInteger(final Set<ExtendedKeyUsage> value) {
+        int tmp = 0;
+        for (ExtendedKeyUsage it : value) {
+            tmp |= it.getValue();
+        }
+        return tmp;
+    }
 }

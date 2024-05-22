@@ -72,8 +72,7 @@ public class GXDLMSPlcMeterInfo {
     }
 
     /**
-     * @param value
-     *            Destination Address.
+     * @param value Destination Address.
      */
     public final void setDestinationAddress(final int value) {
         destinationAddress = value;
@@ -87,8 +86,7 @@ public class GXDLMSPlcMeterInfo {
     }
 
     /**
-     * @param value
-     *            System title.
+     * @param value System title.
      */
     public final void setSystemTitle(byte[] value) {
         systemTitle = value;
@@ -102,8 +100,7 @@ public class GXDLMSPlcMeterInfo {
     }
 
     /**
-     * @param value
-     *            Alarm descriptor.
+     * @param value Alarm descriptor.
      */
     public final void setAlarmDescriptor(final short value) {
         alarmDescriptor = value;

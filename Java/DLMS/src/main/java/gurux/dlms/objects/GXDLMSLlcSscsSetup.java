@@ -69,9 +69,8 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSLlcSscsSetup(final String ln) {
         this(ln, 0);
@@ -79,11 +78,9 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSLlcSscsSetup(final String ln, final int sn) {
         super(ObjectType.LLC_SSCS_SETUP, ln, sn);
@@ -91,16 +88,15 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Address assigned to the service node during its registration by
-     *         the base node.
+     * the base node.
      */
     public final int getServiceNodeAddress() {
         return serviceNodeAddress;
     }
 
     /**
-     * @param value
-     *            Address assigned to the service node during its registration
-     *            by the base node.
+     * @param value Address assigned to the service node during its registration
+     *              by the base node.
      */
     public final void setServiceNodeAddress(final int value) {
         serviceNodeAddress = value;
@@ -114,8 +110,7 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Base node address to which the service node is registered.
+     * @param value Base node address to which the service node is registered.
      */
     public final void setBaseNodeAddress(final int value) {
         baseNodeAddress = value;
@@ -125,22 +120,15 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
      * Deallocating the service node address. The value of the
      * ServiceNodeAddress becomes NEW and the value of the BaseNodeAddress
      * becomes 0.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] reset(final GXDLMSClient client)
@@ -163,8 +151,8 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), serviceNodeAddress,
-                baseNodeAddress };
+        return new Object[]{getLogicalName(), serviceNodeAddress,
+                baseNodeAddress};
     }
 
     /*
@@ -210,14 +198,14 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-        case 3:
-            return DataType.UINT16;
-        default:
-            throw new IllegalArgumentException(
-                    "GetDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+            case 3:
+                return DataType.UINT16;
+            default:
+                throw new IllegalArgumentException(
+                        "GetDataType failed. Invalid attribute index.");
         }
     }
 
@@ -226,17 +214,17 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return serviceNodeAddress;
-        case 3:
-            return baseNodeAddress;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return serviceNodeAddress;
+            case 3:
+                return baseNodeAddress;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -246,7 +234,7 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
@@ -278,12 +266,12 @@ public class GXDLMSLlcSscsSetup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "ServiceNodeAddress",
-                "BaseNodeAddress" };
+        return new String[]{"Logical Name", "ServiceNodeAddress",
+                "BaseNodeAddress"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset" };
+        return new String[]{"Reset"};
     }
 }

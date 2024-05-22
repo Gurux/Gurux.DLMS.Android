@@ -67,11 +67,11 @@ public enum CreditCollectionConfiguration {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, CreditCollectionConfiguration>
-            getMappings() {
+    getMappings() {
         synchronized (CreditCollectionConfiguration.class) {
             if (mappings == null) {
                 mappings =
@@ -83,9 +83,8 @@ public enum CreditCollectionConfiguration {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     CreditCollectionConfiguration(final int value) {
         intValue = value;
@@ -94,7 +93,7 @@ public enum CreditCollectionConfiguration {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -102,15 +101,14 @@ public enum CreditCollectionConfiguration {
     }
 
     static CreditCollectionConfiguration[] getEnumConstants() {
-        return new CreditCollectionConfiguration[] { DISCONNECTED,
-                LOAD_LIMITING, FRIENDLY_CREDIT };
+        return new CreditCollectionConfiguration[]{DISCONNECTED,
+                LOAD_LIMITING, FRIENDLY_CREDIT};
     }
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static Set<CreditCollectionConfiguration> forValue(final int value) {
@@ -127,13 +125,12 @@ public enum CreditCollectionConfiguration {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int
-            toInteger(final Set<CreditCollectionConfiguration> value) {
+    toInteger(final Set<CreditCollectionConfiguration> value) {
         if (value == null) {
             return 0;
         }

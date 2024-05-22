@@ -60,8 +60,7 @@ public class GXMBusClientData {
     }
 
     /**
-     * @param value
-     *            Data information block.
+     * @param value Data information block.
      */
     public final void setDataInformation(final byte[] value) {
         dataInformation = value;
@@ -75,8 +74,7 @@ public class GXMBusClientData {
     }
 
     /**
-     * @param value
-     *            Value information block.
+     * @param value Value information block.
      */
     public final void setValueInformation(final byte[] value) {
         valueInformation = value;
@@ -90,8 +88,7 @@ public class GXMBusClientData {
     }
 
     /**
-     * @param value
-     *            Data.
+     * @param value Data.
      */
     public final void setData(final Object value) {
         data = value;

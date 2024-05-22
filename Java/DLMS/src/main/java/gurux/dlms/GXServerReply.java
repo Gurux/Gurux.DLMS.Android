@@ -58,9 +58,8 @@ public class GXServerReply {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Received data.
+     *
+     * @param value Received data.
      */
     public GXServerReply(byte[] value) {
         data = value;
@@ -74,8 +73,7 @@ public class GXServerReply {
     }
 
     /**
-     * @param value
-     *            The data to set.
+     * @param value The data to set.
      */
     public final void setData(final byte[] value) {
         data = value;
@@ -89,8 +87,7 @@ public class GXServerReply {
     }
 
     /**
-     * @param value
-     *            the replyMessages to set
+     * @param value the replyMessages to set
      */
     public final void setReply(final byte[] value) {
         reply = value;
@@ -104,8 +101,7 @@ public class GXServerReply {
     }
 
     /**
-     * @param value
-     *            Connection info.
+     * @param value Connection info.
      */
     public final void setConnectionInfo(final GXDLMSConnectionEventArgs value) {
         connectionInfo = value;
@@ -126,8 +122,7 @@ public class GXServerReply {
     }
 
     /**
-     * @param value
-     *            Message count to send.
+     * @param value Message count to send.
      */
     public final void setCount(final int value) {
         count = value;

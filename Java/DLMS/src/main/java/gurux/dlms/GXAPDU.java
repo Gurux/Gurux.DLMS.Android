@@ -83,10 +83,10 @@ final class GXAPDU {
      * Retrieves the string that indicates the level of authentication, if any.
      */
     private static void getAuthenticationString(final GXDLMSSettings settings,
-            final GXByteBuffer data, final boolean ignoreAcse) {
+                                                final GXByteBuffer data, final boolean ignoreAcse) {
         if (settings.getAuthentication() != Authentication.NONE
                 || (!ignoreAcse && settings.getCipher() != null
-                        && settings.getCipher().getSecurity() != Security.NONE)) {
+                && settings.getCipher().getSecurity() != Security.NONE)) {
             // Add sender ACSE-requirements field component.
             data.setUInt8(BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS);
             data.setUInt8(2);
@@ -97,8 +97,8 @@ final class GXAPDU {
             // Len
             data.setUInt8(7);
             // OBJECT IDENTIFIER
-            byte[] p = { (byte) 0x60, (byte) 0x85, (byte) 0x74, 0x05, 0x08, 0x02,
-                    (byte) settings.getAuthentication().getValue() };
+            byte[] p = {(byte) 0x60, (byte) 0x85, (byte) 0x74, 0x05, 0x08, 0x02,
+                    (byte) settings.getAuthentication().getValue()};
             data.set(p);
         }
         // If authentication is used.
@@ -132,17 +132,14 @@ final class GXAPDU {
 
     /**
      * Code application context name.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param data
-     *            Byte buffer where data is saved.
-     * @param cipher
-     *            Is ciphering settings.
+     *
+     * @param settings DLMS settings.
+     * @param data     Byte buffer where data is saved.
+     * @param cipher   Is ciphering settings.
      */
     @SuppressWarnings("squid:S2259")
     private static void generateApplicationContextName(final int name,
-            final GXDLMSSettings settings, final GXByteBuffer data, final GXICipher cipher) {
+                                                       final GXDLMSSettings settings, final GXByteBuffer data, final GXICipher cipher) {
         // ProtocolVersion
         if (settings.getProtocolVersion() != null) {
             data.setUInt8(BerType.CONTEXT | PduType.PROTOCOL_VERSION);
@@ -229,16 +226,13 @@ final class GXAPDU {
 
     /**
      * Generate User information initiate request.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param data
-     *            Received data.
-     * @param xml
-     *            Is XML used.
+     *
+     * @param settings DLMS settings.
+     * @param data     Received data.
+     * @param xml      Is XML used.
      */
     static void getInitiateRequest(final GXDLMSSettings settings, final GXByteBuffer data,
-            final boolean xml) {
+                                   final boolean xml) {
         // Tag for xDLMS-Initiate request
         data.setUInt8(Command.INITIATE_REQUEST);
         // Usage field for the response allowed component.
@@ -279,7 +273,7 @@ final class GXAPDU {
      * @param data Generated user information.
      */
     static void generateUserInformation(final GXDLMSSettings settings, final GXICipher cipher,
-            final GXByteBuffer encryptedData, final GXByteBuffer data)
+                                        final GXByteBuffer encryptedData, final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         data.setUInt8(BerType.CONTEXT | BerType.CONSTRUCTED | PduType.USER_INFORMATION);
@@ -325,7 +319,7 @@ final class GXAPDU {
      * Generates Aarq.
      */
     public static void generateAarq(final GXDLMSSettings settings, final GXICipher cipher,
-            final GXByteBuffer encryptedData, final GXByteBuffer data)
+                                    final GXByteBuffer encryptedData, final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         // AARQ APDU Tag
@@ -363,7 +357,7 @@ final class GXAPDU {
      * Parse User Information from PDU.
      */
     static SourceDiagnostic parseUserInformation(final GXDLMSSettings settings,
-            final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml)
+                                                 final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml)
             throws Exception {
         short len = data.getUInt8();
         if (data.size() - data.position() < len) {
@@ -395,8 +389,8 @@ final class GXAPDU {
 
     @SuppressWarnings("squid:S1066")
     static SourceDiagnostic parse(final boolean initiateRequest, final GXDLMSSettings settings,
-            final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml,
-            final int tag2) {
+                                  final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml,
+                                  final int tag2) {
         int len;
         int tag;
         GXByteBuffer tmp2 = new GXByteBuffer();
@@ -643,8 +637,8 @@ final class GXAPDU {
     }
 
     static SourceDiagnostic parseInitiate(final boolean initiateRequest,
-            final GXDLMSSettings settings, final GXICipher cipher, final GXByteBuffer data,
-            final GXDLMSTranslatorStructure xml)
+                                          final GXDLMSSettings settings, final GXICipher cipher, final GXByteBuffer data,
+                                          final GXDLMSTranslatorStructure xml)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         // Tag for xDLMS-Initate.response
@@ -725,17 +719,14 @@ final class GXAPDU {
 
     /**
      * Parse application context name.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param buff
-     *            Received data.
-     * @param xml
-     *            XML.
+     *
+     * @param settings DLMS settings.
+     * @param buff     Received data.
+     * @param xml      XML.
      * @return null if succeeded.
      */
     private static ApplicationContextName parseApplicationContextName(final GXDLMSSettings settings,
-            final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
+                                                                      final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
         // Get length.
         int len = buff.getUInt8();
         if (buff.size() - buff.position() < len) {
@@ -845,7 +836,7 @@ final class GXAPDU {
      * Parse APDU.
      */
     public static Object parsePDU(final GXDLMSSettings settings, final GXICipher cipher,
-            final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
+                                  final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
         // Get AARE tag and length
         validateAare(settings, buff);
         int len = GXCommon.getObjectCount(buff);
@@ -877,7 +868,7 @@ final class GXAPDU {
     }
 
     private static AcseServiceProvider parseProtocolVersion(GXDLMSSettings settings,
-            GXByteBuffer buff, GXDLMSTranslatorStructure xml) {
+                                                            GXByteBuffer buff, GXDLMSTranslatorStructure xml) {
         // Get count.
         buff.getUInt8();
         byte unusedBits = (byte) buff.getUInt8();
@@ -906,7 +897,7 @@ final class GXAPDU {
      */
     @SuppressWarnings("squid:S106")
     public static Object parsePDU2(final GXDLMSSettings settings, final GXICipher cipher,
-            final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
+                                   final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
         AssociationResult resultComponent = AssociationResult.ACCEPTED;
         String msg = null;
         Object ret = 0;
@@ -916,251 +907,251 @@ final class GXAPDU {
         while (buff.position() < buff.size()) {
             tag = buff.getUInt8();
             switch (tag) {
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.APPLICATION_CONTEXT_NAME:
-                if ((name = parseApplicationContextName(settings, buff, xml)) != null) {
-                    if (!settings.isServer()) {
-                        switch (name) {
-                        case LOGICAL_NAME:
-                            msg = " Meter expects Logical Name referencing.";
-                            break;
-                        case SHORT_NAME:
-                            msg = " Meter expects Short Name referencing.";
-                            break;
-                        case LOGICAL_NAME_WITH_CIPHERING:
-                            msg = " Meter expects Logical Name referencing with secured connection.";
-                            break;
-                        case SHORT_NAME_WITH_CIPHERING:
-                            msg = " Meter expects Short Name referencing with secured connection.";
-                            break;
-                        default:
-                            break;
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.APPLICATION_CONTEXT_NAME:
+                    if ((name = parseApplicationContextName(settings, buff, xml)) != null) {
+                        if (!settings.isServer()) {
+                            switch (name) {
+                                case LOGICAL_NAME:
+                                    msg = " Meter expects Logical Name referencing.";
+                                    break;
+                                case SHORT_NAME:
+                                    msg = " Meter expects Short Name referencing.";
+                                    break;
+                                case LOGICAL_NAME_WITH_CIPHERING:
+                                    msg = " Meter expects Logical Name referencing with secured connection.";
+                                    break;
+                                case SHORT_NAME_WITH_CIPHERING:
+                                    msg = " Meter expects Short Name referencing with secured connection.";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            throw new GXDLMSException(AssociationResult.PERMANENT_REJECTED,
+                                    SourceDiagnostic.NOT_SUPPORTED, msg);
                         }
-                        throw new GXDLMSException(AssociationResult.PERMANENT_REJECTED,
-                                SourceDiagnostic.NOT_SUPPORTED, msg);
+                        ret = name;
                     }
-                    ret = name;
-                }
-                break;
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AP_TITLE: // 0xA2
-                // Get length.
-                if (buff.getUInt8() != 3) {
-                    throw new IllegalArgumentException("Invalid tag.");
-                }
-                if (settings.isServer()) {
-                    // Choice for result (INTEGER, universal)
-                    if (buff.getUInt8() != BerType.OCTET_STRING) {
+                    break;
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AP_TITLE: // 0xA2
+                    // Get length.
+                    if (buff.getUInt8() != 3) {
                         throw new IllegalArgumentException("Invalid tag.");
                     }
+                    if (settings.isServer()) {
+                        // Choice for result (INTEGER, universal)
+                        if (buff.getUInt8() != BerType.OCTET_STRING) {
+                            throw new IllegalArgumentException("Invalid tag.");
+                        }
+                        len = buff.getUInt8();
+                        tmp = new byte[len];
+                        buff.get(tmp);
+                        if (xml != null) {
+                            // Called AP Title
+                            xml.appendLine(TranslatorTags.CALLED_AP_TITLE, "Value",
+                                    GXCommon.toHex(tmp, false));
+                        }
+                    } else {
+                        // Choice for result (INTEGER, universal)
+                        if (buff.getUInt8() != BerType.INTEGER) {
+                            throw new IllegalArgumentException("Invalid tag.");
+                        }
+                        // Get length.
+                        if (buff.getUInt8() != 1) {
+                            throw new IllegalArgumentException("Invalid tag.");
+                        }
+                        resultComponent = AssociationResult.forValue(buff.getUInt8());
+                        if (xml != null) {
+                            if (resultComponent != AssociationResult.ACCEPTED) {
+                                xml.appendComment(resultComponent.toString());
+                            }
+                            xml.appendLine(TranslatorGeneralTags.ASSOCIATION_RESULT, "Value",
+                                    xml.integerToHex(resultComponent.getValue(), 2));
+                            xml.appendStartTag(TranslatorGeneralTags.RESULT_SOURCE_DIAGNOSTIC);
+                        }
+                    }
+                    break;
+                // SourceDiagnostic
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AE_QUALIFIER: // 0xA3
+                    ret = parseSourceDiagnostic(settings, buff, xml);
+                    break;
+                // Result
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AP_INVOCATION_ID: // 0xA4
+                    parseResult(settings, buff, xml);
+                    break;
+                // Client system title.
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AP_TITLE: // 0xA6
+                    // len =
+                    buff.getUInt8();
+                    // tag =
+                    buff.getUInt8();
                     len = buff.getUInt8();
                     tmp = new byte[len];
                     buff.get(tmp);
-                    if (xml != null) {
-                        // Called AP Title
-                        xml.appendLine(TranslatorTags.CALLED_AP_TITLE, "Value",
-                                GXCommon.toHex(tmp, false));
-                    }
-                } else {
-                    // Choice for result (INTEGER, universal)
-                    if (buff.getUInt8() != BerType.INTEGER) {
-                        throw new IllegalArgumentException("Invalid tag.");
-                    }
-                    // Get length.
-                    if (buff.getUInt8() != 1) {
-                        throw new IllegalArgumentException("Invalid tag.");
-                    }
-                    resultComponent = AssociationResult.forValue(buff.getUInt8());
-                    if (xml != null) {
-                        if (resultComponent != AssociationResult.ACCEPTED) {
-                            xml.appendComment(resultComponent.toString());
+                    try {
+                        if (tmp.length == 8) {
+                            settings.setSourceSystemTitle(tmp);
+                        } else {
+                            settings.setSourceSystemTitle(null);
                         }
-                        xml.appendLine(TranslatorGeneralTags.ASSOCIATION_RESULT, "Value",
-                                xml.integerToHex(resultComponent.getValue(), 2));
-                        xml.appendStartTag(TranslatorGeneralTags.RESULT_SOURCE_DIAGNOSTIC);
-                    }
-                }
-                break;
-            // SourceDiagnostic
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AE_QUALIFIER: // 0xA3
-                ret = parseSourceDiagnostic(settings, buff, xml);
-                break;
-            // Result
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AP_INVOCATION_ID: // 0xA4
-                parseResult(settings, buff, xml);
-                break;
-            // Client system title.
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AP_TITLE: // 0xA6
-                // len =
-                buff.getUInt8();
-                // tag =
-                buff.getUInt8();
-                len = buff.getUInt8();
-                tmp = new byte[len];
-                buff.get(tmp);
-                try {
-                    if (tmp.length == 8) {
-                        settings.setSourceSystemTitle(tmp);
-                    } else {
-                        settings.setSourceSystemTitle(null);
-                    }
-                } catch (Exception ex) {
-                    if (xml == null) {
-                        throw ex;
-                    }
-                }
-                appendClientSystemTitleToXml(settings, xml);
-                break;
-            // Server system title.
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.SENDER_ACSE_REQUIREMENTS: // 0xAA
-                // len =
-                buff.getUInt8();
-                tag = buff.getUInt8();
-                len = buff.getUInt8();
-                tmp = new byte[len];
-                buff.get(tmp);
-                settings.setStoCChallenge(tmp);
-                appendServerSystemTitleToXml(settings, xml, tag);
-                break;
-            // Client AEInvocationId.
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AE_INVOCATION_ID:// 0xA9
-                // len =
-                buff.getUInt8();
-                // tag =
-                buff.getUInt8();
-                // len =
-                buff.getUInt8();
-                settings.setUserId(buff.getUInt8());
-                if (xml != null) {
-                    // CallingAPTitle
-                    xml.appendLine(TranslatorGeneralTags.CALLING_AE_INVOCATION_ID, "Value",
-                            xml.integerToHex(settings.getUserId(), 2));
-                }
-                break;
-            // Client CalledAeInvocationId.
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AE_INVOCATION_ID:// 0xA5
-                // len =
-                buff.getUInt8();
-                // tag =
-                buff.getUInt8();
-                // len =
-                buff.getUInt8();
-                settings.setUserId(buff.getUInt8());
-                if (xml != null) {
-                    // CallingAPTitle
-                    xml.appendLine(TranslatorGeneralTags.CALLED_AE_INVOCATION_ID, "Value",
-                            xml.integerToHex(settings.getUserId(), 2));
-                }
-                break;
-            // Server RespondingAEInvocationId.
-            case BerType.CONTEXT | BerType.CONSTRUCTED | 7:// 0xA7
-                // len =
-                buff.getUInt8();
-                // tag =
-                buff.getUInt8();
-                // len =
-                buff.getUInt8();
-                settings.setUserId(buff.getUInt8());
-                if (xml != null) {
-                    // CallingAPTitle
-                    xml.appendLine(TranslatorGeneralTags.RESPONDING_AE_INVOCATION_ID, "Value",
-                            xml.integerToHex(settings.getUserId(), 2));
-                }
-                break;
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AP_INVOCATION_ID:// 0xA8
-                if (buff.getUInt8() != 3) {
-                    throw new IllegalArgumentException("Invalid tag.");
-                }
-                if (buff.getUInt8() != 2) {
-                    throw new IllegalArgumentException("Invalid length.");
-                }
-                if (buff.getUInt8() != 1) {
-                    throw new IllegalArgumentException("Invalid tag length.");
-                }
-                // Get value.
-                len = buff.getUInt8();
-                if (xml != null) {
-                    // CallingApInvocationId
-                    xml.appendLine(TranslatorTags.CALLING_AP_INVOCATION_ID, "Value",
-                            xml.integerToHex(len, 2));
-                }
-                break;
-            case BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS: // 0x8A
-            case BerType.CONTEXT | PduType.CALLING_AP_INVOCATION_ID: // 0x88
-                // Get sender ACSE-requirements field component.
-                if (buff.getUInt8() != 2) {
-                    throw new IllegalArgumentException("Invalid tag.");
-                }
-                if (buff.getUInt8() != BerType.OBJECT_DESCRIPTOR) {
-                    throw new IllegalArgumentException("Invalid tag.");
-                }
-                // Get only value because client application is
-                // sending system title with LOW authentication.
-                buff.getUInt8();
-                if (xml != null) {
-                    xml.appendLine(tag, "Value", "1");
-                }
-                break;
-            case BerType.CONTEXT | PduType.MECHANISM_NAME: // 0x8B
-            case BerType.CONTEXT | PduType.CALLING_AE_INVOCATION_ID: // 0x89
-                updateAuthentication(settings, buff);
-                if (xml != null) {
-                    // CHECKSTYLE:OFF
-                    if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
-                        // CHECKSTYLE:ON
-                        xml.appendLine(tag, "Value", settings.getAuthentication().toString());
-                    } else {
-                        xml.appendLine(tag, "Value",
-                                String.valueOf(settings.getAuthentication().ordinal()));
-                    }
-                }
-                break;
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AUTHENTICATION_VALUE: // 0xAC
-                updatePassword(settings, buff, xml);
-                break;
-            case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.USER_INFORMATION:// 0xBE
-                try {
-                    SourceDiagnostic ret2 = parseUserInformation(settings, cipher, buff, xml);
-                    if (ret2 != SourceDiagnostic.NONE) {
-                        return ret2.getValue();
-                    }
-                } catch (GXDLMSExceptionResponse e) {
-                    return e.getExceptionServiceError();
-                } catch (AEADBadTagException e) {
-                    return ExceptionServiceError.DECIPHERING_ERROR;
-                } catch (Exception e) {
-                    if (xml == null) {
-                        // Check result component. Some meters are returning
-                        // invalid user-information if connection failed.
-                        if (resultComponent != AssociationResult.ACCEPTED
-                                && ret instanceof SourceDiagnostic
-                                && (SourceDiagnostic) ret != SourceDiagnostic.NONE) {
-                            throw new GXDLMSException(resultComponent, (SourceDiagnostic) ret);
+                    } catch (Exception ex) {
+                        if (xml == null) {
+                            throw ex;
                         }
-                        if (resultComponent != AssociationResult.ACCEPTED
-                                && ret instanceof AcseServiceProvider
-                                && (AcseServiceProvider) ret != AcseServiceProvider.NONE) {
-                            throw new GXDLMSException(resultComponent, (AcseServiceProvider) ret);
-                        }
-                        throw new GXDLMSException(AssociationResult.PERMANENT_REJECTED,
-                                SourceDiagnostic.NO_REASON_GIVEN);
                     }
-                }
-                break;
-            case BerType.CONTEXT: // 0x80
-                AcseServiceProvider tmp2 = parseProtocolVersion(settings, buff, xml);
-                if (tmp2 != AcseServiceProvider.NONE) {
-                    resultComponent = AssociationResult.PERMANENT_REJECTED;
-                }
-                ret = tmp2;
-                break;
-            default:
-                // Unknown tags.
-                Logger.getLogger(GXAPDU.class.getName()).log(Level.WARNING,
-                        "Unknown tag: " + tag + ".");
-                if (buff.position() < buff.size()) {
+                    appendClientSystemTitleToXml(settings, xml);
+                    break;
+                // Server system title.
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.SENDER_ACSE_REQUIREMENTS: // 0xAA
+                    // len =
+                    buff.getUInt8();
+                    tag = buff.getUInt8();
                     len = buff.getUInt8();
-                    buff.position(buff.position() + len);
-                }
-                break;
+                    tmp = new byte[len];
+                    buff.get(tmp);
+                    settings.setStoCChallenge(tmp);
+                    appendServerSystemTitleToXml(settings, xml, tag);
+                    break;
+                // Client AEInvocationId.
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AE_INVOCATION_ID:// 0xA9
+                    // len =
+                    buff.getUInt8();
+                    // tag =
+                    buff.getUInt8();
+                    // len =
+                    buff.getUInt8();
+                    settings.setUserId(buff.getUInt8());
+                    if (xml != null) {
+                        // CallingAPTitle
+                        xml.appendLine(TranslatorGeneralTags.CALLING_AE_INVOCATION_ID, "Value",
+                                xml.integerToHex(settings.getUserId(), 2));
+                    }
+                    break;
+                // Client CalledAeInvocationId.
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AE_INVOCATION_ID:// 0xA5
+                    // len =
+                    buff.getUInt8();
+                    // tag =
+                    buff.getUInt8();
+                    // len =
+                    buff.getUInt8();
+                    settings.setUserId(buff.getUInt8());
+                    if (xml != null) {
+                        // CallingAPTitle
+                        xml.appendLine(TranslatorGeneralTags.CALLED_AE_INVOCATION_ID, "Value",
+                                xml.integerToHex(settings.getUserId(), 2));
+                    }
+                    break;
+                // Server RespondingAEInvocationId.
+                case BerType.CONTEXT | BerType.CONSTRUCTED | 7:// 0xA7
+                    // len =
+                    buff.getUInt8();
+                    // tag =
+                    buff.getUInt8();
+                    // len =
+                    buff.getUInt8();
+                    settings.setUserId(buff.getUInt8());
+                    if (xml != null) {
+                        // CallingAPTitle
+                        xml.appendLine(TranslatorGeneralTags.RESPONDING_AE_INVOCATION_ID, "Value",
+                                xml.integerToHex(settings.getUserId(), 2));
+                    }
+                    break;
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AP_INVOCATION_ID:// 0xA8
+                    if (buff.getUInt8() != 3) {
+                        throw new IllegalArgumentException("Invalid tag.");
+                    }
+                    if (buff.getUInt8() != 2) {
+                        throw new IllegalArgumentException("Invalid length.");
+                    }
+                    if (buff.getUInt8() != 1) {
+                        throw new IllegalArgumentException("Invalid tag length.");
+                    }
+                    // Get value.
+                    len = buff.getUInt8();
+                    if (xml != null) {
+                        // CallingApInvocationId
+                        xml.appendLine(TranslatorTags.CALLING_AP_INVOCATION_ID, "Value",
+                                xml.integerToHex(len, 2));
+                    }
+                    break;
+                case BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS: // 0x8A
+                case BerType.CONTEXT | PduType.CALLING_AP_INVOCATION_ID: // 0x88
+                    // Get sender ACSE-requirements field component.
+                    if (buff.getUInt8() != 2) {
+                        throw new IllegalArgumentException("Invalid tag.");
+                    }
+                    if (buff.getUInt8() != BerType.OBJECT_DESCRIPTOR) {
+                        throw new IllegalArgumentException("Invalid tag.");
+                    }
+                    // Get only value because client application is
+                    // sending system title with LOW authentication.
+                    buff.getUInt8();
+                    if (xml != null) {
+                        xml.appendLine(tag, "Value", "1");
+                    }
+                    break;
+                case BerType.CONTEXT | PduType.MECHANISM_NAME: // 0x8B
+                case BerType.CONTEXT | PduType.CALLING_AE_INVOCATION_ID: // 0x89
+                    updateAuthentication(settings, buff);
+                    if (xml != null) {
+                        // CHECKSTYLE:OFF
+                        if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
+                            // CHECKSTYLE:ON
+                            xml.appendLine(tag, "Value", settings.getAuthentication().toString());
+                        } else {
+                            xml.appendLine(tag, "Value",
+                                    String.valueOf(settings.getAuthentication().ordinal()));
+                        }
+                    }
+                    break;
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AUTHENTICATION_VALUE: // 0xAC
+                    updatePassword(settings, buff, xml);
+                    break;
+                case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.USER_INFORMATION:// 0xBE
+                    try {
+                        SourceDiagnostic ret2 = parseUserInformation(settings, cipher, buff, xml);
+                        if (ret2 != SourceDiagnostic.NONE) {
+                            return ret2.getValue();
+                        }
+                    } catch (GXDLMSExceptionResponse e) {
+                        return e.getExceptionServiceError();
+                    } catch (AEADBadTagException e) {
+                        return ExceptionServiceError.DECIPHERING_ERROR;
+                    } catch (Exception e) {
+                        if (xml == null) {
+                            // Check result component. Some meters are returning
+                            // invalid user-information if connection failed.
+                            if (resultComponent != AssociationResult.ACCEPTED
+                                    && ret instanceof SourceDiagnostic
+                                    && (SourceDiagnostic) ret != SourceDiagnostic.NONE) {
+                                throw new GXDLMSException(resultComponent, (SourceDiagnostic) ret);
+                            }
+                            if (resultComponent != AssociationResult.ACCEPTED
+                                    && ret instanceof AcseServiceProvider
+                                    && (AcseServiceProvider) ret != AcseServiceProvider.NONE) {
+                                throw new GXDLMSException(resultComponent, (AcseServiceProvider) ret);
+                            }
+                            throw new GXDLMSException(AssociationResult.PERMANENT_REJECTED,
+                                    SourceDiagnostic.NO_REASON_GIVEN);
+                        }
+                    }
+                    break;
+                case BerType.CONTEXT: // 0x80
+                    AcseServiceProvider tmp2 = parseProtocolVersion(settings, buff, xml);
+                    if (tmp2 != AcseServiceProvider.NONE) {
+                        resultComponent = AssociationResult.PERMANENT_REJECTED;
+                    }
+                    ret = tmp2;
+                    break;
+                default:
+                    // Unknown tags.
+                    Logger.getLogger(GXAPDU.class.getName()).log(Level.WARNING,
+                            "Unknown tag: " + tag + ".");
+                    if (buff.position() < buff.size()) {
+                        len = buff.getUInt8();
+                        buff.position(buff.position() + len);
+                    }
+                    break;
             }
         }
         // All meters don't send user-information if connection is failed.
@@ -1180,7 +1171,7 @@ final class GXAPDU {
     }
 
     private static void parseResult(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDLMSTranslatorStructure xml) {
+                                    final GXDLMSTranslatorStructure xml) {
         byte[] tmp;
         int len;
         if (settings.isServer()) {
@@ -1222,7 +1213,7 @@ final class GXAPDU {
     }
 
     private static Object parseSourceDiagnostic(final GXDLMSSettings settings,
-            final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
+                                                final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
         int tag;
         int len;
         Object ret = 0;
@@ -1274,7 +1265,7 @@ final class GXAPDU {
     }
 
     private static void appendServerSystemTitleToXml(final GXDLMSSettings settings,
-            final GXDLMSTranslatorStructure xml, final int tag) {
+                                                     final GXDLMSTranslatorStructure xml, final int tag) {
         if (xml != null) {
             // RespondingAuthentication
             if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
@@ -1291,7 +1282,7 @@ final class GXAPDU {
     }
 
     private static void appendClientSystemTitleToXml(final GXDLMSSettings settings,
-            final GXDLMSTranslatorStructure xml) {
+                                                     final GXDLMSTranslatorStructure xml) {
         if (xml != null) {
             // CallingAPTitle
             xml.appendLine(TranslatorGeneralTags.CALLING_AP_TITLE, "Value",
@@ -1300,7 +1291,7 @@ final class GXAPDU {
     }
 
     private static void appendResultToXml(final GXDLMSSettings settings,
-            final GXDLMSTranslatorStructure xml) {
+                                          final GXDLMSTranslatorStructure xml) {
         if (xml != null) {
             // RespondingAPTitle
             xml.appendLine(TranslatorGeneralTags.RESPONDING_AP_TITLE, "Value",
@@ -1309,7 +1300,7 @@ final class GXAPDU {
     }
 
     private static void updatePassword(final GXDLMSSettings settings, final GXByteBuffer buff,
-            final GXDLMSTranslatorStructure xml) {
+                                       final GXDLMSTranslatorStructure xml) {
         byte[] tmp;
         int len;
         // len =
@@ -1353,7 +1344,7 @@ final class GXAPDU {
     }
 
     private static void updateAuthentication(final GXDLMSSettings settings,
-            final GXByteBuffer buff) {
+                                             final GXByteBuffer buff) {
         int ch;
         buff.getUInt8();
         if (buff.getUInt8() != 0x60) {
@@ -1427,8 +1418,8 @@ final class GXAPDU {
      * Server generates AARE message.
      */
     public static void generateAARE(final int name, final GXDLMSSettings settings,
-            final GXByteBuffer data, final AssociationResult result, final Object diagnostic,
-            final GXICipher cipher, final GXByteBuffer errorData, final GXByteBuffer encryptedData)
+                                    final GXByteBuffer data, final AssociationResult result, final Object diagnostic,
+                                    final GXICipher cipher, final GXByteBuffer errorData, final GXByteBuffer encryptedData)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         int offset = data.size();

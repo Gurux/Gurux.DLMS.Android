@@ -54,7 +54,7 @@ import gurux.dlms.enums.ObjectType;
 /**
  * Save COSEM object to the file.
  */
-public class GXXmlWriter implements AutoCloseable{
+public class GXXmlWriter implements AutoCloseable {
 
     private int indenting = 0;
     private GXXmlWriterSettings settings;
@@ -68,7 +68,7 @@ public class GXXmlWriter implements AutoCloseable{
 
     /**
      * @return GXDateTime values are serialised using meter time, not local
-     *         time.
+     * time.
      */
     public boolean isUseMeterTime() {
         if (settings == null) {
@@ -79,13 +79,10 @@ public class GXXmlWriter implements AutoCloseable{
 
     /**
      * Constructor.
-     * 
-     * @param filename
-     *            File name.
-     * @throws XMLStreamException
-     *             Invalid XML stream.
-     * @throws FileNotFoundException
-     *             File not found.
+     *
+     * @param filename File name.
+     * @throws XMLStreamException    Invalid XML stream.
+     * @throws FileNotFoundException File not found.
      */
     public GXXmlWriter(final String filename)
             throws FileNotFoundException, XMLStreamException {
@@ -94,23 +91,21 @@ public class GXXmlWriter implements AutoCloseable{
 
     /**
      * Constructor.
-     * 
-     * @param s
-     *            Stream.
-     * @throws XMLStreamException
-     *             Invalid XML stream.
+     *
+     * @param s Stream.
+     * @throws XMLStreamException Invalid XML stream.
      */
     public GXXmlWriter(final OutputStream s) throws XMLStreamException {
         throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     @Override
-    public final void close()  {
+    public final void close() {
     }
 
     /**
      * Append spaces to the buffer.
-     * 
+     *
      * @throws XMLStreamException
      */
     private void appendSpaces() throws XMLStreamException {
@@ -127,8 +122,8 @@ public class GXXmlWriter implements AutoCloseable{
     }
 
     public final void writeStartElement(final String elementName,
-            final String attributeName, final String value,
-            final boolean newLine) throws XMLStreamException {
+                                        final String attributeName, final String value,
+                                        final boolean newLine) throws XMLStreamException {
         throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
@@ -150,7 +145,7 @@ public class GXXmlWriter implements AutoCloseable{
     }
 
     public final void writeElementString(final String name, final double value,
-            final double defaultValue) throws XMLStreamException {
+                                         final double defaultValue) throws XMLStreamException {
         throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
@@ -174,7 +169,7 @@ public class GXXmlWriter implements AutoCloseable{
     }
 
     public final void writeElementString(final String name,
-            final GXDateTime value) throws XMLStreamException {
+                                         final GXDateTime value) throws XMLStreamException {
         throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
@@ -189,39 +184,31 @@ public class GXXmlWriter implements AutoCloseable{
 
     /**
      * Write object value to file.
-     * 
-     * @param name
-     *            Object name.
-     * @param value
-     *            Object value.
-     * @param dt
-     *            Data type of serialized value.
-     * @param uiType
-     *            UI data type of serialized value.
+     *
+     * @param name   Object name.
+     * @param value  Object value.
+     * @param dt     Data type of serialized value.
+     * @param uiType UI data type of serialized value.
      */
     public final void writeElementObject(final String name, final Object value,
-            final DataType dt, final DataType uiType){
+                                         final DataType dt, final DataType uiType) {
         throw new UnsupportedOperationException("XML writer is not supported at the moment.");
     }
 
     /**
      * Write object value to file.
-     * 
-     * @param name
-     *            Object name.
-     * @param value
-     *            Object value.
-     * @param skipDefaultValue
-     *            Is default value serialized.
-     * @throws XMLStreamException
-     *             Invalid XML stream.
+     *
+     * @param name             Object name.
+     * @param value            Object value.
+     * @param skipDefaultValue Is default value serialized.
+     * @throws XMLStreamException Invalid XML stream.
      */
     public final void writeElementObject(final String name, final Object value,
-            final boolean skipDefaultValue) throws XMLStreamException {
+                                         final boolean skipDefaultValue) throws XMLStreamException {
         if (value != null || !skipDefaultValue) {
             if (skipDefaultValue && value instanceof java.util.Date
                     && (((java.util.Date) value)
-                            .compareTo(new java.util.Date(0))) == 0) {
+                    .compareTo(new java.util.Date(0))) == 0) {
                 return;
             }
             if (value instanceof GXDateTimeOS) {
@@ -250,9 +237,8 @@ public class GXXmlWriter implements AutoCloseable{
 
     /**
      * Write End Element tag.
-     * 
-     * @throws XMLStreamException
-     *             Invalid XML stream.
+     *
+     * @throws XMLStreamException Invalid XML stream.
      */
     public final void writeEndElement() throws XMLStreamException {
         writeEndElement(true);
@@ -260,18 +246,16 @@ public class GXXmlWriter implements AutoCloseable{
 
     /**
      * Write End document tag.
-     * 
-     * @throws XMLStreamException
-     *             Invalid XML stream.
+     *
+     * @throws XMLStreamException Invalid XML stream.
      */
     public final void writeEndDocument() throws XMLStreamException {
     }
 
     /**
      * Write any cached data to the stream.
-     * 
-     * @throws XMLStreamException
-     *             Invalid XML stream.
+     *
+     * @throws XMLStreamException Invalid XML stream.
      */
     public final void flush() throws XMLStreamException {
     }
@@ -279,10 +263,8 @@ public class GXXmlWriter implements AutoCloseable{
     /**
      * Check if object attribute is serialized.
      *
-     * @param objectType
-     *            Object type
-     * @param index
-     *            Attribute index.
+     * @param objectType Object type
+     * @param index      Attribute index.
      * @return True, if object attribute is not serialized.
      */
     boolean isSerialized(ObjectType objectType, int index) {

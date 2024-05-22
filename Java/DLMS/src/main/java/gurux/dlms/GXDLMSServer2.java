@@ -77,56 +77,48 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Constructor for logical name referencing.
-     * 
-     * @param logicalNameReferencing
-     *            Is logical name referencing used.
-     * @param type
-     *            Interface type.
+     *
+     * @param logicalNameReferencing Is logical name referencing used.
+     * @param type                   Interface type.
      */
     public GXDLMSServer2(final boolean logicalNameReferencing,
-            final InterfaceType type) {
+                         final InterfaceType type) {
         base = new GXDLMSServerBase(this, true, type);
         getSettings().setUseLogicalNameReferencing(logicalNameReferencing);
     }
 
     /**
      * Constructor for logical name referencing.
-     * 
-     * @param ln
-     *            Association logical name.
-     * @param type
-     *            Interface type.
+     *
+     * @param ln   Association logical name.
+     * @param type Interface type.
      */
     public GXDLMSServer2(final GXDLMSAssociationLogicalName ln,
-            final InterfaceType type) {
+                         final InterfaceType type) {
         base = new GXDLMSServerBase(this, true, type);
         base.getItems().add(ln);
     }
 
     /**
      * Constructor for short name referencing.
-     * 
-     * @param sn
-     *            Association short name.
-     * @param type
-     *            Interface type.
+     *
+     * @param sn   Association short name.
+     * @param type Interface type.
      */
     public GXDLMSServer2(final GXDLMSAssociationShortName sn,
-            final InterfaceType type) {
+                         final InterfaceType type) {
         base = new GXDLMSServerBase(this, false, type);
         base.getItems().add(sn);
     }
 
     /**
      * Constructor for logical name referencing.
-     * 
-     * @param ln
-     *            Association logical name.
-     * @param hdlc
-     *            HDLC settings.
+     *
+     * @param ln   Association logical name.
+     * @param hdlc HDLC settings.
      */
     public GXDLMSServer2(final GXDLMSAssociationLogicalName ln,
-            final GXDLMSHdlcSetup hdlc) {
+                         final GXDLMSHdlcSetup hdlc) {
         base = new GXDLMSServerBase(this, true, InterfaceType.HDLC);
         base.setHdlc(hdlc);
         base.getItems().add(ln);
@@ -135,14 +127,12 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Constructor for short name referencing.
-     * 
-     * @param sn
-     *            Association short name.
-     * @param hdlc
-     *            HDLC settings.
+     *
+     * @param sn   Association short name.
+     * @param hdlc HDLC settings.
      */
     public GXDLMSServer2(final GXDLMSAssociationShortName sn,
-            final GXDLMSHdlcSetup hdlc) {
+                         final GXDLMSHdlcSetup hdlc) {
         base = new GXDLMSServerBase(this, false, InterfaceType.HDLC);
         getSettings().setHdlc(hdlc);
         base.getItems().add(sn);
@@ -151,14 +141,12 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Constructor for logical name referencing.
-     * 
-     * @param ln
-     *            Association logical name.
-     * @param wrapper
-     *            WRAPPER settings.
+     *
+     * @param ln      Association logical name.
+     * @param wrapper WRAPPER settings.
      */
     public GXDLMSServer2(final GXDLMSAssociationLogicalName ln,
-            final GXDLMSTcpUdpSetup wrapper) {
+                         final GXDLMSTcpUdpSetup wrapper) {
         base = new GXDLMSServerBase(this, true, InterfaceType.WRAPPER);
         getSettings().setWrapper(wrapper);
         base.getItems().add(ln);
@@ -167,14 +155,12 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Constructor for short name referencing.
-     * 
-     * @param sn
-     *            Association short name.
-     * @param wrapper
-     *            WRAPPER settings.
+     *
+     * @param sn      Association short name.
+     * @param wrapper WRAPPER settings.
      */
     public GXDLMSServer2(final GXDLMSAssociationShortName sn,
-            final GXDLMSTcpUdpSetup wrapper) {
+                         final GXDLMSTcpUdpSetup wrapper) {
         base = new GXDLMSServerBase(this, false, InterfaceType.WRAPPER);
         getSettings().setWrapper(wrapper);
         base.getItems().add(sn);
@@ -183,16 +169,15 @@ public abstract class GXDLMSServer2 {
 
     /**
      * @return Server is using push client address when sending push messages.
-     *         Client address is used if PushAddress is zero.
+     * Client address is used if PushAddress is zero.
      */
     public int getPushClientAddress() {
         return getSettings().getPushClientAddress();
     }
 
     /**
-     * @param value
-     *            Server is using push client address when sending push
-     *            messages. Client address is used if PushAddress is zero.
+     * @param value Server is using push client address when sending push
+     *              messages. Client address is used if PushAddress is zero.
      */
     public void setPushClientAddress(final int value) {
         getSettings().setPushClientAddress(value);
@@ -241,8 +226,7 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            GBT window size.
+     * @param value GBT window size.
      */
     public final void setWindowSize(final int value) {
         getSettings().setGbtWindowSize((byte) value);
@@ -268,7 +252,7 @@ public abstract class GXDLMSServer2 {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
+     *
      * @return True, if UTC time is used.
      */
     public boolean getUseUtc2NormalTime() {
@@ -279,9 +263,8 @@ public abstract class GXDLMSServer2 {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
-     * @param value
-     *            True, if UTC time is used.
+     *
+     * @param value True, if UTC time is used.
      */
     public void setUseUtc2NormalTime(final boolean value) {
         base.setUseUtc2NormalTime(value);
@@ -289,16 +272,15 @@ public abstract class GXDLMSServer2 {
 
     /**
      * @return Skipped date time fields. This value can be used if meter can't
-     *         handle deviation or status.
+     * handle deviation or status.
      */
     public java.util.Set<DateTimeSkips> getDateTimeSkips() {
         return base.getDateTimeSkips();
     }
 
     /**
-     * @param value
-     *            Skipped date time fields. This value can be used if meter
-     *            can't handle deviation or status.
+     * @param value Skipped date time fields. This value can be used if meter
+     *              can't handle deviation or status.
      */
     public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
         base.setDateTimeSkips(value);
@@ -308,7 +290,7 @@ public abstract class GXDLMSServer2 {
      * Retrieves the maximum size of received PDU. PDU size tells maximum size
      * of PDU packet. Value can be from 0 to 0xFFFF. By default the value is
      * 0xFFFF.
-     * 
+     *
      * @return Maximum size of received PDU.
      */
     public final int getMaxReceivePDUSize() {
@@ -316,8 +298,7 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            Maximum size of received PDU.
+     * @param value Maximum size of received PDU.
      */
     public final void setMaxReceivePDUSize(final int value) {
         base.setMaxReceivePDUSize(value);
@@ -329,17 +310,16 @@ public abstract class GXDLMSServer2 {
      * supports only either Logical or Short name referencing. The referencing
      * is defined by the device manufacturer. If the referencing is wrong, the
      * SNMR message will fail.
-     * 
-     * @see #getMaxReceivePDUSize
+     *
      * @return Is logical name referencing used.
+     * @see #getMaxReceivePDUSize
      */
     public final boolean getUseLogicalNameReferencing() {
         return base.getUseLogicalNameReferencing();
     }
 
     /**
-     * @param value
-     *            Is Logical Name referencing used.
+     * @param value Is Logical Name referencing used.
      */
     public final void setUseLogicalNameReferencing(final boolean value) {
         base.setUseLogicalNameReferencing(value);
@@ -353,8 +333,7 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            Cipher interface that is used to cipher PDU.
+     * @param value Cipher interface that is used to cipher PDU.
      */
     protected final void setCipher(final GXICipher value) {
         base.setCipher(value);
@@ -376,9 +355,8 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Close server.
-     * 
-     * @throws Exception
-     *             Occurred exception.
+     *
+     * @throws Exception Occurred exception.
      */
     public void close() throws Exception {
         base.close();
@@ -414,7 +392,7 @@ public abstract class GXDLMSServer2 {
 
     /**
      * What kind of services server is offering.
-     * 
+     *
      * @return Functionality.
      */
     public final java.util.Set<Conformance> getConformance() {
@@ -422,8 +400,7 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            What kind of services server is offering.
+     * @param value What kind of services server is offering.
      */
     public final void setConformance(final java.util.Set<Conformance> value) {
         base.getSettings().setProposedConformance(value);
@@ -432,9 +409,8 @@ public abstract class GXDLMSServer2 {
     /**
      * Server to Client custom challenge. This is for debugging purposes. Reset
      * custom challenge settings StoCChallenge to null.
-     * 
-     * @param value
-     *            Server to Client challenge.
+     *
+     * @param value Server to Client challenge.
      */
     public final void setStoCChallenge(final byte[] value) {
         base.setStoCChallenge(value);
@@ -443,9 +419,8 @@ public abstract class GXDLMSServer2 {
     /**
      * Set starting packet index. Default is One based, but some meters use Zero
      * based value. Usually this is not used.
-     * 
-     * @param value
-     *            Zero based starting index.
+     *
+     * @param value Zero based starting index.
      */
     public final void setStartingPacketIndex(final int value) {
         base.setStartingPacketIndex(value);
@@ -459,8 +434,7 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            Invoke ID.
+     * @param value Invoke ID.
      */
     public final void setInvokeID(final int value) {
         base.setInvokeID(value);
@@ -474,8 +448,7 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            Used service class.
+     * @param value Used service class.
      */
     public final void setServiceClass(final ServiceClass value) {
         base.setServiceClass(value);
@@ -489,19 +462,17 @@ public abstract class GXDLMSServer2 {
     }
 
     /**
-     * @param value
-     *            Used priority.
+     * @param value Used priority.
      */
     public final void setPriority(final Priority value) {
         base.setPriority(value);
     }
 
     /**
-     * @param value
-     *            Current association of the server.
+     * @param value Current association of the server.
      */
     public final void
-            setAssignedAssociation(final GXDLMSAssociationLogicalName value) {
+    setAssignedAssociation(final GXDLMSAssociationLogicalName value) {
         base.setAssignedAssociation(value);
     }
 
@@ -514,25 +485,17 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Handles client request.
-     * 
-     * @param buff
-     *            Received data from the client.
+     *
+     * @param buff Received data from the client.
      * @return Response to the request. Response is null if request packet is
-     *         not complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * not complete.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[] handleRequest(final byte[] buff)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -543,30 +506,21 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Handles client request.
-     * 
-     * @param buff
-     *            Received data from the client.
-     * @param connectionInfo
-     *            Connection info.
+     *
+     * @param buff           Received data from the client.
+     * @param connectionInfo Connection info.
      * @return Response to the request. Response is null if request packet is
-     *         not complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * not complete.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[] handleRequest(final byte[] buff,
-            final GXDLMSConnectionEventArgs connectionInfo)
+                                      final GXDLMSConnectionEventArgs connectionInfo)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -578,23 +532,15 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Handles client request.
-     * 
-     * @param sr
-     *            Server reply.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     *
+     * @param sr Server reply.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final void handleRequest(GXServerReply sr)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -605,28 +551,22 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Check is data sent to this server.
-     * 
-     * @param serverAddress
-     *            Server address.
-     * @param clientAddress
-     *            Client address.
+     *
+     * @param serverAddress Server address.
+     * @param clientAddress Client address.
      * @return True, if data is sent to this server.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract boolean isTarget(int serverAddress, int clientAddress)
             throws Exception;
 
     /**
      * Check whether the authentication and password are correct.
-     * 
-     * @param authentication
-     *            Authentication level.
-     * @param password
-     *            Password.
+     *
+     * @param authentication Authentication level.
+     * @param password       Password.
      * @return Source diagnostic.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract SourceDiagnostic onValidateAuthentication(
             Authentication authentication, byte[] password) throws Exception;
@@ -634,156 +574,126 @@ public abstract class GXDLMSServer2 {
     /**
      * Get selected value(s). This is called when example profile generic
      * request current value.
-     * 
-     * @param args
-     *            Value event arguments.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Value event arguments.
+     * @throws Exception Server handler occurred exceptions.
      */
     public abstract void onPreGet(ValueEventArgs[] args) throws Exception;
 
     /**
      * Get selected value(s). This is called when example profile generic
      * request current value.
-     * 
-     * @param args
-     *            Value event arguments.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Value event arguments.
+     * @throws Exception Server handler occurred exceptions.
      */
     public abstract void onPostGet(ValueEventArgs[] args) throws Exception;
 
     /**
      * Find object.
-     * 
-     * @param objectType
-     *            Object type.
-     * @param sn
-     *            Short Name. In Logical name referencing this is not used.
-     * @param ln
-     *            Logical Name. In Short Name referencing this is not used.
+     *
+     * @param objectType Object type.
+     * @param sn         Short Name. In Logical name referencing this is not used.
+     * @param ln         Logical Name. In Short Name referencing this is not used.
      * @return Found object or null if object is not found.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract GXDLMSObject onFindObject(ObjectType objectType, int sn,
-            String ln) throws Exception;
+                                                 String ln) throws Exception;
 
     /**
      * Called before read is executed.
-     * 
-     * @param args
-     *            Handled read requests.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Handled read requests.
+     * @throws Exception Server handler occurred exceptions.
      */
     public abstract void onPreRead(ValueEventArgs[] args) throws Exception;
 
     /**
      * Called after read is executed.
-     * 
-     * @param args
-     *            Handled read requests.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Handled read requests.
+     * @throws Exception Server handler occurred exceptions.
      */
     public abstract void onPostRead(ValueEventArgs[] args) throws Exception;
 
     /**
      * Called before write is executed..
-     * 
-     * @param args
-     *            Handled write requests.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Handled write requests.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onPreWrite(ValueEventArgs[] args) throws Exception;
 
     /**
      * Called after write is executed.
-     * 
-     * @param args
-     *            Handled write requests.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Handled write requests.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onPostWrite(ValueEventArgs[] args) throws Exception;
 
     /**
      * Accepted connection is made for the server. All initialization is done
      * here.
-     * 
-     * @param connectionInfo
-     *            Connection info.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param connectionInfo Connection info.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onConnected(
             GXDLMSConnectionEventArgs connectionInfo) throws Exception;
 
     /**
      * Client has try to made invalid connection. Password is incorrect.
-     * 
-     * @param connectionInfo
-     *            Connection info.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param connectionInfo Connection info.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onInvalidConnection(
             GXDLMSConnectionEventArgs connectionInfo) throws Exception;
 
     /**
      * Server has close the connection. All clean up is made here.
-     * 
-     * @param connectionInfo
-     *            Connection info.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param connectionInfo Connection info.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onDisconnected(
             GXDLMSConnectionEventArgs connectionInfo) throws Exception;
 
     /**
      * Get attribute access mode.
-     * 
-     * @param arg
-     *            Value event argument.
+     *
+     * @param arg Value event argument.
      * @return Access mode.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract AccessMode onGetAttributeAccess(ValueEventArgs arg)
             throws Exception;
 
     /**
      * Get method access mode.
-     * 
-     * @param arg
-     *            Value event argument.
+     *
+     * @param arg Value event argument.
      * @return Method access mode.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract MethodAccessMode onGetMethodAccess(ValueEventArgs arg)
             throws Exception;
 
     /**
      * Called before action is executed.
-     * 
-     * @param args
-     *            Handled action requests.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Handled action requests.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onPreAction(ValueEventArgs[] args) throws Exception;
 
     /**
      * Called after action is executed.
-     * 
-     * @param args
-     *            Handled action requests.
-     * @throws Exception
-     *             Server handler occurred exceptions.
+     *
+     * @param args Handled action requests.
+     * @throws Exception Server handler occurred exceptions.
      */
     protected abstract void onPostAction(ValueEventArgs[] args)
             throws Exception;
@@ -793,16 +703,13 @@ public abstract class GXDLMSServer2 {
      * GetDataNotificationMessage -method. DLMS specification do not specify the
      * structure of Data-Notification body. So each manufacture can sent
      * different data.
-     * 
-     * @param obj
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
-     * @param buff
-     *            Byte buffer.
+     *
+     * @param obj   COSEM object.
+     * @param index Attribute index.
+     * @param buff  Byte buffer.
      */
     public final void addData(final GXDLMSObject obj, final int index,
-            final GXByteBuffer buff) {
+                              final GXByteBuffer buff) {
         DataType dt;
         ValueEventArgs e = new ValueEventArgs(obj, index, 0, null);
         Object value = obj.getValue(getSettings(), e);
@@ -815,29 +722,20 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Generates data notification message.
-     * 
-     * @param time
-     *            Date time. Set Date(0) if not added.
-     * @param data
-     *            Notification body.
+     *
+     * @param time Date time. Set Date(0) if not added.
+     * @param data Notification body.
      * @return Generated data notification message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generateDataNotificationMessages(final Date time,
-            final GXByteBuffer data)
+                                                           final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -868,29 +766,20 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Generates push setup message.
-     * 
-     * @param date
-     *            Date time. Set to null or Date(0) if not used.
-     * @param push
-     *            Target Push object.
+     *
+     * @param date Date time. Set to null or Date(0) if not used.
+     * @param push Target Push object.
      * @return Generated data notification message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generatePushSetupMessages(final Date date,
-            final GXDLMSPushSetup push)
+                                                    final GXDLMSPushSetup push)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -909,17 +798,16 @@ public abstract class GXDLMSServer2 {
 
     /**
      * @return Client system title.
-     *         <p>
-     *         Client system title is optional and it's used when
-     *         Pre-established Application Associations is used.
+     * <p>
+     * Client system title is optional and it's used when
+     * Pre-established Application Associations is used.
      */
     public byte[] getClientSystemTitle() {
         return getSettings().getPreEstablishedSystemTitle();
     }
 
     /**
-     * @param value
-     *            Client system title.
+     * @param value Client system title.
      */
     public void setClientSystemTitle(final byte[] value) {
         getSettings().setPreEstablishedSystemTitle(value);
@@ -927,24 +815,22 @@ public abstract class GXDLMSServer2 {
 
     /**
      * Is value of the object changed with action instead of write.
-     * 
-     * @param objectType
-     *            Object type.
-     * @param methodIndex
-     *            Method index.
+     *
+     * @param objectType  Object type.
+     * @param methodIndex Method index.
      * @return Returns true if object is modified with action.
      */
     public boolean isChangedWithAction(ObjectType objectType, int methodIndex) {
         if ((objectType == ObjectType.ASSOCIATION_LOGICAL_NAME
                 && methodIndex != 1)
                 || (objectType == ObjectType.SECURITY_SETUP && (methodIndex == 1
-                        || methodIndex == 4 || methodIndex == 6
-                        || methodIndex == 7 || methodIndex == 8))) {
+                || methodIndex == 4 || methodIndex == 6
+                || methodIndex == 7 || methodIndex == 8))) {
             return true;
         }
         // SAP assignment is added or removed.
         return objectType == ObjectType.SAP_ASSIGNMENT ||
-        // Connection state is changed.
+                // Connection state is changed.
                 objectType == ObjectType.DISCONNECT_CONTROL
                 || objectType == ObjectType.SPECIAL_DAYS_TABLE
                 || objectType == ObjectType.REGISTER_ACTIVATION;

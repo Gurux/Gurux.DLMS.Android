@@ -82,9 +82,8 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSActivityCalendar(final String ln) {
         this(ln, 0);
@@ -92,11 +91,9 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSActivityCalendar(final String ln, final int sn) {
         super(ObjectType.ACTIVITY_CALENDAR, ln, sn);
@@ -176,24 +173,16 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
 
     /**
      * This method copies all passive properties to the active.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] activatePassiveCalendar(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -204,10 +193,10 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getCalendarNameActive(), getSeasonProfileActive(),
+        return new Object[]{getLogicalName(), getCalendarNameActive(), getSeasonProfileActive(),
                 getWeekProfileTableActive(), getDayProfileTableActive(), getCalendarNamePassive(),
                 getSeasonProfilePassive(), getWeekProfileTablePassive(),
-                getDayProfileTablePassive(), getTime() };
+                getDayProfileTablePassive(), getTime()};
     }
 
     /*
@@ -316,7 +305,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     static Object getSeasonProfile(final GXDLMSSettings settings,
-            final GXDLMSSeasonProfile[] target) {
+                                   final GXDLMSSeasonProfile[] target) {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.ARRAY.getValue());
         if (target == null) {
@@ -338,7 +327,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     static Object getWeekProfileTable(final GXDLMSSettings settings,
-            final GXDLMSWeekProfile[] target) {
+                                      final GXDLMSWeekProfile[] target) {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.ARRAY.getValue());
         if (target == null) {
@@ -364,7 +353,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     static Object getDayProfileTable(final GXDLMSSettings settings,
-            final GXDLMSDayProfile[] target) {
+                                     final GXDLMSDayProfile[] target) {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.ARRAY.getValue());
         if (target == null) {
@@ -399,41 +388,41 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     @Override
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            if (calendarNameActive == null) {
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                if (calendarNameActive == null) {
+                    return null;
+                }
+                if (isSec) {
+                    return GXCommon.hexToBytes(calendarNameActive);
+                }
+                return calendarNameActive.getBytes();
+            case 3:
+                return getSeasonProfile(settings, seasonProfileActive);
+            case 4:
+                return getWeekProfileTable(settings, weekProfileTableActive);
+            case 5:
+                return getDayProfileTable(settings, dayProfileTableActive);
+            case 6:
+                if (calendarNamePassive == null) {
+                    return null;
+                }
+                if (isSec) {
+                    return GXCommon.hexToBytes(calendarNamePassive);
+                }
+                return calendarNamePassive.getBytes();
+            case 7:
+                return getSeasonProfile(settings, seasonProfilePassive);
+            case 8:
+                return getWeekProfileTable(settings, weekProfileTablePassive);
+            case 9:
+                return getDayProfileTable(settings, dayProfileTablePassive);
+            case 10:
+                return getTime();
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
                 return null;
-            }
-            if (isSec) {
-                return GXCommon.hexToBytes(calendarNameActive);
-            }
-            return calendarNameActive.getBytes();
-        case 3:
-            return getSeasonProfile(settings, seasonProfileActive);
-        case 4:
-            return getWeekProfileTable(settings, weekProfileTableActive);
-        case 5:
-            return getDayProfileTable(settings, dayProfileTableActive);
-        case 6:
-            if (calendarNamePassive == null) {
-                return null;
-            }
-            if (isSec) {
-                return GXCommon.hexToBytes(calendarNamePassive);
-            }
-            return calendarNamePassive.getBytes();
-        case 7:
-            return getSeasonProfile(settings, seasonProfilePassive);
-        case 8:
-            return getWeekProfileTable(settings, weekProfileTablePassive);
-        case 9:
-            return getDayProfileTable(settings, dayProfileTablePassive);
-        case 10:
-            return getTime();
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            return null;
         }
     }
 
@@ -512,66 +501,66 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         String tmp;
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            if (e.getValue() == null) {
-                setCalendarNameActive(null);
-            } else {
-                tmp = new String((byte[]) e.getValue()).trim();
-                if (isSec || !GXCommon.isAscii(tmp)) {
-                    setCalendarNameActive(GXCommon.toHex((byte[]) e.getValue()));
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                if (e.getValue() == null) {
+                    setCalendarNameActive(null);
                 } else {
-                    setCalendarNameActive(tmp);
+                    tmp = new String((byte[]) e.getValue()).trim();
+                    if (isSec || !GXCommon.isAscii(tmp)) {
+                        setCalendarNameActive(GXCommon.toHex((byte[]) e.getValue()));
+                    } else {
+                        setCalendarNameActive(tmp);
+                    }
                 }
-            }
-            break;
-        case 3:
-            setSeasonProfileActive(getSeasonProfile(e, e.getValue()));
-            break;
-        case 4:
-            setWeekProfileTableActive(getWeekProfileTable(e.getValue()));
-            break;
-        case 5:
-            setDayProfileTableActive(getDayProfileTable(e, e.getValue()));
-            break;
-        case 6:
-            if (e.getValue() == null) {
-                setCalendarNamePassive(null);
-            } else {
-                tmp = new String((byte[]) e.getValue()).trim();
-                if (isSec || !GXCommon.isAscii(tmp)) {
-                    setCalendarNamePassive(GXCommon.toHex((byte[]) e.getValue()));
+                break;
+            case 3:
+                setSeasonProfileActive(getSeasonProfile(e, e.getValue()));
+                break;
+            case 4:
+                setWeekProfileTableActive(getWeekProfileTable(e.getValue()));
+                break;
+            case 5:
+                setDayProfileTableActive(getDayProfileTable(e, e.getValue()));
+                break;
+            case 6:
+                if (e.getValue() == null) {
+                    setCalendarNamePassive(null);
                 } else {
-                    setCalendarNamePassive(new String((byte[]) e.getValue()));
+                    tmp = new String((byte[]) e.getValue()).trim();
+                    if (isSec || !GXCommon.isAscii(tmp)) {
+                        setCalendarNamePassive(GXCommon.toHex((byte[]) e.getValue()));
+                    } else {
+                        setCalendarNamePassive(new String((byte[]) e.getValue()));
+                    }
                 }
-            }
-            break;
-        case 7:
-            setSeasonProfilePassive(getSeasonProfile(e, e.getValue()));
-            break;
-        case 8:
-            setWeekProfileTablePassive(getWeekProfileTable(e.getValue()));
-            break;
-        case 9:
-            setDayProfileTablePassive(getDayProfileTable(e, e.getValue()));
-            break;
-        case 10:
-            if (e.getValue() instanceof GXDateTime) {
-                setTime((GXDateTime) e.getValue());
-            } else {
-                setTime((GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                        DataType.DATETIME, e.getSettings()));
-            }
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
+            case 7:
+                setSeasonProfilePassive(getSeasonProfile(e, e.getValue()));
+                break;
+            case 8:
+                setWeekProfileTablePassive(getWeekProfileTable(e.getValue()));
+                break;
+            case 9:
+                setDayProfileTablePassive(getDayProfileTable(e, e.getValue()));
+                break;
+            case 10:
+                if (e.getValue() instanceof GXDateTime) {
+                    setTime((GXDateTime) e.getValue());
+                } else {
+                    setTime((GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                            DataType.DATETIME, e.getSettings()));
+                }
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
         }
     }
 
     private static GXDLMSSeasonProfile[] loadSeasonProfile(final GXXmlReader reader,
-            final String name) throws XMLStreamException {
+                                                           final String name) throws XMLStreamException {
         List<GXDLMSSeasonProfile> list = new ArrayList<GXDLMSSeasonProfile>();
         if (reader.isStartElement(name, true)) {
             while (reader.isStartElement("Item", true)) {
@@ -588,7 +577,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     private static GXDLMSWeekProfile[] loadWeekProfileTable(final GXXmlReader reader,
-            final String name) throws XMLStreamException {
+                                                            final String name) throws XMLStreamException {
         List<GXDLMSWeekProfile> list = new ArrayList<GXDLMSWeekProfile>();
         if (reader.isStartElement(name, true)) {
             while (reader.isStartElement("Item", true)) {
@@ -609,7 +598,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     private static GXDLMSDayProfile[] loadDayProfileTable(final GXXmlReader reader,
-            final String name) throws XMLStreamException {
+                                                          final String name) throws XMLStreamException {
         List<GXDLMSDayProfile> list = new ArrayList<GXDLMSDayProfile>();
         if (reader.isStartElement(name, true)) {
             while (reader.isStartElement("Item", true)) {
@@ -648,7 +637,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     private void saveSeasonProfile(final GXXmlWriter writer, final GXDLMSSeasonProfile[] list,
-            final String name) throws XMLStreamException {
+                                   final String name) throws XMLStreamException {
         if (list != null) {
             writer.writeStartElement(name);
             for (GXDLMSSeasonProfile it : list) {
@@ -663,7 +652,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     private void saveWeekProfileTable(final GXXmlWriter writer, final GXDLMSWeekProfile[] list,
-            final String name) throws XMLStreamException {
+                                      final String name) throws XMLStreamException {
         if (list != null) {
             writer.writeStartElement(name);
             for (GXDLMSWeekProfile it : list) {
@@ -683,7 +672,7 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
     }
 
     private void saveDayProfileTable(final GXXmlWriter writer, final GXDLMSDayProfile[] list,
-            final String name) throws XMLStreamException {
+                                     final String name) throws XMLStreamException {
         if (list != null) {
             writer.writeStartElement(name);
             for (GXDLMSDayProfile it : list) {
@@ -724,14 +713,14 @@ public class GXDLMSActivityCalendar extends GXDLMSObject implements IGXDLMSBase 
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Active Calendar Name ", "Active Season Profile",
+        return new String[]{"Logical Name", "Active Calendar Name ", "Active Season Profile",
                 "Active Week Profile Table", "Active Day Profile Table", "Passive Calendar Name",
                 "Passive Season Profile", "Passive Week Profile Table", "Passive Day Profile Table",
-                "Time" };
+                "Time"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Activate passive calendar" };
+        return new String[]{"Activate passive calendar"};
     }
 }

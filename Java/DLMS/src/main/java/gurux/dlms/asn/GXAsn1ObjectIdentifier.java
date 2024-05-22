@@ -54,9 +54,8 @@ public class GXAsn1ObjectIdentifier {
 
     /**
      * Constructor.
-     * 
-     * @param oid
-     *            Object identifier in dotted format.
+     *
+     * @param oid Object identifier in dotted format.
      */
     public GXAsn1ObjectIdentifier(final String oid) {
         objectIdentifier = oid;
@@ -71,15 +70,13 @@ public class GXAsn1ObjectIdentifier {
 
     /**
      * Get OID string from bytes.
-     * 
-     * @param bb
-     *            converted bytes.
-     * @param len
-     *            byte count.
+     *
+     * @param bb  converted bytes.
+     * @param len byte count.
      * @return OID string.
      */
     private static String oidStringFromBytes(final GXByteBuffer bb,
-            final int len) {
+                                             final int len) {
         long value = 0;
         StringBuilder sb = new StringBuilder();
         if (len != 0) {

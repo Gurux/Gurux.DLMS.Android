@@ -39,7 +39,6 @@ import java.util.HashSet;
 import java.util.List;
 
 
-
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
@@ -142,9 +141,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSCharge(final String ln) {
         this(ln, 0);
@@ -152,11 +150,9 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSCharge(final String ln, final int sn) {
         super(ObjectType.CHARGE, ln, sn);
@@ -169,7 +165,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Total amount paid.
      */
     public final int getTotalAmountPaid() {
@@ -179,9 +175,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Total amount paid.
+     *
+     * @param value Total amount paid.
      */
     public final void setTotalAmountPaid(final int value) {
         totalAmountPaid = value;
@@ -190,7 +185,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Charge type.
      */
     public final ChargeType getChargeType() {
@@ -200,9 +195,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Charge type.
+     *
+     * @param value Charge type.
      */
     public final void setChargeType(final ChargeType value) {
         chargeType = value;
@@ -211,7 +205,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Priority
      */
     public final byte getPriority() {
@@ -221,9 +215,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Priority
+     *
+     * @param value Priority
      */
     public final void setPriority(final byte value) {
         priority = value;
@@ -232,7 +225,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Unit charge active.
      */
     public final GXUnitCharge getUnitChargeActive() {
@@ -242,9 +235,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Unit charge active.
+     *
+     * @param value Unit charge active.
      */
     public final void setUnitChargeActive(final GXUnitCharge value) {
         unitChargeActive = value;
@@ -253,7 +245,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Unit charge passive.
      */
     public final GXUnitCharge getUnitChargePassive() {
@@ -263,9 +255,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Unit charge passive.
+     *
+     * @param value Unit charge passive.
      */
     public final void setUnitChargePassive(final GXUnitCharge value) {
         unitChargePassive = value;
@@ -274,7 +265,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Unit charge activation time.
      */
     public final GXDateTime getUnitChargeActivationTime() {
@@ -284,9 +275,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Unit charge activation time.
+     *
+     * @param value Unit charge activation time.
      */
     public final void setUnitChargeActivationTime(final GXDateTime value) {
         unitChargeActivationTime = value;
@@ -295,7 +285,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Period.
      */
     public final int getPeriod() {
@@ -305,9 +295,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Period.
+     *
+     * @param value Period.
      */
     public final void setPeriod(final int value) {
         period = value;
@@ -316,7 +305,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Charge configuration.
      */
     public final java.util.Set<ChargeConfiguration> getChargeConfiguration() {
@@ -326,9 +315,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Charge configuration.
+     *
+     * @param value Charge configuration.
      */
     public final void setChargeConfiguration(final java.util.Set<ChargeConfiguration> value) {
         chargeConfiguration = value;
@@ -337,7 +325,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Last collection time.
      */
     public final GXDateTime getLastCollectionTime() {
@@ -347,9 +335,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Last collection time.
+     *
+     * @param value Last collection time.
      */
     public final void setLastCollectionTime(final GXDateTime value) {
         lastCollectionTime = value;
@@ -358,7 +345,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Last collection amount.
      */
     public final int getLastCollectionAmount() {
@@ -368,9 +355,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Last collection amount.
+     *
+     * @param value Last collection amount.
      */
     public final void setLastCollectionAmount(final int value) {
         lastCollectionAmount = value;
@@ -379,7 +365,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Total amount remaining
      */
     public final int getTotalAmountRemaining() {
@@ -389,9 +375,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Total amount remaining
+     *
+     * @param value Total amount remaining
      */
     public final void setTotalAmountRemaining(final int value) {
         totalAmountRemaining = value;
@@ -400,7 +385,7 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
+     *
      * @return Proportion
      */
     public final int getProportion() {
@@ -410,9 +395,8 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCharge
-     * 
-     * @param value
-     *            Proportion
+     *
+     * @param value Proportion
      */
     public final void setProportion(final int value) {
         proportion = value;
@@ -420,10 +404,10 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), totalAmountPaid, chargeType, priority,
+        return new Object[]{getLogicalName(), totalAmountPaid, chargeType, priority,
                 unitChargeActive, unitChargePassive, unitChargeActivationTime, period,
                 chargeConfiguration, lastCollectionTime, lastCollectionAmount, totalAmountRemaining,
-                proportion };
+                proportion};
     }
 
     /*
@@ -507,34 +491,34 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-            return DataType.INT32;
-        case 3:
-            return DataType.ENUM;
-        case 4:
-            return DataType.UINT8;
-        case 5:
-            return DataType.STRUCTURE;
-        case 6:
-            return DataType.STRUCTURE;
-        case 7:
-            return DataType.OCTET_STRING;
-        case 8:
-            return DataType.UINT32;
-        case 9:
-            return DataType.BITSTRING;
-        case 10:
-            return DataType.DATETIME;
-        case 11:
-            return DataType.INT32;
-        case 12:
-            return DataType.INT32;
-        case 13:
-            return DataType.UINT16;
-        default:
-            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+                return DataType.INT32;
+            case 3:
+                return DataType.ENUM;
+            case 4:
+                return DataType.UINT8;
+            case 5:
+                return DataType.STRUCTURE;
+            case 6:
+                return DataType.STRUCTURE;
+            case 7:
+                return DataType.OCTET_STRING;
+            case 8:
+                return DataType.UINT32;
+            case 9:
+                return DataType.BITSTRING;
+            case 10:
+                return DataType.DATETIME;
+            case 11:
+                return DataType.INT32;
+            case 12:
+                return DataType.INT32;
+            case 13:
+                return DataType.UINT16;
+            default:
+                throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -596,35 +580,35 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return totalAmountPaid;
-        case 3:
-            return chargeType.getValue();
-        case 4:
-            return priority;
-        case 5:
-            return getUnitCharge(unitChargeActive);
-        case 6:
-            return getUnitCharge(unitChargePassive);
-        case 7:
-            return unitChargeActivationTime;
-        case 8:
-            return period;
-        case 9:
-            return GXBitString.toBitString(ChargeConfiguration.toInteger(chargeConfiguration), 2);
-        case 10:
-            return lastCollectionTime;
-        case 11:
-            return lastCollectionAmount;
-        case 12:
-            return totalAmountRemaining;
-        case 13:
-            return proportion;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return totalAmountPaid;
+            case 3:
+                return chargeType.getValue();
+            case 4:
+                return priority;
+            case 5:
+                return getUnitCharge(unitChargeActive);
+            case 6:
+                return getUnitCharge(unitChargePassive);
+            case 7:
+                return unitChargeActivationTime;
+            case 8:
+                return period;
+            case 9:
+                return GXBitString.toBitString(ChargeConfiguration.toInteger(chargeConfiguration), 2);
+            case 10:
+                return lastCollectionTime;
+            case 11:
+                return lastCollectionAmount;
+            case 12:
+                return totalAmountRemaining;
+            case 13:
+                return proportion;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -657,59 +641,59 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            totalAmountPaid = ((Number) e.getValue()).intValue();
-            break;
-        case 3:
-            chargeType = ChargeType.forValue(((Number) e.getValue()).intValue());
-            break;
-        case 4:
-            priority = ((Number) e.getValue()).byteValue();
-            break;
-        case 5:
-            setUnitCharge(settings, unitChargeActive, e.getValue());
-            break;
-        case 6:
-            setUnitCharge(settings, unitChargePassive, e.getValue());
-            break;
-        case 7:
-            if (e.getValue() instanceof GXDateTime) {
-                unitChargeActivationTime = (GXDateTime) e.getValue();
-            } else {
-                unitChargeActivationTime = (GXDateTime) GXDLMSClient
-                        .changeType((byte[]) e.getValue(), DataType.DATETIME, e.getSettings());
-            }
-            break;
-        case 8:
-            period = ((Number) e.getValue()).intValue();
-            break;
-        case 9:
-            chargeConfiguration =
-                    ChargeConfiguration.forValue(((GXBitString) e.getValue()).toInteger());
-            break;
-        case 10:
-            if (e.getValue() instanceof GXDateTime) {
-                lastCollectionTime = (GXDateTime) e.getValue();
-            } else {
-                lastCollectionTime = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                        DataType.DATETIME, e.getSettings());
-            }
-            break;
-        case 11:
-            lastCollectionAmount = ((Number) e.getValue()).intValue();
-            break;
-        case 12:
-            totalAmountRemaining = ((Number) e.getValue()).intValue();
-            break;
-        case 13:
-            proportion = ((Number) e.getValue()).intValue();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                totalAmountPaid = ((Number) e.getValue()).intValue();
+                break;
+            case 3:
+                chargeType = ChargeType.forValue(((Number) e.getValue()).intValue());
+                break;
+            case 4:
+                priority = ((Number) e.getValue()).byteValue();
+                break;
+            case 5:
+                setUnitCharge(settings, unitChargeActive, e.getValue());
+                break;
+            case 6:
+                setUnitCharge(settings, unitChargePassive, e.getValue());
+                break;
+            case 7:
+                if (e.getValue() instanceof GXDateTime) {
+                    unitChargeActivationTime = (GXDateTime) e.getValue();
+                } else {
+                    unitChargeActivationTime = (GXDateTime) GXDLMSClient
+                            .changeType((byte[]) e.getValue(), DataType.DATETIME, e.getSettings());
+                }
+                break;
+            case 8:
+                period = ((Number) e.getValue()).intValue();
+                break;
+            case 9:
+                chargeConfiguration =
+                        ChargeConfiguration.forValue(((GXBitString) e.getValue()).toInteger());
+                break;
+            case 10:
+                if (e.getValue() instanceof GXDateTime) {
+                    lastCollectionTime = (GXDateTime) e.getValue();
+                } else {
+                    lastCollectionTime = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                            DataType.DATETIME, e.getSettings());
+                }
+                break;
+            case 11:
+                lastCollectionAmount = ((Number) e.getValue()).intValue();
+                break;
+            case 12:
+                totalAmountRemaining = ((Number) e.getValue()).intValue();
+                break;
+            case 13:
+                proportion = ((Number) e.getValue()).intValue();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -764,15 +748,15 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "TotalAmountPaid", "ChargeType", "Priority",
+        return new String[]{"Logical Name", "TotalAmountPaid", "ChargeType", "Priority",
                 "UnitChargeActive", "UnitChargePassive", "UnitChargeActivationTime", "Period",
                 "ChargeConfiguration", "LastCollectionTime", "LastCollectionAmount",
-                "TotalAmountRemaining", "Proportion" };
+                "TotalAmountRemaining", "Proportion"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Update unit charge", "Activate passive unit charge", "Collect",
-                "Update total amount remaining", "Set total amount remaining" };
+        return new String[]{"Update unit charge", "Activate passive unit charge", "Collect",
+                "Update total amount remaining", "Set total amount remaining"};
     }
 }

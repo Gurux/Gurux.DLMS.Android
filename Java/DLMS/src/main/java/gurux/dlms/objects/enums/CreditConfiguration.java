@@ -78,7 +78,7 @@ public enum CreditConfiguration {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, CreditConfiguration> getMappings() {
@@ -92,9 +92,8 @@ public enum CreditConfiguration {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     CreditConfiguration(final int value) {
         intValue = value;
@@ -112,16 +111,15 @@ public enum CreditConfiguration {
      * @return Get enumeration constant values.
      */
     private static CreditConfiguration[] getEnumConstants() {
-        return new CreditConfiguration[] { VISUAL, CONFIRMATION, PAID_BACK,
-                RESETTABLE, TOKENS };
+        return new CreditConfiguration[]{VISUAL, CONFIRMATION, PAID_BACK,
+                RESETTABLE, TOKENS};
 
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<CreditConfiguration> forValue(final int value) {
@@ -141,13 +139,12 @@ public enum CreditConfiguration {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int
-            toInteger(final java.util.Set<CreditConfiguration> value) {
+    toInteger(final java.util.Set<CreditConfiguration> value) {
         int tmp = 0;
         for (CreditConfiguration it : value) {
             tmp |= it.getValue();

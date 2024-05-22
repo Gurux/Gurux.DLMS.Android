@@ -55,16 +55,13 @@ class GXDLMSLongTransaction {
 
     /**
      * Constructor.
-     * 
-     * @param forTargets
-     *            Targets.
-     * @param forCommand
-     *            Command.
-     * @param forData
-     *            Data.
+     *
+     * @param forTargets Targets.
+     * @param forCommand Command.
+     * @param forData    Data.
      */
     public GXDLMSLongTransaction(final ValueEventArgs[] forTargets,
-            final int forCommand, final GXByteBuffer forData) {
+                                 final int forCommand, final GXByteBuffer forData) {
         targets = forTargets;
         command = forCommand;
         data = new GXByteBuffer();
@@ -93,8 +90,7 @@ class GXDLMSLongTransaction {
     }
 
     /**
-     * @param value
-     *            New data.
+     * @param value New data.
      */
     public final void setData(final GXByteBuffer value) {
         data.clear();

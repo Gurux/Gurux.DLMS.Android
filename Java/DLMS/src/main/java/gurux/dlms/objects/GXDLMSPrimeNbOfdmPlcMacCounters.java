@@ -96,9 +96,8 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSPrimeNbOfdmPlcMacCounters(final String ln) {
         this(ln, 0);
@@ -106,11 +105,9 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSPrimeNbOfdmPlcMacCounters(final String ln, final int sn) {
         super(ObjectType.PRIME_NB_OFDM_PLC_MAC_COUNTERS, ln, sn);
@@ -124,8 +121,7 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Count of successfully transmitted MSDUs.
+     * @param value Count of successfully transmitted MSDUs.
      */
     public final void setTxDataPktCount(final long value) {
         txDataPktCount = value;
@@ -133,16 +129,15 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     /**
      * @return Count of successfully received MSDUs whose destination address
-     *         was this node.
+     * was this node.
      */
     public final long getRxDataPktCount() {
         return rxDataPktCount;
     }
 
     /**
-     * @param value
-     *            Count of successfully received MSDUs whose destination address
-     *            was this node.
+     * @param value Count of successfully received MSDUs whose destination address
+     *              was this node.
      */
     public final void setRxDataPktCount(final long value) {
         rxDataPktCount = value;
@@ -156,8 +151,7 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Count of successfully transmitted MAC control packets.
+     * @param value Count of successfully transmitted MAC control packets.
      */
     public final void setTxCtrlPktCount(final long value) {
         txCtrlPktCount = value;
@@ -165,16 +159,15 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     /**
      * @return Count of successfully received MAC control packets whose
-     *         destination was this node.
+     * destination was this node.
      */
     public final long getRxCtrlPktCount() {
         return rxCtrlPktCount;
     }
 
     /**
-     * @param value
-     *            Count of successfully received MAC control packets whose
-     *            destination was this node.
+     * @param value Count of successfully received MAC control packets whose
+     *              destination was this node.
      */
     public final void setRxCtrlPktCount(final long value) {
         rxCtrlPktCount = value;
@@ -188,8 +181,7 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
     }
 
     /**
-     * @param value
-     *            Count of failed CSMA transmit attempts.
+     * @param value Count of failed CSMA transmit attempts.
      */
     public final void setCsmaFailCount(final long value) {
         csmaFailCount = value;
@@ -197,16 +189,15 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     /**
      * @return Count of number of times this node has to back off SCP
-     *         transmission due to channel busy state.
+     * transmission due to channel busy state.
      */
     public final long getCsmaChBusyCount() {
         return csmaChBusyCount;
     }
 
     /**
-     * @param value
-     *            Count of number of times this node has to back off SCP
-     *            transmission due to channel busy state.
+     * @param value Count of number of times this node has to back off SCP
+     *              transmission due to channel busy state.
      */
     public final void setCsmaChBusyCount(final long value) {
         csmaChBusyCount = value;
@@ -214,24 +205,16 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     /**
      * Reset all counters.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -242,14 +225,14 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), txDataPktCount, rxDataPktCount,
+        return new Object[]{getLogicalName(), txDataPktCount, rxDataPktCount,
                 txCtrlPktCount, rxCtrlPktCount, csmaFailCount,
-                csmaChBusyCount };
+                csmaChBusyCount};
     }
 
     @Override
     public final byte[] invoke(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             txDataPktCount = rxDataPktCount = txCtrlPktCount =
                     rxCtrlPktCount = csmaFailCount = csmaChBusyCount = 0;
@@ -318,18 +301,18 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-            return DataType.UINT32;
-        default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                return DataType.UINT32;
+            default:
+                throw new IllegalArgumentException(
+                        "getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -338,25 +321,25 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return txDataPktCount;
-        case 3:
-            return rxDataPktCount;
-        case 4:
-            return txCtrlPktCount;
-        case 5:
-            return rxCtrlPktCount;
-        case 6:
-            return csmaFailCount;
-        case 7:
-            return csmaChBusyCount;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return txDataPktCount;
+            case 3:
+                return rxDataPktCount;
+            case 4:
+                return txCtrlPktCount;
+            case 5:
+                return rxCtrlPktCount;
+            case 6:
+                return csmaFailCount;
+            case 7:
+                return csmaChBusyCount;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -366,32 +349,32 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            txDataPktCount = ((Number) e.getValue()).longValue();
-            break;
-        case 3:
-            rxDataPktCount = ((Number) e.getValue()).longValue();
-            break;
-        case 4:
-            txCtrlPktCount = ((Number) e.getValue()).longValue();
-            break;
-        case 5:
-            rxCtrlPktCount = ((Number) e.getValue()).longValue();
-            break;
-        case 6:
-            csmaFailCount = ((Number) e.getValue()).longValue();
-            break;
-        case 7:
-            csmaChBusyCount = ((Number) e.getValue()).longValue();
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                txDataPktCount = ((Number) e.getValue()).longValue();
+                break;
+            case 3:
+                rxDataPktCount = ((Number) e.getValue()).longValue();
+                break;
+            case 4:
+                txCtrlPktCount = ((Number) e.getValue()).longValue();
+                break;
+            case 5:
+                rxCtrlPktCount = ((Number) e.getValue()).longValue();
+                break;
+            case 6:
+                csmaFailCount = ((Number) e.getValue()).longValue();
+                break;
+            case 7:
+                csmaChBusyCount = ((Number) e.getValue()).longValue();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -421,14 +404,14 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "TxDataPktCount",
+        return new String[]{"Logical Name", "TxDataPktCount",
                 "RxDataPktCount", "TxCtrlPktCount", "RxCtrlPktCount",
-                "CsmaFailCount", "CsmaChBusyCount" };
+                "CsmaFailCount", "CsmaChBusyCount"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset" };
+        return new String[]{"Reset"};
     }
 }

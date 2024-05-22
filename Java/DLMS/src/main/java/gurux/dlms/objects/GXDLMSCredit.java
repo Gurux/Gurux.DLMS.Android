@@ -129,9 +129,8 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSCredit(final String ln) {
         this(ln, 0);
@@ -139,11 +138,9 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSCredit(final String ln, final int sn) {
         super(ObjectType.CREDIT, ln, sn);
@@ -160,8 +157,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Current credit amount.
+     * @param value Current credit amount.
      */
     public final void setCurrentCreditAmount(final int value) {
         currentCreditAmount = value;
@@ -175,8 +171,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Type.
+     * @param value Type.
      */
     public final void setType(final CreditType value) {
         type = value;
@@ -190,8 +185,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Priority.
+     * @param value Priority.
      */
     public final void setPriority(final byte value) {
         priority = value;
@@ -205,8 +199,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Warning threshold.
+     * @param value Warning threshold.
      */
     public final void setWarningThreshold(final int value) {
         warningThreshold = value;
@@ -220,8 +213,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Limit.
+     * @param value Limit.
      */
     public final void setLimit(final int value) {
         limit = value;
@@ -235,8 +227,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Credit configuration.
+     * @param value Credit configuration.
      */
     public final void setCreditConfiguration(final java.util.Set<CreditConfiguration> value) {
         creditConfiguration = value;
@@ -250,8 +241,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Status.
+     * @param value Status.
      */
     public final void setStatus(final CreditStatus value) {
         status = value;
@@ -265,8 +255,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Preset credit amount.
+     * @param value Preset credit amount.
      */
     public final void setPresetCreditAmount(final int value) {
         presetCreditAmount = value;
@@ -280,8 +269,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Credit available threshold.
+     * @param value Credit available threshold.
      */
     public final void setCreditAvailableThreshold(final int value) {
         creditAvailableThreshold = value;
@@ -290,7 +278,7 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
-     * 
+     *
      * @return Period
      */
     public final GXDateTime getPeriod() {
@@ -300,9 +288,8 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Online help:<br>
      * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSCredit
-     * 
-     * @param value
-     *            Period
+     *
+     * @param value Period
      */
     public final void setPeriod(final GXDateTime value) {
         period = value;
@@ -310,31 +297,23 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), currentCreditAmount, type, priority,
+        return new Object[]{getLogicalName(), currentCreditAmount, type, priority,
                 warningThreshold, limit, creditConfiguration, status, presetCreditAmount,
-                creditAvailableThreshold, period };
+                creditAvailableThreshold, period};
     }
 
     /**
      * Adjusts the value of the current credit amount attribute.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param value
-     *            Current credit amount
+     *
+     * @param client DLMS client.
+     * @param value  Current credit amount
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
      */
     public final byte[][] updateAmount(final GXDLMSClient client, final int value)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -345,24 +324,16 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Sets the value of the current credit amount attribute.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param value
-     *            Current credit amount
+     *
+     * @param client DLMS client.
+     * @param value  Current credit amount
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
      */
     public final byte[][] setAmountToValue(final GXDLMSClient client, final int value)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -373,24 +344,16 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Sets the value of the current credit amount attribute.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param value
-     *            Current credit amount
+     *
+     * @param client DLMS client.
+     * @param value  Current credit amount
      * @return Action bytes.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws BadPaddingException                Bad padding exception.
      */
     public final byte[][] invokeCredit(final GXDLMSClient client, final CreditStatus value)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -402,21 +365,21 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public byte[] invoke(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            currentCreditAmount += ((Number) e.getValue()).intValue();
-            break;
-        case 2:
-            currentCreditAmount = ((Number) e.getValue()).intValue();
-            break;
-        case 3:
-            if (creditConfiguration.contains(CreditConfiguration.CONFIRMATION)
-                    && status == CreditStatus.SELECTABLE) {
-                status = CreditStatus.INVOKED;
-            }
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                currentCreditAmount += ((Number) e.getValue()).intValue();
+                break;
+            case 2:
+                currentCreditAmount = ((Number) e.getValue()).intValue();
+                break;
+            case 3:
+                if (creditConfiguration.contains(CreditConfiguration.CONFIRMATION)
+                        && status == CreditStatus.SELECTABLE) {
+                    status = CreditStatus.INVOKED;
+                }
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -494,30 +457,30 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-            return DataType.INT32;
-        case 3:
-            return DataType.ENUM;
-        case 4:
-            return DataType.UINT8;
-        case 5:
-            return DataType.INT32;
-        case 6:
-            return DataType.INT32;
-        case 7:
-            return DataType.BITSTRING;
-        case 8:
-            return DataType.ENUM;
-        case 9:
-            return DataType.INT32;
-        case 10:
-            return DataType.INT32;
-        case 11:
-            return DataType.OCTET_STRING;
-        default:
-            throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+                return DataType.INT32;
+            case 3:
+                return DataType.ENUM;
+            case 4:
+                return DataType.UINT8;
+            case 5:
+                return DataType.INT32;
+            case 6:
+                return DataType.INT32;
+            case 7:
+                return DataType.BITSTRING;
+            case 8:
+                return DataType.ENUM;
+            case 9:
+                return DataType.INT32;
+            case 10:
+                return DataType.INT32;
+            case 11:
+                return DataType.OCTET_STRING;
+            default:
+                throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -527,31 +490,31 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object getValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            return GXCommon.logicalNameToBytes(getLogicalName());
-        case 2:
-            return currentCreditAmount;
-        case 3:
-            return type.getValue();
-        case 4:
-            return priority;
-        case 5:
-            return warningThreshold;
-        case 6:
-            return limit;
-        case 7:
-            return GXBitString.toBitString(CreditConfiguration.toInteger(creditConfiguration), 5);
-        case 8:
-            return status.getValue();
-        case 9:
-            return presetCreditAmount;
-        case 10:
-            return creditAvailableThreshold;
-        case 11:
-            return period;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return GXCommon.logicalNameToBytes(getLogicalName());
+            case 2:
+                return currentCreditAmount;
+            case 3:
+                return type.getValue();
+            case 4:
+                return priority;
+            case 5:
+                return warningThreshold;
+            case 6:
+                return limit;
+            case 7:
+                return GXBitString.toBitString(CreditConfiguration.toInteger(creditConfiguration), 5);
+            case 8:
+                return status.getValue();
+            case 9:
+                return presetCreditAmount;
+            case 10:
+                return creditAvailableThreshold;
+            case 11:
+                return period;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -562,54 +525,54 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            currentCreditAmount = ((Number) e.getValue()).intValue();
-            break;
-        case 3:
-            type = CreditType.forValue(((Number) e.getValue()).intValue());
-            break;
-        case 4:
-            priority = ((Number) e.getValue()).byteValue();
-            break;
-        case 5:
-            warningThreshold = ((Number) e.getValue()).intValue();
-            break;
-        case 6:
-            limit = ((Number) e.getValue()).intValue();
-            break;
-        case 7:
-            creditConfiguration =
-                    CreditConfiguration.forValue(((GXBitString) e.getValue()).toInteger());
-            break;
-        case 8:
-            status = CreditStatus.forValue(((Number) e.getValue()).intValue());
-            break;
-        case 9:
-            presetCreditAmount = ((Number) e.getValue()).intValue();
-            break;
-        case 10:
-            creditAvailableThreshold = ((Number) e.getValue()).intValue();
-            break;
-        case 11:
-            if (e.getValue() == null) {
-                period = new GXDateTime();
-            } else {
-                GXDateTime tmp;
-                if (e.getValue() instanceof byte[]) {
-                    tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
-                            DataType.DATETIME, e.getSettings());
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                currentCreditAmount = ((Number) e.getValue()).intValue();
+                break;
+            case 3:
+                type = CreditType.forValue(((Number) e.getValue()).intValue());
+                break;
+            case 4:
+                priority = ((Number) e.getValue()).byteValue();
+                break;
+            case 5:
+                warningThreshold = ((Number) e.getValue()).intValue();
+                break;
+            case 6:
+                limit = ((Number) e.getValue()).intValue();
+                break;
+            case 7:
+                creditConfiguration =
+                        CreditConfiguration.forValue(((GXBitString) e.getValue()).toInteger());
+                break;
+            case 8:
+                status = CreditStatus.forValue(((Number) e.getValue()).intValue());
+                break;
+            case 9:
+                presetCreditAmount = ((Number) e.getValue()).intValue();
+                break;
+            case 10:
+                creditAvailableThreshold = ((Number) e.getValue()).intValue();
+                break;
+            case 11:
+                if (e.getValue() == null) {
+                    period = new GXDateTime();
                 } else {
-                    tmp = (GXDateTime) e.getValue();
+                    GXDateTime tmp;
+                    if (e.getValue() instanceof byte[]) {
+                        tmp = (GXDateTime) GXDLMSClient.changeType((byte[]) e.getValue(),
+                                DataType.DATETIME, e.getSettings());
+                    } else {
+                        tmp = (GXDateTime) e.getValue();
+                    }
+                    period = tmp;
                 }
-                period = tmp;
-            }
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
     }
 
@@ -653,13 +616,13 @@ public class GXDLMSCredit extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "CurrentCreditAmount", "Type", "Priority",
+        return new String[]{"Logical Name", "CurrentCreditAmount", "Type", "Priority",
                 "WarningThreshold", "Limit", "CreditConfiguration", "Status", "PresetCreditAmount",
-                "CreditAvailableThreshold", "Period" };
+                "CreditAvailableThreshold", "Period"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Update amount", "Set amount to value", "Invoke credit" };
+        return new String[]{"Update amount", "Set amount to value", "Invoke credit"};
     }
 }

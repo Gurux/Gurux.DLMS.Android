@@ -46,7 +46,7 @@ public enum PlcDestinationAddress {
     private static java.util.HashMap<Integer, PlcDestinationAddress> mappings;
 
     private static java.util.HashMap<Integer, PlcDestinationAddress>
-            getMappings() {
+    getMappings() {
         synchronized (PlcDestinationAddress.class) {
             if (mappings == null) {
                 mappings =

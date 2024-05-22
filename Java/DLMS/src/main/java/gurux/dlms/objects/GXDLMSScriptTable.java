@@ -73,9 +73,8 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSScriptTable(final String ln) {
         this(ln, 0);
@@ -83,11 +82,9 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSScriptTable(final String ln, final int sn) {
         super(ObjectType.SCRIPT_TABLE, ln, sn);
@@ -100,7 +97,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getScripts() };
+        return new Object[]{getLogicalName(), getScripts()};
     }
 
     /*
@@ -157,7 +154,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
     @SuppressWarnings("deprecation")
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             return GXCommon.logicalNameToBytes(getLogicalName());
         }
@@ -219,7 +216,7 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         if (e.getIndex() == 1) {
             setLogicalName(GXCommon.toLogicalName(e.getValue()));
         } else if (e.getIndex() == 2) {
@@ -295,29 +292,20 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Executes the script specified in parameter data.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param script
-     *            Executed script.
+     *
+     * @param client DLMS client.
+     * @param script Executed script.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] execute(final GXDLMSClient client,
-            final GXDLMSScript script)
+                                  final GXDLMSScript script)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -326,26 +314,17 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Executes the script specified in parameter data.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param scriptId
-     *            Executed script ID.
+     *
+     * @param client   DLMS client.
+     * @param scriptId Executed script ID.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] execute(final GXDLMSClient client, final int scriptId)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -436,12 +415,12 @@ public class GXDLMSScriptTable extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Scripts" };
+        return new String[]{"Logical Name", "Scripts"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Execute" };
+        return new String[]{"Execute"};
     }
 
 }

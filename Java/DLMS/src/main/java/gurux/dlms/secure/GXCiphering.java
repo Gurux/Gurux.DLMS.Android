@@ -134,25 +134,24 @@ public class GXCiphering implements GXICipher {
 
     /**
      * Constructor. Default values are from the Green Book.
-     * 
-     * @param title
-     *            Used system title.
+     *
+     * @param title Used system title.
      */
     public GXCiphering(final byte[] title) {
         securityPolicy = new HashSet<SecurityPolicy>();
         certificates = new GXx509CertificateCollection();
         setSecurity(Security.NONE);
         setSystemTitle(title);
-        setBlockCipherKey(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
-                0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F });
-        setAuthenticationKey(new byte[] { (byte) 0xD0, (byte) 0xD1, (byte) 0xD2, (byte) 0xD3,
+        setBlockCipherKey(new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+                0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
+        setAuthenticationKey(new byte[]{(byte) 0xD0, (byte) 0xD1, (byte) 0xD2, (byte) 0xD3,
                 (byte) 0xD4, (byte) 0xD5, (byte) 0xD6, (byte) 0xD7, (byte) 0xD8, (byte) 0xD9,
-                (byte) 0xDA, (byte) 0xDB, (byte) 0xDC, (byte) 0xDD, (byte) 0xDE, (byte) 0xDF });
+                (byte) 0xDA, (byte) 0xDB, (byte) 0xDC, (byte) 0xDD, (byte) 0xDE, (byte) 0xDF});
         signing = Signing.NONE;
     }
 
     public static byte[] decrypt(final GXICipher c, final AesGcmParameter p,
-            final GXByteBuffer data)
+                                 final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         byte[] tmp;
@@ -162,24 +161,16 @@ public class GXCiphering implements GXICipher {
 
     /**
      * Cipher PDU.
-     * 
-     * @param p
-     *            Aes GCM Parameter.
-     * @param data
-     *            Plain text.
+     *
+     * @param p    Aes GCM Parameter.
+     * @param data Plain text.
      * @return Secured data.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      */
     public static byte[] encrypt(final AesGcmParameter p, final byte[] data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -203,8 +194,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Invocation Counter.
+     * @param value Invocation Counter.
      */
     public final void setInvocationCounter(final long value) {
         invocationCounter = value;
@@ -225,16 +215,14 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Used security.
+     * @param value Used security.
      */
     public final void setSecurity(final Security value) {
         security = value;
     }
 
     /**
-     * @param value
-     *            Used security policy.
+     * @param value Used security policy.
      */
     public void setSecurityPolicy(java.util.Set<SecurityPolicy> value) {
         securityPolicy.addAll(value);
@@ -251,18 +239,17 @@ public class GXCiphering implements GXICipher {
      * The SystemTitle is a 8 bytes (64 bit) value that identifies a partner of
      * the communication. First 3 bytes contains the three letters manufacturer
      * ID. The remainder of the system title holds for example a serial number.
-     * 
-     * @see <a href="http://www.dlms.com/organization/flagmanufacturesids">List
-     *      of manufacturer IDs.</a>
+     *
      * @return System title.
+     * @see <a href="http://www.dlms.com/organization/flagmanufacturesids">List
+     * of manufacturer IDs.</a>
      */
     public final byte[] getSystemTitle() {
         return systemTitle;
     }
 
     /**
-     * @param value
-     *            System title.
+     * @param value System title.
      */
     public final void setSystemTitle(final byte[] value) {
         if (value != null && value.length != 8) {
@@ -279,8 +266,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Recipient system title.
+     * @param value Recipient system title.
      */
     public final void setRecipientSystemTitle(final byte[] value) {
         if (value != null && value.length != 8) {
@@ -291,7 +277,7 @@ public class GXCiphering implements GXICipher {
 
     /**
      * Each block is ciphered with this key.
-     * 
+     *
      * @return Block cipher key.
      */
     public final byte[] getBlockCipherKey() {
@@ -320,8 +306,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Broadcast block cipher key.
+     * @param value Broadcast block cipher key.
      */
     public final void setBroadcastBlockCipherKey(byte[] value) {
         if (value != null && value.length != 16) {
@@ -352,8 +337,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Ephemeral key pair.
+     * @param value Ephemeral key pair.
      */
     public void setEphemeralKeyPair(final KeyPair value) {
         ephemeralKeyPair = value;
@@ -367,8 +351,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Signing key pair.
+     * @param value Signing key pair.
      */
     public final void setSigningKeyPair(final KeyPair value) {
         signingKeyPair = value;
@@ -382,8 +365,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Client's key agreement key pair.
+     * @param value Client's key agreement key pair.
      */
     public final void setKeyAgreementKeyPair(final KeyPair value) {
         keyAgreementKeyPair = value;
@@ -397,8 +379,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Used security suite.
+     * @param value Used security suite.
      */
     public void setSecuritySuite(final SecuritySuite value) {
         securitySuite = value;
@@ -406,22 +387,15 @@ public class GXCiphering implements GXICipher {
 
     /**
      * Generate GMAC password from given challenge.
-     * 
-     * @param challenge
-     *            Client to Server or Server to Client challenge.
+     *
+     * @param challenge Client to Server or Server to Client challenge.
      * @return Generated challenge.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      */
     public byte[] generateGmacPassword(final byte[] challenge)
             throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
@@ -456,8 +430,7 @@ public class GXCiphering implements GXICipher {
     }
 
     /**
-     * @param value
-     *            Used key agreement scheme.
+     * @param value Used key agreement scheme.
      */
     @Override
     public void setSigning(final Signing value) {

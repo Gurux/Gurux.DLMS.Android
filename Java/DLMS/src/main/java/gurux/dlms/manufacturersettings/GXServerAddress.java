@@ -49,11 +49,9 @@ public class GXServerAddress {
 
     /**
      * Constructor.
-     * 
-     * @param address
-     *            HDLC address type.
-     * @param value
-     *            Physical address.
+     *
+     * @param address HDLC address type.
+     * @param value   Physical address.
      */
     public GXServerAddress(final HDLCAddressType address, final int value) {
         setHDLCAddress(address);
@@ -68,8 +66,7 @@ public class GXServerAddress {
     }
 
     /**
-     * @param value
-     *            Is server address enabled.
+     * @param value Is server address enabled.
      */
     public final void setSelected(final boolean value) {
         selected = value;

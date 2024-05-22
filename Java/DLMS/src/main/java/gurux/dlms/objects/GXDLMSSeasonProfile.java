@@ -50,16 +50,13 @@ public class GXDLMSSeasonProfile {
 
     /**
      * Constructor.
-     * 
-     * @param forName
-     *            name of season profile.
-     * @param forStart
-     *            Start time.
-     * @param forWeekName
-     *            Week name.
+     *
+     * @param forName     name of season profile.
+     * @param forStart    Start time.
+     * @param forWeekName Week name.
      */
     public GXDLMSSeasonProfile(final String forName, final GXDateTime forStart,
-            final String forWeekName) {
+                               final String forWeekName) {
         setName(forName);
         setStart(forStart);
         setWeekName(forWeekName);
@@ -67,16 +64,13 @@ public class GXDLMSSeasonProfile {
 
     /**
      * Constructor.
-     * 
-     * @param forName
-     *            name of season profile.
-     * @param forStart
-     *            Start time.
-     * @param forWeekName
-     *            Week name.
+     *
+     * @param forName     name of season profile.
+     * @param forStart    Start time.
+     * @param forWeekName Week name.
      */
     public GXDLMSSeasonProfile(final String forName, final GXDateTime forStart,
-            final byte[] forWeekName) {
+                               final byte[] forWeekName) {
         setName(forName);
         setStart(forStart);
         setWeekName(forWeekName);
@@ -90,8 +84,7 @@ public class GXDLMSSeasonProfile {
     }
 
     /**
-     * @param value
-     *            Name of season profile.
+     * @param value Name of season profile.
      */
     public final void setName(final String value) {
         if (value == null) {
@@ -102,8 +95,7 @@ public class GXDLMSSeasonProfile {
     }
 
     /**
-     * @param value
-     *            Name of season profile.
+     * @param value Name of season profile.
      */
     public final void setName(final byte[] value) {
         name = value;
@@ -117,16 +109,14 @@ public class GXDLMSSeasonProfile {
     }
 
     /**
-     * @param value
-     *            Season Profile start time.
+     * @param value Season Profile start time.
      */
     public final void setStart(final GXDateTime value) {
         start = value;
     }
 
     /**
-     * @param value
-     *            Week name of season profile.
+     * @param value Week name of season profile.
      */
     public final void setWeekName(final String value) {
         if (value == null) {
@@ -144,8 +134,7 @@ public class GXDLMSSeasonProfile {
     }
 
     /**
-     * @param value
-     *            Week name of season profile.
+     * @param value Week name of season profile.
      */
     public final void setWeekName(final byte[] value) {
         weekName = value;

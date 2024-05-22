@@ -46,7 +46,7 @@ public enum PlcHdlcSourceAddress {
     private static java.util.HashMap<Integer, PlcHdlcSourceAddress> mappings;
 
     private static java.util.HashMap<Integer, PlcHdlcSourceAddress>
-            getMappings() {
+    getMappings() {
         synchronized (PlcHdlcSourceAddress.class) {
             if (mappings == null) {
                 mappings =

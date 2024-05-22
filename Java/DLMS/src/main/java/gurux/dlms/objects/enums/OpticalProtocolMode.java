@@ -60,7 +60,7 @@ public enum OpticalProtocolMode {
     private static java.util.HashMap<Integer, OpticalProtocolMode> mappings;
 
     private static java.util.HashMap<Integer, OpticalProtocolMode>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (OpticalProtocolMode.class) {
                 if (mappings == null) {

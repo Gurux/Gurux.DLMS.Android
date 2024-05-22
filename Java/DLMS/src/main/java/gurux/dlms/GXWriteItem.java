@@ -48,11 +48,9 @@ public class GXWriteItem {
 
     /**
      * Constructor.
-     * 
-     * @param object
-     *            Object to write.
-     * @param attributeIndex
-     *            Attribute index.
+     *
+     * @param object         Object to write.
+     * @param attributeIndex Attribute index.
      */
     public GXWriteItem(final GXDLMSObject object, final int attributeIndex) {
         dataType = DataType.NONE;
@@ -92,8 +90,7 @@ public class GXWriteItem {
     }
 
     /**
-     * @param value
-     *            the selector to set
+     * @param value the selector to set
      */
     public final void setSelector(final int value) {
         selector = value;
@@ -107,8 +104,7 @@ public class GXWriteItem {
     }
 
     /**
-     * @param value
-     *            the objectType to set
+     * @param value the objectType to set
      */
     public final void setDataType(final DataType value) {
         dataType = value;
@@ -122,8 +118,7 @@ public class GXWriteItem {
     }
 
     /**
-     * @param value
-     *            the parameters to set
+     * @param value the parameters to set
      */
     public final void setParameters(final Object value) {
         parameters = value;
@@ -137,8 +132,7 @@ public class GXWriteItem {
     }
 
     /**
-     * @param value
-     *            the target to set.
+     * @param value the target to set.
      */
     public final void setTarget(final GXDLMSObject value) {
         target = value;
@@ -152,8 +146,7 @@ public class GXWriteItem {
     }
 
     /**
-     * @param value
-     *            the index to set.
+     * @param value the index to set.
      */
     public final void setIndex(final int value) {
         index = value;

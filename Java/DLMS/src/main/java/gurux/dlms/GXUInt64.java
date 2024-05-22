@@ -39,7 +39,7 @@ import java.math.BigInteger;
 
 public class GXUInt64 extends Number implements Comparable<GXUInt64> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private BigInteger value;
@@ -65,9 +65,8 @@ public class GXUInt64 extends Number implements Comparable<GXUInt64> {
 
     /**
      * Constructor.
-     * 
-     * @param val
-     *            Initial value.
+     *
+     * @param val Initial value.
      */
     public GXUInt64(final long val) {
         value = BigInteger.valueOf(val);
@@ -75,9 +74,8 @@ public class GXUInt64 extends Number implements Comparable<GXUInt64> {
 
     /**
      * Constructor.
-     * 
-     * @param val
-     *            Initial value.
+     *
+     * @param val Initial value.
      */
     public GXUInt64(final BigInteger val) {
         value = val;

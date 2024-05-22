@@ -64,7 +64,7 @@ public enum CreditStatus {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -73,9 +73,8 @@ public enum CreditStatus {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static CreditStatus forValue(int value) {

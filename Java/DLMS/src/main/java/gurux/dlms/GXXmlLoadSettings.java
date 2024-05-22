@@ -51,8 +51,7 @@ public class GXXmlLoadSettings {
     }
 
     /**
-     * @param value
-     *            Start date of profile Generic.
+     * @param value Start date of profile Generic.
      */
     public final void setStart(final java.util.Date value) {
         start = value;
@@ -66,8 +65,7 @@ public class GXXmlLoadSettings {
     }
 
     /**
-     * @param value
-     *            End date of profile Generic.
+     * @param value End date of profile Generic.
      */
     public final void setEnd(final java.util.Date value) {
         end = value;

@@ -90,7 +90,7 @@ public enum ServiceError {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static java.util.HashMap<Integer, ServiceError> getMappings() {
@@ -106,9 +106,8 @@ public enum ServiceError {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     ServiceError(final int value) {
         intValue = value;
@@ -117,7 +116,7 @@ public enum ServiceError {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -126,9 +125,8 @@ public enum ServiceError {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static ServiceError forValue(final int value) {

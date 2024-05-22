@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -80,8 +79,7 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Constructor.
      *
-     * @param ln
-     *            Logical Name of the object.
+     * @param ln Logical Name of the object.
      */
     public GXDLMSLimiter(final String ln) {
         super(ObjectType.LIMITER, ln, 0);
@@ -93,10 +91,8 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Constructor.
      *
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSLimiter(final String ln, final int sn) {
         super(ObjectType.LIMITER, ln, sn);
@@ -113,8 +109,7 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Defines an attribute of an object to be monitored.
+     * @param value Defines an attribute of an object to be monitored.
      */
     public final void setMonitoredValue(final GXDLMSObject value) {
         monitoredValue = value;
@@ -130,16 +125,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Provides the active threshold value to which the attribute
-     *         monitored is compared.
+     * monitored is compared.
      */
     public final Object getThresholdActive() {
         return thresholdActive;
     }
 
     /**
-     * @param value
-     *            Provides the active threshold value to which the attribute
-     *            monitored is compared.
+     * @param value Provides the active threshold value to which the attribute
+     *              monitored is compared.
      */
     public final void setThresholdActive(final Object value) {
         thresholdActive = value;
@@ -147,16 +141,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Provides the threshold value to which the attribute monitored is
-     *         compared when in normal operation.
+     * compared when in normal operation.
      */
     public final Object getThresholdNormal() {
         return thresholdNormal;
     }
 
     /**
-     * @param value
-     *            Provides the threshold value to which the attribute monitored
-     *            is compared when in normal operation.
+     * @param value Provides the threshold value to which the attribute monitored
+     *              is compared when in normal operation.
      */
     public final void setThresholdNormal(final Object value) {
         thresholdNormal = value;
@@ -164,16 +157,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Provides the threshold value to which the attribute monitored is
-     *         compared when an emergency profile is active.
+     * compared when an emergency profile is active.
      */
     public final Object getThresholdEmergency() {
         return thresholdEmergency;
     }
 
     /**
-     * @param value
-     *            Provides the threshold value to which the attribute monitored
-     *            is compared when an emergency profile is active.
+     * @param value Provides the threshold value to which the attribute monitored
+     *              is compared when an emergency profile is active.
      */
     public final void setThresholdEmergency(final Object value) {
         thresholdEmergency = value;
@@ -181,16 +173,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Defines minimal over threshold duration in seconds required to
-     *         execute the over threshold action.
+     * execute the over threshold action.
      */
     public final long getMinOverThresholdDuration() {
         return minOverThresholdDuration;
     }
 
     /**
-     * @param value
-     *            Defines minimal over threshold duration in seconds required to
-     *            execute the over threshold action.
+     * @param value Defines minimal over threshold duration in seconds required to
+     *              execute the over threshold action.
      */
     public final void setMinOverThresholdDuration(final long value) {
         minOverThresholdDuration = value;
@@ -198,16 +189,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Defines minimal under threshold duration in seconds required to
-     *         execute the under threshold action.
+     * execute the under threshold action.
      */
     public final long getMinUnderThresholdDuration() {
         return minUnderThresholdDuration;
     }
 
     /**
-     * @param value
-     *            Defines minimal under threshold duration in seconds required
-     *            to execute the under threshold action.
+     * @param value Defines minimal under threshold duration in seconds required
+     *              to execute the under threshold action.
      */
     public final void setMinUnderThresholdDuration(final long value) {
         minUnderThresholdDuration = value;
@@ -233,8 +223,7 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Is Emergency Profile active.
+     * @param value Is Emergency Profile active.
      */
     public final void setEmergencyProfileActive(final boolean value) {
         emergencyProfileActive = value;
@@ -242,16 +231,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Defines the scripts to be executed when the monitored value
-     *         crosses the threshold for minimal duration time.
+     * crosses the threshold for minimal duration time.
      */
     public final GXDLMSActionItem getActionOverThreshold() {
         return actionOverThreshold;
     }
 
     /**
-     * @param value
-     *            Defines the scripts to be executed when the monitored value
-     *            crosses the threshold for minimal duration time.
+     * @param value Defines the scripts to be executed when the monitored value
+     *              crosses the threshold for minimal duration time.
      */
     public final void setActionOverThreshold(final GXDLMSActionItem value) {
         actionOverThreshold = value;
@@ -259,16 +247,15 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Defines the scripts to be executed when the monitored value
-     *         crosses the threshold for minimal duration time.
+     * crosses the threshold for minimal duration time.
      */
     public final GXDLMSActionItem getActionUnderThreshold() {
         return actionUnderThreshold;
     }
 
     /**
-     * @param value
-     *            Defines the scripts to be executed when the monitored value
-     *            crosses the threshold for minimal duration time.
+     * @param value Defines the scripts to be executed when the monitored value
+     *              crosses the threshold for minimal duration time.
      */
     public final void setActionUnderThreshold(final GXDLMSActionItem value) {
         actionUnderThreshold = value;
@@ -276,10 +263,10 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), monitoredValue, thresholdActive, thresholdNormal,
+        return new Object[]{getLogicalName(), monitoredValue, thresholdActive, thresholdNormal,
                 thresholdEmergency, minOverThresholdDuration, minUnderThresholdDuration,
                 emergencyProfile, emergencyProfileGroupIDs, emergencyProfileActive,
-                new Object[] { actionOverThreshold, actionUnderThreshold } };
+                new Object[]{actionOverThreshold, actionUnderThreshold}};
     }
 
     @Override
@@ -629,10 +616,10 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Monitored Value", "Active Threshold",
+        return new String[]{"Logical Name", "Monitored Value", "Active Threshold",
                 "Normal Threshold", "Emergency Threshold", "Threshold Duration Min Over",
                 "Threshold Duration Min Under", "Emergency Profile", "Emergency Profile Group",
-                "Emergency Profile Active", "Actions" };
+                "Emergency Profile Active", "Actions"};
     }
 
     @Override

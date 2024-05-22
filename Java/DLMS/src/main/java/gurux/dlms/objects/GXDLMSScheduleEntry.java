@@ -43,7 +43,7 @@ import gurux.dlms.objects.enums.Weekdays;
 
 /**
  * Executed scripts.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXDLMSScheduleEntry {
@@ -73,8 +73,8 @@ public class GXDLMSScheduleEntry {
     private int scriptSelector;
 
     /**
-    *
-    */
+     *
+     */
     private GXTime switchTime;
 
     /**
@@ -105,7 +105,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Get schedule entry index.
-     * 
+     *
      * @return Entry index.
      */
     public final int getIndex() {
@@ -114,9 +114,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Set schedule entry index.
-     * 
-     * @param value
-     *            Entry index.
+     *
+     * @param value Entry index.
      */
     public final void setIndex(final int value) {
         index = value;
@@ -124,7 +123,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Is Schedule entry enabled.
-     * 
+     *
      * @return True, if schedule entry is enabled.
      */
     public final boolean getEnable() {
@@ -133,9 +132,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Enable schedule entry.
-     * 
-     * @param value
-     *            Is Schedule entry enabled.
+     *
+     * @param value Is Schedule entry enabled.
      */
     public final void setEnable(final boolean value) {
         enable = value;
@@ -143,7 +141,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Returns logical name of the Script table object.
-     * 
+     *
      * @return Logical name of the Script table object.
      */
     public final String getLogicalName() {
@@ -156,7 +154,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Get script identifier of the script to be executed.
-     * 
+     *
      * @return Script identifier.
      */
     public final int getScriptSelector() {
@@ -165,9 +163,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Set script identifier of the script to be executed.
-     * 
-     * @param value
-     *            Script identifier.
+     *
+     * @param value Script identifier.
      */
     public final void setScriptSelector(final int value) {
         scriptSelector = value;
@@ -181,8 +178,7 @@ public class GXDLMSScheduleEntry {
     }
 
     /**
-     * @param value
-     *            Switch time.
+     * @param value Switch time.
      */
     public final void setSwitchTime(final GXTime value) {
         switchTime = value;
@@ -191,7 +187,7 @@ public class GXDLMSScheduleEntry {
     /**
      * Defines a period in minutes, in which an entry shall be processed after
      * power fail.
-     * 
+     *
      * @return Validity period in minutes.
      */
     public final int getValidityWindow() {
@@ -201,9 +197,8 @@ public class GXDLMSScheduleEntry {
     /**
      * Defines a period in minutes, in which an entry shall be processed after
      * power fail.
-     * 
-     * @param value
-     *            Validity period in minutes.
+     *
+     * @param value Validity period in minutes.
      */
     public final void setValidityWindow(final int value) {
         validityWindow = value;
@@ -211,7 +206,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Get days of the week on which the entry is valid.
-     * 
+     *
      * @return Days of the week on which the entry is valid.
      */
     public final Set<Weekdays> getExecWeekdays() {
@@ -220,9 +215,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Set days of the week on which the entry is valid.
-     * 
-     * @param value
-     *            Days of the week on which the entry is valid.
+     *
+     * @param value Days of the week on which the entry is valid.
      */
     public final void setExecWeekdays(final Set<Weekdays> value) {
         execWeekdays = value;
@@ -230,7 +224,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Perform the link to the IC Special days table..
-     * 
+     *
      * @return day_id.
      */
     public final String getExecSpecDays() {
@@ -239,9 +233,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Perform the link to the IC Special days table.
-     * 
-     * @param value
-     *            day_id
+     *
+     * @param value day_id
      */
     public final void setExecSpecDays(final String value) {
         execSpecDays = value;
@@ -249,7 +242,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Date starting period in which the entry is valid.
-     * 
+     *
      * @return Begin date.
      */
     public final GXDate getBeginDate() {
@@ -258,9 +251,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Date starting period in which the entry is valid.
-     * 
-     * @param value
-     *            Begin date.
+     *
+     * @param value Begin date.
      */
     public final void setBeginDate(final GXDate value) {
         beginDate = value;
@@ -268,7 +260,7 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Get date starting period in which the entry is valid.
-     * 
+     *
      * @return End date.
      */
     public final GXDate getEndDate() {
@@ -277,9 +269,8 @@ public class GXDLMSScheduleEntry {
 
     /**
      * Set date starting period in which the entry is valid.
-     * 
-     * @param value
-     *            End date.
+     *
+     * @param value End date.
      */
     public final void setEndDate(final GXDate value) {
         endDate = value;

@@ -131,9 +131,8 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSAssociationLogicalName(final String ln) {
         super(ObjectType.ASSOCIATION_LOGICAL_NAME, ln, 0);
@@ -154,8 +153,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     /**
-     * @param value
-     *            Object list.
+     * @param value Object list.
      */
     public final void setObjectList(final GXDLMSObjectCollection value) {
         objectList = value;
@@ -163,16 +161,15 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * @return Contains the identifiers of the COSEM client APs within the
-     *         physical devices hosting these APs, which belong to the AA
-     *         modeled by the Association LN object.
+     * physical devices hosting these APs, which belong to the AA
+     * modeled by the Association LN object.
      */
     public final int getClientSAP() {
         return clientSAP;
     }
 
     /**
-     * @param value
-     *            Client address.
+     * @param value Client address.
      */
     public final void setClientSAP(final int value) {
         clientSAP = value;
@@ -180,16 +177,15 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * @return Contains the identifiers of the COSEM server (logical device) APs
-     *         within the physical devices hosting these APs, which belong to
-     *         the AA modeled by the Association LN object.
+     * within the physical devices hosting these APs, which belong to
+     * the AA modeled by the Association LN object.
      */
     public final short getServerSAP() {
         return serverSAP;
     }
 
     /**
-     * @param value
-     *            Server address.
+     * @param value Server address.
      */
     public final void setServerSAP(final short value) {
         serverSAP = value;
@@ -221,8 +217,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     /**
-     * @param value
-     *            Secret used in Low Level Authentication.
+     * @param value Secret used in Low Level Authentication.
      */
     public final void setSecret(final byte[] value) {
         secret = value;
@@ -236,8 +231,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     /**
-     * @param value
-     *            Association status.
+     * @param value Association status.
      */
     public final void setAssociationStatus(final AssociationStatus value) {
         associationStatus = value;
@@ -253,24 +247,16 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Updates secret.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] updateSecret(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -290,28 +276,18 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Add user to user list.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param id
-     *            User ID.
-     * @param name
-     *            User name.
+     *
+     * @param client DLMS client.
+     * @param id     User ID.
+     * @param name   User name.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] addUser(final GXDLMSClient client, final byte id, final String name)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -328,28 +304,18 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Remove user from user list.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param id
-     *            User ID.
-     * @param name
-     *            User name.
+     *
+     * @param client DLMS client.
+     * @param id     User ID.
+     * @param name   User name.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] removeUser(final GXDLMSClient client, final byte id, final String name)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -366,14 +332,14 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getObjectList(), clientSAP + "/" + serverSAP,
+        return new Object[]{getLogicalName(), getObjectList(), clientSAP + "/" + serverSAP,
                 getApplicationContextName(), getXDLMSContextInfo(),
                 getAuthenticationMechanismName(), getSecret(), getAssociationStatus(),
-                getSecuritySetupReference(), userList, currentUser };
+                getSecuritySetupReference(), userList, currentUser};
     }
 
     static Object getKey(IGXCryptoNotifier cryptoNotifier, SecuritySuite securitySuite,
-            CertificateType certificateType, byte[] systemTitle, boolean encrypt) {
+                         CertificateType certificateType, byte[] systemTitle, boolean encrypt) {
         if (cryptoNotifier == null) {
             throw new RuntimeException("Failed to get the certificate.");
         }
@@ -424,8 +390,8 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 }
                 GXByteBuffer signature = new GXByteBuffer((byte[]) e.getParameters());
                 byte[] tmp = GXAsn1Converter
-                        .toByteArray(new Object[] { new GXAsn1Integer(signature.subArray(0, 32)),
-                                new GXAsn1Integer(signature.subArray(32, 32)) });
+                        .toByteArray(new Object[]{new GXAsn1Integer(signature.subArray(0, 32)),
+                                new GXAsn1Integer(signature.subArray(32, 32))});
                 signature.size(0);
                 signature.set(tmp);
                 Signature ver = Signature.getInstance("SHA256withECDSA");
@@ -623,26 +589,26 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             throws InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         switch (e.getIndex()) {
-        case 1:
-            return replyToHlsAuthentication(settings, e);
-        case 2:
-            changeHlsSecret(settings, e);
-            break;
-        case 3:
-            addObject(settings, e);
-            break;
-        case 4:
-            removeObject(settings, e);
-            break;
-        case 5:
-            addUser(settings, e);
-            break;
-        case 6:
-            removeUser(settings, e);
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+            case 1:
+                return replyToHlsAuthentication(settings, e);
+            case 2:
+                changeHlsSecret(settings, e);
+                break;
+            case 3:
+                addObject(settings, e);
+                break;
+            case 4:
+                removeObject(settings, e);
+                break;
+            case 5:
+                addUser(settings, e);
+                break;
+            case 6:
+                removeUser(settings, e);
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return null;
     }
@@ -822,7 +788,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     private void getAccessRights(final GXDLMSSettings settings, final GXDLMSObject item,
-            final GXDLMSServerBase server, final GXByteBuffer data) throws Exception {
+                                 final GXDLMSServerBase server, final GXByteBuffer data) throws Exception {
         data.setUInt8(DataType.STRUCTURE.getValue());
         data.setUInt8(2);
         if (server == null) {
@@ -1083,13 +1049,10 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Get object.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param item
-     *            received data.
-     * @param add
-     *            Is data added to settings object list.
+     *
+     * @param settings DLMS settings.
+     * @param item     received data.
+     * @param add      Is data added to settings object list.
      * @return Created object.
      */
     private GXDLMSObject getObject(final GXDLMSSettings settings, final List<?> item, boolean add) {
@@ -1113,7 +1076,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     private void updateObjectList(final GXDLMSSettings settings,
-            final GXDLMSObjectCollection target, final Object value) {
+                                  final GXDLMSObjectCollection target, final Object value) {
         target.clear();
         if (value != null) {
             for (Object tmp : (List<?>) value) {
@@ -1277,72 +1240,72 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     @Override
     public final void setValue(final GXDLMSSettings settings, final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2:
-            updateObjectList(settings, objectList, e.getValue());
-            break;
-        case 3:
-            if (e.getValue() != null) {
-                List<?> tmp = (List<?>) e.getValue();
-                clientSAP = ((Number) tmp.get(0)).shortValue();
-                serverSAP = ((Number) tmp.get(1)).shortValue();
-            }
-            break;
-        case 4:
-            updateApplicationContextName(e.getValue());
-            break;
-        case 5:
-            if (e.getValue() != null) {
-                List<?> arr = (List<?>) e.getValue();
-                xDLMSContextInfo.setConformance(
-                        Conformance.forValue(((GXBitString) arr.get(0)).toInteger()));
-                xDLMSContextInfo.setMaxReceivePduSize(((Number) arr.get(1)).intValue());
-                xDLMSContextInfo.setMaxSendPduSize(((Number) arr.get(2)).intValue());
-                xDLMSContextInfo.setDlmsVersionNumber(((Number) arr.get(3)).byteValue());
-                xDLMSContextInfo.setQualityOfService(((Number) arr.get(4)).intValue());
-                xDLMSContextInfo.setCypheringInfo((byte[]) arr.get(5));
-            }
-            break;
-        case 6:
-            updateAuthenticationMechanismName(e.getValue());
-            break;
-        case 7:
-            secret = (byte[]) e.getValue();
-            break;
-        case 8:
-            if (e.getValue() == null) {
-                setAssociationStatus(AssociationStatus.NON_ASSOCIATED);
-            } else {
-                setAssociationStatus(
-                        AssociationStatus.values()[((Number) e.getValue()).intValue()]);
-            }
-            break;
-        case 9:
-            setSecuritySetupReference(GXCommon.toLogicalName((byte[]) e.getValue()));
-            break;
-        case 10:
-            userList.clear();
-            if (e.getValue() != null) {
-                for (Object tmp : (List<?>) e.getValue()) {
-                    List<?> item = (List<?>) tmp;
-                    userList.add(new GXSimpleEntry<Byte, String>((Byte) item.get(0),
-                            (String) item.get(1)));
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2:
+                updateObjectList(settings, objectList, e.getValue());
+                break;
+            case 3:
+                if (e.getValue() != null) {
+                    List<?> tmp = (List<?>) e.getValue();
+                    clientSAP = ((Number) tmp.get(0)).shortValue();
+                    serverSAP = ((Number) tmp.get(1)).shortValue();
                 }
-            }
-            break;
-        case 11:
-            if (e.getValue() != null) {
-                List<?> tmp = (List<?>) e.getValue();
-                currentUser = new GXSimpleEntry<Byte, String>(((Number) tmp.get(0)).byteValue(),
-                        (String) tmp.get(1));
-            } else {
-                currentUser = null;
-            }
-            break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
+            case 4:
+                updateApplicationContextName(e.getValue());
+                break;
+            case 5:
+                if (e.getValue() != null) {
+                    List<?> arr = (List<?>) e.getValue();
+                    xDLMSContextInfo.setConformance(
+                            Conformance.forValue(((GXBitString) arr.get(0)).toInteger()));
+                    xDLMSContextInfo.setMaxReceivePduSize(((Number) arr.get(1)).intValue());
+                    xDLMSContextInfo.setMaxSendPduSize(((Number) arr.get(2)).intValue());
+                    xDLMSContextInfo.setDlmsVersionNumber(((Number) arr.get(3)).byteValue());
+                    xDLMSContextInfo.setQualityOfService(((Number) arr.get(4)).intValue());
+                    xDLMSContextInfo.setCypheringInfo((byte[]) arr.get(5));
+                }
+                break;
+            case 6:
+                updateAuthenticationMechanismName(e.getValue());
+                break;
+            case 7:
+                secret = (byte[]) e.getValue();
+                break;
+            case 8:
+                if (e.getValue() == null) {
+                    setAssociationStatus(AssociationStatus.NON_ASSOCIATED);
+                } else {
+                    setAssociationStatus(
+                            AssociationStatus.values()[((Number) e.getValue()).intValue()]);
+                }
+                break;
+            case 9:
+                setSecuritySetupReference(GXCommon.toLogicalName((byte[]) e.getValue()));
+                break;
+            case 10:
+                userList.clear();
+                if (e.getValue() != null) {
+                    for (Object tmp : (List<?>) e.getValue()) {
+                        List<?> item = (List<?>) tmp;
+                        userList.add(new GXSimpleEntry<Byte, String>((Byte) item.get(0),
+                                (String) item.get(1)));
+                    }
+                }
+                break;
+            case 11:
+                if (e.getValue() != null) {
+                    List<?> tmp = (List<?>) e.getValue();
+                    currentUser = new GXSimpleEntry<Byte, String>(((Number) tmp.get(0)).byteValue(),
+                            (String) tmp.get(1));
+                } else {
+                    currentUser = null;
+                }
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
         }
     }
 
@@ -1664,8 +1627,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     /**
-     * @param userList
-     *            User list.
+     * @param userList User list.
      */
     public void setUserList(List<Entry<Byte, String>> userList) {
         this.userList = userList;
@@ -1679,8 +1641,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     /**
-     * @param currentUser
-     *            Current user.
+     * @param currentUser Current user.
      */
     public void setCurrentUser(Entry<Byte, String> currentUser) {
         this.currentUser = currentUser;
@@ -1694,8 +1655,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     /**
-     * @param value
-     *            Is this association including other association views.
+     * @param value Is this association including other association views.
      */
     public void setMultipleAssociationViews(final boolean value) {
         multipleAssociationViews = value;
@@ -1703,11 +1663,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Returns default attribute access mode for the selected object.
-     * 
-     * @param target
-     *            target object.
-     * @param attributeIndex
-     *            Attribute index.
+     *
+     * @param target         target object.
+     * @param attributeIndex Attribute index.
      * @return Returns Default access mode.
      */
     private static int getAttributeAccess(final GXDLMSObject target, final int attributeIndex) {
@@ -1719,172 +1677,170 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             return att.getAccess().getValue();
         }
         switch (target.getObjectType()) {
-        case ACCOUNT:
-            break;
-        case ACTION_SCHEDULE:
-            break;
-        case ACTIVITY_CALENDAR:
-            break;
-        case ARBITRATOR:
-            break;
-        case ASSOCIATION_LOGICAL_NAME:
-            // Association Status
-            if (attributeIndex == 8) {
-                return AccessMode.READ.getValue();
-            }
-        case ASSOCIATION_SHORT_NAME:
-            break;
-        case AUTO_ANSWER:
-            break;
-        case AUTO_CONNECT:
-            break;
-        case CHARGE:
-            break;
-        case CLOCK:
-            break;
-        case COMPACT_DATA:
-            break;
-        case CREDIT:
-            break;
-        case DATA:
-            break;
-        case DATA_PROTECTION:
-            break;
-        case DEMAND_REGISTER:
-            break;
-        case DISCONNECT_CONTROL:
-            break;
-        case EXTENDED_REGISTER:
-            break;
-        case G3_PLC6_LO_WPAN:
-            break;
-        case G3_PLC_MAC_LAYER_COUNTERS:
-            break;
-        case G3_PLC_MAC_SETUP:
-            break;
-        case GPRS_SETUP:
-            break;
-        case GSM_DIAGNOSTIC:
-            break;
-        case IEC_61334_4_32_LLC_SETUP:
-            break;
-        case IEC_8802_LLC_TYPE1_SETUP:
-            break;
-        case IEC_8802_LLC_TYPE2_SETUP:
-            break;
-        case IEC_8802_LLC_TYPE3_SETUP:
-            break;
-        case IEC_HDLC_SETUP:
-            break;
-        case IEC_LOCAL_PORT_SETUP:
-            break;
-        case IEC_TWISTED_PAIR_SETUP:
-            break;
-        case IMAGE_TRANSFER:
-            break;
-        case IP4_SETUP:
-            break;
-        case IP6_SETUP:
-            break;
-        case LIMITER:
-            break;
-        case LLC_SSCS_SETUP:
-            break;
-        case MAC_ADDRESS_SETUP:
-            break;
-        case MBUS_CLIENT:
-            break;
-        case MBUS_MASTER_PORT_SETUP:
-            break;
-        case MBUS_SLAVE_PORT_SETUP:
-            break;
-        case MODEM_CONFIGURATION:
-            break;
-        case NONE:
-            break;
-        case PARAMETER_MONITOR:
-            break;
-        case PPP_SETUP:
-            break;
-        case PRIME_NB_OFDM_PLC_APPLICATIONS_IDENTIFICATION:
-            break;
-        case PRIME_NB_OFDM_PLC_MAC_COUNTERS:
-            break;
-        case PRIME_NB_OFDM_PLC_MAC_FUNCTIONAL_PARAMETERS:
-            break;
-        case PRIME_NB_OFDM_PLC_MAC_NETWORK_ADMINISTRATION_DATA:
-            break;
-        case PRIME_NB_OFDM_PLC_MAC_SETUP:
-            break;
-        case PRIME_NB_OFDM_PLC_PHYSICAL_LAYER_COUNTERS:
-            break;
-        case PROFILE_GENERIC:
-            break;
-        case PUSH_SETUP:
-            break;
-        case REGISTER:
-            break;
-        case REGISTER_ACTIVATION:
-            break;
-        case REGISTER_MONITOR:
-            break;
-        case REGISTER_TABLE:
-            break;
-        case SAP_ASSIGNMENT:
-            break;
-        case SCHEDULE:
-            break;
-        case SCRIPT_TABLE:
-            break;
-        case SECURITY_SETUP:
-            break;
-        case SFSK_ACTIVE_INITIATOR:
-            break;
-        case SFSK_MAC_COUNTERS:
-            break;
-        case SFSK_MAC_SYNCHRONIZATION_TIMEOUTS:
-            break;
-        case SFSK_PHY_MAC_SETUP:
-            break;
-        case SFSK_REPORTING_SYSTEM_LIST:
-            break;
-        case SMTP_SETUP:
-            break;
-        case SPECIAL_DAYS_TABLE:
-            break;
-        case STATUS_MAPPING:
-            break;
-        case TARIFF_PLAN:
-            break;
-        case TCP_UDP_SETUP:
-            break;
-        case TOKEN_GATEWAY:
-            break;
-        case UTILITY_TABLES:
-            break;
-        case WIRELESS_MODE_Q_CHANNEL:
-            break;
-        case ZIG_BEE_NETWORK_CONTROL:
-            break;
-        case ZIG_BEE_SAS_APS_FRAGMENTATION:
-            break;
-        case ZIG_BEE_SAS_JOIN:
-            break;
-        case ZIG_BEE_SAS_STARTUP:
-            break;
-        default:
-            break;
+            case ACCOUNT:
+                break;
+            case ACTION_SCHEDULE:
+                break;
+            case ACTIVITY_CALENDAR:
+                break;
+            case ARBITRATOR:
+                break;
+            case ASSOCIATION_LOGICAL_NAME:
+                // Association Status
+                if (attributeIndex == 8) {
+                    return AccessMode.READ.getValue();
+                }
+            case ASSOCIATION_SHORT_NAME:
+                break;
+            case AUTO_ANSWER:
+                break;
+            case AUTO_CONNECT:
+                break;
+            case CHARGE:
+                break;
+            case CLOCK:
+                break;
+            case COMPACT_DATA:
+                break;
+            case CREDIT:
+                break;
+            case DATA:
+                break;
+            case DATA_PROTECTION:
+                break;
+            case DEMAND_REGISTER:
+                break;
+            case DISCONNECT_CONTROL:
+                break;
+            case EXTENDED_REGISTER:
+                break;
+            case G3_PLC6_LO_WPAN:
+                break;
+            case G3_PLC_MAC_LAYER_COUNTERS:
+                break;
+            case G3_PLC_MAC_SETUP:
+                break;
+            case GPRS_SETUP:
+                break;
+            case GSM_DIAGNOSTIC:
+                break;
+            case IEC_61334_4_32_LLC_SETUP:
+                break;
+            case IEC_8802_LLC_TYPE1_SETUP:
+                break;
+            case IEC_8802_LLC_TYPE2_SETUP:
+                break;
+            case IEC_8802_LLC_TYPE3_SETUP:
+                break;
+            case IEC_HDLC_SETUP:
+                break;
+            case IEC_LOCAL_PORT_SETUP:
+                break;
+            case IEC_TWISTED_PAIR_SETUP:
+                break;
+            case IMAGE_TRANSFER:
+                break;
+            case IP4_SETUP:
+                break;
+            case IP6_SETUP:
+                break;
+            case LIMITER:
+                break;
+            case LLC_SSCS_SETUP:
+                break;
+            case MAC_ADDRESS_SETUP:
+                break;
+            case MBUS_CLIENT:
+                break;
+            case MBUS_MASTER_PORT_SETUP:
+                break;
+            case MBUS_SLAVE_PORT_SETUP:
+                break;
+            case MODEM_CONFIGURATION:
+                break;
+            case NONE:
+                break;
+            case PARAMETER_MONITOR:
+                break;
+            case PPP_SETUP:
+                break;
+            case PRIME_NB_OFDM_PLC_APPLICATIONS_IDENTIFICATION:
+                break;
+            case PRIME_NB_OFDM_PLC_MAC_COUNTERS:
+                break;
+            case PRIME_NB_OFDM_PLC_MAC_FUNCTIONAL_PARAMETERS:
+                break;
+            case PRIME_NB_OFDM_PLC_MAC_NETWORK_ADMINISTRATION_DATA:
+                break;
+            case PRIME_NB_OFDM_PLC_MAC_SETUP:
+                break;
+            case PRIME_NB_OFDM_PLC_PHYSICAL_LAYER_COUNTERS:
+                break;
+            case PROFILE_GENERIC:
+                break;
+            case PUSH_SETUP:
+                break;
+            case REGISTER:
+                break;
+            case REGISTER_ACTIVATION:
+                break;
+            case REGISTER_MONITOR:
+                break;
+            case REGISTER_TABLE:
+                break;
+            case SAP_ASSIGNMENT:
+                break;
+            case SCHEDULE:
+                break;
+            case SCRIPT_TABLE:
+                break;
+            case SECURITY_SETUP:
+                break;
+            case SFSK_ACTIVE_INITIATOR:
+                break;
+            case SFSK_MAC_COUNTERS:
+                break;
+            case SFSK_MAC_SYNCHRONIZATION_TIMEOUTS:
+                break;
+            case SFSK_PHY_MAC_SETUP:
+                break;
+            case SFSK_REPORTING_SYSTEM_LIST:
+                break;
+            case SMTP_SETUP:
+                break;
+            case SPECIAL_DAYS_TABLE:
+                break;
+            case STATUS_MAPPING:
+                break;
+            case TARIFF_PLAN:
+                break;
+            case TCP_UDP_SETUP:
+                break;
+            case TOKEN_GATEWAY:
+                break;
+            case UTILITY_TABLES:
+                break;
+            case WIRELESS_MODE_Q_CHANNEL:
+                break;
+            case ZIG_BEE_NETWORK_CONTROL:
+                break;
+            case ZIG_BEE_SAS_APS_FRAGMENTATION:
+                break;
+            case ZIG_BEE_SAS_JOIN:
+                break;
+            case ZIG_BEE_SAS_STARTUP:
+                break;
+            default:
+                break;
         }
         return AccessMode.READ_WRITE.getValue();
     }
 
     /**
      * Returns access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
      * @return Access mode.
      */
     public AccessMode getAccess(final GXDLMSObject target, final int index) {
@@ -1901,13 +1857,10 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
-     * @param access
-     *            Access mode.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
+     * @param access Access mode.
      */
     public void setAccess(final GXDLMSObject target, final int index, final AccessMode access) {
         if (accessRights.containsKey(target)) {
@@ -1922,11 +1875,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param access
-     *            Access modes.
+     *
+     * @param target COSEM object.
+     * @param access Access modes.
      */
     public void setAccess(final GXDLMSObject target, final AccessMode[] access) {
         int count = target.getAttributeCount();
@@ -1943,17 +1894,15 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Returns method access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
      * @return Method access mode.
      */
     public MethodAccessMode getMethodAccess(final GXDLMSObject target, final int index) {
         if (target == this
                 || (target instanceof GXDLMSAssociationLogicalName
-                        && target.getLogicalName().compareTo("0.0.40.0.0.255") == 0)
+                && target.getLogicalName().compareTo("0.0.40.0.0.255") == 0)
                 || methodAccessRights.get(target) == null) {
             return this.getMethodAccess(index);
         }
@@ -1962,16 +1911,13 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets method access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
-     * @param access
-     *            Method access mode.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
+     * @param access Method access mode.
      */
     public void setMethodAccess(final GXDLMSObject target, final int index,
-            final MethodAccessMode access) {
+                                final MethodAccessMode access) {
         if (methodAccessRights.containsKey(target)) {
             methodAccessRights.get(target)[index - 1] = access.getValue();
         } else {
@@ -1984,11 +1930,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets method access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param access
-     *            Method access modes.
+     *
+     * @param target COSEM object.
+     * @param access Method access modes.
      */
     public void setMethodAccess(final GXDLMSObject target, final MethodAccessMode[] access) {
         int count = target.getMethodCount();
@@ -2005,11 +1949,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Returns access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
      * @return Access mode.
      */
     public Set<AccessMode3> getAccess3(final GXDLMSObject target, final int index) {
@@ -2026,16 +1968,13 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
-     * @param access
-     *            Access mode.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
+     * @param access Access mode.
      */
     public void setAccess3(final GXDLMSObject target, final int index,
-            final Set<AccessMode3> access) {
+                           final Set<AccessMode3> access) {
         if (accessRights.containsKey(target)) {
             accessRights.get(target)[index - 1] = AccessMode3.toInteger(access);
         } else {
@@ -2048,11 +1987,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param access
-     *            Access modes.
+     *
+     * @param target COSEM object.
+     * @param access Access modes.
      */
     public void setAccess3(final GXDLMSObject target, final Set<AccessMode3>[] access) {
         int count = target.getAttributeCount();
@@ -2069,17 +2006,15 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Returns method access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
      * @return Method access mode.
      */
     public Set<MethodAccessMode3> getMethodAccess3(final GXDLMSObject target, final int index) {
         if (target == this
                 || (target instanceof GXDLMSAssociationLogicalName
-                        && target.getLogicalName().compareTo("0.0.40.0.0.255") == 0)
+                && target.getLogicalName().compareTo("0.0.40.0.0.255") == 0)
                 || accessRights.get(target) == null) {
             return this.getMethodAccess3(index);
         }
@@ -2088,16 +2023,13 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets method access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
-     * @param access
-     *            Method access mode.
+     *
+     * @param target COSEM object.
+     * @param index  Attribute index.
+     * @param access Method access mode.
      */
     public void setMethodAccess3(final GXDLMSObject target, final int index,
-            final Set<MethodAccessMode3> access) {
+                                 final Set<MethodAccessMode3> access) {
         if (methodAccessRights.containsKey(target)) {
             methodAccessRights.get(target)[index - 1] = MethodAccessMode3.toInteger(access);
         } else {
@@ -2110,11 +2042,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * Sets method access mode for given object.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param access
-     *            Method access modes.
+     *
+     * @param target COSEM object.
+     * @param access Method access modes.
      */
     public void setMethodAccess3(final GXDLMSObject target, final Set<MethodAccessMode3>[] access) {
         int count = target.getMethodCount();
@@ -2132,28 +2062,28 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     @Override
     public String[] getNames() {
         if (version == 0) {
-            return new String[] { "Logical Name", "Object List", "Associated partners Id",
+            return new String[]{"Logical Name", "Object List", "Associated partners Id",
                     "Application Context Name", "xDLMS Context Info",
-                    "Authentication Mechanism Name", "Secret", "Association Status" };
+                    "Authentication Mechanism Name", "Secret", "Association Status"};
         }
         if (version == 1) {
-            return new String[] { "Logical Name", "Object List", "Associated partners Id",
+            return new String[]{"Logical Name", "Object List", "Associated partners Id",
                     "Application Context Name", "xDLMS Context Info",
                     "Authentication Mechanism Name", "Secret", "Association Status",
-                    "Security Setup Reference" };
+                    "Security Setup Reference"};
         }
-        return new String[] { "Logical Name", "Object List", "Associated partners Id",
+        return new String[]{"Logical Name", "Object List", "Associated partners Id",
                 "Application Context Name", "xDLMS Context Info", "Authentication Mechanism Name",
                 "Secret", "Association Status", "Security Setup Reference", "UserList",
-                "CurrentUser" };
+                "CurrentUser"};
     }
 
     @Override
     public String[] getMethodNames() {
         if (version > 1)
-            return new String[] { "Reply to HLS authentication", "Change HLS secret", "Add object",
-                    "Remove object", "Add user", "Remove user" };
-        return new String[] { "Reply to HLS authentication", "Change HLS secret", "Add object",
-                "Remove object" };
+            return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object",
+                    "Remove object", "Add user", "Remove user"};
+        return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object",
+                "Remove object"};
     }
 }

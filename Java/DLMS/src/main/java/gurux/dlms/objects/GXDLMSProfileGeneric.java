@@ -93,9 +93,8 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSProfileGeneric(final String ln) {
         this(ln, 0);
@@ -103,11 +102,9 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSProfileGeneric(final String ln, final int sn) {
         super(ObjectType.PROFILE_GENERIC, ln, sn);
@@ -124,8 +121,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Data of profile generic.
+     * @param value Data of profile generic.
      */
     public final void setBuffer(final Object[][] value) {
         buffer.clear();
@@ -134,24 +130,21 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Add new row to Profile Generic data buffer.
+     * @param value Add new row to Profile Generic data buffer.
      */
     public final void addRow(final Object[] value) {
         buffer.add(value);
     }
 
     /**
-     * @param value
-     *            Data of profile generic.
+     * @param value Data of profile generic.
      */
     public final void addBuffer(final Object[][] value) {
         buffer.addAll(Arrays.asList(value));
     }
 
     /**
-     * @param value
-     *            Data of profile generic.
+     * @param value Data of profile generic.
      */
     public final void addBuffer(final List<Object[]> value) {
         buffer.addAll(value);
@@ -166,22 +159,15 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Clears the buffer.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] reset(final GXDLMSClient client) throws InvalidKeyException,
@@ -193,24 +179,16 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Copies the values of the objects to capture into the buffer by reading
      * each capture object.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] capture(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -222,7 +200,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
      * Add new capture object (column) to the profile generic.
      */
     public final void addCaptureObject(final GXDLMSObject item, final int attributeIndex,
-            final int dataIndex) {
+                                       final int dataIndex) {
         if (item == null) {
             throw new RuntimeException("Invalid Object");
         }
@@ -251,8 +229,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            How often values are captured.
+     * @param value How often values are captured.
      */
     public final void setCapturePeriod(final long value) {
         capturePeriod = value;
@@ -266,8 +243,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            How columns are sorted.
+     * @param value How columns are sorted.
      */
     public final void setSortMethod(final SortMethod value) {
         sortMethod = value;
@@ -281,8 +257,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Column that is used for sorting.
+     * @param value Column that is used for sorting.
      */
     public final void setSortObject(final GXDLMSObject value) {
         sortObject = value;
@@ -296,8 +271,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Attribute index of sort object.
+     * @param value Attribute index of sort object.
      */
     public final void setSortObjectAttributeIndex(final int value) {
         sortObjectAttributeIndex = value;
@@ -311,8 +285,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Data index of sort object.
+     * @param value Data index of sort object.
      */
     public final void setSortObject(final int value) {
         sortObjectDataIndex = value;
@@ -326,8 +299,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Entries (rows) in Use.
+     * @param value Entries (rows) in Use.
      */
     public final void setEntriesInUse(final int value) {
         entriesInUse = value;
@@ -341,8 +313,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Maximum Entries (rows) count.
+     * @param value Maximum Entries (rows) count.
      */
     public final void setProfileEntries(final int value) {
         profileEntries = value;
@@ -350,9 +321,9 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getBuffer(), getCaptureObjects(),
+        return new Object[]{getLogicalName(), getBuffer(), getCaptureObjects(),
                 getCapturePeriod(), getSortMethod(), getSortObject(), getEntriesInUse(),
-                getProfileEntries() };
+                getProfileEntries()};
     }
 
     @Override
@@ -459,7 +430,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     }
 
     private byte[] getData(final GXDLMSSettings settings, final ValueEventArgs e,
-            final Object[] table, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns) {
+                           final Object[] table, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns) {
         GXByteBuffer data = new GXByteBuffer();
         if (settings.getIndex() == 0) {
             data.setUInt8((byte) DataType.ARRAY.getValue());
@@ -510,9 +481,8 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Get selected columns.
-     * 
-     * @param cols
-     *            selected columns.
+     *
+     * @param cols selected columns.
      * @return Selected columns.
      */
     private List<Entry<GXDLMSObject, GXDLMSCaptureObject>> getColumns(final List<?> cols) {
@@ -550,15 +520,13 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Get selected columns from parameters.
-     * 
-     * @param selector
-     *            Is read by entry or range.
-     * @param parameters
-     *            Received parameters where columns information is found.
+     *
+     * @param selector   Is read by entry or range.
+     * @param parameters Received parameters where columns information is found.
      * @return Selected columns.
      */
     public final List<Entry<GXDLMSObject, GXDLMSCaptureObject>>
-            getSelectedColumns(final int selector, final Object parameters) {
+    getSelectedColumns(final int selector, final Object parameters) {
         if (selector == 0) {
             // Return all rows.
             List<Entry<GXDLMSObject, GXDLMSCaptureObject>> colums =
@@ -863,9 +831,8 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Update buffer.
-     * 
-     * @param value
-     *            Received data.
+     *
+     * @param value Received data.
      */
     @SuppressWarnings("unchecked")
     private void setBuffer(final ValueEventArgs e) {
@@ -937,7 +904,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
                         }
                     } else if (item.getKey() instanceof GXDLMSDemandRegister
                             && (item.getValue().getAttributeIndex() == 2
-                                    || item.getValue().getAttributeIndex() == 3)) {
+                            || item.getValue().getAttributeIndex() == 3)) {
                         double scaler = ((GXDLMSDemandRegister) item.getKey()).getScaler();
                         if (scaler != 1 && data != null) {
                             try {
@@ -980,7 +947,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
             Object[] values = new Object[captureObjects.size()];
             int pos = 0;
             ValueEventArgs[] args =
-                    new ValueEventArgs[] { new ValueEventArgs(srv, this, 2, 0, null) };
+                    new ValueEventArgs[]{new ValueEventArgs(srv, this, 2, 0, null)};
             srv.notifyPreGet(args);
             if (!args[0].getHandled()) {
                 // CHECKSTYLE:OFF
@@ -1109,13 +1076,13 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Buffer", "CaptureObjects", "Capture Period",
-                "Sort Method", "Sort Object", "Entries In Use", "Profile Entries" };
+        return new String[]{"Logical Name", "Buffer", "CaptureObjects", "Capture Period",
+                "Sort Method", "Sort Object", "Entries In Use", "Profile Entries"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Reset", "Capture" };
+        return new String[]{"Reset", "Capture"};
     }
 
 }

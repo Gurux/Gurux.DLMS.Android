@@ -64,7 +64,7 @@ import gurux.dlms.objects.GXDLMSPushSetup;
 
 /**
  * This class is used to send data notify and push messages to the clients.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXDLMSNotify {
@@ -76,18 +76,14 @@ public class GXDLMSNotify {
 
     /**
      * Constructor.
-     * 
-     * @param useLogicalNameReferencing
-     *            Is Logical Name referencing used.
-     * @param clientAddress
-     *            Server address.
-     * @param serverAddress
-     *            Client address.
-     * @param interfaceType
-     *            Object type.
+     *
+     * @param useLogicalNameReferencing Is Logical Name referencing used.
+     * @param clientAddress             Server address.
+     * @param serverAddress             Client address.
+     * @param interfaceType             Object type.
      */
     public GXDLMSNotify(final boolean useLogicalNameReferencing, final int clientAddress,
-            final int serverAddress, final InterfaceType interfaceType) {
+                        final int serverAddress, final InterfaceType interfaceType) {
         settings = new GXDLMSSettings(true,
                 this instanceof IGXCryptoNotifier ? (IGXCryptoNotifier) this : null);
         setUseLogicalNameReferencing(useLogicalNameReferencing);
@@ -98,7 +94,7 @@ public class GXDLMSNotify {
 
     /**
      * What kind of services are used.
-     * 
+     *
      * @return Functionality.
      */
     public final java.util.Set<Conformance> getConformance() {
@@ -106,16 +102,14 @@ public class GXDLMSNotify {
     }
 
     /**
-     * @param value
-     *            What kind of services are used.
+     * @param value What kind of services are used.
      */
     public final void setConformance(final java.util.Set<Conformance> value) {
         settings.setNegotiatedConformance(value);
     }
 
     /**
-     * @param value
-     *            Cipher interface that is used to cipher PDU.
+     * @param value Cipher interface that is used to cipher PDU.
      */
     protected final void setCipher(final GXICipher value) {
         settings.setCipher(value);
@@ -147,19 +141,18 @@ public class GXDLMSNotify {
      * Retrieves the maximum size of received PDU. PDU size tells maximum size
      * of PDU packet. Value can be from 0 to 0xFFFF. By default the value is
      * 0xFFFF.
-     * 
+     *
+     * @return Maximum size of received PDU.
      * @see GXDLMSClient#getClientAddress
      * @see GXDLMSClient#getServerAddress
      * @see GXDLMSClient#getUseLogicalNameReferencing
-     * @return Maximum size of received PDU.
      */
     public final int getMaxReceivePDUSize() {
         return settings.getMaxPduSize();
     }
 
     /**
-     * @param value
-     *            Maximum size of received PDU.
+     * @param value Maximum size of received PDU.
      */
     public final void setMaxReceivePDUSize(final int value) {
         settings.setMaxPduSize(value);
@@ -171,7 +164,7 @@ public class GXDLMSNotify {
      * supports only either Logical or Short name referencing. The referencing
      * is defined by the device manufacturer. If the referencing is wrong, the
      * SNMR message will fail.
-     * 
+     *
      * @return Is Logical Name referencing used.
      */
     public final boolean getUseLogicalNameReferencing() {
@@ -179,8 +172,7 @@ public class GXDLMSNotify {
     }
 
     /**
-     * @param value
-     *            Is Logical Name referencing used.
+     * @param value Is Logical Name referencing used.
      */
     public final void setUseLogicalNameReferencing(final boolean value) {
         settings.setUseLogicalNameReferencing(value);
@@ -194,8 +186,7 @@ public class GXDLMSNotify {
     }
 
     /**
-     * @param value
-     *            Used Priority.
+     * @param value Used Priority.
      */
     public final void setPriority(final Priority value) {
         settings.setPriority(value);
@@ -209,8 +200,7 @@ public class GXDLMSNotify {
     }
 
     /**
-     * @param value
-     *            Used service class.
+     * @param value Used service class.
      */
     public final void setServiceClass(final ServiceClass value) {
         settings.setServiceClass(value);
@@ -224,8 +214,7 @@ public class GXDLMSNotify {
     }
 
     /**
-     * @param value
-     *            Invoke ID.
+     * @param value Invoke ID.
      */
     public final void setInvokeID(final byte value) {
         settings.setInvokeID(value);
@@ -233,26 +222,17 @@ public class GXDLMSNotify {
 
     /**
      * Removes the HDLC frame from the packet, and returns COSEM data only.
-     * 
-     * @param reply
-     *            The received data from the device.
-     * @param data
-     *            Information from the received data.
+     *
+     * @param reply The received data from the device.
+     * @param data  Information from the received data.
      * @return Is frame complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final boolean getData(final GXByteBuffer reply, final GXReplyData data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -266,13 +246,10 @@ public class GXDLMSNotify {
      * GetDataNotificationMessage -method. DLMS specification do not specify the
      * structure of Data-Notification body. So each manufacture can sent
      * different data.
-     * 
-     * @param obj
-     *            COSEM object.
-     * @param index
-     *            Attribute index.
-     * @param buff
-     *            Byte buffer.
+     *
+     * @param obj   COSEM object.
+     * @param index Attribute index.
+     * @param buff  Byte buffer.
      */
     public final void addData(final GXDLMSObject obj, final int index, final GXByteBuffer buff) {
         DataType dt;
@@ -290,13 +267,10 @@ public class GXDLMSNotify {
      * GetDataNotificationMessage -method. DLMS specification do not specify the
      * structure of Data-Notification body. So each manufacture can sent
      * different data.
-     * 
-     * @param value
-     *            Added value.
-     * @param type
-     *            Value data type.
-     * @param buff
-     *            Byte buffer.
+     *
+     * @param value Added value.
+     * @param type  Value data type.
+     * @param buff  Byte buffer.
      */
     public final void addData(final Object value, final DataType type, final GXByteBuffer buff) {
         GXCommon.setData(settings, buff, type, value);
@@ -304,26 +278,17 @@ public class GXDLMSNotify {
 
     /**
      * Generates data notification message.
-     * 
-     * @param time
-     *            Date time. Set to null or Date(0) if not used
-     * @param data
-     *            Notification body.
+     *
+     * @param time Date time. Set to null or Date(0) if not used
+     * @param data Notification body.
      * @return Generated data notification message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generateDataNotificationMessages(final Date time, final byte[] data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -334,26 +299,17 @@ public class GXDLMSNotify {
 
     /**
      * Generates data notification message.
-     * 
-     * @param time
-     *            Date time. Set Date(0) if not added.
-     * @param data
-     *            Notification body.
+     *
+     * @param time Date time. Set Date(0) if not added.
+     * @param data Notification body.
      * @return Generated data notification message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generateDataNotificationMessages(final Date time, final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -384,29 +340,20 @@ public class GXDLMSNotify {
 
     /**
      * Generates data notification message.
-     * 
-     * @param date
-     *            Date time. Set To null if not added.
-     * @param objects
-     *            List of objects and attribute indexes to notify.
+     *
+     * @param date    Date time. Set To null if not added.
+     * @param objects List of objects and attribute indexes to notify.
      * @return Generated data notification message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generateDataNotificationMessages(final Date date,
-            final List<Entry<GXDLMSObject, Integer>> objects) throws InvalidKeyException,
+                                                           final List<Entry<GXDLMSObject, Integer>> objects) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (objects == null) {
@@ -423,26 +370,17 @@ public class GXDLMSNotify {
 
     /**
      * Generates push setup message.
-     * 
-     * @param date
-     *            Date time. Set to null or Date(0) if not used.
-     * @param push
-     *            Target Push object.
+     *
+     * @param date Date time. Set to null or Date(0) if not used.
+     * @param push Target Push object.
      * @return Generated data notification message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] generatePushSetupMessages(final Date date, final GXDLMSPushSetup push)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -463,9 +401,8 @@ public class GXDLMSNotify {
     /**
      * Returns collection of push objects. If this method is used Push object
      * must be set for first object on push object list.
-     * 
-     * @param data
-     *            Received value.
+     *
+     * @param data Received value.
      * @return Array of objects and called indexes.
      */
     public final List<Entry<GXDLMSObject, Integer>> parsePush(final List<?> data) {
@@ -530,14 +467,12 @@ public class GXDLMSNotify {
 
     /**
      * Returns collection of push objects.
-     * 
-     * @param objects
-     *            Array of objects and called indexes.
-     * @param data
-     *            Received data.
+     *
+     * @param objects Array of objects and called indexes.
+     * @param data    Received data.
      */
     public final void parsePush(final List<Entry<GXDLMSObject, Integer>> objects,
-            final List<?> data) {
+                                final List<?> data) {
         GXDLMSObject obj;
         int index;
         DataType dt;
@@ -568,29 +503,20 @@ public class GXDLMSNotify {
 
     /**
      * Sends Event Notification or Information Report Request.
-     * 
-     * @param time
-     *            Send time.
-     * @param list
-     *            List of COSEM object and attribute index to report.
+     *
+     * @param time Send time.
+     * @param list List of COSEM object and attribute index to report.
      * @return Report request as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] generateReport(final GXDateTime time,
-            final List<Entry<GXDLMSObject, Integer>> list) throws InvalidKeyException,
+                                   final List<Entry<GXDLMSObject, Integer>> list) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (list == null || list.size() == 0) {

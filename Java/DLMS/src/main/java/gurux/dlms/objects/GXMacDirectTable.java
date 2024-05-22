@@ -79,9 +79,8 @@ public class GXMacDirectTable {
     }
 
     /**
-     * @param value
-     *            SID of switch through which the source service node is
-     *            connected.
+     * @param value SID of switch through which the source service node is
+     *              connected.
      */
     public final void setSourceSId(final short value) {
         sourceSId = value;
@@ -95,8 +94,7 @@ public class GXMacDirectTable {
     }
 
     /**
-     * @param value
-     *            NID allocated to the source service node.
+     * @param value NID allocated to the source service node.
      */
     public final void setSourceLnId(final short value) {
         sourceLnId = value;
@@ -110,8 +108,7 @@ public class GXMacDirectTable {
     }
 
     /**
-     * @param value
-     *            LCID allocated to this connection at the source.
+     * @param value LCID allocated to this connection at the source.
      */
     public final void setSourceLcId(final short value) {
         sourceLcId = value;
@@ -119,16 +116,15 @@ public class GXMacDirectTable {
 
     /**
      * @return SID of the switch through which the destination service node is
-     *         connected.
+     * connected.
      */
     public final short getDestinationSId() {
         return destinationSId;
     }
 
     /**
-     * @param value
-     *            SID of the switch through which the destination service node
-     *            is connected.
+     * @param value SID of the switch through which the destination service node
+     *              is connected.
      */
     public final void setDestinationSId(final short value) {
         destinationSId = value;
@@ -142,8 +138,7 @@ public class GXMacDirectTable {
     }
 
     /**
-     * @param value
-     *            NID allocated to the destination service node.
+     * @param value NID allocated to the destination service node.
      */
     public final void setDestinationLnId(final short value) {
         destinationLnId = value;
@@ -157,8 +152,7 @@ public class GXMacDirectTable {
     }
 
     /**
-     * @param value
-     *            LCID allocated to this connection at the destination.
+     * @param value LCID allocated to this connection at the destination.
      */
     public final void setDestinationLcId(final short value) {
         destinationLcId = value;
@@ -172,8 +166,7 @@ public class GXMacDirectTable {
     }
 
     /**
-     * @param value
-     *            Entry DID is the EUI-48 of the direct switch.
+     * @param value Entry DID is the EUI-48 of the direct switch.
      */
     public final void setDid(final byte[] value) {
         did = value;

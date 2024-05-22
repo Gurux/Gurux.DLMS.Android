@@ -60,9 +60,8 @@ public class GXAsn1BitString {
 
     /**
      * Append zeroes to the buffer.
-     * 
-     * @param count
-     *            Amount of zero.
+     *
+     * @param count Amount of zero.
      */
     private static void appendZeros(final StringBuilder sb, final int count) {
         for (int pos = 0; pos != count; ++pos) {
@@ -72,9 +71,8 @@ public class GXAsn1BitString {
 
     /**
      * Constructor
-     * 
-     * @param bitString
-     *            Bit string.
+     *
+     * @param bitString Bit string.
      */
     public GXAsn1BitString(final String bitString) {
         padBits = 8 - (bitString.length() % 8);
@@ -92,11 +90,9 @@ public class GXAsn1BitString {
 
     /**
      * Constructor
-     * 
-     * @param str
-     *            Bit string.
-     * @param padCount
-     *            Number of extra bits at the end of the string.
+     *
+     * @param str      Bit string.
+     * @param padCount Number of extra bits at the end of the string.
      */
     public GXAsn1BitString(final byte[] str, final int padCount) {
         if (str == null) {
@@ -112,9 +108,8 @@ public class GXAsn1BitString {
 
     /**
      * Constructor
-     * 
-     * @param str
-     *            Bit string.
+     *
+     * @param str Bit string.
      */
     public GXAsn1BitString(final byte[] str) {
         if (str == null) {

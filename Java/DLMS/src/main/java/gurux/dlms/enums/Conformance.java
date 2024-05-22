@@ -115,14 +115,14 @@ public enum Conformance {
     /**
      * Is Information reports supported by the meter.<br>
      * Information reports is used with Short Name Referencing
-     * 
+     *
      * @see DATA_NOTIFICATION
      * @see EVENT_NOTIFICATION
      */
     INFORMATION_REPORT(0x8000),
     /**
      * Is Data Notification supported by the meter.
-     * 
+     *
      * @see INFORMATION_REPORT
      * @see EVENT_NOTIFICATION
      */
@@ -139,7 +139,7 @@ public enum Conformance {
      * from parameterized access.<br>
      * Parameterized access is used with Short Name Referencing example if
      * Profile Generic is read by range or entry.
-     * 
+     *
      * @see SELECTIVE_ACCESS
      */
     PARAMETERIZED_ACCESS(0x40000),
@@ -158,7 +158,7 @@ public enum Conformance {
      * selective access.<br>
      * Selective access is used with Logical Name Referencing example if Profile
      * Generic is read by range or entry.
-     * 
+     *
      * @see PARAMETERIZED_ACCESS
      */
     SELECTIVE_ACCESS(0x200000),
@@ -168,7 +168,7 @@ public enum Conformance {
      * events for given target. Example if power down occurred. Note! Client do
      * not need to have connection to the server when event notification is
      * send.
-     * 
+     *
      * @see INFORMATION_REPORT
      * @see DATA_NOTIFICATION
      */
@@ -197,20 +197,19 @@ public enum Conformance {
     }
 
     public static Conformance[] getEnumConstants() {
-        return new Conformance[] { ACTION, EVENT_NOTIFICATION, SELECTIVE_ACCESS, SET, GET,
+        return new Conformance[]{ACTION, EVENT_NOTIFICATION, SELECTIVE_ACCESS, SET, GET,
                 PARAMETERIZED_ACCESS, ACCESS, DATA_NOTIFICATION, INFORMATION_REPORT,
                 MULTIPLE_REFERENCES, BLOCK_TRANSFER_WITH_ACTION, BLOCK_TRANSFER_WITH_SET_OR_WRITE,
                 BLOCK_TRANSFER_WITH_GET_OR_READ, ATTRIBUTE_0_SUPPORTED_WITH_GET,
                 PRIORITY_MGMT_SUPPORTED, ATTRIBUTE_0_SUPPORTED_WITH_SET, RESERVED_SEVEN,
                 DELTA_VALUE_ENCODING, UN_CONFIRMED_WRITE, WRITE, READ, GENERAL_BLOCK_TRANSFER,
-                GENERAL_PROTECTION, RESERVED_ZERO };
+                GENERAL_PROTECTION, RESERVED_ZERO};
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static Set<Conformance> forValue(final int value) {
@@ -226,9 +225,8 @@ public enum Conformance {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<Conformance> value) {

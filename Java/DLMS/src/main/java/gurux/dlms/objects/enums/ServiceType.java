@@ -36,7 +36,7 @@ package gurux.dlms.objects.enums;
 
 /**
  * Type of service used to push the data.
- * 
+ *
  * @author Gurux Ltd.
  */
 public enum ServiceType {

@@ -38,12 +38,12 @@ package gurux.dlms.asn.enums;
  * Used ECC scheme.
  */
 public enum Ecc {
-	/**
-	 * ECC-P256 domain parameters are used.
-	 */
-	P256,
-	/**
-	 * ECC-384 domain parameters are used.
-	 */
-	P384
+    /**
+     * ECC-P256 domain parameters are used.
+     */
+    P256,
+    /**
+     * ECC-384 domain parameters are used.
+     */
+    P384
 }

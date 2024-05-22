@@ -41,55 +41,51 @@ import gurux.dlms.enums.ObjectType;
  */
 public class GXIgnoreSerialize {
 
-	/**
-	 * Object types that are not serialized.
-	 */
-	private ObjectType objectType;
+    /**
+     * Object types that are not serialized.
+     */
+    private ObjectType objectType;
 
-	/**
-	 * Attributes that are not serialized.
-	 */
-	private int[] attributes;
+    /**
+     * Attributes that are not serialized.
+     */
+    private int[] attributes;
 
-	/**
-	 * 
-	 * @return Object types that are not serialized.
-	 */
-	public ObjectType getObjectType() {
-		return objectType;
-	}
+    /**
+     * @return Object types that are not serialized.
+     */
+    public ObjectType getObjectType() {
+        return objectType;
+    }
 
-	/**
-	 * 
-	 * @param value Object types that are not serialized.
-	 */
-	public void setObjectType(final ObjectType value) {
-		this.objectType = value;
-	}
+    /**
+     * @param value Object types that are not serialized.
+     */
+    public void setObjectType(final ObjectType value) {
+        this.objectType = value;
+    }
 
-	/**
-	 * 
-	 * @return Attributes that are not serialized.
-	 */
-	public int[] getAttributes() {
-		return attributes;
-	}
+    /**
+     * @return Attributes that are not serialized.
+     */
+    public int[] getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * 
-	 * @param value Attributes that are not serialized.
-	 */
-	public void setAttributes(final int[] value) {
-		attributes = value;
-	}
+    /**
+     * @param value Attributes that are not serialized.
+     */
+    public void setAttributes(final int[] value) {
+        attributes = value;
+    }
 
-	public GXIgnoreSerialize() {
+    public GXIgnoreSerialize() {
 
-	}
+    }
 
-	public GXIgnoreSerialize(ObjectType ot, int index) {
-		objectType = ot;
-		attributes = new int[] { index };
-	}
+    public GXIgnoreSerialize(ObjectType ot, int index) {
+        objectType = ot;
+        attributes = new int[]{index};
+    }
 
 }

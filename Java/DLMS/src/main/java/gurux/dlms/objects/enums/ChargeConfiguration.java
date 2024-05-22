@@ -63,7 +63,7 @@ public enum ChargeConfiguration {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, ChargeConfiguration> getMappings() {
@@ -77,9 +77,8 @@ public enum ChargeConfiguration {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     ChargeConfiguration(final int value) {
         intValue = value;
@@ -88,7 +87,7 @@ public enum ChargeConfiguration {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -99,16 +98,15 @@ public enum ChargeConfiguration {
      * @return Get enumeration constant values.
      */
     private static ChargeConfiguration[] getEnumConstants() {
-        return new ChargeConfiguration[] { PERCENTAGE_BASED_COLLECTION,
-                CONTINUOUS_COLLECTION };
+        return new ChargeConfiguration[]{PERCENTAGE_BASED_COLLECTION,
+                CONTINUOUS_COLLECTION};
 
     }
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static java.util.Set<ChargeConfiguration> forValue(final int value) {
@@ -128,13 +126,12 @@ public enum ChargeConfiguration {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int
-            toInteger(final java.util.Set<ChargeConfiguration> value) {
+    toInteger(final java.util.Set<ChargeConfiguration> value) {
         int tmp = 0;
         for (ChargeConfiguration it : value) {
             tmp |= it.getValue();

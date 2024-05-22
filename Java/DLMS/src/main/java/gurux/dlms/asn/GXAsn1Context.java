@@ -37,7 +37,7 @@ package gurux.dlms.asn;
 public class GXAsn1Context extends java.util.ArrayList<Object> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
@@ -66,8 +66,7 @@ public class GXAsn1Context extends java.util.ArrayList<Object> {
     }
 
     /**
-     * @param value
-     *            Context index.
+     * @param value Context index.
      */
     public void setIndex(final int value) {
         index = value;
@@ -81,8 +80,7 @@ public class GXAsn1Context extends java.util.ArrayList<Object> {
     }
 
     /**
-     * @param value
-     *            Is constructed.
+     * @param value Is constructed.
      */
     public void setConstructed(final boolean value) {
         constructed = value;

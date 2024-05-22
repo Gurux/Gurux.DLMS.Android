@@ -36,7 +36,7 @@ package gurux.dlms.objects.enums;
 
 /**
  * IEC Twisted pair setup working mode.
- * 
+ *
  * @author Gurux Ltd.
  */
 public enum IecTwistedPairSetupMode {

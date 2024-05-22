@@ -40,7 +40,7 @@ import gurux.dlms.internal.GXCommon;
 
 /**
  * BitString class is used with Bit strings.
- * 
+ *
  * @author Gurux Ltd.
  */
 public class GXBitString {
@@ -59,9 +59,8 @@ public class GXBitString {
 
     /**
      * Constructor.
-     * 
-     * @param val
-     *            Bit string value.
+     *
+     * @param val Bit string value.
      */
     public GXBitString(final String val) {
         value = val;
@@ -69,11 +68,9 @@ public class GXBitString {
 
     /**
      * Constructor.
-     * 
-     * @param val
-     *            Byte value.
-     * @param count
-     *            Bit count.
+     *
+     * @param val   Byte value.
+     * @param count Bit count.
      */
     public GXBitString(final byte val, final int count) {
         StringBuilder sb = new StringBuilder();
@@ -93,8 +90,7 @@ public class GXBitString {
     }
 
     /**
-     * @param val
-     *            Bit string value.
+     * @param val Bit string value.
      */
     public void setValue(final String val) {
         value = val;
@@ -120,11 +116,9 @@ public class GXBitString {
 
     /**
      * Convert integer value to BitString.
-     * 
-     * @param value
-     *            Value to convert.
-     * @param count
-     *            Amount of the bits.
+     *
+     * @param value Value to convert.
+     * @param count Amount of the bits.
      * @return Bitstring
      */
     public static String toBitString(long value, int count) {

@@ -91,8 +91,7 @@ public class GXDLMSXmlPdu {
     }
 
     /**
-     * @param value
-     *            Command.
+     * @param value Command.
      */
     public final void setCommand(final int value) {
         command = value;
@@ -111,8 +110,7 @@ public class GXDLMSXmlPdu {
     }
 
     /**
-     * @param value
-     *            Generated Pdu.
+     * @param value Generated Pdu.
      */
     public final void setData(final byte[] value) {
         data = value;
@@ -126,8 +124,7 @@ public class GXDLMSXmlPdu {
     }
 
     /**
-     * @param value
-     *            Description of the test.
+     * @param value Description of the test.
      */
     public final void setDescription(final String value) {
         description = value;
@@ -141,8 +138,7 @@ public class GXDLMSXmlPdu {
     }
 
     /**
-     * @param value
-     *            Shown error if this test fails.
+     * @param value Shown error if this test fails.
      */
     public final void setError(final String value) {
         error = value;
@@ -156,8 +152,7 @@ public class GXDLMSXmlPdu {
     }
 
     /**
-     * @param value
-     *            Error url if test fails.
+     * @param value Error url if test fails.
      */
     public final void setErrorUrl(final String value) {
         errorUrl = value;
@@ -203,7 +198,7 @@ public class GXDLMSXmlPdu {
 
     @SuppressWarnings("squid:S1066")
     private static void compare(final Node expectedNode, final Node actualNode,
-            final java.util.ArrayList<String> list) {
+                                final java.util.ArrayList<String> list) {
         int cnt = expectedNode.getChildNodes().getLength();
         if (expectedNode.getNodeName()
                 .compareTo(actualNode.getNodeName()) != 0) {
@@ -247,25 +242,25 @@ public class GXDLMSXmlPdu {
                         .getNamedItem("Value");
                 if (a == null
                         || (expectedNode.getChildNodes().item(pos).getNodeName()
-                                .compareTo("None") != 0
-                                && expectedNode.getChildNodes().item(pos)
-                                        .getNodeName()
-                                        .compareTo(actualNode.getChildNodes()
-                                                .item(pos).getNodeName()) != 0)
+                        .compareTo("None") != 0
+                        && expectedNode.getChildNodes().item(pos)
+                        .getNodeName()
+                        .compareTo(actualNode.getChildNodes()
+                                .item(pos).getNodeName()) != 0)
                         || a.getNodeValue().compareTo("*") != 0)
                 // If value type is not defined.
                 {
                     if (!expectedNode.getFirstChild().getNodeName()
                             .equals("Structure")
                             && !expectedNode.getFirstChild().getNodeName()
-                                    .equals("Array")
+                            .equals("Array")
                             && !expectedNode.getParentNode().getNodeName()
-                                    .equals("Array")) {
+                            .equals("Array")) {
                         list.add("Different values. Expected: '"
                                 + expectedNode.getChildNodes().item(pos)
-                                        .getNodeValue()
+                                .getNodeValue()
                                 + "'. Actual: '" + actualNode.getChildNodes()
-                                        .item(pos).getNodeValue()
+                                .item(pos).getNodeValue()
                                 + "'.");
                     }
                 }
@@ -275,9 +270,8 @@ public class GXDLMSXmlPdu {
 
     /**
      * Compare load XML.
-     * 
-     * @param xml
-     *            XML string to compare.
+     *
+     * @param xml XML string to compare.
      * @return True, if content is same.
      */
     @SuppressWarnings("squid:S00112")
@@ -303,31 +297,31 @@ public class GXDLMSXmlPdu {
 
     /**
      * Is command request. This information is used to tell is PDU send.
-     * 
+     *
      * @return True, if command is request.
      */
     public final boolean isRequest() {
         boolean ret;
         switch (command) {
-        case Command.SNRM:
-        case Command.AARQ:
-        case Command.READ_REQUEST:
-        case Command.GLO_READ_REQUEST:
-        case Command.WRITE_REQUEST:
-        case Command.GLO_WRITE_REQUEST:
-        case Command.GET_REQUEST:
-        case Command.GLO_GET_REQUEST:
-        case Command.SET_REQUEST:
-        case Command.GLO_SET_REQUEST:
-        case Command.METHOD_REQUEST:
-        case Command.GLO_METHOD_REQUEST:
-        case Command.DISCONNECT_REQUEST:
-        case Command.RELEASE_REQUEST:
-            ret = true;
-            break;
-        default:
-            ret = false;
-            break;
+            case Command.SNRM:
+            case Command.AARQ:
+            case Command.READ_REQUEST:
+            case Command.GLO_READ_REQUEST:
+            case Command.WRITE_REQUEST:
+            case Command.GLO_WRITE_REQUEST:
+            case Command.GET_REQUEST:
+            case Command.GLO_GET_REQUEST:
+            case Command.SET_REQUEST:
+            case Command.GLO_SET_REQUEST:
+            case Command.METHOD_REQUEST:
+            case Command.GLO_METHOD_REQUEST:
+            case Command.DISCONNECT_REQUEST:
+            case Command.RELEASE_REQUEST:
+                ret = true;
+                break;
+            default:
+                ret = false;
+                break;
         }
         return ret;
     }
@@ -341,13 +335,10 @@ public class GXDLMSXmlPdu {
 
     /**
      * Constructor.
-     * 
-     * @param command
-     *            Generated command.
-     * @param xml
-     *            Generated PDU as XML.
-     * @param pdu
-     *            Generated PDU.
+     *
+     * @param command Generated command.
+     * @param xml     Generated PDU as XML.
+     * @param pdu     Generated PDU.
      */
     public GXDLMSXmlPdu(final int command, final Node xml, final byte[] pdu) {
         setCommand(command);

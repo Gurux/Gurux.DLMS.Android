@@ -56,7 +56,7 @@ public enum PppSetupLcpOptionType {
     private static HashMap<Integer, PppSetupLcpOptionType> mappings;
 
     private static java.util.HashMap<Integer, PppSetupLcpOptionType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (PppSetupLcpOptionType.class) {
                 if (mappings == null) {

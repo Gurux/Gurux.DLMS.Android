@@ -118,17 +118,16 @@ public enum ClockStatus {
      * @return Get enumeration constant values.
      */
     private static ClockStatus[] getEnumConstants() {
-        return new ClockStatus[] { OK, INVALID_VALUE, DOUBTFUL_VALUE,
+        return new ClockStatus[]{OK, INVALID_VALUE, DOUBTFUL_VALUE,
                 DIFFERENT_CLOCK_BASE, INVALID_CLOCK_STATUS, RESERVED2,
-                RESERVED3, RESERVED4, DAYLIGHT_SAVE_ACTIVE, SKIPPED };
+                RESERVED3, RESERVED4, DAYLIGHT_SAVE_ACTIVE, SKIPPED};
 
     }
 
     /**
      * Converts the integer value to enumerated value.
-     * 
-     * @param value
-     *            The integer value, which is read from the device.
+     *
+     * @param value The integer value, which is read from the device.
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<ClockStatus> forValue(final int value) {
@@ -151,9 +150,8 @@ public enum ClockStatus {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final java.util.Set<ClockStatus> value) {

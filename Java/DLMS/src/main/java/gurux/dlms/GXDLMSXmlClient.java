@@ -74,9 +74,8 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * Constructor
-     * 
-     * @param type
-     *            XML type.
+     *
+     * @param type XML type.
      */
     public GXDLMSXmlClient(TranslatorOutputType type) {
         translator = new GXDLMSTranslator(type);
@@ -86,16 +85,15 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * @return XML client don't throw exceptions. It serializes them as a
-     *         default. Set value to true, if exceptions are thrown.
+     * default. Set value to true, if exceptions are thrown.
      */
     public final boolean getThrowExceptions() {
         return throwExceptions;
     }
 
     /**
-     * @param value
-     *            XML client don't throw exceptions. It serializes them as a
-     *            default. Set value to true, if exceptions are thrown.
+     * @param value XML client don't throw exceptions. It serializes them as a
+     *              default. Set value to true, if exceptions are thrown.
      */
     @Override
     public final void setThrowExceptions(boolean value) {
@@ -103,7 +101,7 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
     }
 
     public static void removeRecursively(final Node node, final short nodeType,
-            final String name) {
+                                         final String name) {
         if (node.getNodeType() == nodeType
                 && (name == null || node.getNodeName().equals(name))) {
             node.getParentNode().removeChild(node);
@@ -118,9 +116,8 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * Load XML commands from the file.
-     * 
-     * @param file
-     *            XML file
+     *
+     * @param file XML file
      * @return Loaded XML objects.
      */
     public List<GXDLMSXmlPdu> load(final File file) {
@@ -129,11 +126,9 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * Load XML commands from the file.
-     * 
-     * @param file
-     *            XML file
-     * @param s
-     *            Load settings.
+     *
+     * @param file XML file
+     * @param s    Load settings.
      * @return Loaded XML objects.
      */
     @SuppressWarnings("squid:S00112")
@@ -155,16 +150,14 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * Load XML commands from the string.
-     * 
-     * @param xml
-     *            XML string
-     * @param s
-     *            Load settings.
+     *
+     * @param xml XML string
+     * @param s   Load settings.
      * @return Loaded XML objects.
      */
     @SuppressWarnings("squid:S00112")
     public List<GXDLMSXmlPdu> load(final String xml,
-            final GXXmlLoadSettings s) {
+                                   final GXXmlLoadSettings s) {
         DocumentBuilder docBuilder;
         Document doc;
         DocumentBuilderFactory docBuilderFactory =
@@ -182,16 +175,14 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * Load XML commands from the string.
-     * 
-     * @param xml
-     *            XML string
-     * @param settings
-     *            Load settings.
+     *
+     * @param xml      XML string
+     * @param settings Load settings.
      * @return Loaded XML objects.
      */
-    @SuppressWarnings({ "squid:S00112", "squid:S1066", "squid:S135" })
+    @SuppressWarnings({"squid:S00112", "squid:S1066", "squid:S135"})
     private List<GXDLMSXmlPdu> load(final Document doc,
-            final GXXmlLoadSettings loadSettings) {
+                                    final GXXmlLoadSettings loadSettings) {
         // Remove comments.
         removeRecursively(doc, Node.COMMENT_NODE, null);
 
@@ -224,8 +215,8 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
                                 && node.getNodeName().equals("GetRequest")) {
                             if (loadSettings.getStart() != new java.util.Date(0)
                                     && loadSettings
-                                            .getEnd() != new java.util.Date(
-                                                    0)) {
+                                    .getEnd() != new java.util.Date(
+                                    0)) {
                                 for (int pos3 = 0; pos3 != node.getChildNodes()
                                         .getLength(); ++pos3) {
                                     Node n1 = node.getChildNodes().item(pos3);
@@ -255,9 +246,9 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
                                                     } else if (n3.getNodeName()
                                                             .equals("AccessParameters")) {
                                                         for (int pos6 =
-                                                                0; pos6 != n3
-                                                                        .getChildNodes()
-                                                                        .getLength(); ++pos6) {
+                                                             0; pos6 != n3
+                                                                .getChildNodes()
+                                                                .getLength(); ++pos6) {
                                                             Node n4 = n3
                                                                     .getChildNodes()
                                                                     .item(pos6);
@@ -266,9 +257,9 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
                                                                 boolean start =
                                                                         true;
                                                                 for (int pos7 =
-                                                                        0; pos7 != n4
-                                                                                .getChildNodes()
-                                                                                .getLength(); ++pos7) {
+                                                                     0; pos7 != n4
+                                                                        .getChildNodes()
+                                                                        .getLength(); ++pos7) {
                                                                     Node n5 = n4
                                                                             .getChildNodes()
                                                                             .item(pos7);
@@ -342,7 +333,7 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
                         if ((s.getCommand() == Command.SNRM
                                 && !s.getSettings().isServer())
                                 || (s.getCommand() == Command.UA
-                                        && s.getSettings().isServer())) {
+                                && s.getSettings().isServer())) {
                             settings.getHdlcSettings()
                                     .setMaxInfoTX(s.getSettings()
                                             .getHdlcSettings().getMaxInfoTX());
@@ -383,22 +374,15 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
 
     /**
      * Load XML commands from the file.
-     * 
-     * @param pdu
-     *            Parsed PDU.
+     *
+     * @param pdu Parsed PDU.
      * @return Generated messages (frames).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      */
     public final byte[][] pduToMessages(final GXDLMSXmlPdu pdu)
             throws InvalidKeyException, NoSuchAlgorithmException,

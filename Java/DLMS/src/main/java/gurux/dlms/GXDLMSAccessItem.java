@@ -42,8 +42,7 @@ public class GXDLMSAccessItem {
     }
 
     /**
-     * @param value
-     *            COSEM target object.
+     * @param value COSEM target object.
      */
     public final void setTarget(final GXDLMSObject value) {
         target = value;
@@ -64,8 +63,7 @@ public class GXDLMSAccessItem {
     }
 
     /**
-     * @param value
-     *            Attribute index.
+     * @param value Attribute index.
      */
     public final void setIndex(final int value) {
         index = value;
@@ -79,16 +77,13 @@ public class GXDLMSAccessItem {
 
     /**
      * Constructor.
-     * 
-     * @param commandType
-     *            Command to execute.
-     * @param targetObject
-     *            COSEM target object.
-     * @param attributeIndex
-     *            Attribute index.
+     *
+     * @param commandType    Command to execute.
+     * @param targetObject   COSEM target object.
+     * @param attributeIndex Attribute index.
      */
     public GXDLMSAccessItem(final int commandType,
-            final GXDLMSObject targetObject, final int attributeIndex) {
+                            final GXDLMSObject targetObject, final int attributeIndex) {
         command = commandType;
         target = targetObject;
         index = attributeIndex;
@@ -102,8 +97,7 @@ public class GXDLMSAccessItem {
     }
 
     /**
-     * @param error
-     *            Reply error code.
+     * @param error Reply error code.
      */
     public void setError(final ErrorCode error) {
         this.error = error;
@@ -117,8 +111,7 @@ public class GXDLMSAccessItem {
     }
 
     /**
-     * @param val
-     *            Reply value
+     * @param val Reply value
      */
     public void setValue(final Object val) {
         value = val;

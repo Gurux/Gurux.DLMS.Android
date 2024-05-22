@@ -173,9 +173,8 @@ public class GXDLMSClient {
 
     /**
      * Constructor.
-     * 
-     * @param useLogicalNameReferencing
-     *            Is Logical Name referencing used.
+     *
+     * @param useLogicalNameReferencing Is Logical Name referencing used.
      */
     public GXDLMSClient(final boolean useLogicalNameReferencing) {
         this(useLogicalNameReferencing, 16, 1, Authentication.NONE, null, InterfaceType.HDLC);
@@ -183,23 +182,17 @@ public class GXDLMSClient {
 
     /**
      * Constructor.
-     * 
-     * @param useLogicalNameReferencing
-     *            Is Logical Name referencing used.
-     * @param clientAddress
-     *            Server address.
-     * @param serverAddress
-     *            Client address.
-     * @param forAuthentication
-     *            Authentication type.
-     * @param password
-     *            Password if authentication is used.
-     * @param interfaceType
-     *            Object type.
+     *
+     * @param useLogicalNameReferencing Is Logical Name referencing used.
+     * @param clientAddress             Server address.
+     * @param serverAddress             Client address.
+     * @param forAuthentication         Authentication type.
+     * @param password                  Password if authentication is used.
+     * @param interfaceType             Object type.
      */
     public GXDLMSClient(final boolean useLogicalNameReferencing, final int clientAddress,
-            final int serverAddress, final Authentication forAuthentication, final String password,
-            final InterfaceType interfaceType) {
+                        final int serverAddress, final Authentication forAuthentication, final String password,
+                        final InterfaceType interfaceType) {
         settings = new GXDLMSSettings(false,
                 this instanceof IGXCryptoNotifier ? (IGXCryptoNotifier) this : null);
         setUseLogicalNameReferencing(useLogicalNameReferencing);
@@ -219,16 +212,14 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            The version can be used for backward compatibility.
+     * @param value The version can be used for backward compatibility.
      */
     public void setVersion(final int value) {
         settings.setVersion(value);
     }
 
     /**
-     * @param value
-     *            Cipher interface that is used to cipher PDU.
+     * @param value Cipher interface that is used to cipher PDU.
      */
     protected final void setCipher(final GXICipher value) {
         settings.setCipher(value);
@@ -252,7 +243,7 @@ public class GXDLMSClient {
      * This list is used when Association view is read from the meter and
      * description of the object is needed. If collection is not set description
      * of object is empty.
-     * 
+     *
      * @return List of available OBIS codes.
      */
     public final GXObisCodeCollection getObisCodes() {
@@ -260,10 +251,9 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            This list is used when Association view is read from the meter
-     *            and description of the object is needed. If collection is not
-     *            set description of object is empty.
+     * @param value This list is used when Association view is read from the meter
+     *              and description of the object is needed. If collection is not
+     *              set description of object is empty.
      */
     public final void setObisCodes(final GXObisCodeCollection value) {
         obisCodes = value;
@@ -272,9 +262,8 @@ public class GXDLMSClient {
     /**
      * Set starting packet index. Default is One based, but some meters use Zero
      * based value. Usually this is not used.
-     * 
-     * @param value
-     *            Zero based starting index.
+     *
+     * @param value Zero based starting index.
      */
     public final void setStartingPacketIndex(final int value) {
         settings.setStartingPacketIndex(value);
@@ -283,7 +272,7 @@ public class GXDLMSClient {
     /**
      * User id is the identifier of the user. This value is used if user list on
      * Association LN is used.
-     * 
+     *
      * @return User id.
      */
     public final int getUserId() {
@@ -293,9 +282,8 @@ public class GXDLMSClient {
     /**
      * User id is the identifier of the user. This value is used if user list on
      * Association LN is used.
-     * 
-     * @param value
-     *            User id.
+     *
+     * @param value User id.
      */
     public final void setUserId(final int value) {
         if (value < -1 || value > 255) {
@@ -312,8 +300,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Client address
+     * @param value Client address
      */
     public final void setClientAddress(final int value) {
         settings.setClientAddress(value);
@@ -327,8 +314,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Server address.
+     * @param value Server address.
      */
     public final void setServerAddress(final int value) {
         settings.setServerAddress(value);
@@ -336,16 +322,15 @@ public class GXDLMSClient {
 
     /**
      * @return Server address size in bytes. If it is Zero it is counted
-     *         automatically.
+     * automatically.
      */
     public final int getServerAddressSize() {
         return settings.getServerAddressSize();
     }
 
     /**
-     * @param value
-     *            Server address size in bytes. If it is Zero it is counted
-     *            automatically.
+     * @param value Server address size in bytes. If it is Zero it is counted
+     *              automatically.
      */
     public final void setServerAddressSize(final int value) {
         settings.setServerAddressSize(value);
@@ -354,7 +339,7 @@ public class GXDLMSClient {
     /**
      * Meter returns system title when ciphered connection is made or GMAC
      * authentication is used.
-     * 
+     *
      * @return Source system title.
      */
     public byte[] getSourceSystemTitle() {
@@ -369,8 +354,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            GBT window size.
+     * @param value GBT window size.
      */
     public final void setGbtWindowSize(final byte value) {
         settings.setGbtWindowSize(value);
@@ -380,19 +364,18 @@ public class GXDLMSClient {
      * Retrieves the maximum size of received PDU. PDU size tells maximum size
      * of PDU packet. Value can be from 0 to 0xFFFF. By default the value is
      * 0xFFFF.
-     * 
+     *
+     * @return Maximum size of received PDU.
      * @see GXDLMSClient#getClientAddress
      * @see GXDLMSClient#getServerAddress
      * @see GXDLMSClient#getUseLogicalNameReferencing
-     * @return Maximum size of received PDU.
      */
     public final int getMaxReceivePDUSize() {
         return settings.getMaxPduSize();
     }
 
     /**
-     * @param value
-     *            Maximum size of received PDU.
+     * @param value Maximum size of received PDU.
      */
     public final void setMaxReceivePDUSize(final int value) {
         settings.setMaxPduSize(value);
@@ -404,7 +387,7 @@ public class GXDLMSClient {
      * supports only either Logical or Short name referencing. The referencing
      * is defined by the device manufacturer. If the referencing is wrong, the
      * SNMR message will fail.
-     * 
+     *
      * @return Is Logical Name referencing used.
      */
     public final boolean getUseLogicalNameReferencing() {
@@ -412,8 +395,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Is Logical Name referencing used.
+     * @param value Is Logical Name referencing used.
      */
     public final void setUseLogicalNameReferencing(final boolean value) {
         settings.setUseLogicalNameReferencing(value);
@@ -429,7 +411,7 @@ public class GXDLMSClient {
 
     /**
      * Client to Server custom challenge.
-     * 
+     *
      * @return Client to Server custom challenge.
      */
     public final byte[] getCtoSChallenge() {
@@ -439,9 +421,8 @@ public class GXDLMSClient {
     /**
      * Client to Server custom challenge. This is for debugging purposes. Reset
      * custom challenge settings CtoSChallenge to null.
-     * 
-     * @param value
-     *            Client to Server challenge.
+     *
+     * @param value Client to Server challenge.
      */
     public final void setCtoSChallenge(final byte[] value) {
         settings.setUseCustomChallenge(value != null);
@@ -452,7 +433,7 @@ public class GXDLMSClient {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
+     *
      * @return True, if UTC time is used.
      */
     public boolean getUseUtc2NormalTime() {
@@ -463,9 +444,8 @@ public class GXDLMSClient {
      * Standard says that Time zone is from normal time to UTC in minutes. If
      * meter is configured to use UTC time (UTC to normal time) set this to
      * true.
-     * 
-     * @param value
-     *            True, if UTC time is used.
+     *
+     * @param value True, if UTC time is used.
      */
     public void setUseUtc2NormalTime(final boolean value) {
         settings.setUseUtc2NormalTime(value);
@@ -473,16 +453,15 @@ public class GXDLMSClient {
 
     /**
      * @return Skipped date time fields. This value can be used if meter can't
-     *         handle deviation or status.
+     * handle deviation or status.
      */
     public java.util.Set<DateTimeSkips> getDateTimeSkips() {
         return settings.getDateTimeSkips();
     }
 
     /**
-     * @param value
-     *            Skipped date time fields. This value can be used if meter
-     *            can't handle deviation or status.
+     * @param value Skipped date time fields. This value can be used if meter
+     *              can't handle deviation or status.
      */
     public void setDateTimeSkips(final java.util.Set<DateTimeSkips> value) {
         settings.setDateTimeSkips(value);
@@ -490,16 +469,15 @@ public class GXDLMSClient {
 
     /**
      * @return Skipped date time fields on read. This value can be used if meter
-     *         returns invalid deviation on read.
+     * returns invalid deviation on read.
      */
     public java.util.Set<DateTimeSkips> getDateTimeSkipsOnRead() {
         return settings.getDateTimeSkipsOnRead();
     }
 
     /**
-     * @param value
-     *            Skipped date time fields on read. This value can be used if
-     *            meter returns invalid deviation on read.
+     * @param value Skipped date time fields on read. This value can be used if
+     *              meter returns invalid deviation on read.
      */
     public void setDateTimeSkipsOnRead(final java.util.Set<DateTimeSkips> value) {
         settings.setDateTimeSkipsOnRead(value);
@@ -513,8 +491,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Used standard.
+     * @param value Used standard.
      */
     public void setStandard(final Standard value) {
         settings.setStandard(value);
@@ -523,25 +500,23 @@ public class GXDLMSClient {
     /**
      * Retrieves the password that is used in communication. If authentication
      * is set to none, password is not used.
-     * 
-     * @see GXDLMSClient#getAuthentication
+     *
      * @return Used password.
+     * @see GXDLMSClient#getAuthentication
      */
     public final byte[] getPassword() {
         return settings.getPassword();
     }
 
     /**
-     * @param value
-     *            Used password as byte array.
+     * @param value Used password as byte array.
      */
     public final void setPassword(final byte[] value) {
         settings.setPassword(value);
     }
 
     /**
-     * @param value
-     *            Used password as string value.
+     * @param value Used password as string value.
      */
     public final void setPassword(final String value) {
         settings.setPassword(value.getBytes());
@@ -556,16 +531,15 @@ public class GXDLMSClient {
 
     /**
      * @return When connection is made client tells what kind of services it
-     *         want's to use.
+     * want's to use.
      */
     public final java.util.Set<Conformance> getProposedConformance() {
         return settings.getProposedConformance();
     }
 
     /**
-     * @param value
-     *            When connection is made client tells what kind of services it
-     *            want's to use.
+     * @param value When connection is made client tells what kind of services it
+     *              want's to use.
      */
     public final void setProposedConformance(final java.util.Set<Conformance> value) {
         settings.setProposedConformance(value);
@@ -575,18 +549,17 @@ public class GXDLMSClient {
      * Retrieves the authentication used in communicating with the device. By
      * default authentication is not used. If authentication is used, set the
      * password with the Password property.
-     * 
+     *
+     * @return Used authentication.
      * @see GXDLMSClient#getPassword
      * @see GXDLMSClient#getClientAddress
-     * @return Used authentication.
      */
     public final Authentication getAuthentication() {
         return settings.getAuthentication();
     }
 
     /**
-     * @param value
-     *            Used authentication.
+     * @param value Used authentication.
      */
     public final void setAuthentication(final Authentication value) {
         settings.setAuthentication(value);
@@ -600,8 +573,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Used Priority.
+     * @param value Used Priority.
      */
     public final void setPriority(final Priority value) {
         settings.setPriority(value);
@@ -615,8 +587,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Used service class.
+     * @param value Used service class.
      */
     public final void setServiceClass(final ServiceClass value) {
         settings.setServiceClass(value);
@@ -630,8 +601,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Invoke ID.
+     * @param value Invoke ID.
      */
     public final void setInvokeID(final int value) {
         settings.setInvokeID(value);
@@ -645,8 +615,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Auto increase Invoke ID.
+     * @param value Auto increase Invoke ID.
      */
     public final void setAutoIncreaseInvokeID(final boolean value) {
         settings.setAutoIncreaseInvokeID(value);
@@ -660,8 +629,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Interface type.
+     * @param value Interface type.
      */
     public final void setInterfaceType(final InterfaceType value) {
         settings.setInterfaceType(value);
@@ -697,8 +665,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Gateway settings.
+     * @param value Gateway settings.
      */
     public final void setGateway(final GXDLMSGateway value) {
         settings.setGateway(value);
@@ -712,8 +679,7 @@ public class GXDLMSClient {
     }
 
     /**
-     * @param value
-     *            Protocol version.
+     * @param value Protocol version.
      */
     public final void setProtocolVersion(final String value) {
         settings.setProtocolVersion(value);
@@ -729,11 +695,11 @@ public class GXDLMSClient {
      * </ul>
      * <b>Note! </b>According to IEC 62056-47: when communicating using TCP/IP,
      * the SNRM request is not send.
-     * 
+     *
+     * @return SNRM request as byte array.
      * @see GXDLMSClient#getClientAddress
      * @see GXDLMSClient#getServerAddress
      * @see GXDLMSClient#parseUAResponse
-     * @return SNRM request as byte array.
      */
     public final byte[] snrmRequest() {
         return snrmRequest(false);
@@ -749,13 +715,12 @@ public class GXDLMSClient {
      * </ul>
      * <b>Note! </b>According to IEC 62056-47: when communicating using TCP/IP,
      * the SNRM request is not send.
-     * 
-     * @param forceParameters
-     *            Are HDLC parameters forced. Some meters require this.
+     *
+     * @param forceParameters Are HDLC parameters forced. Some meters require this.
+     * @return SNRM request as byte array.
      * @see GXDLMSClient#getClientAddress
      * @see GXDLMSClient#getServerAddress
      * @see GXDLMSClient#parseUAResponse
-     * @return SNRM request as byte array.
      */
     public final byte[] snrmRequest(final boolean forceParameters) {
         // Save default values.
@@ -818,9 +783,8 @@ public class GXDLMSClient {
 
     /**
      * Parses UAResponse from byte array.
-     * 
-     * @param data
-     *            Received message from the server.
+     *
+     * @param data Received message from the server.
      * @see GXDLMSClient#snrmRequest
      */
     public final void parseUAResponse(final byte[] data) {
@@ -830,9 +794,8 @@ public class GXDLMSClient {
 
     /**
      * Parses UAResponse from byte array.
-     * 
-     * @param data
-     *            Received message from the server.
+     *
+     * @param data Received message from the server.
      * @see GXDLMSClient#snrmRequest
      */
     public final void parseUAResponse(final GXByteBuffer data) {
@@ -843,23 +806,16 @@ public class GXDLMSClient {
      * Generate AARQ request. Because all meters can't read all data in one
      * packet, the packet must be split first, by using SplitDataToPackets
      * method.
-     * 
+     *
      * @return AARQ request as byte array.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      * @see GXDLMSClient#parseAareResponse
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
      */
     public final byte[][] aarqRequest() throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -900,7 +856,7 @@ public class GXDLMSClient {
             GXDLMSSNParameters p = new GXDLMSSNParameters(settings, Command.AARQ, 0, 0, null, buff);
             reply = GXDLMS.getSnMessages(p);
         }
-        return reply.toArray(new byte[][] {});
+        return reply.toArray(new byte[][]{});
     }
 
     /**
@@ -913,9 +869,8 @@ public class GXDLMSClient {
      * </ul>
      * LNSettings or SNSettings will be updated, depending on the referencing,
      * Logical name or Short name.
-     * 
-     * @param reply
-     *            Received data.
+     *
+     * @param reply Received data.
      * @see GXDLMSClient#aarqRequest
      * @see GXDLMSClient#getUseLogicalNameReferencing
      * @see GXDLMSClient#getNegotiatedConformance
@@ -941,20 +896,13 @@ public class GXDLMSClient {
 
     /**
      * @return Get challenge request if HLS authentication is used.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] getApplicationAssociationRequest() throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -1015,13 +963,13 @@ public class GXDLMSClient {
             pw = settings.getPassword();
         }
         long ic = settings.getCipher().getInvocationCounter();
+        byte[] challenge = GXSecure.secure(settings, settings.getCipher(), ic,
+                settings.getStoCChallenge(), pw);
         if (settings.getCipher() != null
                 && settings.getIncreaseInvocationCounterForGMacAuthentication()) {
             ++ic;
             settings.getCipher().setInvocationCounter(ic);
         }
-        byte[] challenge = GXSecure.secure(settings, settings.getCipher(), ic,
-                settings.getStoCChallenge(), pw);
         if (getUseLogicalNameReferencing()) {
             return method("0.0.40.0.0.255", ObjectType.ASSOCIATION_LOGICAL_NAME, 1, challenge,
                     DataType.OCTET_STRING);
@@ -1032,21 +980,14 @@ public class GXDLMSClient {
 
     /**
      * Parse server's challenge if HLS authentication is used.
-     * 
-     * @param reply
-     *            Received reply from the server.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     *
+     * @param reply Received reply from the server.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     @SuppressWarnings("squid:S00112")
     public final void parseApplicationAssociationResponse(final GXByteBuffer reply)
@@ -1076,8 +1017,8 @@ public class GXDLMSClient {
                         bb.size(0);
                         bb.set(value);
                         value = GXAsn1Converter
-                                .toByteArray(new Object[] { new GXAsn1Integer(bb.subArray(0, 32)),
-                                        new GXAsn1Integer(bb.subArray(32, 32)) });
+                                .toByteArray(new Object[]{new GXAsn1Integer(bb.subArray(0, 32)),
+                                        new GXAsn1Integer(bb.subArray(32, 32))});
                         equals = ver.verify(value);
 
                     } catch (Exception ex) {
@@ -1125,20 +1066,13 @@ public class GXDLMSClient {
 
     /**
      * @return Release request, as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] releaseRequest() throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -1183,27 +1117,20 @@ public class GXDLMSClient {
         settings.setConnected(settings.getConnected() & ~ConnectionState.DLMS);
         // Restore default values.
         settings.setCtoSChallenge(initializeChallenge);
-        return reply.toArray(new byte[][] {});
+        return reply.toArray(new byte[][]{});
     }
 
     /**
      * Generates a disconnect request.
-     * 
+     *
      * @return Disconnected request, as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[] disconnectRequest() throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -1213,24 +1140,16 @@ public class GXDLMSClient {
 
     /**
      * Generates a disconnect request.
-     * 
-     * @param force
-     *            Is disconnect method called always.
+     *
+     * @param force Is disconnect method called always.
      * @return Disconnected request, as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[] disconnectRequest(final boolean force) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -1261,21 +1180,16 @@ public class GXDLMSClient {
 
     /**
      * Reserved for internal use.
-     * 
-     * @param classID
-     *            Class ID.
-     * @param version
-     *            Version number.
-     * @param baseName
-     *            Short name.
-     * @param ln
-     *            Logical name.
-     * @param accessRights
-     *            Array of access rights.
+     *
+     * @param classID      Class ID.
+     * @param version      Version number.
+     * @param baseName     Short name.
+     * @param ln           Logical name.
+     * @param accessRights Array of access rights.
      * @return Created COSEM object.
      */
     static GXDLMSObject createDLMSObject(final int classID, final Object version,
-            final int baseName, final Object ln, final Object accessRights, final int lnVersion) {
+                                         final int baseName, final Object ln, final Object accessRights, final int lnVersion) {
         ObjectType type = ObjectType.forValue(classID);
         GXDLMSObject obj = createObject(type);
         updateObjectData(obj, type, version, baseName, (byte[]) ln, accessRights, lnVersion);
@@ -1284,17 +1198,14 @@ public class GXDLMSClient {
 
     /**
      * Parse SN objects.
-     * 
-     * @param buff
-     *            Byte stream where objects are parsed.
-     * @param onlyKnownObjects
-     *            Only known objects are parsed.
-     * @param ignoreInactiveObjects
-     *            Inactive objects are ignored.
+     *
+     * @param buff                  Byte stream where objects are parsed.
+     * @param onlyKnownObjects      Only known objects are parsed.
+     * @param ignoreInactiveObjects Inactive objects are ignored.
      * @return Collection of COSEM objects.
      */
     private GXDLMSObjectCollection parseSNObjects(final GXByteBuffer buff,
-            final boolean onlyKnownObjects, final boolean ignoreInactiveObjects) {
+                                                  final boolean onlyKnownObjects, final boolean ignoreInactiveObjects) {
         // Get array tag.
         buff.position(0);
         short size = buff.getUInt8();
@@ -1350,8 +1261,8 @@ public class GXDLMSClient {
      * @param accessRights
      */
     private static void updateObjectData(final GXDLMSObject obj, final ObjectType objectType,
-            final Object version, final Object baseName, final byte[] logicalName,
-            final Object accessRights, final int lnVersion) {
+                                         final Object version, final Object baseName, final byte[] logicalName,
+                                         final Object accessRights, final int lnVersion) {
         obj.setObjectType(objectType);
         // Check access rights.
         if (accessRights instanceof List<?> && ((List<?>) accessRights).size() == 2) {
@@ -1402,50 +1313,41 @@ public class GXDLMSClient {
 
     /**
      * Parses the COSEM objects of the received data.
-     * 
-     * @param data
-     *            Received data, from the device, as byte array.
-     * @param onlyKnownObjects
-     *            Only known objects are parsed.
+     *
+     * @param data             Received data, from the device, as byte array.
+     * @param onlyKnownObjects Only known objects are parsed.
      * @return Collection of COSEM objects.
      */
     public final GXDLMSObjectCollection parseObjects(final GXByteBuffer data,
-            final boolean onlyKnownObjects) {
+                                                     final boolean onlyKnownObjects) {
         return parseObjects(data, onlyKnownObjects, true);
     }
 
     /**
      * Parses the COSEM objects of the received data.
-     * 
-     * @param data
-     *            Received data, from the device, as byte array.
-     * @param onlyKnownObjects
-     *            Only known objects are parsed.
-     * @param ignoreInactiveObjects
-     *            Inactive objects are ignored.
+     *
+     * @param data                  Received data, from the device, as byte array.
+     * @param onlyKnownObjects      Only known objects are parsed.
+     * @param ignoreInactiveObjects Inactive objects are ignored.
      * @return Collection of COSEM objects.
      */
     public final GXDLMSObjectCollection parseObjects(final GXByteBuffer data,
-            final boolean onlyKnownObjects, final boolean ignoreInactiveObjects) {
+                                                     final boolean onlyKnownObjects, final boolean ignoreInactiveObjects) {
         return parseObjects(data, onlyKnownObjects, ignoreInactiveObjects, null);
     }
 
     /**
      * Parses the COSEM objects of the received data.
-     * 
-     * @param data
-     *            Received data, from the device, as byte array.
-     * @param onlyKnownObjects
-     *            Only known objects are parsed.
-     * @param ignoreInactiveObjects
-     *            Inactive objects are ignored.
-     * @param converter
-     *            Converter used to update OBIS code descriptions.
+     *
+     * @param data                  Received data, from the device, as byte array.
+     * @param onlyKnownObjects      Only known objects are parsed.
+     * @param ignoreInactiveObjects Inactive objects are ignored.
+     * @param converter             Converter used to update OBIS code descriptions.
      * @return Collection of COSEM objects.
      */
     public final GXDLMSObjectCollection parseObjects(final GXByteBuffer data,
-            final boolean onlyKnownObjects, final boolean ignoreInactiveObjects,
-            final GXDLMSConverter converter) {
+                                                     final boolean onlyKnownObjects, final boolean ignoreInactiveObjects,
+                                                     final GXDLMSConverter converter) {
         if (data == null) {
             throw new GXDLMSException("Invalid parameter.");
         }
@@ -1465,17 +1367,14 @@ public class GXDLMSClient {
 
     /**
      * Parse LN objects.
-     * 
-     * @param buff
-     *            Byte stream where objects are parsed.
-     * @param onlyKnownObjects
-     *            Only known objects are parsed.
-     * @param ignoreInactiveObjects
-     *            Inactive objects are ignored.
+     *
+     * @param buff                  Byte stream where objects are parsed.
+     * @param onlyKnownObjects      Only known objects are parsed.
+     * @param ignoreInactiveObjects Inactive objects are ignored.
      * @return Collection of COSEM objects.
      */
     private GXDLMSObjectCollection parseLNObjects(final GXByteBuffer buff,
-            final boolean onlyKnownObjects, final boolean ignoreInactiveObjects) {
+                                                  final boolean onlyKnownObjects, final boolean ignoreInactiveObjects) {
         // Get array tag.
         byte size = buff.getInt8();
         // Check that data is in the array
@@ -1545,35 +1444,28 @@ public class GXDLMSClient {
 
     /**
      * Update value from byte array received from the meter.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param attributeIndex
-     *            Attribute index.
-     * @param value
-     *            Value to update.
+     *
+     * @param target         COSEM object.
+     * @param attributeIndex Attribute index.
+     * @param value          Value to update.
      * @return Updated value.
      */
     public final Object updateValue(final GXDLMSObject target, final int attributeIndex,
-            final Object value) {
+                                    final Object value) {
         return updateValue(target, attributeIndex, value, null);
     }
 
     /**
      * Update value from byte array received from the meter.
-     * 
-     * @param target
-     *            COSEM object.
-     * @param attributeIndex
-     *            Attribute index.
-     * @param value
-     *            Value to update.
-     * @param parameters
-     *            Optional parameters.
+     *
+     * @param target         COSEM object.
+     * @param attributeIndex Attribute index.
+     * @param value          Value to update.
+     * @param parameters     Optional parameters.
      * @return Updated value.
      */
     public final Object updateValue(final GXDLMSObject target, final int attributeIndex,
-            final Object value, final Object parameters) {
+                                    final Object value, final Object parameters) {
         Object val = value;
         if (val instanceof byte[]) {
             DataType type = target.getUIDataType(attributeIndex);
@@ -1593,9 +1485,8 @@ public class GXDLMSClient {
 
     /**
      * Get Value from byte array received from the meter.
-     * 
-     * @param data
-     *            Byte array received from the meter.
+     *
+     * @param data Byte array received from the meter.
      * @return Received data.
      */
     public static Object getValue(final GXByteBuffer data) {
@@ -1605,13 +1496,11 @@ public class GXDLMSClient {
 
     /**
      * Get Value from byte array received from the meter.
-     * 
-     * @param data
-     *            Byte array received from the meter.
-     * @param useUtc
-     *            Standard says that Time zone is from normal time to UTC in
-     *            minutes. If meter is configured to use UTC time (UTC to normal
-     *            time) set this to true.
+     *
+     * @param data   Byte array received from the meter.
+     * @param useUtc Standard says that Time zone is from normal time to UTC in
+     *               minutes. If meter is configured to use UTC time (UTC to normal
+     *               time) set this to true.
      * @return Received data.
      */
     public static Object getValue(final GXByteBuffer data, final boolean useUtc) {
@@ -1623,14 +1512,12 @@ public class GXDLMSClient {
 
     /**
      * Update list of values.
-     * 
-     * @param list
-     *            read objects.
-     * @param values
-     *            Received values.
+     *
+     * @param list   read objects.
+     * @param values Received values.
      */
     public final void updateValues(final List<Entry<GXDLMSObject, Integer>> list,
-            final List<?> values) {
+                                   final List<?> values) {
         int pos = 0;
         for (Entry<GXDLMSObject, Integer> it : list) {
             ValueEventArgs e = new ValueEventArgs(settings, it.getKey(), it.getValue(), 0, null);
@@ -1642,11 +1529,9 @@ public class GXDLMSClient {
 
     /**
      * Changes byte array received from the meter to given type.
-     * 
-     * @param value
-     *            Byte array received from the meter.
-     * @param type
-     *            Wanted type.
+     *
+     * @param value Byte array received from the meter.
+     * @param type  Wanted type.
      * @return Value changed by type.
      */
     public static Object changeType(final byte[] value, final DataType type) {
@@ -1655,15 +1540,12 @@ public class GXDLMSClient {
 
     /**
      * Changes byte array received from the meter to given type.
-     * 
-     * @param value
-     *            Byte array received from the meter.
-     * @param type
-     *            Wanted type.
-     * @param useUtc
-     *            Standard says that Time zone is from normal time to UTC in
-     *            minutes. If meter is configured to use UTC time (UTC to normal
-     *            time) set this to true.
+     *
+     * @param value  Byte array received from the meter.
+     * @param type   Wanted type.
+     * @param useUtc Standard says that Time zone is from normal time to UTC in
+     *               minutes. If meter is configured to use UTC time (UTC to normal
+     *               time) set this to true.
      * @return Value changed by type.
      */
     public static Object changeType(final byte[] value, final DataType type, final boolean useUtc) {
@@ -1677,11 +1559,9 @@ public class GXDLMSClient {
 
     /**
      * Changes byte array received from the meter to given type.
-     * 
-     * @param value
-     *            Byte array received from the meter.
-     * @param type
-     *            Wanted type.
+     *
+     * @param value Byte array received from the meter.
+     * @param type  Wanted type.
      * @return Value changed by type.
      */
     public Object changeType2(final byte[] value, final DataType type) {
@@ -1693,17 +1573,14 @@ public class GXDLMSClient {
 
     /**
      * Changes byte array received from the meter to given type.
-     * 
-     * @param value
-     *            Byte array received from the meter.
-     * @param type
-     *            Wanted type.
-     * @param settings
-     *            DLMS settings.
+     *
+     * @param value    Byte array received from the meter.
+     * @param type     Wanted type.
+     * @param settings DLMS settings.
      * @return Value changed by type.
      */
     public static Object changeType(final byte[] value, final DataType type,
-            final GXDLMSSettings settings) {
+                                    final GXDLMSSettings settings) {
         if (value == null) {
             return null;
         }
@@ -1740,22 +1617,15 @@ public class GXDLMSClient {
     /**
      * Reads the Association view from the device. This method is used to get
      * all objects in the device.
-     * 
+     *
      * @return Read request, as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] getObjectsRequest() throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -1766,24 +1636,16 @@ public class GXDLMSClient {
     /**
      * Reads the Association view from the device. This method is used to get
      * all objects in the device.
-     * 
-     * @param ln
-     *            Logical name of Association view.
+     *
+     * @param ln Logical name of Association view.
      * @return Read request, as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] getObjectsRequest(final String ln) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -1804,33 +1666,22 @@ public class GXDLMSClient {
 
     /**
      * Generate Method (Action) request.
-     * 
-     * @param item
-     *            Method object short name or Logical Name.
-     * @param index
-     *            Method index.
-     * @param data
-     *            Method data.
-     * @param type
-     *            Data type.
+     *
+     * @param item  Method object short name or Logical Name.
+     * @param index Method index.
+     * @param data  Method data.
+     * @param type  Data type.
      * @return DLMS action message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] method(final GXDLMSObject item, final int index, final Object data,
-            final DataType type) throws InvalidKeyException, NoSuchAlgorithmException,
+                                 final DataType type) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return method(item.getName(), item.getObjectType(), index, data, type);
@@ -1838,35 +1689,23 @@ public class GXDLMSClient {
 
     /**
      * Generate Method (Action) request..
-     * 
-     * @param name
-     *            Method object short name or Logical Name.
-     * @param objectType
-     *            Object type.
-     * @param methodIndex
-     *            Method index.
-     * @param value
-     *            Method data.
-     * @param dataType
-     *            Data type.
+     *
+     * @param name        Method object short name or Logical Name.
+     * @param objectType  Object type.
+     * @param methodIndex Method index.
+     * @param value       Method data.
+     * @param dataType    Data type.
      * @return DLMS action message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] method(final Object name, final ObjectType objectType,
-            final int methodIndex, final Object value, final DataType dataType)
+                                 final int methodIndex, final Object value, final DataType dataType)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -1875,37 +1714,24 @@ public class GXDLMSClient {
 
     /**
      * Generate Method (Action) request..
-     * 
-     * @param name
-     *            Method object short name or Logical Name.
-     * @param objectType
-     *            Object type.
-     * @param methodIndex
-     *            Method index.
-     * @param value
-     *            Method data.
-     * @param dataType
-     *            Data type.
-     * @param mode
-     *            Access mode.
+     *
+     * @param name        Method object short name or Logical Name.
+     * @param objectType  Object type.
+     * @param methodIndex Method index.
+     * @param value       Method data.
+     * @param dataType    Data type.
+     * @param mode        Access mode.
      * @return DLMS action message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] method(final Object name, final ObjectType objectType,
-            final int methodIndex, final Object value, final DataType dataType, int mode)
+                                 final int methodIndex, final Object value, final DataType dataType, int mode)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -1965,31 +1791,22 @@ public class GXDLMSClient {
                     VariableAccessSpecification.VARIABLE_NAME, attributeDescriptor, data);
             reply = GXDLMS.getSnMessages(p);
         }
-        return reply.toArray(new byte[][] {});
+        return reply.toArray(new byte[][]{});
     }
 
     /**
      * Generates a write message.
-     * 
-     * @param item
-     *            COSEM object to read.
-     * @param index
-     *            Attribute index.
+     *
+     * @param item  COSEM object to read.
+     * @param index Attribute index.
      * @return Generated write message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] write(final GXDLMSObject item, final int index)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -2010,35 +1827,23 @@ public class GXDLMSClient {
 
     /**
      * Generates a write message.
-     * 
-     * @param name
-     *            Short or Logical Name.
-     * @param value
-     *            Data to Write.
-     * @param dataType
-     *            Data type of write object.
-     * @param objectType
-     *            Object type.
-     * @param index
-     *            Attribute index where data is write.
+     *
+     * @param name       Short or Logical Name.
+     * @param value      Data to Write.
+     * @param dataType   Data type of write object.
+     * @param objectType Object type.
+     * @param index      Attribute index where data is write.
      * @return Generated write message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] write(final Object name, final Object value, final DataType dataType,
-            final ObjectType objectType, final int index) throws InvalidKeyException,
+                                final ObjectType objectType, final int index) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         return write(name, value, dataType, objectType, index, 0);
@@ -2046,34 +1851,23 @@ public class GXDLMSClient {
 
     /**
      * Generates a write message.
-     * 
-     * @param name
-     *            Short or Logical Name.
-     * @param value
-     *            Data to Write.
-     * @param dataType
-     *            Data type of write object.
-     * @param objectType
-     *            Object type.
-     * @param index
-     *            Attribute index where data is write.
+     *
+     * @param name       Short or Logical Name.
+     * @param value      Data to Write.
+     * @param dataType   Data type of write object.
+     * @param objectType Object type.
+     * @param index      Attribute index where data is write.
      * @return Generated write message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     final byte[][] write(final Object name, final Object value, final DataType dataType,
-            final ObjectType objectType, final int index, final int mode)
+                         final ObjectType objectType, final int index, final int mode)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -2124,24 +1918,16 @@ public class GXDLMSClient {
 
     /**
      * Write list of COSEM objects.
-     * 
-     * @param list
-     *            DLMS objects to write.
+     *
+     * @param list DLMS objects to write.
      * @return Write request as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      * @deprecated use {@link writeList} instead.
      */
     public final byte[][] writeList2(final List<GXWriteItem> list) throws InvalidKeyException,
@@ -2209,24 +1995,16 @@ public class GXDLMSClient {
 
     /**
      * Write list of COSEM objects.
-     * 
-     * @param list
-     *            DLMS objects to write.
+     *
+     * @param list DLMS objects to write.
      * @return Write request as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] writeList(final List<Entry<GXDLMSObject, Integer>> list)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -2303,31 +2081,21 @@ public class GXDLMSClient {
 
     /**
      * Generates a read message.
-     * 
-     * @param name
-     *            Short or Logical Name.
-     * @param objectType
-     *            COSEM object type.
-     * @param attributeOrdinal
-     *            Attribute index of the object.
+     *
+     * @param name             Short or Logical Name.
+     * @param objectType       COSEM object type.
+     * @param attributeOrdinal Attribute index of the object.
      * @return Generated read message(s).
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] read(final Object name, final ObjectType objectType,
-            final int attributeOrdinal) throws InvalidKeyException, NoSuchAlgorithmException,
+                               final int attributeOrdinal) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return read(name, objectType, attributeOrdinal, null, 0);
@@ -2335,23 +2103,17 @@ public class GXDLMSClient {
 
     /**
      * Generates a read message.
-     * 
-     * @param name
-     *            Short or Logical Name.
-     * @param objectType
-     *            COSEM object type.
-     * @param attributeOrdinal
-     *            Attribute index of the object.
-     * @param data
-     *            Read data parameter.
-     * @param mode
-     *            Access rights.
+     *
+     * @param name             Short or Logical Name.
+     * @param objectType       COSEM object type.
+     * @param attributeOrdinal Attribute index of the object.
+     * @param data             Read data parameter.
+     * @param mode             Access rights.
      * @return Generated read message(s).
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws SignatureException Signature exception.
      */
     private byte[][] read(final Object name, final ObjectType objectType,
-            final int attributeOrdinal, final GXByteBuffer data, final int mode)
+                          final int attributeOrdinal, final GXByteBuffer data, final int mode)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -2400,26 +2162,17 @@ public class GXDLMSClient {
 
     /**
      * Generates a read message.
-     * 
-     * @param item
-     *            DLMS object to read.
-     * @param attributeOrdinal
-     *            Read attribute index.
+     *
+     * @param item             DLMS object to read.
+     * @param attributeOrdinal Read attribute index.
      * @return Read request as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] read(final GXDLMSObject item, final int attributeOrdinal)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -2430,24 +2183,16 @@ public class GXDLMSClient {
 
     /**
      * Read list of COSEM objects.
-     * 
-     * @param list
-     *            DLMS objects to read.
+     *
+     * @param list DLMS objects to read.
      * @return Read request as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readList(final List<Entry<GXDLMSObject, Integer>> list)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -2532,7 +2277,7 @@ public class GXDLMSClient {
     /**
      * Generates the keep alive message. Keep alive message is sent to keep the
      * connection to the device alive.
-     * 
+     *
      * @return Returns Keep alive message, as byte array.
      */
     public final byte[] keepAlive() {
@@ -2545,31 +2290,21 @@ public class GXDLMSClient {
 
     /**
      * Read rows by entry.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param index
-     *            Zero bases start index.
-     * @param count
-     *            Rows count to read.
+     *
+     * @param pg    Profile generic object to read.
+     * @param index Zero bases start index.
+     * @param count Rows count to read.
      * @return Read message as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg, final int index,
-            final int count) throws InvalidKeyException, NoSuchAlgorithmException,
+                                          final int count) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return readRowsByEntry(pg, index, count, null);
@@ -2577,33 +2312,22 @@ public class GXDLMSClient {
 
     /**
      * Read rows by entry.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param index
-     *            One based start index.
-     * @param count
-     *            Rows count to read.
-     * @param columns
-     *            Columns to read.
+     *
+     * @param pg      Profile generic object to read.
+     * @param index   One based start index.
+     * @param count   Rows count to read.
+     * @param columns Columns to read.
      * @return Read message as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg, final int index,
-            final int count, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
+                                          final int count, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -2623,7 +2347,7 @@ public class GXDLMSClient {
                     ++pos;
                     if (it.getKey().getObjectType() == c.getKey().getObjectType()
                             && it.getKey().getLogicalName()
-                                    .compareTo(c.getKey().getLogicalName()) == 0
+                            .compareTo(c.getKey().getLogicalName()) == 0
                             && it.getValue().getAttributeIndex() == c.getValue().getAttributeIndex()
                             && it.getValue().getDataIndex() == c.getValue().getDataIndex()) {
                         found = true;
@@ -2645,35 +2369,23 @@ public class GXDLMSClient {
 
     /**
      * Read rows by entry.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param index
-     *            One based start index.
-     * @param count
-     *            Rows count to read.
-     * @param columnStart
-     *            One based column start index.
-     * @param columnEnd
-     *            Column end index.
+     *
+     * @param pg          Profile generic object to read.
+     * @param index       One based start index.
+     * @param count       Rows count to read.
+     * @param columnStart One based column start index.
+     * @param columnEnd   Column end index.
      * @return Read message as byte array.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByEntry(final GXDLMSProfileGeneric pg, final int index,
-            final int count, final int columnStart, final int columnEnd) throws InvalidKeyException,
+                                          final int count, final int columnStart, final int columnEnd) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (pg.getCaptureObjects().isEmpty()) {
@@ -2717,31 +2429,21 @@ public class GXDLMSClient {
     /**
      * Read rows by range. Use this method to read Profile Generic table between
      * dates.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param start
-     *            Start time.
-     * @param end
-     *            End time.
+     *
+     * @param pg    Profile generic object to read.
+     * @param start Start time.
+     * @param end   End time.
      * @return Generated read message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByRange(final GXDLMSProfileGeneric pg, final GXDateTime start,
-            final GXDateTime end) throws InvalidKeyException, NoSuchAlgorithmException,
+                                          final GXDateTime end) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return readByRange(pg, start, end, null);
@@ -2750,31 +2452,21 @@ public class GXDLMSClient {
     /**
      * Read rows by range. Use this method to read Profile Generic table between
      * dates.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param start
-     *            Start time.
-     * @param end
-     *            End time.
+     *
+     * @param pg    Profile generic object to read.
+     * @param start Start time.
+     * @param end   End time.
      * @return Generated read message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByRange(final GXDLMSProfileGeneric pg, final java.util.Date start,
-            final java.util.Date end) throws InvalidKeyException, NoSuchAlgorithmException,
+                                          final java.util.Date end) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return readByRange(pg, start, end, null);
@@ -2783,33 +2475,22 @@ public class GXDLMSClient {
     /**
      * Read rows by range. Use this method to read Profile Generic table between
      * dates.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param start
-     *            Start time.
-     * @param end
-     *            End time.
-     * @param columns
-     *            Columns to read.
+     *
+     * @param pg      Profile generic object to read.
+     * @param start   Start time.
+     * @param end     End time.
+     * @param columns Columns to read.
      * @return Generated read message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByRange(final GXDLMSProfileGeneric pg, final java.util.Date start,
-            final java.util.Date end, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
+                                          final java.util.Date end, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -2819,31 +2500,21 @@ public class GXDLMSClient {
     /**
      * Read rows by range. Use this method to read Profile Generic table between
      * dates.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param start
-     *            Start time.
-     * @param end
-     *            End time.
+     *
+     * @param pg    Profile generic object to read.
+     * @param start Start time.
+     * @param end   End time.
      * @return Generated read message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByRange(final GXDLMSProfileGeneric pg, final Calendar start,
-            final Calendar end) throws InvalidKeyException, NoSuchAlgorithmException,
+                                          final Calendar end) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return readByRange(pg, start, end, null);
@@ -2852,33 +2523,22 @@ public class GXDLMSClient {
     /**
      * Read rows by range. Use this method to read Profile Generic table between
      * dates.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param start
-     *            Start time.
-     * @param end
-     *            End time.
-     * @param columns
-     *            Columns to read.
+     *
+     * @param pg      Profile generic object to read.
+     * @param start   Start time.
+     * @param end     End time.
+     * @param columns Columns to read.
      * @return Generated read message.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] readRowsByRange(final GXDLMSProfileGeneric pg, final Calendar start,
-            final Calendar end, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
+                                          final Calendar end, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -2888,19 +2548,15 @@ public class GXDLMSClient {
     /**
      * Read rows by range. Use this method to read Profile Generic table between
      * dates.
-     * 
-     * @param pg
-     *            Profile generic object to read.
-     * @param start
-     *            Start time.
-     * @param end
-     *            End time.
+     *
+     * @param pg    Profile generic object to read.
+     * @param start Start time.
+     * @param end   End time.
      * @return Generated read message.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws SignatureException Signature exception.
      */
     private byte[][] readByRange(final GXDLMSProfileGeneric pg, final Object start,
-            final Object end, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
+                                 final Object end, final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             SignatureException {
@@ -2999,9 +2655,8 @@ public class GXDLMSClient {
 
     /**
      * Create object by object type.
-     * 
-     * @param type
-     *            Object type.
+     *
+     * @param type Object type.
      * @return Created object.
      */
     public static GXDLMSObject createObject(final ObjectType type) {
@@ -3011,9 +2666,8 @@ public class GXDLMSClient {
     /**
      * Generates an acknowledgment message, with which the server is informed to
      * send next packets.
-     * 
-     * @param type
-     *            Frame type
+     *
+     * @param type Frame type
      * @return Acknowledgment message as byte array.
      * @deprecated
      */
@@ -3024,9 +2678,8 @@ public class GXDLMSClient {
     /**
      * Generates an acknowledgment message, with which the server is informed to
      * send next packets.
-     * 
-     * @param type
-     *            Frame type
+     *
+     * @param type Frame type
      * @return Acknowledgment message as byte array.
      * @deprecated
      */
@@ -3037,9 +2690,8 @@ public class GXDLMSClient {
     /**
      * Generates an acknowledgment message, with which the server is informed to
      * send next packets.
-     * 
-     * @param reply
-     *            Received data.
+     *
+     * @param reply Received data.
      * @return Acknowledgment message as byte array.
      */
     public final byte[] receiverReady(final GXReplyData reply) {
@@ -3052,26 +2704,17 @@ public class GXDLMSClient {
 
     /**
      * Removes the HDLC frame from the packet, and returns COSEM data only.
-     * 
-     * @param reply
-     *            The received data from the device.
-     * @param data
-     *            Information from the received data.
+     *
+     * @param reply The received data from the device.
+     * @param data  Information from the received data.
      * @return Is frame complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final boolean getData(final byte[] reply, final GXReplyData data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -3082,31 +2725,21 @@ public class GXDLMSClient {
 
     /**
      * Removes the HDLC frame from the packet, and returns COSEM data only.
-     * 
-     * @param reply
-     *            The received data from the device.
-     * @param data
-     *            Information from the received data.
-     * @param notify
-     *            Information from the notify message.
+     *
+     * @param reply  The received data from the device.
+     * @param data   Information from the received data.
+     * @param notify Information from the notify message.
      * @return Is frame complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final boolean getData(final byte[] reply, final GXReplyData data,
-            final GXReplyData notify) throws InvalidKeyException, NoSuchAlgorithmException,
+                                 final GXReplyData notify) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return getData(new GXByteBuffer(reply), data, notify);
@@ -3114,26 +2747,17 @@ public class GXDLMSClient {
 
     /**
      * Removes the HDLC frame from the packet, and returns COSEM data only.
-     * 
-     * @param reply
-     *            The received data from the device.
-     * @param data
-     *            The exported reply information.
+     *
+     * @param reply The received data from the device.
+     * @param data  The exported reply information.
      * @return Is frame complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final boolean getData(final GXByteBuffer reply, final GXReplyData data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -3144,31 +2768,21 @@ public class GXDLMSClient {
 
     /**
      * Removes the HDLC frame from the packet, and returns COSEM data only.
-     * 
-     * @param reply
-     *            The received data from the device.
-     * @param data
-     *            The exported reply information.
-     * @param notify
-     *            Information from the notify message.
+     *
+     * @param reply  The received data from the device.
+     * @param data   The exported reply information.
+     * @param notify Information from the notify message.
      * @return Is frame complete.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final boolean getData(final GXByteBuffer reply, final GXReplyData data,
-            final GXReplyData notify) throws InvalidKeyException, NoSuchAlgorithmException,
+                                 final GXReplyData notify) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         data.setXml(null);
@@ -3245,9 +2859,8 @@ public class GXDLMSClient {
      * Converts meter serial number to server address. Default formula is used.
      * All meters do not use standard formula or support serial number
      * addressing at all.
-     * 
-     * @param serialNumber
-     *            Meter serial number
+     *
+     * @param serialNumber Meter serial number
      * @return Server address.
      */
     public static int getServerAddress(final int serialNumber) {
@@ -3258,11 +2871,9 @@ public class GXDLMSClient {
      * Converts meter serial number to server address. Default formula is used.
      * All meters do not use standard formula or support serial number
      * addressing at all.
-     * 
-     * @param serialNumber
-     *            Meter serial number
-     * @param formula
-     *            Formula used to convert serial number to server address.
+     *
+     * @param serialNumber Meter serial number
+     * @param formula      Formula used to convert serial number to server address.
      * @return Server address.
      */
 
@@ -3277,11 +2888,9 @@ public class GXDLMSClient {
 
     /**
      * Convert physical address and logical address to server address.
-     * 
-     * @param logicalAddress
-     *            Server logical address.
-     * @param physicalAddress
-     *            Server physical address.
+     *
+     * @param logicalAddress  Server logical address.
+     * @param physicalAddress Server physical address.
      * @return Server address.
      */
     public static int getServerAddress(final int logicalAddress, final int physicalAddress) {
@@ -3290,17 +2899,14 @@ public class GXDLMSClient {
 
     /**
      * Convert physical address and logical address to server address.
-     * 
-     * @param logicalAddress
-     *            Server logical address.
-     * @param physicalAddress
-     *            Server physical address.
-     * @param addressSize
-     *            Address size in bytes.
+     *
+     * @param logicalAddress  Server logical address.
+     * @param physicalAddress Server physical address.
+     * @param addressSize     Address size in bytes.
      * @return Server address.
      */
     public static int getServerAddress(final int logicalAddress, final int physicalAddress,
-            final int addressSize) {
+                                       final int addressSize) {
         if (addressSize < 4 && physicalAddress < 0x80 && logicalAddress < 0x80) {
             return logicalAddress << 7 | physicalAddress;
         }
@@ -3312,26 +2918,17 @@ public class GXDLMSClient {
 
     /**
      * Generates a access service message.
-     * 
-     * @param time
-     *            Send time. Set to DateTime.MinValue is not used.
-     * @param list
-     *            List of access items.
+     *
+     * @param time Send time. Set to DateTime.MinValue is not used.
+     * @param list List of access items.
      * @return Read request as byte array. {@link parseAccessResponse}
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] accessRequest(final Date time, final List<GXDLMSAccessItem> list)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -3381,14 +2978,12 @@ public class GXDLMSClient {
 
     /**
      * Parse access response.
-     * 
-     * @param list
-     *            Collection of access items.
-     * @param data
-     *            Received data from the meter.
+     *
+     * @param list Collection of access items.
+     * @param data Received data from the meter.
      */
     public final void parseAccessResponse(final List<GXDLMSAccessItem> list,
-            final GXByteBuffer data) {
+                                          final GXByteBuffer data) {
         // Get count
         GXDataInfo info = new GXDataInfo();
         int cnt = GXCommon.getObjectCount(data);
@@ -3420,14 +3015,13 @@ public class GXDLMSClient {
 
     /**
      * Get initial Conformance.
-     * 
-     * @param useLogicalNameReferencing
-     *            Is logical name referencing used.
+     *
+     * @param useLogicalNameReferencing Is logical name referencing used.
      * @return Initial Conformance.
      */
     public static Set<Conformance>
 
-            getInitialConformance(final boolean useLogicalNameReferencing) {
+    getInitialConformance(final boolean useLogicalNameReferencing) {
         Set<Conformance> list = new HashSet<Conformance>();
         if (useLogicalNameReferencing) {
             list.addAll(Arrays.asList(Conformance.BLOCK_TRANSFER_WITH_ACTION,
@@ -3447,17 +3041,14 @@ public class GXDLMSClient {
 
     /**
      * Returns collection of report objects.
-     * 
-     * @param reply
-     *            Reply.
-     * @param list
-     *            Array of objects and called indexes.
+     *
+     * @param reply Reply.
+     * @param list  Array of objects and called indexes.
      * @return Data notification data.
-     * @throws Exception
-     *             Occurred exception
+     * @throws Exception Occurred exception
      */
     public Object parseReport(final GXReplyData reply,
-            final List<Entry<GXDLMSObject, Integer>> list) throws Exception {
+                              final List<Entry<GXDLMSObject, Integer>> list) throws Exception {
 
         if (reply.getCommand() == Command.EVENT_NOTIFICATION) {
             GXDLMSLNCommandHandler.handleEventNotification(settings, reply, list);
@@ -3474,9 +3065,8 @@ public class GXDLMSClient {
 
     /**
      * Returns collection of push objects.
-     * 
-     * @param data
-     *            Received value.
+     *
+     * @param data Received value.
      * @return Array of objects and called indexes.
      */
     public final List<Entry<GXDLMSObject, Integer>> parsePushObjects(final List<?> data) throws FileNotFoundException {
@@ -3514,64 +3104,63 @@ public class GXDLMSClient {
      * <p>
      * When WRAPPER is used this method can be used to check how many bytes we
      * need to read.
-     * 
-     * @param data
-     *            Received data.
+     *
+     * @param data Received data.
      * @return Size of received bytes on the frame.
      */
     public final int getFrameSize(final GXByteBuffer data) {
         int ret;
         switch (getInterfaceType()) {
-        case HDLC:
-        case HDLC_WITH_MODE_E: {
-            ret = 0;
-            short ch;
-            int pos, index = data.position();
-            try {
-                // If whole frame is not received yet.
-                if (data.available() > 8) {
-                    // Find start of HDLC frame.
-                    for (pos = data.position(); pos < data.size(); ++pos) {
-                        ch = data.getUInt8();
-                        if (ch == GXDLMS.HDLC_FRAME_START_END) {
-                            break;
+            case HDLC:
+            case HDLC_WITH_MODE_E: {
+                ret = 0;
+                short ch;
+                int pos, index = data.position();
+                try {
+                    // If whole frame is not received yet.
+                    if (data.available() > 8) {
+                        // Find start of HDLC frame.
+                        for (pos = data.position(); pos < data.size(); ++pos) {
+                            ch = data.getUInt8();
+                            if (ch == GXDLMS.HDLC_FRAME_START_END) {
+                                break;
+                            }
                         }
+                        short frame = data.getUInt8();
+                        // Check frame length.
+                        if ((frame & 0x7) != 0) {
+                            ret = ((frame & 0x7) << 8);
+                        }
+                        ret += data.getUInt8();
                     }
-                    short frame = data.getUInt8();
-                    // Check frame length.
-                    if ((frame & 0x7) != 0) {
-                        ret = ((frame & 0x7) << 8);
-                    }
-                    ret += data.getUInt8();
+                } finally {
+                    data.position(index);
                 }
-            } finally {
-                data.position(index);
-            }
-        }
-            break;
-        case WRAPPER:
-            if (data.available() < 8 || data.getUInt16(data.position()) != 1) {
-                ret = 8 - data.available();
-            } else {
-                ret = 8 + data.getUInt16(data.position() + 6) - data.available();
             }
             break;
-        case PLC:
-            if (data.available() < 2 || data.getUInt8(data.position()) != 2) {
-                ret = 2 - data.available();
-            } else {
-                ret = 2 + data.getUInt8(data.position() + 1) - data.available();
-            }
-            break;
-        case PLC_HDLC:
-            ret = GXDLMS.getPlcSfskFrameSize(data) - data.available();
-            if (ret < 2) {
-                ret = 36 - data.available() % 36;
-            }
-            break;
-        default:
-            ret = 1;
-            break;
+            case WRAPPER:
+                if (data.available() < 8 || data.getUInt16(data.position()) != 1) {
+                    ret = 8 - data.available();
+                } else {
+                    ret = 8 + data.getUInt16(data.position() + 6) - data.available();
+                }
+                break;
+            case PLC:
+                if (data.available() < 2 || data.getUInt8(data.position()) != 2) {
+                    ret = 2 - data.available();
+                } else {
+                    ret = 2 + data.getUInt8(data.position() + 1) - data.available();
+                }
+                break;
+            case PLC_HDLC:
+                ret = GXDLMS.getPlcSfskFrameSize(data) - data.available();
+                if (ret < 2) {
+                    ret = 36 - data.available() % 36;
+                }
+                break;
+            default:
+                ret = 1;
+                break;
         }
         if (ret < 1) {
             ret = 1;
@@ -3581,16 +3170,15 @@ public class GXDLMSClient {
 
     /**
      * @return XML client don't throw exceptions. It serializes them as a
-     *         default. Set value to true, if exceptions are thrown.
+     * default. Set value to true, if exceptions are thrown.
      */
     boolean isThrowExceptions() {
         return throwExceptions;
     }
 
     /**
-     * @param value
-     *            XML client don't throw exceptions. It serializes them as a
-     *            default. Set value to true, if exceptions are thrown.
+     * @param value XML client don't throw exceptions. It serializes them as a
+     *              default. Set value to true, if exceptions are thrown.
      */
     void setThrowExceptions(final boolean value) {
         throwExceptions = value;
@@ -3598,18 +3186,14 @@ public class GXDLMSClient {
 
     /**
      * Get HDLC sender and receiver address information.
-     * 
-     * @param reply
-     *            Received data.
-     * @param target
-     *            target (primary) address
-     * @param source
-     *            Source (secondary) address.
-     * @param type
-     *            DLMS frame type.
+     *
+     * @param reply  Received data.
+     * @param target target (primary) address
+     * @param source Source (secondary) address.
+     * @param type   DLMS frame type.
      */
     public static void getHdlcAddressInfo(final GXByteBuffer reply, final int[] target,
-            final int[] source, final short[] type) {
+                                          final int[] source, final short[] type) {
         GXDLMS.getHdlcAddressInfo(reply, target, source, type);
     }
 
@@ -3617,8 +3201,7 @@ public class GXDLMSClient {
      * If protected release is used, release is including a ciphered xDLMS
      * Initiate request.
      *
-     * @param protectedRelease
-     *            Use Protected Release
+     * @param protectedRelease Use Protected Release
      */
     public void setUseProtectedRelease(boolean protectedRelease) {
         useProtectedRelease = protectedRelease;
@@ -3626,7 +3209,7 @@ public class GXDLMSClient {
 
     /**
      * @return If protected release is used, release is including a ciphered
-     *         xDLMS Initiate request.
+     * xDLMS Initiate request.
      */
     public boolean getUseProtectedRelease() {
         return useProtectedRelease;
@@ -3634,16 +3217,15 @@ public class GXDLMSClient {
 
     /**
      * @return Manufacturer ID (FLAG ID) is used for manufacturer depending
-     *         functionality.
+     * functionality.
      */
     public String getManufacturerId() {
         return manufacturerId;
     }
 
     /**
-     * @param value
-     *            Manufacturer ID (FLAG ID) is used for manufacturer depending
-     *            functionality.
+     * @param value Manufacturer ID (FLAG ID) is used for manufacturer depending
+     *              functionality.
      */
     public void setManufacturerId(final String value) {
         if (value != null && value.length() != 3) {
@@ -3654,15 +3236,13 @@ public class GXDLMSClient {
 
     /**
      * Encrypt Landis+Gyr High level password.
-     * 
-     * @param password
-     *            User password.
-     * @param seed
-     *            Seed received from the meter.
+     *
+     * @param password User password.
+     * @param seed     Seed received from the meter.
      * @return Encrypted challenge.
      */
     public static byte[] encryptLandisGyrHighLevelAuthentication(final byte[] password,
-            final byte[] seed) {
+                                                                 final byte[] seed) {
         byte[] crypted = seed.clone();
         for (int pos = 0; pos != password.length; ++pos) {
             if (password[pos] != 0x30) {
@@ -3681,16 +3261,15 @@ public class GXDLMSClient {
 
     /**
      * @return Overwrite attribute access rights if association view tells wrong
-     *         access rights and they need to be overwritten.
+     * access rights and they need to be overwritten.
      */
     public final boolean getOverwriteAttributeAccessRights() {
         return settings.getOverwriteAttributeAccessRights();
     }
 
     /**
-     * @param value
-     *            Overwrite attribute access rights if association view tells
-     *            wrong access rights and they need to be overwritten.
+     * @param value Overwrite attribute access rights if association view tells
+     *              wrong access rights and they need to be overwritten.
      */
     public final void setOverwriteAttributeAccessRights(boolean value) {
         settings.setOverwriteAttributeAccessRights(value);
@@ -3700,11 +3279,9 @@ public class GXDLMSClient {
      * Can client read the object attribute index. This method is added because
      * Association Logical Name version #3 where access rights are defined with
      * bitmask.
-     * 
-     * @param target
-     *            Object to read.
-     * @param index
-     *            Attribute index.
+     *
+     * @param target Object to read.
+     * @param index  Attribute index.
      * @return True, if read is allowed.
      */
     public final boolean canRead(GXDLMSObject target, int index) {
@@ -3733,13 +3310,13 @@ public class GXDLMSClient {
                 // used.
                 if (m.contains(AccessMode3.ENCRYPTED_REQUEST)
                         || m.contains(AccessMode3.ENCRYPTED_RESPONSE)
-                                && (security.getValue() & (Security.ENCRYPTION.getValue())) == 0) {
+                        && (security.getValue() & (Security.ENCRYPTION.getValue())) == 0) {
                     return false;
                 }
                 // If signing is expected, but it's not used.
                 if (m.contains(AccessMode3.DIGITALLY_SIGNED_REQUEST)
                         || m.contains(AccessMode3.DIGITALLY_SIGNED_RESPONSE)
-                                && (signing.ordinal() & (Signing.GENERAL_SIGNING.ordinal())) == 0) {
+                        && (signing.ordinal() & (Signing.GENERAL_SIGNING.ordinal())) == 0) {
                     return false;
                 }
             }
@@ -3751,11 +3328,9 @@ public class GXDLMSClient {
      * Can client write the object attribute index. This method is added because
      * Association Logical Name version #3 where access rights are defined with
      * bitmask.
-     * 
-     * @param target
-     *            Object to write.
-     * @param index
-     *            Attribute index.
+     *
+     * @param target Object to write.
+     * @param index  Attribute index.
      * @return True, if write is allowed.
      */
     public final boolean canWrite(GXDLMSObject target, int index) {
@@ -3784,13 +3359,13 @@ public class GXDLMSClient {
                 // used.
                 if (m.contains(AccessMode3.ENCRYPTED_REQUEST)
                         || m.contains(AccessMode3.ENCRYPTED_RESPONSE)
-                                && (security.getValue() & (Security.ENCRYPTION.getValue())) == 0) {
+                        && (security.getValue() & (Security.ENCRYPTION.getValue())) == 0) {
                     return false;
                 }
                 // If signing is expected, but it's not used.
                 if (m.contains(AccessMode3.DIGITALLY_SIGNED_REQUEST)
                         || m.contains(AccessMode3.DIGITALLY_SIGNED_RESPONSE)
-                                && (signing.ordinal() & (Signing.GENERAL_SIGNING.ordinal())) == 0) {
+                        && (signing.ordinal() & (Signing.GENERAL_SIGNING.ordinal())) == 0) {
                     return false;
                 }
             }
@@ -3802,11 +3377,9 @@ public class GXDLMSClient {
      * Can client invoke server methods. This method is added because
      * Association Logical Name version #3 where access rights are defined with
      * bitmask.
-     * 
-     * @param target
-     *            Object to invoke.
-     * @param index
-     *            Method attribute index.
+     *
+     * @param target Object to invoke.
+     * @param index  Method attribute index.
      * @return True, if client can access meter methods.
      */
     public final boolean canInvoke(GXDLMSObject target, int index) {
@@ -3836,13 +3409,13 @@ public class GXDLMSClient {
                 // used.
                 if (m.contains(MethodAccessMode3.ENCRYPTED_REQUEST)
                         || m.contains(MethodAccessMode3.ENCRYPTED_RESPONSE)
-                                && (security.getValue() & (Security.ENCRYPTION.getValue())) == 0) {
+                        && (security.getValue() & (Security.ENCRYPTION.getValue())) == 0) {
                     return false;
                 }
                 // If signing is expected, but it's not used.
                 if (m.contains(MethodAccessMode3.DIGITALLY_SIGNED_REQUEST)
                         || m.contains(MethodAccessMode3.DIGITALLY_SIGNED_RESPONSE)
-                                && (signing.ordinal() & (Signing.GENERAL_SIGNING.ordinal())) == 0) {
+                        && (signing.ordinal() & (Signing.GENERAL_SIGNING.ordinal())) == 0) {
                     return false;
                 }
             }

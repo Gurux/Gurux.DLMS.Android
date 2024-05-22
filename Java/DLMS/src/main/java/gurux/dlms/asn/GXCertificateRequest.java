@@ -44,83 +44,76 @@ import gurux.dlms.objects.enums.CertificateType;
  * Certificate request
  */
 public class GXCertificateRequest {
-	/**
-	 * Certificate type.
-	 */
-	private CertificateType certificateType;
-	/**
-	 * Indicates the purpose for which the certified public key is used.
-	 */
-	private Set<ExtendedKeyUsage> extendedKeyUsage;
-	/**
-	 * Certificate Signing Request.
-	 */
-	private GXPkcs10 certificate;
+    /**
+     * Certificate type.
+     */
+    private CertificateType certificateType;
+    /**
+     * Indicates the purpose for which the certified public key is used.
+     */
+    private Set<ExtendedKeyUsage> extendedKeyUsage;
+    /**
+     * Certificate Signing Request.
+     */
+    private GXPkcs10 certificate;
 
-	/**
-	 * Constructor.
-	 */
-	public GXCertificateRequest() {
-		extendedKeyUsage = new HashSet<ExtendedKeyUsage>();
-	}
+    /**
+     * Constructor.
+     */
+    public GXCertificateRequest() {
+        extendedKeyUsage = new HashSet<ExtendedKeyUsage>();
+    }
 
-	/**
-	 * 
-	 * @param certificateType Certificate type.
-	 * @param certificate     PKCS 10 certificate.
-	 */
-	public GXCertificateRequest(CertificateType certificateType, GXPkcs10 certificate) {
-		this();
-		setCertificate(certificate);
-		setCertificateType(certificateType);
-	}
+    /**
+     * @param certificateType Certificate type.
+     * @param certificate     PKCS 10 certificate.
+     */
+    public GXCertificateRequest(CertificateType certificateType, GXPkcs10 certificate) {
+        this();
+        setCertificate(certificate);
+        setCertificateType(certificateType);
+    }
 
-	/**
-	 * 
-	 * @return Certificate type.
-	 */
-	public final CertificateType getCertificateType() {
-		return certificateType;
-	}
+    /**
+     * @return Certificate type.
+     */
+    public final CertificateType getCertificateType() {
+        return certificateType;
+    }
 
-	/**
-	 * 
-	 * @param value Certificate type.
-	 */
-	public final void setCertificateType(CertificateType value) {
-		certificateType = value;
-	}
+    /**
+     * @param value Certificate type.
+     */
+    public final void setCertificateType(CertificateType value) {
+        certificateType = value;
+    }
 
-	/**
-	 * 
-	 * @return Indicates the purpose for which the certified public key is used.
-	 */
-	public final Set<ExtendedKeyUsage> getExtendedKeyUsage() {
-		return extendedKeyUsage;
-	}
+    /**
+     * @return Indicates the purpose for which the certified public key is used.
+     */
+    public final Set<ExtendedKeyUsage> getExtendedKeyUsage() {
+        return extendedKeyUsage;
+    }
 
-	/**
-	 * 
-	 * @param value Indicates the purpose for which the certified public key is
-	 *              used.
-	 */
-	public final void setExtendedKeyUsage(final Set<ExtendedKeyUsage> value) {
-		extendedKeyUsage = value;
-	}
+    /**
+     * @param value Indicates the purpose for which the certified public key is
+     *              used.
+     */
+    public final void setExtendedKeyUsage(final Set<ExtendedKeyUsage> value) {
+        extendedKeyUsage = value;
+    }
 
-	/**
-	 * 
-	 * @return Certificate Signing Request.
-	 */
-	public final GXPkcs10 getCertificate() {
-		return certificate;
-	}
+    /**
+     * @return Certificate Signing Request.
+     */
+    public final GXPkcs10 getCertificate() {
+        return certificate;
+    }
 
-	/**
-	 * 
-	 * @param value Certificate Signing Request.
-	 */
-	public final void setCertificate(final GXPkcs10 value) {
-		certificate = value;
-	}
+    /**
+     * @param value Certificate Signing Request.
+     */
+    public final void setCertificate(final GXPkcs10 value) {
+        certificate = value;
+    }
 }

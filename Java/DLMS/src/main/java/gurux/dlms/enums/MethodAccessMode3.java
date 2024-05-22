@@ -38,107 +38,107 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum MethodAccessMode3 {
-	/*
-	 * No access.
-	 */
-	NO_ACCESS(0),
-	/*
-	 * access.
-	 */
-	ACCESS(1),
-	/*
-	 * Authenticated request.
-	 */
-	AUTHENTICATED_REQUEST(4),
+    /*
+     * No access.
+     */
+    NO_ACCESS(0),
+    /*
+     * access.
+     */
+    ACCESS(1),
+    /*
+     * Authenticated request.
+     */
+    AUTHENTICATED_REQUEST(4),
 
-	/**
-	 * Encrypted request.
-	 */
-	ENCRYPTED_REQUEST(8),
+    /**
+     * Encrypted request.
+     */
+    ENCRYPTED_REQUEST(8),
 
-	/**
-	 * Digitally signed request.
-	 */
-	DIGITALLY_SIGNED_REQUEST(16),
+    /**
+     * Digitally signed request.
+     */
+    DIGITALLY_SIGNED_REQUEST(16),
 
-	/**
-	 * Authenticated response.
-	 */
-	AUTHENTICATED_RESPONSE(32),
+    /**
+     * Authenticated response.
+     */
+    AUTHENTICATED_RESPONSE(32),
 
-	/**
-	 * Encrypted response.
-	 */
-	ENCRYPTED_RESPONSE(64),
+    /**
+     * Encrypted response.
+     */
+    ENCRYPTED_RESPONSE(64),
 
-	/**
-	 * Digitally signed response.
-	 */
-	DIGITALLY_SIGNED_RESPONSE(128);
+    /**
+     * Digitally signed response.
+     */
+    DIGITALLY_SIGNED_RESPONSE(128);
 
-	private int intValue;
-	private static java.util.HashMap<Integer, MethodAccessMode3> mappings;
+    private int intValue;
+    private static java.util.HashMap<Integer, MethodAccessMode3> mappings;
 
-	private static java.util.HashMap<Integer, MethodAccessMode3> getMappings() {
-		synchronized (MethodAccessMode3.class) {
-			if (mappings == null) {
-				mappings = new java.util.HashMap<Integer, MethodAccessMode3>();
-			}
-		}
-		return mappings;
-	}
+    private static java.util.HashMap<Integer, MethodAccessMode3> getMappings() {
+        synchronized (MethodAccessMode3.class) {
+            if (mappings == null) {
+                mappings = new java.util.HashMap<Integer, MethodAccessMode3>();
+            }
+        }
+        return mappings;
+    }
 
-	MethodAccessMode3(final int value) {
-		intValue = value;
-		getMappings().put(value, this);
-	}
+    MethodAccessMode3(final int value) {
+        intValue = value;
+        getMappings().put(value, this);
+    }
 
-	/*
-	 * Get integer value for enum.
-	 */
-	public int getValue() {
-		return intValue;
-	}
+    /*
+     * Get integer value for enum.
+     */
+    public int getValue() {
+        return intValue;
+    }
 
-	/**
-	 * @return Get enumeration constant values.
-	 */
-	private static MethodAccessMode3[] getEnumConstants() {
-		return new MethodAccessMode3[] { ACCESS, AUTHENTICATED_REQUEST, ENCRYPTED_REQUEST, DIGITALLY_SIGNED_REQUEST,
-				AUTHENTICATED_RESPONSE, ENCRYPTED_RESPONSE };
+    /**
+     * @return Get enumeration constant values.
+     */
+    private static MethodAccessMode3[] getEnumConstants() {
+        return new MethodAccessMode3[]{ACCESS, AUTHENTICATED_REQUEST, ENCRYPTED_REQUEST, DIGITALLY_SIGNED_REQUEST,
+                AUTHENTICATED_RESPONSE, ENCRYPTED_RESPONSE};
 
-	}
+    }
 
-	/**
-	 * Converts the integer value to enumerated value.
-	 * 
-	 * @param value The integer value, which is read from the device.
-	 * @return The enumerated value, which represents the integer.
-	 */
-	public static java.util.Set<MethodAccessMode3> forValue(final int value) {
-		Set<MethodAccessMode3> types = new HashSet<MethodAccessMode3>();
-		MethodAccessMode3[] enums = getEnumConstants();
-		for (int pos = 0; pos != enums.length; ++pos) {
-			if ((enums[pos].intValue & value) == enums[pos].intValue) {
-				types.add(enums[pos]);
-			}
-		}
-		return types;
-	}
+    /**
+     * Converts the integer value to enumerated value.
+     *
+     * @param value The integer value, which is read from the device.
+     * @return The enumerated value, which represents the integer.
+     */
+    public static java.util.Set<MethodAccessMode3> forValue(final int value) {
+        Set<MethodAccessMode3> types = new HashSet<MethodAccessMode3>();
+        MethodAccessMode3[] enums = getEnumConstants();
+        for (int pos = 0; pos != enums.length; ++pos) {
+            if ((enums[pos].intValue & value) == enums[pos].intValue) {
+                types.add(enums[pos]);
+            }
+        }
+        return types;
+    }
 
-	/**
-	 * Converts the enumerated value to integer value.
-	 * 
-	 * @param value The enumerated value.
-	 * @return The integer value.
-	 */
-	public static int toInteger(final Set<MethodAccessMode3> value) {
-		int tmp = 0;
-		if (value != null) {
-			for (MethodAccessMode3 it : value) {
-				tmp |= it.getValue();
-			}
-		}
-		return tmp;
-	}
+    /**
+     * Converts the enumerated value to integer value.
+     *
+     * @param value The enumerated value.
+     * @return The integer value.
+     */
+    public static int toInteger(final Set<MethodAccessMode3> value) {
+        int tmp = 0;
+        if (value != null) {
+            for (MethodAccessMode3 it : value) {
+                tmp |= it.getValue();
+            }
+        }
+        return tmp;
+    }
 }

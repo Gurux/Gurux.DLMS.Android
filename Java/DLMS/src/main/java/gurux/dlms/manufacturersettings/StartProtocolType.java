@@ -36,7 +36,7 @@ package gurux.dlms.manufacturersettings;
 
 /**
  * What protocol meter uses when connection is started.
- * 
+ *
  * @author Gurux Ltd.
  */
 public enum StartProtocolType {

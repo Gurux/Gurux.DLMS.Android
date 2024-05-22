@@ -111,93 +111,93 @@ final class Conformance {
     static final int ACTION = 0x1;
 
     static int[] getEnumConstants() {
-        return new int[] { ACTION, EVENT_NOTIFICATION, SELECTIVE_ACCESS, SET,
+        return new int[]{ACTION, EVENT_NOTIFICATION, SELECTIVE_ACCESS, SET,
                 GET, PARAMETERIZED_ACCESS, ACCESS, DATA_NOTIFICATION,
                 INFORMATION_REPORT, MULTIPLE_REFERENCES,
                 BLOCK_TRANSFER_WITH_ACTION, BLOCK_TRANSFER_WITH_SET_OR_WRITE,
                 BLOCK_TRANSFER_WITH_GET_OR_READ, ATTRIBUTE_0_SUPPORTED_WITH_GET,
                 PRIORITY_MGMT_SUPPORTED, ATTRIBUTE_0_SUPPORTED_WITH_SET,
                 RESERVED_SEVEN, RESERVED_SIX, UN_CONFIRMED_WRITE, WRITE, READ,
-                GENERAL_BLOCK_TRANSFER, GENERAL_PROTECTION, RESERVED_ZERO };
+                GENERAL_BLOCK_TRANSFER, GENERAL_PROTECTION, RESERVED_ZERO};
     }
 
     static String toString(final int value) {
         String str;
         switch (value) {
-        case ACCESS:
-            str = "Access";
-            break;
-        case ACTION:
-            str = "Action";
-            break;
-        case ATTRIBUTE_0_SUPPORTED_WITH_GET:
-            str = "Attribute0SupportedWithGet";
-            break;
-        case ATTRIBUTE_0_SUPPORTED_WITH_SET:
-            str = "Attribute0SupportedWithSet";
-            break;
-        case BLOCK_TRANSFER_WITH_ACTION:
-            str = "BlockTransferWithAction";
-            break;
-        case BLOCK_TRANSFER_WITH_GET_OR_READ:
-            str = "BlockTransferWithGetOrRead";
-            break;
-        case BLOCK_TRANSFER_WITH_SET_OR_WRITE:
-            str = "BlockTransferWithSetOrWrite";
-            break;
-        case DATA_NOTIFICATION:
-            str = "DataNotification";
-            break;
-        case EVENT_NOTIFICATION:
-            str = "EventNotification";
-            break;
-        case GENERAL_BLOCK_TRANSFER:
-            str = "GeneralBlockTransfer";
-            break;
-        case GENERAL_PROTECTION:
-            str = "GeneralProtection";
-            break;
-        case GET:
-            str = "Get";
-            break;
-        case INFORMATION_REPORT:
-            str = "InformationReport";
-            break;
-        case MULTIPLE_REFERENCES:
-            str = "MultipleReferences";
-            break;
-        case PARAMETERIZED_ACCESS:
-            str = "ParameterizedAccess";
-            break;
-        case PRIORITY_MGMT_SUPPORTED:
-            str = "PriorityMgmtSupported";
-            break;
-        case READ:
-            str = "Read";
-            break;
-        case RESERVED_SEVEN:
-            str = "ReservedSeven";
-            break;
-        case RESERVED_SIX:
-            str = "ReservedSix";
-            break;
-        case RESERVED_ZERO:
-            str = "ReservedZero";
-            break;
-        case SELECTIVE_ACCESS:
-            str = "SelectiveAccess";
-            break;
-        case SET:
-            str = "Set";
-            break;
-        case UN_CONFIRMED_WRITE:
-            str = "UnconfirmedWrite";
-            break;
-        case WRITE:
-            str = "Write";
-            break;
-        default:
-            throw new IllegalArgumentException(String.valueOf(value));
+            case ACCESS:
+                str = "Access";
+                break;
+            case ACTION:
+                str = "Action";
+                break;
+            case ATTRIBUTE_0_SUPPORTED_WITH_GET:
+                str = "Attribute0SupportedWithGet";
+                break;
+            case ATTRIBUTE_0_SUPPORTED_WITH_SET:
+                str = "Attribute0SupportedWithSet";
+                break;
+            case BLOCK_TRANSFER_WITH_ACTION:
+                str = "BlockTransferWithAction";
+                break;
+            case BLOCK_TRANSFER_WITH_GET_OR_READ:
+                str = "BlockTransferWithGetOrRead";
+                break;
+            case BLOCK_TRANSFER_WITH_SET_OR_WRITE:
+                str = "BlockTransferWithSetOrWrite";
+                break;
+            case DATA_NOTIFICATION:
+                str = "DataNotification";
+                break;
+            case EVENT_NOTIFICATION:
+                str = "EventNotification";
+                break;
+            case GENERAL_BLOCK_TRANSFER:
+                str = "GeneralBlockTransfer";
+                break;
+            case GENERAL_PROTECTION:
+                str = "GeneralProtection";
+                break;
+            case GET:
+                str = "Get";
+                break;
+            case INFORMATION_REPORT:
+                str = "InformationReport";
+                break;
+            case MULTIPLE_REFERENCES:
+                str = "MultipleReferences";
+                break;
+            case PARAMETERIZED_ACCESS:
+                str = "ParameterizedAccess";
+                break;
+            case PRIORITY_MGMT_SUPPORTED:
+                str = "PriorityMgmtSupported";
+                break;
+            case READ:
+                str = "Read";
+                break;
+            case RESERVED_SEVEN:
+                str = "ReservedSeven";
+                break;
+            case RESERVED_SIX:
+                str = "ReservedSix";
+                break;
+            case RESERVED_ZERO:
+                str = "ReservedZero";
+                break;
+            case SELECTIVE_ACCESS:
+                str = "SelectiveAccess";
+                break;
+            case SET:
+                str = "Set";
+                break;
+            case UN_CONFIRMED_WRITE:
+                str = "UnconfirmedWrite";
+                break;
+            case WRITE:
+                str = "Write";
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(value));
         }
         return str;
     }

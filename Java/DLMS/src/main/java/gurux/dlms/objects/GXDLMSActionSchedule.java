@@ -39,7 +39,6 @@ import java.util.Calendar;
 import java.util.List;
 
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -77,9 +76,8 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSActionSchedule(final String ln) {
         this(ln, 0);
@@ -87,11 +85,9 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSActionSchedule(final String ln, final int sn) {
         super(ObjectType.ACTION_SCHEDULE, ln, sn);
@@ -106,8 +102,7 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Script to execute.
+     * @param value Script to execute.
      */
     public final void setTarget(final GXDLMSScriptTable value) {
         target = value;
@@ -148,8 +143,8 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
         } else {
             str = "0.0.0.0.0.0";
         }
-        return new Object[] { getLogicalName(), str + " " + executedScriptSelector, getType(),
-                getExecutionTime() };
+        return new Object[]{getLogicalName(), str + " " + executedScriptSelector, getType(),
+                getExecutionTime()};
     }
 
     /*
@@ -293,15 +288,15 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
                                     DataType.TIME, e.getSettings());
                     time.setSkip(DateTimeSkips.forValue(DateTimeSkips.toInteger(time.getSkip())
                             & ~(DateTimeSkips.YEAR.getValue() | DateTimeSkips.MONTH.getValue()
-                                    | DateTimeSkips.DAY.getValue()
-                                    | DateTimeSkips.DAY_OF_WEEK.getValue())));
+                            | DateTimeSkips.DAY.getValue()
+                            | DateTimeSkips.DAY_OF_WEEK.getValue())));
                     GXDateTime date =
                             (GXDateTime) GXDLMSClient.changeType((byte[]) ((List<?>) it).get(1),
                                     DataType.DATE, e.getSettings());
                     date.setSkip(DateTimeSkips.forValue(DateTimeSkips.toInteger(date.getSkip())
                             & ~(DateTimeSkips.HOUR.getValue() | DateTimeSkips.MINUTE.getValue()
-                                    | DateTimeSkips.SECOND.getValue()
-                                    | DateTimeSkips.MILLISECOND.getValue())));
+                            | DateTimeSkips.SECOND.getValue()
+                            | DateTimeSkips.MILLISECOND.getValue())));
                     GXDateTime tmp = new GXDateTime(date);
                     tmp.getMeterCalendar().add(Calendar.HOUR_OF_DAY,
                             time.getMeterCalendar().get(Calendar.HOUR_OF_DAY));
@@ -375,8 +370,8 @@ public class GXDLMSActionSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Executed Script Logical Name", "Type",
-                "Execution Time" };
+        return new String[]{"Logical Name", "Executed Script Logical Name", "Type",
+                "Execution Time"};
     }
 
     @Override

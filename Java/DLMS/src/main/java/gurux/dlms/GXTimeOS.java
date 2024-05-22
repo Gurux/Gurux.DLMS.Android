@@ -50,9 +50,8 @@ public class GXTimeOS extends GXTime {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXTimeOS(final Date forvalue) {
         super(forvalue);
@@ -60,9 +59,8 @@ public class GXTimeOS extends GXTime {
 
     /**
      * Constructor.
-     * 
-     * @param forvalue
-     *            Date value.
+     *
+     * @param forvalue Date value.
      */
     public GXTimeOS(final GXDateTime forvalue) {
         super(forvalue);
@@ -70,26 +68,21 @@ public class GXTimeOS extends GXTime {
 
     /**
      * Constructor.
-     * 
-     * @param hour
-     *            Used hour.
-     * @param minute
-     *            Used minute.
-     * @param second
-     *            Used second.
-     * @param millisecond
-     *            Used millisecond.
+     *
+     * @param hour        Used hour.
+     * @param minute      Used minute.
+     * @param second      Used second.
+     * @param millisecond Used millisecond.
      */
     public GXTimeOS(final int hour, final int minute, final int second,
-            final int millisecond) {
+                    final int millisecond) {
         super(hour, minute, second, millisecond);
     }
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
+     *
+     * @param value Date time value as a string.
      */
     public GXTimeOS(final String value) {
         super(value);
@@ -97,11 +90,9 @@ public class GXTimeOS extends GXTime {
 
     /**
      * Constructor
-     * 
-     * @param value
-     *            Date time value as a string.
-     * @param locale
-     *            Used locale.
+     *
+     * @param value  Date time value as a string.
+     * @param locale Used locale.
      */
     public GXTimeOS(final String value, final Locale locale) {
         super(value, locale);

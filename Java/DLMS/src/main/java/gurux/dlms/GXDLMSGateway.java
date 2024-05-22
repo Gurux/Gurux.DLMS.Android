@@ -63,8 +63,7 @@ public class GXDLMSGateway {
     }
 
     /**
-     * @param value
-     *            Gateway network ID.
+     * @param value Gateway network ID.
      */
     public final void setNetworkId(final short value) {
         networkId = value;
@@ -78,8 +77,7 @@ public class GXDLMSGateway {
     }
 
     /**
-     * @param value
-     *            Physical device address.
+     * @param value Physical device address.
      */
     public final void setPhysicalDeviceAddress(final byte[] value) {
         physicalDeviceAddress = value;

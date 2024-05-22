@@ -73,7 +73,7 @@ public enum RequestTypes {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static java.util.HashMap<Integer, RequestTypes> getMappings() {
@@ -89,9 +89,8 @@ public enum RequestTypes {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     RequestTypes(final int value) {
         intValue = value;
@@ -100,7 +99,7 @@ public enum RequestTypes {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -111,15 +110,14 @@ public enum RequestTypes {
      * @return Get enumeration constant values.
      */
     private static RequestTypes[] getEnumConstants() {
-        return new RequestTypes[] { DATABLOCK, FRAME, GBT };
+        return new RequestTypes[]{DATABLOCK, FRAME, GBT};
 
     }
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static java.util.Set<RequestTypes> forValue(final int value) {
@@ -135,9 +133,8 @@ public enum RequestTypes {
 
     /**
      * Converts the enumerated value to integer value.
-     * 
-     * @param value
-     *            The enumerated value.
+     *
+     * @param value The enumerated value.
      * @return The integer value.
      */
     public static int toInteger(final Set<RequestTypes> value) {

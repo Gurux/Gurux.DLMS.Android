@@ -57,7 +57,7 @@ public enum PppAuthenticationType {
     private static java.util.HashMap<Integer, PppAuthenticationType> mappings;
 
     private static java.util.HashMap<Integer, PppAuthenticationType>
-            getMappings() {
+    getMappings() {
         if (mappings == null) {
             synchronized (PppAuthenticationType.class) {
                 if (mappings == null) {

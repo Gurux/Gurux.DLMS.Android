@@ -103,8 +103,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Is data encrypted or decrypted.
+     * @param value Is data encrypted or decrypted.
      */
     public final void setEncrypt(final boolean value) {
         encrypt = value;
@@ -118,8 +117,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Used security suite.
+     * @param value Used security suite.
      */
     public final void setSecuritySuite(final SecuritySuite value) {
         securitySuite = value;
@@ -133,8 +131,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Used certificate type.
+     * @param value Used certificate type.
      */
     public final void setCertificateType(final CertificateType value) {
         certificateType = value;
@@ -148,8 +145,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            System title
+     * @param value System title
      */
     public final void setSystemTitle(final byte[] value) {
         systemTitle = value;
@@ -163,8 +159,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Private key to used to encrypt the data.
+     * @param value Private key to used to encrypt the data.
      */
     public final void setPrivateKey(final PrivateKey value) {
         privateKey = value;
@@ -178,8 +173,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Public key to used to decrypt the data.
+     * @param value Public key to used to decrypt the data.
      */
     public final void setPublicKey(final PublicKey value) {
         publicKey = value;
@@ -193,8 +187,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Decrypted data.
+     * @param value Decrypted data.
      */
     public void setPlainText(final byte[] value) {
         plainText = value;
@@ -208,8 +201,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Encrypted data.
+     * @param value Encrypted data.
      */
     public void setEncrypted(final byte[] value) {
         encrypted = value;
@@ -223,8 +215,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Used security policy.
+     * @param value Used security policy.
      */
     public void setSecurityPolicy(final java.util.Set<SecurityPolicy> value) {
         securityPolicy = value;
@@ -238,8 +229,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Recipient system title.
+     * @param value Recipient system title.
      */
     public void setRecipientSystemTitle(final byte[] value) {
         recipientSystemTitle = value;
@@ -253,8 +243,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Block cipher key.
+     * @param value Block cipher key.
      */
     public void setBlockCipherKey(final byte[] value) {
         blockCipherKey = value;
@@ -268,8 +257,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Authentication key.
+     * @param value Authentication key.
      */
     public void setAuthenticationKey(final byte[] value) {
         authenticationKey = value;
@@ -283,8 +271,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Frame counter. Invocation counter.
+     * @param value Frame counter. Invocation counter.
      */
     public void setInvocationCounter(final long value) {
         invocationCounter = value;
@@ -298,8 +285,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Transaction Id.
+     * @param value Transaction Id.
      */
     public void setTransactionId(byte[] value) {
         transactionId = value;
@@ -313,8 +299,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Crypto key type.
+     * @param value Crypto key type.
      */
     public void setKeyType(final CryptoKeyType value) {
         keyType = value;
@@ -328,8 +313,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Command.
+     * @param value Command.
      */
     public void setCommand(final int value) {
         command = value;
@@ -343,8 +327,7 @@ public class GXCryptoKeyParameter {
     }
 
     /**
-     * @param value
-     *            Used security
+     * @param value Used security
      */
     public void setSecurity(final Security value) {
         security = value;

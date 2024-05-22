@@ -77,8 +77,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Four-byte cell ID.
+     * @param value Four-byte cell ID.
      */
     public final void setCellId(final long value) {
         cellId = value;
@@ -92,8 +91,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Two byte location area code (LAC).
+     * @param value Two byte location area code (LAC).
      */
     public final void setLocationId(final int value) {
         locationId = value;
@@ -107,8 +105,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Signal quality.
+     * @param value Signal quality.
      */
     public final void setSignalQuality(final int value) {
         signalQuality = value;
@@ -122,8 +119,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Bit Error Rate.
+     * @param value Bit Error Rate.
      */
     public final void setBer(final int value) {
         ber = value;
@@ -137,8 +133,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Mobile Country Code.
+     * @param value Mobile Country Code.
      */
     public void setMobileCountryCode(final int value) {
         mobileCountryCode = value;
@@ -152,8 +147,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Absolute radio frequency channel number.
+     * @param value Absolute radio frequency channel number.
      */
     public void setChannelNumber(final long value) {
         channelNumber = value;
@@ -167,8 +161,7 @@ public class GXDLMSGSMCellInfo {
     }
 
     /**
-     * @param value
-     *            Mobile Network Code.
+     * @param value Mobile Network Code.
      */
     public void setMobileNetworkCode(final int value) {
         mobileNetworkCode = value;

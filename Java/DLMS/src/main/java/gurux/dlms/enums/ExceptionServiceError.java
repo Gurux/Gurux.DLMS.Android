@@ -38,7 +38,7 @@ import java.util.HashMap;
 
 /**
  * DLMS service errors.
- * 
+ *
  * @author Gurux Ltd.
  */
 public enum ExceptionServiceError {
@@ -84,7 +84,7 @@ public enum ExceptionServiceError {
 
     /**
      * Returns collection of enumerator values.
-     * 
+     *
      * @return Enumerator values.
      */
     private static HashMap<Integer, ExceptionServiceError> getMappings() {
@@ -98,9 +98,8 @@ public enum ExceptionServiceError {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value of enumerator.
+     *
+     * @param value Integer value of enumerator.
      */
     ExceptionServiceError(final int value) {
         intValue = value;
@@ -109,7 +108,7 @@ public enum ExceptionServiceError {
 
     /**
      * Get integer value for enumerator.
-     * 
+     *
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -118,9 +117,8 @@ public enum ExceptionServiceError {
 
     /**
      * Returns enumerator value from an integer value.
-     * 
-     * @param value
-     *            Integer value.
+     *
+     * @param value Integer value.
      * @return Enumeration value.
      */
     public static ExceptionServiceError forValue(final int value) {

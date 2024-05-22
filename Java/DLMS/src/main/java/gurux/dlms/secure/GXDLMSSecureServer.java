@@ -39,7 +39,7 @@ import gurux.dlms.enums.InterfaceType;
 
 /**
  * Implements secured DLMS server.
- * 
+ *
  * @author Gurux Ltd.
  */
 public abstract class GXDLMSSecureServer extends GXDLMSServer {
@@ -50,14 +50,12 @@ public abstract class GXDLMSSecureServer extends GXDLMSServer {
 
     /**
      * Constructor.
-     * 
-     * @param logicalNameReferencing
-     *            Is logical name referencing used.
-     * @param type
-     *            Interface type.
+     *
+     * @param logicalNameReferencing Is logical name referencing used.
+     * @param type                   Interface type.
      */
     public GXDLMSSecureServer(final boolean logicalNameReferencing,
-            final InterfaceType type) {
+                              final InterfaceType type) {
         super(logicalNameReferencing, type);
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
@@ -75,8 +73,7 @@ public abstract class GXDLMSSecureServer extends GXDLMSServer {
     }
 
     /**
-     * @param value
-     *            Key Encrypting Key, also known as Master key.
+     * @param value Key Encrypting Key, also known as Master key.
      */
     public final void setKek(final byte[] value) {
         getSettings().setKek(value);

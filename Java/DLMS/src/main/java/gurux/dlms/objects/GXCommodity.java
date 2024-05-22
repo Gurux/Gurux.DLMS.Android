@@ -61,8 +61,7 @@ public class GXCommodity {
     }
 
     /**
-     * @param value
-     *            Executed object.
+     * @param value Executed object.
      */
     public final void setTarget(GXDLMSObject value) {
         target = value;
@@ -76,8 +75,7 @@ public class GXCommodity {
     }
 
     /**
-     * @param value
-     *            Attribute index.
+     * @param value Attribute index.
      */
     public final void setIndex(int value) {
         index = value;

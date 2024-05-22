@@ -81,7 +81,7 @@ public class GXHdlcSettings {
 
     /**
      * Gets maximum information field length in transmit. DefaultValue is 128.
-     * 
+     *
      * @return Maximum information field length in transmit.
      */
     public final int getMaxInfoTX() {
@@ -90,9 +90,8 @@ public class GXHdlcSettings {
 
     /**
      * Sets maximum information field length in transmit.
-     * 
-     * @param value
-     *            Maximum information field length in transmit.
+     *
+     * @param value Maximum information field length in transmit.
      */
     public final void setMaxInfoTX(final int value) {
         maxInfoTX = value;
@@ -100,7 +99,7 @@ public class GXHdlcSettings {
 
     /**
      * Get the maximum information field length in receive. DefaultValue is 62.
-     * 
+     *
      * @return The maximum information field length in receive.
      */
     public final int getMaxInfoRX() {
@@ -109,9 +108,8 @@ public class GXHdlcSettings {
 
     /**
      * Set the maximum information field length in receive.
-     * 
-     * @param value
-     *            The maximum information field length in receive.
+     *
+     * @param value The maximum information field length in receive.
      */
     public final void setMaxInfoRX(final int value) {
         maxInfoRX = value;
@@ -119,7 +117,7 @@ public class GXHdlcSettings {
 
     /**
      * Get The window size in transmit. DefaultValue is 1.
-     * 
+     *
      * @return The window size in transmit.
      */
     public final int getWindowSizeTX() {
@@ -128,9 +126,8 @@ public class GXHdlcSettings {
 
     /**
      * Set the window size in transmit.
-     * 
-     * @param value
-     *            The window size in transmit.
+     *
+     * @param value The window size in transmit.
      */
     public final void setWindowSizeTX(final int value) {
         windowSizeTX = value;
@@ -138,7 +135,7 @@ public class GXHdlcSettings {
 
     /**
      * Get the window size in receive. DefaultValue is 1.
-     * 
+     *
      * @return The window size in receive.
      */
     public final int getWindowSizeRX() {
@@ -147,9 +144,8 @@ public class GXHdlcSettings {
 
     /**
      * Set the window size in receive.
-     * 
-     * @param value
-     *            The window size in receive.
+     *
+     * @param value The window size in receive.
      */
     public final void setWindowSizeRX(final int value) {
         windowSizeRX = value;
@@ -157,7 +153,7 @@ public class GXHdlcSettings {
 
     /**
      * Get the HDLC sender frame sequence number.
-     * 
+     *
      * @return sender frame.
      */
     public final short getSenderFrame() {
@@ -166,9 +162,8 @@ public class GXHdlcSettings {
 
     /**
      * Set the HDLC sender frame sequence number.
-     * 
-     * @param value
-     *            sender frame.
+     *
+     * @param value sender frame.
      */
     public final void setSenderFrame(final short value) {
         settings.senderFrame = value;
@@ -176,7 +171,7 @@ public class GXHdlcSettings {
 
     /**
      * Get the HDLC receiver frame sequence number.
-     * 
+     *
      * @return receiver frame.
      */
     public final short getReceiverFrame() {
@@ -185,9 +180,8 @@ public class GXHdlcSettings {
 
     /**
      * Set HDLC receiver frame sequence number.
-     * 
-     * @param value
-     *            receiver frame.
+     *
+     * @param value receiver frame.
      */
     public final void setReceiverFrame(final short value) {
         settings.receiverFrame = value;
@@ -201,8 +195,7 @@ public class GXHdlcSettings {
     }
 
     /**
-     * @param value
-     *            Is Max Info TX and RX count for frame size or PDU size.
+     * @param value Is Max Info TX and RX count for frame size or PDU size.
      */
     public void setUseFrameSize(final boolean value) {
         useFrameSize = value;

@@ -92,9 +92,8 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSArbitrator(final String ln) {
         this(ln, 0);
@@ -102,11 +101,9 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSArbitrator(final String ln, final int sn) {
         super(ObjectType.ARBITRATOR, ln, sn);
@@ -120,8 +117,7 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Requested actions.
+     * @param value Requested actions.
      */
     public final void setActions(final GXDLMSActionItem[] value) {
         actions = value;
@@ -135,8 +131,7 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Permissions for each actor to request actions.
+     * @param value Permissions for each actor to request actions.
      */
     public final void setPermissionsTable(final String[] value) {
         permissionsTable = value;
@@ -144,16 +139,15 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Weight allocated for each actor and to each possible action of
-     *         that actor.
+     * that actor.
      */
     public final int[][] getWeightingsTable() {
         return weightingsTable;
     }
 
     /**
-     * @param value
-     *            Weight allocated for each actor and to each possible action of
-     *            that actor.
+     * @param value Weight allocated for each actor and to each possible action of
+     *              that actor.
      */
     public final void setWeightingsTable(final int[][] value) {
         weightingsTable = value;
@@ -167,8 +161,7 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            The most recent requests of each actor.
+     * @param value The most recent requests of each actor.
      */
     public final void setMostRecentRequestsTable(final String[] value) {
         mostRecentRequestsTable = value;
@@ -182,8 +175,7 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            The number identifies a bit in the Actions.
+     * @param value The number identifies a bit in the Actions.
      */
     public final void setLastOutcome(final byte value) {
         lastOutcome = value;
@@ -191,8 +183,8 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), actions, permissionsTable,
-                weightingsTable, mostRecentRequestsTable, lastOutcome };
+        return new Object[]{getLogicalName(), actions, permissionsTable,
+                weightingsTable, mostRecentRequestsTable, lastOutcome};
     }
 
     /*
@@ -239,30 +231,21 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Request Action.
-     * 
-     * @param client
-     *            DLMS client.
-     * @param actor
-     *            Actor.
-     * @param actions
-     *            Actions in bit-string.
+     *
+     * @param client  DLMS client.
+     * @param actor   Actor.
+     * @param actions Actions in bit-string.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public byte[][] requestAction(GXDLMSClient client, byte actor,
-            String actions)
+                                  String actions)
             throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -277,22 +260,15 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Reset value.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public byte[][] reset(GXDLMSClient client)
@@ -321,18 +297,18 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final DataType getDataType(final int index) {
         switch (index) {
-        case 1:
-            return DataType.OCTET_STRING;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            return DataType.ARRAY;
-        case 6:
-            return DataType.UINT8;
-        default:
-            throw new IllegalArgumentException(
-                    "getDataType failed. Invalid attribute index.");
+            case 1:
+                return DataType.OCTET_STRING;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return DataType.ARRAY;
+            case 6:
+                return DataType.UINT8;
+            default:
+                throw new IllegalArgumentException(
+                        "getDataType failed. Invalid attribute index.");
         }
     }
 
@@ -341,101 +317,99 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final Object getValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                                 final ValueEventArgs e) {
         Object ret;
         GXByteBuffer data;
         switch (e.getIndex()) {
-        case 1:
-            ret = GXCommon.logicalNameToBytes(getLogicalName());
-            break;
-        case 2: {
-            data = new GXByteBuffer();
-            data.setUInt8(DataType.ARRAY);
-            if (actions == null) {
-                GXCommon.setObjectCount(0, data);
-            } else {
-                GXCommon.setObjectCount(actions.length, data);
-                for (GXDLMSActionItem it : actions) {
-                    data.setUInt8(DataType.STRUCTURE);
-                    // Count
-                    data.setUInt8(2);
-                    GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                            GXCommon.logicalNameToBytes(it.getLogicalName()));
-                    GXCommon.setData(settings, data, DataType.UINT16,
-                            it.getScriptSelector());
-                }
-            }
-            ret = data.array();
-        }
-            break;
-        case 3: {
-            data = new GXByteBuffer();
-            data.setUInt8(DataType.ARRAY);
-            if (permissionsTable == null) {
-                GXCommon.setObjectCount(0, data);
-            } else {
-                GXCommon.setObjectCount(permissionsTable.length, data);
-                for (String it : permissionsTable) {
-                    GXCommon.setData(settings, data, DataType.BITSTRING, it);
-                }
-            }
-            ret = data.array();
-        }
-            break;
-        case 4: {
-            data = new GXByteBuffer();
-            data.setUInt8(DataType.ARRAY);
-            if (weightingsTable == null) {
-                GXCommon.setObjectCount(0, data);
-            } else {
-                GXCommon.setObjectCount(weightingsTable.length, data);
-                for (int[] it : weightingsTable) {
-                    data.setUInt8(DataType.ARRAY);
-                    GXCommon.setObjectCount(it.length, data);
-                    for (int it2 : it) {
-                        GXCommon.setData(settings, data, DataType.UINT16, it2);
+            case 1:
+                ret = GXCommon.logicalNameToBytes(getLogicalName());
+                break;
+            case 2: {
+                data = new GXByteBuffer();
+                data.setUInt8(DataType.ARRAY);
+                if (actions == null) {
+                    GXCommon.setObjectCount(0, data);
+                } else {
+                    GXCommon.setObjectCount(actions.length, data);
+                    for (GXDLMSActionItem it : actions) {
+                        data.setUInt8(DataType.STRUCTURE);
+                        // Count
+                        data.setUInt8(2);
+                        GXCommon.setData(settings, data, DataType.OCTET_STRING,
+                                GXCommon.logicalNameToBytes(it.getLogicalName()));
+                        GXCommon.setData(settings, data, DataType.UINT16,
+                                it.getScriptSelector());
                     }
                 }
+                ret = data.array();
             }
-            ret = data.array();
-        }
             break;
-        case 5: {
-            data = new GXByteBuffer();
-            data.setUInt8(DataType.ARRAY);
-            if (mostRecentRequestsTable == null) {
-                GXCommon.setObjectCount(0, data);
-            } else {
-                GXCommon.setObjectCount(mostRecentRequestsTable.length, data);
-                for (String it : mostRecentRequestsTable) {
-                    GXCommon.setData(settings, data, DataType.BITSTRING, it);
+            case 3: {
+                data = new GXByteBuffer();
+                data.setUInt8(DataType.ARRAY);
+                if (permissionsTable == null) {
+                    GXCommon.setObjectCount(0, data);
+                } else {
+                    GXCommon.setObjectCount(permissionsTable.length, data);
+                    for (String it : permissionsTable) {
+                        GXCommon.setData(settings, data, DataType.BITSTRING, it);
+                    }
                 }
+                ret = data.array();
             }
-            ret = data.array();
-        }
             break;
-        case 6:
-            ret = lastOutcome;
+            case 4: {
+                data = new GXByteBuffer();
+                data.setUInt8(DataType.ARRAY);
+                if (weightingsTable == null) {
+                    GXCommon.setObjectCount(0, data);
+                } else {
+                    GXCommon.setObjectCount(weightingsTable.length, data);
+                    for (int[] it : weightingsTable) {
+                        data.setUInt8(DataType.ARRAY);
+                        GXCommon.setObjectCount(it.length, data);
+                        for (int it2 : it) {
+                            GXCommon.setData(settings, data, DataType.UINT16, it2);
+                        }
+                    }
+                }
+                ret = data.array();
+            }
             break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            ret = null;
+            case 5: {
+                data = new GXByteBuffer();
+                data.setUInt8(DataType.ARRAY);
+                if (mostRecentRequestsTable == null) {
+                    GXCommon.setObjectCount(0, data);
+                } else {
+                    GXCommon.setObjectCount(mostRecentRequestsTable.length, data);
+                    for (String it : mostRecentRequestsTable) {
+                        GXCommon.setData(settings, data, DataType.BITSTRING, it);
+                    }
+                }
+                ret = data.array();
+            }
             break;
+            case 6:
+                ret = lastOutcome;
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                ret = null;
+                break;
         }
         return ret;
     }
 
     /**
      * Create a new action.
-     * 
-     * @param settings
-     *            DLMS settings.
-     * @param it
-     *            object array.
+     *
+     * @param settings DLMS settings.
+     * @param it       object array.
      * @return Action item.
      */
     private static GXDLMSActionItem createAction(final GXDLMSSettings settings,
-            final List<?> it) {
+                                                 final List<?> it) {
         GXDLMSActionItem item = new GXDLMSActionItem();
         item.setLogicalName(GXCommon.toLogicalName(it.get(0)));
         item.setScriptSelector(((Number) it.get(1)).intValue());
@@ -447,65 +421,65 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
      */
     @Override
     public final void setValue(final GXDLMSSettings settings,
-            final ValueEventArgs e) {
+                               final ValueEventArgs e) {
         switch (e.getIndex()) {
-        case 1:
-            setLogicalName(GXCommon.toLogicalName(e.getValue()));
-            break;
-        case 2: {
-            List<GXDLMSActionItem> list = new ArrayList<GXDLMSActionItem>();
-            if (e.getValue() != null) {
-                List<?> arr = (List<?>) e.getValue();
-                for (Object it : arr) {
-                    list.add(createAction(settings, (List<?>) it));
-                }
-            }
-            actions = list.toArray(new GXDLMSActionItem[0]);
-        }
-            break;
-        case 3: {
-            List<String> list = new ArrayList<String>();
-            if (e.getValue() != null) {
-                List<?> arr = (List<?>) e.getValue();
-                for (Object it : arr) {
-                    list.add(it.toString());
-                }
-            }
-            permissionsTable = list.toArray(new String[0]);
-        }
-            break;
-        case 4: {
-            List<int[]> list = new ArrayList<int[]>();
-            if (e.getValue() != null) {
-                List<?> arr = (List<?>) e.getValue();
-                for (Object it : arr) {
-                    List<Integer> list2 = new ArrayList<Integer>();
-                    for (Object it2 : (List<?>) it) {
-                        list2.add(((Number) it2).intValue());
+            case 1:
+                setLogicalName(GXCommon.toLogicalName(e.getValue()));
+                break;
+            case 2: {
+                List<GXDLMSActionItem> list = new ArrayList<GXDLMSActionItem>();
+                if (e.getValue() != null) {
+                    List<?> arr = (List<?>) e.getValue();
+                    for (Object it : arr) {
+                        list.add(createAction(settings, (List<?>) it));
                     }
-                    list.add(GXCommon.toIntArray(list2));
                 }
+                actions = list.toArray(new GXDLMSActionItem[0]);
             }
-            weightingsTable = list.toArray(new int[0][0]);
-        }
             break;
-        case 5: {
-            List<String> list = new ArrayList<String>();
-            if (e.getValue() != null) {
-                List<?> arr = (List<?>) e.getValue();
-                for (Object it : arr) {
-                    list.add((String) it);
+            case 3: {
+                List<String> list = new ArrayList<String>();
+                if (e.getValue() != null) {
+                    List<?> arr = (List<?>) e.getValue();
+                    for (Object it : arr) {
+                        list.add(it.toString());
+                    }
                 }
+                permissionsTable = list.toArray(new String[0]);
             }
-            mostRecentRequestsTable = list.toArray(new String[0]);
-        }
             break;
-        case 6:
-            lastOutcome = ((Number) e.getValue()).byteValue();
+            case 4: {
+                List<int[]> list = new ArrayList<int[]>();
+                if (e.getValue() != null) {
+                    List<?> arr = (List<?>) e.getValue();
+                    for (Object it : arr) {
+                        List<Integer> list2 = new ArrayList<Integer>();
+                        for (Object it2 : (List<?>) it) {
+                            list2.add(((Number) it2).intValue());
+                        }
+                        list.add(GXCommon.toIntArray(list2));
+                    }
+                }
+                weightingsTable = list.toArray(new int[0][0]);
+            }
             break;
-        default:
-            e.setError(ErrorCode.READ_WRITE_DENIED);
+            case 5: {
+                List<String> list = new ArrayList<String>();
+                if (e.getValue() != null) {
+                    List<?> arr = (List<?>) e.getValue();
+                    for (Object it : arr) {
+                        list.add((String) it);
+                    }
+                }
+                mostRecentRequestsTable = list.toArray(new String[0]);
+            }
             break;
+            case 6:
+                lastOutcome = ((Number) e.getValue()).byteValue();
+                break;
+            default:
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
 
     }
@@ -606,14 +580,14 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Actions", "Permissions table",
+        return new String[]{"Logical Name", "Actions", "Permissions table",
                 "Weightings table", "Most recent requests table",
-                "Last outcome" };
+                "Last outcome"};
 
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Request Action", "Reset" };
+        return new String[]{"Request Action", "Reset"};
     }
 }

@@ -47,9 +47,8 @@ public class GXAsn1Utf8String {
 
     /**
      * Constructor.
-     * 
-     * @param str
-     *            UTF8 String.
+     *
+     * @param str UTF8 String.
      */
     public GXAsn1Utf8String(final String str) {
         utf8String = str;

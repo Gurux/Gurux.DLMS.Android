@@ -49,8 +49,7 @@ public class GXDLMSObjectDefinition {
     }
 
     /**
-     * @param value
-     *            Object type.
+     * @param value Object type.
      * @deprecated use {@link #setObjectType} instead.
      */
     public final void setClassId(final ObjectType value) {
@@ -65,8 +64,7 @@ public class GXDLMSObjectDefinition {
     }
 
     /**
-     * @param value
-     *            Object type.
+     * @param value Object type.
      */
     public final void setObjectType(final ObjectType value) {
         objectType = value;
@@ -80,8 +78,7 @@ public class GXDLMSObjectDefinition {
     }
 
     /**
-     * @param value
-     *            Logical Name.
+     * @param value Logical Name.
      */
     public final void setLogicalName(final String value) {
         logicalName = value;

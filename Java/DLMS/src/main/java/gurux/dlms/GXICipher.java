@@ -60,8 +60,7 @@ public interface GXICipher {
     Security getSecurity();
 
     /**
-     * @param value
-     *            Used security policy.
+     * @param value Used security policy.
      */
     void setSecurityPolicy(java.util.Set<SecurityPolicy> value);
 
@@ -71,8 +70,7 @@ public interface GXICipher {
     java.util.Set<SecurityPolicy> getSecurityPolicy();
 
     /**
-     * @param value
-     *            Used security.
+     * @param value Used security.
      */
     void setSecurity(Security value);
 
@@ -82,8 +80,7 @@ public interface GXICipher {
     SecuritySuite getSecuritySuite();
 
     /**
-     * @param value
-     *            Used security suite.
+     * @param value Used security suite.
      */
     void setSecuritySuite(final SecuritySuite value);
 
@@ -93,8 +90,7 @@ public interface GXICipher {
     byte[] getSystemTitle();
 
     /**
-     * @param value
-     *            System title.
+     * @param value System title.
      */
     void setSystemTitle(byte[] value);
 
@@ -104,8 +100,7 @@ public interface GXICipher {
     byte[] getRecipientSystemTitle();
 
     /**
-     * @param value
-     *            Block cipher key.
+     * @param value Block cipher key.
      */
     void setBlockCipherKey(byte[] value);
 
@@ -120,14 +115,12 @@ public interface GXICipher {
     byte[] getAuthenticationKey();
 
     /**
-     * @param value
-     *            Authentication key.
+     * @param value Authentication key.
      */
     void setAuthenticationKey(byte[] value);
 
     /**
-     * @param value
-     *            Broadcast block cipher key.
+     * @param value Broadcast block cipher key.
      */
     void setBroadcastBlockCipherKey(byte[] value);
 
@@ -142,8 +135,7 @@ public interface GXICipher {
     long getInvocationCounter();
 
     /**
-     * @param value
-     *            Invocation counter.
+     * @param value Invocation counter.
      */
     void setInvocationCounter(long value);
 
@@ -153,8 +145,7 @@ public interface GXICipher {
     byte[] getTransactionId();
 
     /**
-     * @param value
-     *            Invocation counter.
+     * @param value Invocation counter.
      */
     void setTransactionId(byte[] value);
 
@@ -164,8 +155,7 @@ public interface GXICipher {
     KeyPair getEphemeralKeyPair();
 
     /**
-     * @param value
-     *            Ephemeral key pair.
+     * @param value Ephemeral key pair.
      */
     void setEphemeralKeyPair(KeyPair value);
 
@@ -175,8 +165,7 @@ public interface GXICipher {
     KeyPair getKeyAgreementKeyPair();
 
     /**
-     * @param value
-     *            Client's key agreement key pair.
+     * @param value Client's key agreement key pair.
      */
     void setKeyAgreementKeyPair(KeyPair value);
 
@@ -191,8 +180,7 @@ public interface GXICipher {
     KeyPair getSigningKeyPair();
 
     /**
-     * @param value
-     *            Signing key pair.
+     * @param value Signing key pair.
      */
     void setSigningKeyPair(KeyPair value);
 
@@ -202,8 +190,7 @@ public interface GXICipher {
     KeyPair getTlsKeyPair();
 
     /**
-     * @param value
-     *            Signing key pair.
+     * @param value Signing key pair.
      */
     void setTlsKeyPair(KeyPair value);
 
@@ -213,8 +200,7 @@ public interface GXICipher {
     byte[] getDedicatedKey();
 
     /**
-     * @param value
-     *            Dedicated key.
+     * @param value Dedicated key.
      */
     void setDedicatedKey(byte[] value);
 
@@ -224,8 +210,7 @@ public interface GXICipher {
     Signing getSigning();
 
     /**
-     * @param value
-     *            Used signing.
+     * @param value Used signing.
      */
     void setSigning(Signing value);
 

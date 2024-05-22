@@ -81,9 +81,8 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSImageTransfer(final String ln) {
         this(ln, 0);
@@ -91,11 +90,9 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSImageTransfer(final String ln, final int sn) {
         super(ObjectType.IMAGE_TRANSFER, ln, sn);
@@ -108,16 +105,15 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Holds the ImageBlockSize, expressed in octets, which can be
-     *         handled by the server.
+     * handled by the server.
      */
     public final long getImageBlockSize() {
         return imageBlockSize;
     }
 
     /**
-     * @param value
-     *            Holds the ImageBlockSize, expressed in octets, which can be
-     *            handled by the server.
+     * @param value Holds the ImageBlockSize, expressed in octets, which can be
+     *              handled by the server.
      */
     public final void setImageBlockSize(final long value) {
         imageBlockSize = value;
@@ -125,18 +121,17 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Provides information about the transfer status of each
-     *         ImageBlock. Each bit in the bit-string provides information about
-     *         one individual ImageBlock.
+     * ImageBlock. Each bit in the bit-string provides information about
+     * one individual ImageBlock.
      */
     public final String getImageTransferredBlocksStatus() {
         return imageTransferredBlocksStatus;
     }
 
     /**
-     * @param value
-     *            Provides information about the transfer status of each
-     *            ImageBlock. Each bit in the bit-string provides information
-     *            about one individual ImageBlock.
+     * @param value Provides information about the transfer status of each
+     *              ImageBlock. Each bit in the bit-string provides information
+     *              about one individual ImageBlock.
      */
     public final void setImageTransferredBlocksStatus(final String value) {
         imageTransferredBlocksStatus = value;
@@ -144,20 +139,19 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Provides the ImageBlockNumber of the first ImageBlock not
-     *         transferred. NOTE If the Image is complete, the value returned
-     *         should be above the number of blocks calculated from the Image
-     *         size and the ImageBlockSize
+     * transferred. NOTE If the Image is complete, the value returned
+     * should be above the number of blocks calculated from the Image
+     * size and the ImageBlockSize
      */
     public final long getImageFirstNotTransferredBlockNumber() {
         return imageFirstNotTransferredBlockNumber;
     }
 
     /**
-     * @param value
-     *            Provides the ImageBlockNumber of the first ImageBlock not
-     *            transferred. NOTE If the Image is complete, the value returned
-     *            should be above the number of blocks calculated from the Image
-     *            size and the ImageBlockSize
+     * @param value Provides the ImageBlockNumber of the first ImageBlock not
+     *              transferred. NOTE If the Image is complete, the value returned
+     *              should be above the number of blocks calculated from the Image
+     *              size and the ImageBlockSize
      */
     public final void setImageFirstNotTransferredBlockNumber(final long value) {
         imageFirstNotTransferredBlockNumber = value;
@@ -165,17 +159,16 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Controls enabling the Image transfer process. The method can be
-     *         invoked successfully only if the value of this attribute is true.
+     * invoked successfully only if the value of this attribute is true.
      */
     public final boolean getImageTransferEnabled() {
         return imageTransferEnabled;
     }
 
     /**
-     * @param value
-     *            Controls enabling the Image transfer process. The method can
-     *            be invoked successfully only if the value of this attribute is
-     *            true.
+     * @param value Controls enabling the Image transfer process. The method can
+     *              be invoked successfully only if the value of this attribute is
+     *              true.
      */
     public final void setImageTransferEnabled(final boolean value) {
         imageTransferEnabled = value;
@@ -189,8 +182,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Holds the status of the Image transfer process.
+     * @param value Holds the status of the Image transfer process.
      */
     public final void setImageTransferStatus(final ImageTransferStatus value) {
         imageTransferStatus = value;
@@ -204,8 +196,7 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Holds the images available to activated.
+     * @param value Holds the images available to activated.
      */
     public final void setImageActivateInfo(final GXDLMSImageActivateInfo[] value) {
         imageActivateInfo = value;
@@ -213,9 +204,9 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getImageBlockSize(),
+        return new Object[]{getLogicalName(), getImageBlockSize(),
                 getImageTransferredBlocksStatus(), getImageFirstNotTransferredBlockNumber(),
-                getImageTransferEnabled(), getImageTransferStatus(), getImageActivateInfo() };
+                getImageTransferEnabled(), getImageTransferStatus(), getImageActivateInfo()};
     }
 
     @Override
@@ -450,14 +441,14 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     public final byte[][] imageTransferInitiate(final GXDLMSClient client,
-            final String imageIdentifier, final long forImageSize) throws InvalidKeyException,
+                                                final String imageIdentifier, final long forImageSize) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         return imageTransferInitiate(client, GXCommon.getBytes(imageIdentifier), forImageSize);
     }
 
     public final byte[][] imageTransferInitiate(final GXDLMSClient client,
-            final byte[] imageIdentifier, final long forImageSize) throws InvalidKeyException,
+                                                final byte[] imageIdentifier, final long forImageSize) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (imageBlockSize == 0) {
@@ -476,9 +467,8 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Returns image blocks to send to the meter.
-     * 
-     * @param image
-     *            Image.
+     *
+     * @param image Image.
      * @return Sent blocks.
      */
     public List<byte[]> getImageBlocks(final byte[] image) {
@@ -511,31 +501,21 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Move image to the meter.
-     * 
-     * @param client
-     *            DLMS Client.
-     * @param image
-     *            Image
-     * @param imageBlockCount
-     *            Total number of blocks to send.
+     *
+     * @param client          DLMS Client.
+     * @param image           Image
+     * @param imageBlockCount Total number of blocks to send.
      * @return DLMS frames that are send to the meter.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] imageBlockTransfer(final GXDLMSClient client, final byte[] image,
-            final int[] imageBlockCount) throws InvalidKeyException, NoSuchAlgorithmException,
+                                             final int[] imageBlockCount) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, SignatureException {
         return imageBlockTransfer(client, image, 0, imageBlockCount);
@@ -543,33 +523,22 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Move image to the meter.
-     * 
-     * @param client
-     *            DLMS Client.
-     * @param image
-     *            Image
-     * @param index
-     *            Zero based index from which blocks are send.
-     * @param imageBlockCount
-     *            Total number of blocks to send.
+     *
+     * @param client          DLMS Client.
+     * @param image           Image
+     * @param index           Zero based index from which blocks are send.
+     * @param imageBlockCount Total number of blocks to send.
      * @return DLMS frames that are send to the meter.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] imageBlockTransfer(final GXDLMSClient client, final byte[] image,
-            final int index, final int[] imageBlockCount) throws InvalidKeyException,
+                                             final int index, final int[] imageBlockCount) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
 
@@ -598,33 +567,22 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Send image to the meter using blocks states.
-     * 
-     * @param client
-     *            DLMS Client.
-     * @param image
-     *            Image
-     * @param blocksStatus
-     *            Block states in the bit string.
-     * @param imageBlockCount
-     *            Total number of blocks to send.
+     *
+     * @param client          DLMS Client.
+     * @param image           Image
+     * @param blocksStatus    Block states in the bit string.
+     * @param imageBlockCount Total number of blocks to send.
      * @return DLMS frames that are send to the meter.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
-     * @throws SignatureException
-     *             Signature exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] imageBlockTransfer(final GXDLMSClient client, final byte[] image,
-            final String blocksStatus, final int[] imageBlockCount) throws InvalidKeyException,
+                                       final String blocksStatus, final int[] imageBlockCount) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         List<byte[]> packets = new ArrayList<byte[]>();
@@ -716,14 +674,14 @@ public class GXDLMSImageTransfer extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Image Block Size", "Image Transferred Blocks Status",
+        return new String[]{"Logical Name", "Image Block Size", "Image Transferred Blocks Status",
                 "Image FirstNot Transferred Block Number", "Image Transfer Enabled",
-                "Image Transfer Status", "Image Activate Info" };
+                "Image Transfer Status", "Image Activate Info"};
     }
 
     @Override
     public String[] getMethodNames() {
-        return new String[] { "Image transfer initiate", "Image block transfer", "Image verify",
-                "Image activate" };
+        return new String[]{"Image transfer initiate", "Image block transfer", "Image verify",
+                "Image activate"};
     }
 }

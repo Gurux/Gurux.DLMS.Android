@@ -69,7 +69,7 @@ public enum CertificateEntity {
 
     /**
      * Get mappings.
-     * 
+     *
      * @return Hash map of enumeration and integer values.
      */
     private static HashMap<Integer, CertificateEntity> getMappings() {
@@ -83,9 +83,8 @@ public enum CertificateEntity {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            Integer value for enumerator.
+     *
+     * @param value Integer value for enumerator.
      */
     CertificateEntity(final int value) {
         intValue = value;
@@ -96,7 +95,7 @@ public enum CertificateEntity {
 
     /**
      * Get enemerator's integer value.
-     * 
+     *
      * @return Integer value of enumerator.
      */
     public int getValue() {
@@ -105,9 +104,8 @@ public enum CertificateEntity {
 
     /**
      * Get enumerator from integer value.
-     * 
-     * @param value
-     *            integer value.
+     *
+     * @param value integer value.
      * @return Enumerator value.
      */
     public static CertificateEntity forValue(final int value) {

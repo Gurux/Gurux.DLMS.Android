@@ -80,9 +80,8 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSAutoConnect(final String ln) {
         this(ln, 0);
@@ -90,11 +89,9 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSAutoConnect(final String ln, final int sn) {
         super(ObjectType.AUTO_CONNECT, ln, sn);
@@ -145,22 +142,15 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Initiates the connection process.
-     * 
-     * @param client
-     *            DLMS client.
+     *
+     * @param client DLMS client.
      * @return Action bytes.
-     * @throws NoSuchPaddingException
-     *             No such padding exception.
-     * @throws NoSuchAlgorithmException
-     *             No such algorithm exception.
-     * @throws InvalidAlgorithmParameterException
-     *             Invalid algorithm parameter exception.
-     * @throws InvalidKeyException
-     *             Invalid key exception.
-     * @throws BadPaddingException
-     *             Bad padding exception.
-     * @throws IllegalBlockSizeException
-     *             Illegal block size exception.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException
      */
     public final byte[][] connect(final GXDLMSClient client) throws InvalidKeyException,
@@ -171,8 +161,8 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public final Object[] getValues() {
-        return new Object[] { getLogicalName(), getMode(), getRepetitions(), getRepetitionDelay(),
-                getCallingWindow(), getDestinations() };
+        return new Object[]{getLogicalName(), getMode(), getRepetitions(), getRepetitionDelay(),
+                getCallingWindow(), getDestinations()};
     }
 
     @Override
@@ -399,8 +389,8 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames() {
-        return new String[] { "Logical Name", "Mode", "Repetitions", "Repetition Delay",
-                "Calling Window", "Destinations" };
+        return new String[]{"Logical Name", "Mode", "Repetitions", "Repetition Delay",
+                "Calling Window", "Destinations"};
     }
 
     @Override
@@ -408,6 +398,6 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
         if (version == 0) {
             return new String[0];
         }
-        return new String[] { "Connect" };
+        return new String[]{"Connect"};
     }
 }
