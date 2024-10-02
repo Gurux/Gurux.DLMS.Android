@@ -40,6 +40,7 @@ import gurux.common.enums.MediaState;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSException;
+import gurux.dlms.GXDateTime;
 import gurux.dlms.GXReplyData;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.android.GXDevice;
@@ -378,7 +379,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
      * @throws Exception Occurred exception.
      */
     public void readRowsByRange(final GXDLMSProfileGeneric pg,
-                                final java.util.Date start, final java.util.Date end) throws Exception {
+                                final GXDateTime start, GXDateTime end) throws Exception {
         GXReplyData reply = new GXReplyData();
         byte[][] data = mClient.readRowsByRange(pg, start, end);
         readDataBlock(data, reply);
