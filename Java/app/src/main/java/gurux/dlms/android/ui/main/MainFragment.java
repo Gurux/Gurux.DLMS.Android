@@ -47,6 +47,7 @@ import gurux.dlms.android.GXDevice;
 import gurux.dlms.android.GXGeneral;
 import gurux.dlms.android.R;
 import gurux.dlms.android.databinding.FragmentMainBinding;
+import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.InterfaceType;
@@ -674,7 +675,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         mClient.parseAareResponse(reply.getData());
         reply.clear();
         // Get challenge Is HLS authentication is used.
-        if (mClient.getIsAuthenticationRequired()) {
+        if (mClient.getAuthentication().getValue() > Authentication.LOW.getValue()) {
             for (byte[] it : mClient.getApplicationAssociationRequest()) {
                 readDLMSPacket(it, reply);
             }
