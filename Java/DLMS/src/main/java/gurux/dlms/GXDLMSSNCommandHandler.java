@@ -390,10 +390,9 @@ final class GXDLMSSNCommandHandler {
         settings.resetBlockIndex();
     }
 
-    /**
+    /*
      * Find Short Name object.
      *
-     * @param sn
      */
     private static GXSNInfo findSNObject(final GXDLMSServerBase server,
                                          final GXDLMSSettings settings, final int sn) throws Exception {

@@ -124,8 +124,9 @@ public class GXDLMSNotify {
 
     /**
      * @return HDLC connection settings.
-     * @deprecated use {@link getHdlcSettings} instead.
+     * @deprecated use {@link #getHdlcSettings} instead.
      */
+    @Deprecated
     public final GXDLMSLimits getLimits() {
         return (GXDLMSLimits) settings.getHdlcSettings();
     }

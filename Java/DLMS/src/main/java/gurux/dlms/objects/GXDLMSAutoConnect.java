@@ -151,7 +151,7 @@ public class GXDLMSAutoConnect extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] connect(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,

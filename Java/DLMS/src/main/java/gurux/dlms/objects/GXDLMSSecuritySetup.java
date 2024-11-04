@@ -1120,7 +1120,7 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
      * @param entity       Certificate entity type.
      * @param type         Certificate type.
      * @param systemtitle  System title.
-     * @return
+     * @return X509 certificate.
      */
     private static GXx509Certificate findCertificateByEntity(
             final GXx509CertificateCollection certificates, final CertificateEntity entity,

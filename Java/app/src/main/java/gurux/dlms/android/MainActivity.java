@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,10 +34,10 @@ import gurux.serial.GXSerial;
 
 public class MainActivity extends AppCompatActivity {
 
+    GXDevice mDevice = new GXDevice();
     private AppBarConfiguration mAppBarConfiguration;
     private GXManufacturerCollection mManufacturers;
-
-    GXDevice mDevice = new GXDevice();
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
         mManufacturers = new GXManufacturerCollection();
         GXManufacturerCollection.readManufacturerSettings(this, mManufacturers);
         if ((mDevice.getManufacturer() == null || mDevice.getManufacturer().equals("")) &&
-                !mManufacturers.isEmpty())
-        {
+                !mManufacturers.isEmpty()) {
             mDevice.setManufacturer(mManufacturers.get(0).getName());
         }
         ManufacturersViewModel mManufacturersViewModel = new ViewModelProvider(this).get(ManufacturersViewModel.class);
@@ -63,19 +63,24 @@ public class MainActivity extends AppCompatActivity {
         MediaViewModel mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
         mediaViewModel.setDevice(mDevice);
 
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
+        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .setAnchorView(R.id.fab).show();
+            }
+        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_main,  R.id.nav_meterSettings, R.id.nav_mediaSettings,
+                R.id.nav_main, R.id.nav_meterSettings, R.id.nav_mediaSettings,
                 R.id.nav_xml_translator, R.id.nav_obis_translator, R.id.nav_manufacturers)
                 .setOpenableLayout(drawer)
                 .build();
@@ -83,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
+
 
     private void loadSettings() {
         SharedPreferences s = getPreferences(Context.MODE_PRIVATE);
@@ -92,9 +98,7 @@ public class MainActivity extends AppCompatActivity {
             mDevice.setManufacturer(man);
             try {
                 mDevice.setInterfaceType(InterfaceType.values()[s.getInt("interfaceType", 0)]);
-            }
-            catch(Exception ex)
-            {
+            } catch (Exception ex) {
                 //Old way...
                 mDevice.setInterfaceType(InterfaceType.HDLC);
             }
@@ -103,14 +107,10 @@ public class MainActivity extends AppCompatActivity {
             mDevice.setMaximumBaudRate(s.getInt("maximumBaudRate", 0));
             try {
                 String auth = s.getString("authentication", "None");
-                for(GXManufacturer it : mManufacturers)
-                {
-                    if (it.getIdentification().compareTo(man) == 0)
-                    {
-                        for(GXAuthentication authentication : it.getSettings())
-                        {
-                            if (auth.compareTo(authentication.toString()) == 0)
-                            {
+                for (GXManufacturer it : mManufacturers) {
+                    if (it.getIdentification().compareTo(man) == 0) {
+                        for (GXAuthentication authentication : it.getSettings()) {
+                            if (auth.compareTo(authentication.toString()) == 0) {
                                 mDevice.setAuthentication(authentication);
                                 break;
                             }
@@ -118,13 +118,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                if (mDevice.getAuthentication() == null)
-                {
+                if (mDevice.getAuthentication() == null) {
                     mDevice.setAuthentication(new GXAuthentication(auth));
                 }
-            }
-            catch(Exception ex)
-            {
+            } catch (Exception ex) {
                 //Old way...
                 mDevice.setAuthentication(new GXAuthentication(Authentication.forValue(s.getInt("authentication", 0)).toString()));
             }
@@ -155,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putInt("interfaceType", mDevice.getInterfaceType().getValue());
         editor.putInt("waitTime", mDevice.getWaitTime());
         editor.putInt("maximumBaudRate", mDevice.getMaximumBaudRate());
-        if (mDevice.getAuthentication() != null)
-        {
+        if (mDevice.getAuthentication() != null) {
             editor.putString("authentication", mDevice.getAuthentication().toString());
         }
         editor.putString("password", mDevice.getPassword());

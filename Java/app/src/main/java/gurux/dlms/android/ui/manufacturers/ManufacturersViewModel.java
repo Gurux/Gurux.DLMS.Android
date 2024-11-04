@@ -13,8 +13,7 @@ public class ManufacturersViewModel extends ViewModel {
         mManufacturers = manufacturers;
     }
 
-    public GXManufacturerCollection getManufacturers()
-    {
+    public GXManufacturerCollection getManufacturers() {
         return mManufacturers;
     }
 }

@@ -831,7 +831,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] getNeighbourTableEntry(GXDLMSClient client, short address)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -842,7 +842,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
     private static GXDLMSNeighbourTable[] parseNeighbourTableEntry(Object value) {
         ArrayList<GXDLMSNeighbourTable> list = new ArrayList<GXDLMSNeighbourTable>();
         if (value != null) {
-            for (Object tmp : (Iterable<Object>) value) {
+            for (Object tmp : (Iterable<?>) value) {
                 GXStructure arr = (GXStructure) tmp;
                 GXDLMSNeighbourTable it = new GXDLMSNeighbourTable();
                 it.setShortAddress(((GXUInt16) arr.get(0)).intValue());
@@ -866,7 +866,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
      * Parse neighbour table entry.
      *
      * @param reply Received reply
-     * @return {@link getNeighbourTableEntry}
+     * @return {@link GXDLMSNeighbourTable}
      */
     public final GXDLMSNeighbourTable[] parseNeighbourTableEntry(GXByteBuffer reply) {
         GXDataInfo info = new GXDataInfo();
@@ -886,7 +886,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] getPosTableEntry(GXDLMSClient client, int address)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -897,7 +897,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
     private static GXDLMSMacPosTable[] parsePosTableEntry(Object value) {
         ArrayList<GXDLMSMacPosTable> list = new ArrayList<GXDLMSMacPosTable>();
         if (value != null) {
-            for (Object tmp : (Iterable<Object>) value) {
+            for (Object tmp : (Iterable<?>) value) {
                 GXStructure arr = (GXStructure) tmp;
                 GXDLMSMacPosTable it = new GXDLMSMacPosTable();
                 it.setShortAddress(((GXUInt16) arr.get(0)).intValue());
@@ -913,7 +913,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
      * Parse MAC POS tables.
      *
      * @param reply Received reply
-     * @return {@link getPosTableEntry}
+     * @return {@link GXDLMSMacPosTable}
      */
     public final GXDLMSMacPosTable[] parsePosTableEntry(GXByteBuffer reply) {
         GXDataInfo info = new GXDataInfo();

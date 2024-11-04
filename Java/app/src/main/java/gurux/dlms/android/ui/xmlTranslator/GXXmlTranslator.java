@@ -53,13 +53,30 @@ import gurux.dlms.android.R;
  */
 public class GXXmlTranslator extends Fragment {
 
-    private EditText pduText;
-    private EditText xmlText;
     GXDLMSTranslator translator =
             new GXDLMSTranslator(TranslatorOutputType.SIMPLE_XML);
+    private EditText pduText;
+    private EditText xmlText;
 
     public GXXmlTranslator() {
         // Required empty public constructor
+    }
+
+    /*
+     * Remove comments
+     */
+    private static String removeComments(final String data) {
+        StringBuilder sb = new StringBuilder();
+        for (String it : data.split("[\n]")) {
+            if (!it.startsWith("#")) {
+                sb.append(it);
+                sb.append("\n");
+            }
+        }
+        if (sb.length() != 0) {
+            sb.setLength(sb.length() - 2);
+        }
+        return sb.toString();
     }
 
     @Override
@@ -81,29 +98,12 @@ public class GXXmlTranslator extends Fragment {
         return view;
     }
 
-    /*
-     * Remove comments
-     */
-    private static String removeComments(final String data) {
-        StringBuilder sb = new StringBuilder();
-        for (String it : data.split("[\n]")) {
-            if (!it.startsWith("#")) {
-                sb.append(it);
-                sb.append("\n");
-            }
-        }
-        if (sb.length() != 0) {
-            sb.setLength(sb.length() - 2);
-        }
-        return sb.toString();
-    }
-
     /**
      * Convert XML to PDU.
      */
     void toPdu() {
         try {
-            //TODO: translator.setHex(hexBtn.getValue());
+            translator.setHex(true);
             String xml = removeComments(xmlText.getText().toString());
             pduText.setText(translator.xmlToHexPdu(xml, true));
         } catch (Exception e) {

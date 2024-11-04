@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
     <item android:title="Communicate">
         <menu>
@@ -9,7 +11,7 @@
                 android:title="Read" />
             <item
                 android:id="@+id/nav_meterSettings"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_menu_camera"
                 android:title="Meter Settings" />
             <item
                 android:id="@+id/nav_mediaSettings"
@@ -25,13 +27,11 @@
             android:title="XML Translator" />
         <item
             android:id="@+id/nav_obis_translator"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_camera"
             android:title="OBIS Translator" />
         <item
             android:id="@+id/nav_manufacturers"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_slideshow"
             android:title="Manufacturers" />
     </group>
-
-
 </menu>

@@ -57,7 +57,7 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
     private String[] modemProfile;
     private BaudRate communicationSpeed;
 
-    static final String[] defultProfiles() {
+    static String[] defaultProfiles() {
         return new String[]{"OK", "CONNECT", "RING", "NO CARRIER", "ERROR", "CONNECT 1200",
                 "NO DIAL TONE", "BUSY", "NO ANSWER", "CONNECT 600", "CONNECT 2400", "CONNECT 4800",
                 "CONNECT 9600", "CONNECT 14 400", "CONNECT 28 800", "CONNECT 33 600",
@@ -71,7 +71,7 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
         super(ObjectType.MODEM_CONFIGURATION, "0.0.2.0.0.255", 0);
         initialisationStrings = new GXDLMSModemInitialisation[0];
         communicationSpeed = BaudRate.BAUDRATE_300;
-        modemProfile = defultProfiles();
+        modemProfile = defaultProfiles();
     }
 
     /**
@@ -83,7 +83,7 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
         super(ObjectType.MODEM_CONFIGURATION, ln, 0);
         initialisationStrings = new GXDLMSModemInitialisation[0];
         communicationSpeed = BaudRate.BAUDRATE_300;
-        modemProfile = defultProfiles();
+        modemProfile = defaultProfiles();
     }
 
     /**
@@ -96,7 +96,7 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
         super(ObjectType.MODEM_CONFIGURATION, ln, 0);
         initialisationStrings = new GXDLMSModemInitialisation[0];
         communicationSpeed = BaudRate.BAUDRATE_300;
-        modemProfile = defultProfiles();
+        modemProfile = defaultProfiles();
     }
 
     public final BaudRate getCommunicationSpeed() {
@@ -268,7 +268,7 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
                     }
                     items.add(item);
                 }
-                initialisationStrings = items.toArray(new GXDLMSModemInitialisation[items.size()]);
+                initialisationStrings = items.toArray(new GXDLMSModemInitialisation[0]);
             }
         } else if (e.getIndex() == 4) {
             modemProfile = null;
@@ -278,7 +278,7 @@ public class GXDLMSModemConfiguration extends GXDLMSObject implements IGXDLMSBas
                     items.add(GXDLMSClient.changeType((byte[]) it, DataType.STRING, e.getSettings())
                             .toString());
                 }
-                modemProfile = items.toArray(new String[items.size()]);
+                modemProfile = items.toArray(new String[0]);
             }
         } else {
             e.setError(ErrorCode.READ_WRITE_DENIED);

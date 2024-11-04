@@ -92,7 +92,7 @@ public class GXDLMSTranslator {
     private boolean hex = true;
 
     /**
-     * Is string serialized as hex. {@link messageToXml} {@link PduOnly}
+     * Is string serialized as hex. {@link #messageToXml} {@link #pduOnly}
      */
     private boolean showStringAsHex;
 
@@ -107,7 +107,7 @@ public class GXDLMSTranslator {
 
     /**
      * Is only PDU shown when data is parsed with messageToXml.
-     * {@link messageToXml} {@link CompleatePdu}
+     * {@link #messageToXml} {@link #completePdu}
      */
     private boolean pduOnly;
 
@@ -358,8 +358,8 @@ public class GXDLMSTranslator {
     }
 
     /**
-     * Is only complete PDU parsed and shown. {@link messageToXml}
-     * {@link PduOnly}
+     * Is only complete PDU parsed and shown. {@link #messageToXml}
+     * {@link #pduOnly}
      */
     private boolean completePdu;
 
@@ -634,7 +634,7 @@ public class GXDLMSTranslator {
     }
 
     /**
-     * Clear {@link messageToXml} internal settings.
+     * Clear {@link #messageToXml} internal settings.
      */
     public void clear() {
         multipleFrames = false;
@@ -645,7 +645,7 @@ public class GXDLMSTranslator {
      * Convert message to XML.
      *
      * @param value Bytes to convert.
-     * @return Converted xml. {@link setPduOnly} {@link setCompleatePdu}
+     * @return Converted xml. {@link #pduOnly} {@link #completePdu}
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
@@ -687,8 +687,8 @@ public class GXDLMSTranslator {
      * Convert message to XML.
      *
      * @param value Bytes to convert.
-     * @return Converted XML. {@link clear} {@link setPduOnly}
-     * {@link setCompleatePdu}
+     * @return Converted XML. {@link #clear} {@link #pduOnly}
+     * {@link #completePdu}
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
@@ -797,8 +797,8 @@ public class GXDLMSTranslator {
     /**
      * Convert message to XML.
      *
-     * @param msg Translator message data. {@link clear} {@link setPduOnly}
-     *            {@link setCompleatePdu}
+     * @param msg Translator message data. {@link #clear} {@link #pduOnly}
+     *            {@link #completePdu}
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
@@ -3034,7 +3034,6 @@ public class GXDLMSTranslator {
         Document doc;
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
-            docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             docBuilder = docBuilderFactory.newDocumentBuilder();
             doc = docBuilder.parse(new InputSource(new StringReader(xml)));
         } catch (Exception e) {

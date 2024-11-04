@@ -234,7 +234,7 @@ public abstract class GXDLMSServer2 {
 
     /**
      * @return Information from the connection size that server can handle.
-     * @deprecated use {@link getHdlcSettings} instead.
+     * @deprecated use {@link #getHdlcSettings} instead.
      */
     @Deprecated
     public final GXDLMSLimits getLimits() {

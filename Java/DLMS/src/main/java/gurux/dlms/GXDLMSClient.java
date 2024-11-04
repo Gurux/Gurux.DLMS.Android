@@ -637,8 +637,9 @@ public class GXDLMSClient {
 
     /**
      * @return HDLC connection settings.
-     * @deprecated use {@link getHdlcSettings} instead.
+     * @deprecated use {@link #getHdlcSettings} instead.
      */
+    @Deprecated
     public final GXDLMSLimits getLimits() {
         return (GXDLMSLimits) settings.getHdlcSettings();
     }
@@ -1864,7 +1865,7 @@ public class GXDLMSClient {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     final byte[][] write(final Object name, final Object value, final DataType dataType,
                          final ObjectType objectType, final int index, final int mode)
@@ -1928,8 +1929,9 @@ public class GXDLMSClient {
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException                 Signature exception.
-     * @deprecated use {@link writeList} instead.
+     * @deprecated use {@link #writeList} instead.
      */
+    @Deprecated
     public final byte[][] writeList2(final List<GXWriteItem> list) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
@@ -2671,6 +2673,7 @@ public class GXDLMSClient {
      * @return Acknowledgment message as byte array.
      * @deprecated
      */
+    @Deprecated
     public final byte[] receiverReady(final RequestTypes type) {
         return GXDLMS.receiverReady(settings, type);
     }
@@ -2683,6 +2686,7 @@ public class GXDLMSClient {
      * @return Acknowledgment message as byte array.
      * @deprecated
      */
+    @Deprecated
     public final byte[] receiverReady(final java.util.Set<RequestTypes> type) {
         return GXDLMS.receiverReady(settings, type);
     }
@@ -2921,7 +2925,7 @@ public class GXDLMSClient {
      *
      * @param time Send time. Set to DateTime.MinValue is not used.
      * @param list List of access items.
-     * @return Read request as byte array. {@link parseAccessResponse}
+     * @return Read request as byte array. {@link #parseAccessResponse}
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.

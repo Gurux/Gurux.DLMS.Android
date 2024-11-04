@@ -99,6 +99,7 @@ public class GXDLMSScriptAction {
      * @return Executed object type.
      * @deprecated use {@link #getTarget} instead.
      */
+    @Deprecated
     public final ObjectType getObjectType() {
         return objectType;
     }
@@ -107,6 +108,7 @@ public class GXDLMSScriptAction {
      * @param value Executed object type.
      * @deprecated use {@link #setTarget} instead.
      */
+    @Deprecated
     public final void setObjectType(final ObjectType value) {
         objectType = value;
     }
@@ -115,6 +117,7 @@ public class GXDLMSScriptAction {
      * @return Logical name of executed object.
      * @deprecated use {@link #getTarget} instead.
      */
+    @Deprecated
     public final String getLogicalName() {
         return logicalName;
     }
@@ -123,6 +126,7 @@ public class GXDLMSScriptAction {
      * @param value Logical name of executed object.
      * @deprecated use {@link #setTarget} instead.
      */
+    @Deprecated
     public final void setLogicalName(final String value) {
         logicalName = value;
     }

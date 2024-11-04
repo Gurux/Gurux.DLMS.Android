@@ -14,19 +14,20 @@ public class MeterSettingsViewModel extends ViewModel {
         mManufacturers = manufacturers;
     }
 
-    public GXManufacturerCollection getManufacturers()
-    {
+    public GXManufacturerCollection getManufacturers() {
         return mManufacturers;
     }
 
 
-    public GXDevice getDevice()
-    {
+    public GXDevice getDevice() {
         return mDevice;
-    };
+    }
 
-    public void setDevice(GXDevice device)
-    {
+    ;
+
+    public void setDevice(GXDevice device) {
         mDevice = device;
-    };
+    }
+
+    ;
 }

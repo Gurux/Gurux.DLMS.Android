@@ -47,7 +47,6 @@ import androidx.fragment.app.Fragment;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.android.GXGeneral;
 import gurux.dlms.android.R;
-import gurux.dlms.android.databinding.FragmentManufacturersBinding;
 
 /**
  * OBIS code translator fragment.
@@ -81,9 +80,7 @@ public class GXObisTranslator extends Fragment {
         });
         try {
             mConverter.update(getActivity());
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             GXGeneral.showError(getActivity(), e, getString(R.string.error));
         }
         return view;

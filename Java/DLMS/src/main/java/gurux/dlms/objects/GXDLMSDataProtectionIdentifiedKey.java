@@ -34,13 +34,29 @@
 
 package gurux.dlms.objects;
 
-/**
- * Online help: <br>
- * https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMSIECOpticalPortSetup
- *
- * @deprecated use {@link GXDLMSIECLocalPortSetup} instead.
- */
-public class GXDLMSIECOpticalPortSetup extends GXDLMSIECLocalPortSetup
-        implements IGXDLMSBase {
+import gurux.dlms.objects.enums.DataProtectionIdentifiedKeyType;
 
+/**
+ * Data protection identified key.
+ */
+public class GXDLMSDataProtectionIdentifiedKey {
+    /**
+     * Data protection key type.
+     */
+    private DataProtectionIdentifiedKeyType keyType = DataProtectionIdentifiedKeyType.UNICAST_ENCRYPTION;
+
+    /**
+     * @return Data protection key type.
+     */
+    public final DataProtectionIdentifiedKeyType getKeyType() {
+        return keyType;
+    }
+
+    /**
+     * @param value
+     *            Data protection key type.
+     */
+    public final void setKeyType(final DataProtectionIdentifiedKeyType value) {
+        keyType = value;
+    }
 }

@@ -190,7 +190,7 @@ public class GXDLMSConverter {
      *
      * @param codes COSEM objects.
      * @param it    COSEM object.
-     * @param it    used DLMS standard.
+     * @param standard    used DLMS standard.
      */
     private static void updateOBISCodeInfo(final GXStandardObisCodeCollection codes,
                                            final GXDLMSObject it, final Standard standard) {

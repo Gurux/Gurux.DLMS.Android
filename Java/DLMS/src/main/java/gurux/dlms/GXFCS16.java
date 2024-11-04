@@ -97,13 +97,9 @@ class GXFCS16 {
         return (fcs16 & 0xFFFF);
     }
 
-    /**
+    /*
      * Reserved for internal use.
      *
-     * @param buff
-     * @param index
-     * @param count
-     * @return
      */
     private static final long CRCPOLY = 3551967744L;
 

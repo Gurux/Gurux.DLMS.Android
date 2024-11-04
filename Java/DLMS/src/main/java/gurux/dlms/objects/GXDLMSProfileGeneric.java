@@ -168,7 +168,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] reset(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -832,7 +832,7 @@ public class GXDLMSProfileGeneric extends GXDLMSObject implements IGXDLMSBase {
     /**
      * Update buffer.
      *
-     * @param value Received data.
+     * @param e Received data.
      */
     @SuppressWarnings("unchecked")
     private void setBuffer(final ValueEventArgs e) {

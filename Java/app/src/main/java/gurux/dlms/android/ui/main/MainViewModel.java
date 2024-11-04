@@ -8,13 +8,15 @@ public class MainViewModel extends ViewModel {
 
     private GXDevice mDevice;
 
-    public GXDevice getDevice()
-    {
+    public GXDevice getDevice() {
         return mDevice;
-    };
+    }
 
-    public void setDevice(GXDevice device)
-    {
+    ;
+
+    public void setDevice(GXDevice device) {
         mDevice = device;
-    };
+    }
+
+    ;
 }

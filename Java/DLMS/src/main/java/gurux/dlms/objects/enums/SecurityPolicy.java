@@ -109,7 +109,7 @@ public enum SecurityPolicy {
     /**
      * Constructor.
      *
-     * @param value Integer value for enumerator.
+     * @param forValue Integer value for enumerator.
      */
     SecurityPolicy(final int forValue) {
         intValue = forValue;

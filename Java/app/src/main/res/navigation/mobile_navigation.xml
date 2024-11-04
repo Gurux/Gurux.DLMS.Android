@@ -38,5 +38,4 @@
         android:name="gurux.dlms.android.ui.manufacturers.ManufacturersFragment"
         android:label="@string/menu_manufacturers"
         tools:layout="@layout/fragment_manufacturers" />
-
 </navigation>

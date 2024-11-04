@@ -213,13 +213,13 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
      *
      * @param client DLMS client.
      * @return Action bytes.
-     * @throws SignatureException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws InvalidAlgorithmParameterException
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] synchronize(GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,
@@ -235,13 +235,13 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
      * @param id     Authentication key Id.
      * @param key    authentication Key.
      * @return Action bytes.
-     * @throws SignatureException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws InvalidAlgorithmParameterException
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] addAuthenticationKey(GXDLMSClient client, int id,
                                                byte[] key) throws InvalidKeyException, NoSuchAlgorithmException,
@@ -264,13 +264,13 @@ public class GXDLMSNtpSetup extends GXDLMSObject implements IGXDLMSBase {
      * @param client DLMS client.
      * @param id     Authentication key Id.
      * @return Action bytes.
-     * @throws SignatureException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws InvalidAlgorithmParameterException
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] deleteAuthenticationKey(GXDLMSClient client, int id)
             throws InvalidKeyException, NoSuchAlgorithmException,

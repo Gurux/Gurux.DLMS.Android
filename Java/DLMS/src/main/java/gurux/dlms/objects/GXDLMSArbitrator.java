@@ -242,7 +242,7 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] requestAction(GXDLMSClient client, byte actor,
                                   String actions)
@@ -269,7 +269,7 @@ public class GXDLMSArbitrator extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] reset(GXDLMSClient client)
             throws InvalidKeyException, NoSuchAlgorithmException,

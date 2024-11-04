@@ -163,7 +163,6 @@ public class GXDLMSFunctionControl extends GXDLMSObject implements IGXDLMSBase {
      * @param client    DLMS client.
      * @param functions Added functions.
      * @return Action bytes.
-     * @return Action bytes.
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.

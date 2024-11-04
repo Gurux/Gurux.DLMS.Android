@@ -84,8 +84,8 @@ public class GXPkcs8 {
     /**
      * Constructor.
      *
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidKeySpecException            Invalid key spec exception.
      */
     public GXPkcs8(final PrivateKey priv) throws NoSuchAlgorithmException, InvalidKeySpecException {
         this();
@@ -99,8 +99,9 @@ public class GXPkcs8 {
      * Constructor.
      *
      * @param data Base64 string.
-     * @deprecated use {@link fromPem} instead.
+     * @deprecated use {@link #fromPem} instead.
      */
+    @Deprecated
     public GXPkcs8(final String data) {
         final String START = "PRIVATE KEY-----\n";
         final String END = "-----END";

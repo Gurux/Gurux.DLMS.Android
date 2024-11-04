@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,7 +24,7 @@ public class MediaFragment extends Fragment {
 
         binding = FragmentMediaBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        Fragment childFragment =  mediaViewModel.getDevice().getMedia().properties();
+        Fragment childFragment = mediaViewModel.getDevice().getMedia().properties();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.media_fragment_container, childFragment).commit();
         return view;

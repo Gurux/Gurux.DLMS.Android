@@ -37,9 +37,7 @@ package gurux.dlms.android;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.manufacturersettings.GXManufacturerCollection;

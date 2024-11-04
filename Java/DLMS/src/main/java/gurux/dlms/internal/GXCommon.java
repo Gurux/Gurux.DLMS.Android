@@ -610,13 +610,13 @@ public final class GXCommon {
         } else if (value instanceof Short) {
             tmp = ((Short) value).shortValue() & 0xFFFF;
         } else if (value instanceof Long) {
-            tmp = ((Long) value).longValue() & 0xFFFFFFFF;
+            tmp = ((Long) value).longValue() & 0xFFFFFFFFL;
         } else if (value instanceof GXUInt8) {
             tmp = ((GXUInt8) value).byteValue() & 0xFF;
         } else if (value instanceof GXUInt16) {
             tmp = ((GXUInt16) value).shortValue() & 0xFFFF;
         } else if (value instanceof GXUInt32) {
-            tmp = ((GXUInt32) value).longValue() & 0xFFFFFFFF;
+            tmp = ((GXUInt32) value).longValue() & 0xFFFFFFFFL;
         } else {
             tmp = ((Number) value).longValue();
         }

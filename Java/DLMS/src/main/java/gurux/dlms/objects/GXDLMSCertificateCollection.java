@@ -49,7 +49,7 @@ public class GXDLMSCertificateCollection extends ArrayList<GXDLMSCertificateInfo
      * @param entity      Certificate entity.
      * @param type        Certificate type.
      * @param systemtitle System title.
-     * @return
+     * @return Certificate information.
      */
     public GXDLMSCertificateInfo find(final CertificateEntity entity, final CertificateType type,
                                       final byte[] systemtitle) {

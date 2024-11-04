@@ -97,8 +97,9 @@ public class GXPkcs10 {
      * Constructor.
      *
      * @param data Base64 string.
-     * @deprecated use {@link fromPem} instead.
+     * @deprecated use {@link #fromPem} instead.
      */
+    @Deprecated
     public GXPkcs10(final String data) {
         final String START = "CERTIFICATE REQUEST-----\n";
         final String END = "-----END CERTIFICATE REQUEST";
@@ -488,7 +489,7 @@ public class GXPkcs10 {
      * @param cert    PKCS #10 certificate.
      * @param usage   Certificate usage.
      * @return Generated certificate.
-     * @throws IOException
+     * @throws IOException IO exception.
      */
     public static GXx509Certificate getCertificate(final String address, final GXPkcs10 cert, final KeyUsage usage)
             throws IOException {
@@ -547,7 +548,7 @@ public class GXPkcs10 {
      * @param address        Certificate server address.
      * @param certifications List of certification requests.
      * @return Generated certificate(s).
-     * @throws IOException
+     * @throws IOException IO exception.
      */
     public static GXx509Certificate[] getCertificate(final String address,
                                                      final List<GXCertificateRequest> certifications) throws IOException {

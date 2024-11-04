@@ -34,17 +34,12 @@
 
 package gurux.dlms.android;
 
-import android.hardware.usb.UsbDevice;
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import gurux.common.IGXMedia;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
 import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
-import gurux.dlms.manufacturersettings.StartProtocolType;
 import gurux.dlms.objects.GXDLMSObjectCollection;
 
 /**

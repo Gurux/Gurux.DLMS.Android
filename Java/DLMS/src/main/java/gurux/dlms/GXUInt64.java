@@ -88,12 +88,12 @@ public class GXUInt64 extends Number implements Comparable<GXUInt64> {
 
     @Override
     public int intValue() {
-        return value.intValueExact();
+        return value.intValue();
     }
 
     @Override
     public long longValue() {
-        return value.longValueExact();
+        return value.longValue();
     }
 
     @Override

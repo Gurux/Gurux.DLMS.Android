@@ -36,17 +36,12 @@ package gurux.dlms.objects;
 
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import gurux.dlms.GXDLMSConverter;
-import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXDateOS;
 import gurux.dlms.GXDateTime;
 import gurux.dlms.GXDateTimeOS;
-import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.GXTimeOS;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ObjectType;

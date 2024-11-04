@@ -208,7 +208,7 @@ abstract class GXDLMS {
     private static long getLongInvokeIDPriority(final GXDLMSSettings settings) {
         long value = 0;
         if (settings.getPriority() == Priority.HIGH) {
-            value = 0x80000000;
+            value = 0x80000000L;
         }
         if (settings.getServiceClass() == ServiceClass.CONFIRMED) {
             value |= 0x40000000;
@@ -282,12 +282,6 @@ abstract class GXDLMS {
                 return new GXDLMSRegisterActivation();
             case REGISTER_MONITOR:
                 return new GXDLMSRegisterMonitor();
-            case REGISTER_TABLE:
-                return new GXDLMSObject();
-            case ZIG_BEE_SAS_STARTUP:
-                return new GXDLMSObject();
-            case ZIG_BEE_SAS_JOIN:
-                return new GXDLMSObject();
             case SAP_ASSIGNMENT:
                 return new GXDLMSSapAssignment();
             case SCHEDULE:
@@ -296,12 +290,8 @@ abstract class GXDLMS {
                 return new GXDLMSScriptTable();
             case SPECIAL_DAYS_TABLE:
                 return new GXDLMSSpecialDaysTable();
-            case STATUS_MAPPING:
-                return new GXDLMSObject();
             case TCP_UDP_SETUP:
                 return new GXDLMSTcpUdpSetup();
-            case ZIG_BEE_SAS_APS_FRAGMENTATION:
-                return new GXDLMSObject();
             case UTILITY_TABLES:
                 return new GXDLMSUtilityTables();
             case PUSH_SETUP:
@@ -392,6 +382,7 @@ abstract class GXDLMS {
      * @return Acknowledgment message as byte array.
      * @deprecated
      */
+    @Deprecated
     public static byte[] receiverReady(final GXDLMSSettings settings, final RequestTypes type) {
         java.util.Set<RequestTypes> tmp = new HashSet<RequestTypes>();
         tmp.add(type);
@@ -411,6 +402,7 @@ abstract class GXDLMS {
      * @return Acknowledgment message as byte array.
      * @deprecated
      */
+    @Deprecated
     public static byte[] receiverReady(final GXDLMSSettings settings,
                                        final java.util.Set<RequestTypes> type) {
         GXReplyData reply = new GXReplyData();
@@ -425,7 +417,7 @@ abstract class GXDLMS {
         }
     }
 
-    /*
+    /**
      * Generates an acknowledgment message, with which the server is informed to
      * send next packets.
      * @param settings DLMS settings.
@@ -567,7 +559,7 @@ abstract class GXDLMS {
 
         DataType tp = obj.getDataType(index);
         if (tp == DataType.ARRAY) {
-            if (value instanceof byte[] && tp != DataType.OCTET_STRING) {
+            if (value instanceof byte[]) {
                 bb.set((byte[]) value);
                 return;
             }
@@ -1159,7 +1151,8 @@ abstract class GXDLMS {
      *
      * @param p    LN settings.
      * @param data Data to encrypt.
-     * @throws SignatureException
+     * @param sign True, if data is signed.
+     * @throws SignatureException Signature exception.
      */
     private static byte[] cipher1(final GXDLMSLNParameters p, final byte[] data, boolean sign)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -1816,8 +1809,8 @@ abstract class GXDLMS {
     }
 
     /**
-     * @param value
-     * @param size
+     * @param value Address.
+     * @param size Address size in bytes.
      */
     private static byte[] getAddressBytes(final int value, final int size) {
         Object tmp = getAddress(value, size);
@@ -2629,7 +2622,7 @@ abstract class GXDLMS {
                     && settings.getClientAddress() != value) {
                 if (notify == null) {
                     throw new RuntimeException("Destination addresses do not match. It is "
-                            + (new Integer(value)).toString() + ". It should be "
+                            + value + ". It should be "
                             + settings.getClientAddress() + ".");
                 }
                 ret = false;

@@ -116,15 +116,15 @@ public enum Conformance {
      * Is Information reports supported by the meter.<br>
      * Information reports is used with Short Name Referencing
      *
-     * @see DATA_NOTIFICATION
-     * @see EVENT_NOTIFICATION
+     * @see #DATA_NOTIFICATION
+     * @see #EVENT_NOTIFICATION
      */
     INFORMATION_REPORT(0x8000),
     /**
      * Is Data Notification supported by the meter.
      *
-     * @see INFORMATION_REPORT
-     * @see EVENT_NOTIFICATION
+     * @see #INFORMATION_REPORT
+     * @see #EVENT_NOTIFICATION
      */
     DATA_NOTIFICATION(0x10000),
     /**
@@ -140,7 +140,7 @@ public enum Conformance {
      * Parameterized access is used with Short Name Referencing example if
      * Profile Generic is read by range or entry.
      *
-     * @see SELECTIVE_ACCESS
+     * @see #SELECTIVE_ACCESS
      */
     PARAMETERIZED_ACCESS(0x40000),
     /**
@@ -159,7 +159,7 @@ public enum Conformance {
      * Selective access is used with Logical Name Referencing example if Profile
      * Generic is read by range or entry.
      *
-     * @see PARAMETERIZED_ACCESS
+     * @see #PARAMETERIZED_ACCESS
      */
     SELECTIVE_ACCESS(0x200000),
     /**
@@ -169,8 +169,8 @@ public enum Conformance {
      * not need to have connection to the server when event notification is
      * send.
      *
-     * @see INFORMATION_REPORT
-     * @see DATA_NOTIFICATION
+     * @see #INFORMATION_REPORT
+     * @see #DATA_NOTIFICATION
      */
     EVENT_NOTIFICATION(0x400000),
     /**

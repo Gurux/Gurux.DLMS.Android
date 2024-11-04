@@ -173,11 +173,11 @@ public class GXDLMSXmlClient extends GXDLMSSecureClient {
         return load(doc, s);
     }
 
-    /**
+    /*
      * Load XML commands from the string.
      *
-     * @param xml      XML string
-     * @param settings Load settings.
+     * @param doc      XML document.
+     * @param loadSettings Load settings.
      * @return Loaded XML objects.
      */
     @SuppressWarnings({"squid:S00112", "squid:S1066", "squid:S135"})

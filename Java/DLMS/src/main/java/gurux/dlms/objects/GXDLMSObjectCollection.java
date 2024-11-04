@@ -39,9 +39,7 @@ import android.util.Xml;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
 

@@ -226,7 +226,7 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public byte[][] removeAddress(final GXDLMSClient client,
                                   final IPv6AddressType type, final InetAddress address)

@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -40,14 +39,12 @@ import gurux.common.enums.MediaState;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSException;
-import gurux.dlms.GXDateTime;
 import gurux.dlms.GXReplyData;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.android.GXDevice;
 import gurux.dlms.android.GXGeneral;
 import gurux.dlms.android.R;
 import gurux.dlms.android.databinding.FragmentMainBinding;
-import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.InterfaceType;
@@ -80,6 +77,12 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     EditText mTrace;
     private FragmentMainBinding binding;
 
+    private static boolean isAdded(final GXDLMSObject it, final String newText) {
+        return it.getObjectType().toString().toLowerCase().contains(newText) ||
+                (it.getLogicalName() != null && it.getLogicalName().toLowerCase().contains(newText)) ||
+                (it.getDescription() != null && it.getDescription().toLowerCase().contains(newText));
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         MainViewModel mainViewModel =
@@ -89,13 +92,13 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         View view = binding.getRoot();
         try {
             mObjects = view.findViewById(R.id.objects);
-            mAttributes =  view.findViewById(R.id.attributes);
+            mAttributes = view.findViewById(R.id.attributes);
             mOpen = view.findViewById(R.id.open);
             mRead = view.findViewById(R.id.read);
             mRefresh = view.findViewById(R.id.refresh);
             mSearch = view.findViewById(R.id.search);
-            mShowTrace =view.findViewById(R.id.showTrace);
-            mTrace =  view.findViewById(R.id.trace);
+            mShowTrace = view.findViewById(R.id.showTrace);
+            mTrace = view.findViewById(R.id.trace);
             mTrace.setVisibility(View.GONE);
 
             int serverAddress = GXDLMSClient.getServerAddress(mDevice.getLogicalAddress(),
@@ -104,14 +107,14 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                     mDevice.getAuthentication().getType(), mDevice.getPassword(), InterfaceType.HDLC);
 
             mShowTrace.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    mTrace.setVisibility(View.VISIBLE);
-                    mAttributes.setVisibility(View.GONE);
-                } else {
-                    mTrace.setVisibility(View.GONE);
-                    mAttributes.setVisibility(View.VISIBLE);
-                }
-            }
+                        if (isChecked) {
+                            mTrace.setVisibility(View.VISIBLE);
+                            mAttributes.setVisibility(View.GONE);
+                        } else {
+                            mTrace.setVisibility(View.GONE);
+                            mAttributes.setVisibility(View.VISIBLE);
+                        }
+                    }
             );
             mOpen.setOnClickListener(v -> {
                 try {
@@ -160,7 +163,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                         executor.execute(() -> handler.post(() -> {
                             try {
                                 read(obj);
-                                showObject( obj);
+                                showObject(obj);
                                 Toast.makeText(getActivity(), "Read done.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 GXGeneral.showError(getActivity(), e, getString(R.string.error));
@@ -178,9 +181,9 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                 Handler handler = new Handler(Looper.getMainLooper());
                 executor.execute(() -> handler.post(() -> {
                     try {
-                    refresh();
-                    showObjects("");
-                    Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
+                        refresh();
+                        showObjects("");
+                        Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         GXGeneral.showError(getActivity(), e, getString(R.string.error));
                     }
@@ -244,8 +247,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         StringBuilder sb = new StringBuilder();
         String newline = System.getProperty("line.separator");
         sb.append(target.getLogicalName());
-        if (target.getShortName() != 0)
-        {
+        if (target.getShortName() != 0) {
             sb.append(" (");
             sb.append(target.getShortName());
             sb.append(")");
@@ -287,12 +289,6 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         mObjects.setAdapter(objects);
     }
 
-    private static boolean isAdded(final GXDLMSObject it, final String newText) {
-        return it.getObjectType().toString().toLowerCase().contains(newText) ||
-                (it.getLogicalName() != null && it.getLogicalName().toLowerCase().contains(newText)) ||
-                (it.getDescription() != null && it.getDescription().toLowerCase().contains(newText));
-    }
-
     /**
      * Close connection to the meter.
      */
@@ -301,8 +297,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         if (media.isOpen()) {
             try {
                 readDLMSPacket2(mClient.releaseRequest());
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 //All meters don't support release. It's OK.
             }
             GXReplyData reply = new GXReplyData();
@@ -374,13 +369,13 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     /**
      * Reads profile generic using start and end time.
      *
-     * @param pg Profile Generic to read.
+     * @param pg    Profile Generic to read.
      * @param start Start time.
-     * @param end End time.
+     * @param end   End time.
      * @throws Exception Occurred exception.
      */
     public void readRowsByRange(final GXDLMSProfileGeneric pg,
-                                final GXDateTime start, GXDateTime end) throws Exception {
+                                final java.util.Date start, final java.util.Date end) throws Exception {
         GXReplyData reply = new GXReplyData();
         byte[][] data = mClient.readRowsByRange(pg, start, end);
         readDataBlock(data, reply);
@@ -390,7 +385,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     /**
      * Reads selected DLMS object with selected attribute index.
      *
-     * @param item Object to read.
+     * @param item           Object to read.
      * @param attributeIndex
      * @return Read value.
      * @throws Exception Occurred exception.
@@ -554,7 +549,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     /*
      * Initializes connection.
      */
-    private void initializeConnection() throws Exception, InterruptedException {
+    private void initializeConnection() throws Exception {
         IGXMedia media = mDevice.getMedia();
         media.open();
         if (media instanceof GXSerial) {
@@ -675,7 +670,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         mClient.parseAareResponse(reply.getData());
         reply.clear();
         // Get challenge Is HLS authentication is used.
-        if (mClient.getAuthentication().getValue() > Authentication.LOW.getValue()) {
+        if (mClient.getIsAuthenticationRequired()) {
             for (byte[] it : mClient.getApplicationAssociationRequest()) {
                 readDLMSPacket(it, reply);
             }
@@ -734,9 +729,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     public void onStop() {
         try {
             close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             GXGeneral.showError(getActivity(), e, getString(R.string.error));
         }
         super.onStop();
@@ -746,9 +739,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     public void onDestroy() {
         try {
             close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             GXGeneral.showError(getActivity(), e, getString(R.string.error));
         }
         super.onDestroy();

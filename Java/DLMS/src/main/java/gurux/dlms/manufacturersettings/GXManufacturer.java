@@ -34,9 +34,6 @@
 
 package gurux.dlms.manufacturersettings;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;

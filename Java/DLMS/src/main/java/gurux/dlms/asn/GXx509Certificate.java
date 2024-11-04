@@ -175,8 +175,9 @@ public class GXx509Certificate {
      * Constructor.
      *
      * @param data Base64 string.
-     * @deprecated use {@link fromPem} instead.
+     * @deprecated use {@link #fromPem} instead.
      */
+    @Deprecated
     public GXx509Certificate(final String data) {
         final String START = "BEGIN CERTIFICATE-----\n";
         final String END = "-----END";

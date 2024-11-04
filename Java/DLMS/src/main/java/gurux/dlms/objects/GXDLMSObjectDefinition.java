@@ -44,6 +44,7 @@ public class GXDLMSObjectDefinition {
      * @return Object type.
      * @deprecated use {@link #getObjectType} instead.
      */
+    @Deprecated
     public final ObjectType getClassId() {
         return objectType;
     }
@@ -52,6 +53,7 @@ public class GXDLMSObjectDefinition {
      * @param value Object type.
      * @deprecated use {@link #setObjectType} instead.
      */
+    @Deprecated
     public final void setClassId(final ObjectType value) {
         objectType = value;
     }

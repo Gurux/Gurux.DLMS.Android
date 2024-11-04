@@ -58,7 +58,7 @@ public enum Access {
      */
     OBJECT_UNAVAILABLE(4);
 
-    private int value;
+    private final int value;
     private static java.util.HashMap<Integer, Access> mappings;
 
     private static java.util.HashMap<Integer, Access> getMappings() {

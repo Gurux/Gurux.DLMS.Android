@@ -232,7 +232,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] slaveInstall(final GXDLMSClient client, byte primaryAddress)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -252,7 +252,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] slaveDeInstall(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -271,7 +271,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] capture(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -290,7 +290,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] resetAlarm(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -309,7 +309,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] synchronizeClock(final GXDLMSClient client) throws InvalidKeyException,
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
@@ -329,7 +329,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] sendData(final GXDLMSClient client, final GXMBusClientData[] data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -366,7 +366,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] setEncryptionKey(GXDLMSClient client, byte[] encryptionKey)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
@@ -395,7 +395,7 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     public final byte[][] transferKey(GXDLMSClient client, byte[] encryptionKey)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
