@@ -94,6 +94,11 @@ public class GXDevice {
      */
     private String mAuthenticationKey;
 
+    /**
+     * Logical name of the invocation counter.
+     */
+    private String mInvocationCounter;
+
     /*
      * Client address.
      */
@@ -241,6 +246,7 @@ public class GXDevice {
         mAuthenticationKey = value;
     }
 
+
     /**
      * @return Physical address.
      */
@@ -377,5 +383,21 @@ public class GXDevice {
      */
     public void setInterfaceType(final InterfaceType value) {
         interfaceType = value;
+    }
+
+    /**
+     *
+     * @return Logical name of the invocation counter.
+     */
+    public String getInvocationCounter() {
+        return mInvocationCounter;
+    }
+
+    /**
+     *
+     * @param value Logical name of the invocation counter.
+     */
+    public void setInvocationCounter(final String value) {
+        mInvocationCounter = value;
     }
 }

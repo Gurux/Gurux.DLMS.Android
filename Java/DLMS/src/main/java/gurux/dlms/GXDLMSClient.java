@@ -3426,4 +3426,11 @@ public class GXDLMSClient {
         }
         return true;
     }
+
+    /**
+     * @return Is pre-established connection used.
+     */
+    public boolean isPreEstablishedConnection() {
+        return settings.getPreEstablishedSystemTitle() != null;
+    }
 }

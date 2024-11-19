@@ -36,6 +36,7 @@ import gurux.common.ReceiveEventArgs;
 import gurux.common.ReceiveParameters;
 import gurux.common.TraceEventArgs;
 import gurux.common.enums.MediaState;
+import gurux.common.enums.TraceLevel;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSException;
@@ -45,11 +46,14 @@ import gurux.dlms.android.GXDevice;
 import gurux.dlms.android.GXGeneral;
 import gurux.dlms.android.R;
 import gurux.dlms.android.databinding.FragmentMainBinding;
+import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.ObjectType;
 import gurux.dlms.enums.RequestTypes;
+import gurux.dlms.enums.Security;
+import gurux.dlms.objects.GXDLMSData;
 import gurux.dlms.objects.GXDLMSDemandRegister;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSObjectCollection;
@@ -289,18 +293,51 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         mObjects.setAdapter(objects);
     }
 
+
+    void disconnect() throws Exception {
+        IGXMedia media = mDevice.getMedia();
+        if (media != null && media.isOpen() && !mClient.isPreEstablishedConnection()) {
+            GXReplyData reply = new GXReplyData();
+            readDLMSPacket(mClient.disconnectRequest(), reply);
+        }
+    }
+
+    void release() throws Exception {
+        IGXMedia media = mDevice.getMedia();
+        if (media != null && media.isOpen()) {
+            GXReplyData reply = new GXReplyData();
+            try {
+                // Release is call only for secured connections.
+                // All meters are not supporting Release and it's causing
+                // problems.
+                if (mClient.getInterfaceType() == InterfaceType.WRAPPER || (mClient.getInterfaceType() == InterfaceType.HDLC
+                        && mClient.getCiphering().getSecurity() != Security.NONE)) {
+                    readDataBlock(mClient.releaseRequest(), reply);
+                }
+            } catch (Exception e) {
+                // All meters don't support release.
+            }
+        }
+    }
+
     /**
      * Close connection to the meter.
      */
     private void close() throws Exception {
         IGXMedia media = mDevice.getMedia();
+        GXReplyData reply = new GXReplyData();
         if (media.isOpen()) {
             try {
-                readDLMSPacket2(mClient.releaseRequest());
+                // Release is call only for secured connections.
+                // All meters are not supporting Release and it's causing
+                // problems.
+                if (mClient.getInterfaceType() == InterfaceType.WRAPPER || (mClient.getInterfaceType() == InterfaceType.HDLC
+                        && mClient.getCiphering().getSecurity() != Security.NONE)) {
+                    readDataBlock(mClient.releaseRequest(), reply);
+                }
             } catch (Exception e) {
                 //All meters don't support release. It's OK.
             }
-            GXReplyData reply = new GXReplyData();
             readDLMSPacket(mClient.disconnectRequest(), reply);
             media.close();
         }
@@ -392,10 +429,9 @@ public class MainFragment extends Fragment implements IGXMediaListener {
      */
     public Object readObject(GXDLMSObject item, int attributeIndex)
             throws Exception {
-        byte[] data = mClient.read(item.getName(), item.getObjectType(),
-                attributeIndex)[0];
+        byte[][] data = mClient.read(item.getName(), item.getObjectType(),
+                attributeIndex);
         GXReplyData reply = new GXReplyData();
-
         readDataBlock(data, reply);
         // Update data type on read.
         if (item.getDataType(attributeIndex) == DataType.NONE) {
@@ -530,9 +566,8 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     /**
      * Reads next data block.
      *
-     * @param data
-     * @return
-     * @throws Exception
+     * @param data Send data.
+     * @param reply Reply data.
      */
     void readDataBlock(byte[] data, GXReplyData reply) throws Exception {
         java.util.Set<RequestTypes> rt;
@@ -547,11 +582,76 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     }
 
     /*
-     * Initializes connection.
+     * Read Invocation counter (frame counter) from the meter and update it.
      */
-    private void initializeConnection() throws Exception {
-        IGXMedia media = mDevice.getMedia();
-        media.open();
+    private void updateFrameCounter(IGXMedia media) throws Exception {
+        // Read frame counter if GeneralProtection is used.
+        if (mDevice.getInvocationCounter() != null && mClient.getCiphering() != null
+                && mClient.getCiphering().getSecurity() != Security.NONE) {
+            // Media settings are saved and they are restored when HDLC with
+            // mode E is used.
+            String mediaSettings = media.getSettings();
+            initializeOpticalHead(media);
+            byte[] data;
+            GXReplyData reply = new GXReplyData();
+            reply.clear();
+            int add = mClient.getClientAddress();
+            int serverAdd = mClient.getServerAddress();
+            byte[] serverSt = mClient.getServerSystemTitle();
+            Authentication auth = mClient.getAuthentication();
+            Security security = mClient.getCiphering().getSecurity();
+            byte[] challenge = mClient.getCtoSChallenge();
+            try {
+                mClient.setServerSystemTitle(null);
+                mClient.setClientAddress(16);
+                mClient.setAuthentication(Authentication.NONE);
+                mClient.getCiphering().setSecurity(Security.NONE);
+                data = mClient.snrmRequest();
+                if (data.length != 0) {
+                    readDLMSPacket(data, reply);
+                    // Has server accepted client.
+                    mClient.parseUAResponse(reply.getData());
+                }
+                // Generate AARQ request.
+                // Split requests to multiple packets if needed.
+                // If password is used all data might not fit to one packet.
+                try {
+                    if (!mClient.isPreEstablishedConnection()) {
+                        reply.clear();
+                        readDataBlock(mClient.aarqRequest(), reply);
+                        // Parse reply.
+                        mClient.parseAareResponse(reply.getData());
+                    }
+                    reply.clear();
+                    GXDLMSData d = new GXDLMSData(mDevice.getInvocationCounter());
+                    readObject(d, 2);
+                    long iv = ((Number) d.getValue()).longValue();
+                    iv += 1;
+                    mClient.getCiphering().setInvocationCounter(iv);
+                    writeTrace("Invocation counter: " + String.valueOf(iv));
+                    reply.clear();
+                    disconnect();
+                    // Reset media settings back to default.
+                    if (mClient.getInterfaceType() == InterfaceType.HDLC_WITH_MODE_E) {
+                        media.close();
+                        media.setSettings(mediaSettings);
+                    }
+                } catch (Exception Ex) {
+                    disconnect();
+                    throw Ex;
+                }
+            } finally {
+                mClient.setServerSystemTitle(serverSt);
+                mClient.setClientAddress(add);
+                mClient.setServerAddress(serverAdd);
+                mClient.setAuthentication(auth);
+                mClient.getCiphering().setSecurity(security);
+                mClient.setCtoSChallenge(challenge);
+            }
+        }
+    }
+
+    void initializeOpticalHead(IGXMedia media) throws Exception {
         if (media instanceof GXSerial) {
             GXSerial serial = (GXSerial) media;
             if (mDevice.getInterfaceType() == InterfaceType.HDLC_WITH_MODE_E) {
@@ -652,6 +752,16 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                 }
             }
         }
+    }
+
+    /*
+     * Initializes connection.
+     */
+    private void initializeConnection() throws Exception {
+        IGXMedia media = mDevice.getMedia();
+        media.open();
+        updateFrameCounter(media);
+        initializeOpticalHead(media);
         GXReplyData reply = new GXReplyData();
         byte[] data = mClient.snrmRequest();
         if (data.length != 0) {
