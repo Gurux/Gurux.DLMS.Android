@@ -163,5 +163,6 @@ public class GXDLMSSecureClient extends GXDLMSClient {
      */
     public void setServerSystemTitle(final byte[] value) {
         getSettings().setSourceSystemTitle(value);
+        getSettings().setPreEstablishedSystemTitle(value);
     }
 }
