@@ -43,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDevice.setMedia(new GXSerial(this));
+
+        GXSerial serial = (GXSerial)mDevice.getMedia();
+        if (serial.getPorts().length != 0){
+            serial.setPort(serial.getPorts()[0]);
+        }
         mManufacturers = new GXManufacturerCollection();
         GXManufacturerCollection.readManufacturerSettings(this, mManufacturers);
         if ((mDevice.getManufacturer() == null || mDevice.getManufacturer().equals("")) &&

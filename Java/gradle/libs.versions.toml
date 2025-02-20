@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.7.3"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -8,8 +8,8 @@ material = "1.12.0"
 constraintlayout = "2.2.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
-navigationFragment = "2.8.4"
-navigationUi = "2.8.4"
+navigationFragment = "2.8.7"
+navigationUi = "2.8.7"
 guruxCommonAndroid = "2.0.2"
 guruxSerialAndroid = "2.0.8"
 

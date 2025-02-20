@@ -37,6 +37,7 @@ import gurux.common.ReceiveParameters;
 import gurux.common.TraceEventArgs;
 import gurux.common.enums.MediaState;
 import gurux.common.enums.TraceLevel;
+import gurux.dlms.GXArray;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSException;
@@ -262,7 +263,35 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         sb.append("------------------------------------------------------------------");
         sb.append(newline);
         for (int pos = 0; pos != target.getAttributeCount(); ++pos) {
-            sb.append(target.getValues()[pos]);
+            Object value = target.getValues()[pos];
+            if (value instanceof GXArray)
+            {
+                sb.append("{");
+                GXArray arr = (GXArray) value;
+                boolean first = true;
+                for(Object it : arr)
+                {
+                    if (first) {
+                        first = false;
+                    }else {
+                        sb.append(", ");
+                    }
+                    if (it instanceof GXSimpleEntry) {
+                        GXSimpleEntry<?,?> e = (GXSimpleEntry<?,?>) it;
+                        sb.append("[");
+                        sb.append(e.getKey());
+                        sb.append(", ");
+                        sb.append(e.getValue());
+                        sb.append("]");
+                    }
+                    else {
+                        sb.append(value);
+                    }
+                }
+                sb.append("}");
+            }else {
+                sb.append(value);
+            }
             sb.append(newline);
             sb.append("------------------------------------------------------------------");
             sb.append(newline);
