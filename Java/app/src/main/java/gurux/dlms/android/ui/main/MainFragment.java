@@ -289,7 +289,16 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                     }
                 }
                 sb.append("}");
-            }else {
+            }
+            else if (value instanceof GXSimpleEntry) {
+                GXSimpleEntry<?,?> e = (GXSimpleEntry<?,?>) value;
+                sb.append("[");
+                sb.append(e.getKey());
+                sb.append(", ");
+                sb.append(e.getValue());
+                sb.append("]");
+            }
+            else {
                 sb.append(value);
             }
             sb.append(newline);
