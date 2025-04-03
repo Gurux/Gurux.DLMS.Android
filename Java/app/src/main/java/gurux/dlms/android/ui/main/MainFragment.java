@@ -818,7 +818,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         mClient.parseAareResponse(reply.getData());
         reply.clear();
         // Get challenge Is HLS authentication is used.
-        if (mClient.getIsAuthenticationRequired()) {
+        if (mClient.getAuthentication().getValue() > Authentication.LOW.getValue()) {
             for (byte[] it : mClient.getApplicationAssociationRequest()) {
                 readDLMSPacket(it, reply);
             }
