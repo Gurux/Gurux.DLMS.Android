@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -46,12 +48,12 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXSimpleEntry;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -747,20 +749,20 @@ public class GXDLMSMBusClient extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
+    public String[] getNames(final Context context) {
         if (version == 0) {
-            return new String[]{"Logical Name", "MBus Port Reference", "Capture Definition",
+            return new String[]{context.getString(R.string.logical_name), "MBus Port Reference", "Capture Definition",
                     "Capture Period", "Primary Address", "Identification Number", "Manufacturer ID",
                     "Version", "Device Type", "Access Number", "Status", "Alarm"};
         }
-        return new String[]{"Logical Name", "MBus Port Reference", "Capture Definition",
+        return new String[]{context.getString(R.string.logical_name), "MBus Port Reference", "Capture Definition",
                 "Capture Period", "Primary Address", "Identification Number", "Manufacturer ID",
                 "Version", "Device Type", "Access Number", "Status", "Alarm", "Configuration",
                 "Encryption Key Status"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Slave install", "Slave deinstall", "Capture", "Reset alarm",
                 "Synchronize clock", "Data send", "Set encryption key", "Transfer key"};
     }

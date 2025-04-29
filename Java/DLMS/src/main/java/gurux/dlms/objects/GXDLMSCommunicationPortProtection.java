@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -43,9 +45,9 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -528,14 +530,14 @@ public class GXDLMSCommunicationPortProtection extends GXDLMSObject implements I
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Protection mode", "Allowed failed attempts",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Protection mode", "Allowed failed attempts",
                 "Initial lockout time", "Steepness factor", "Max lockout time", "Port",
                 "Protection status", "Failed attempts", "Cumulative failed attempts"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Reset"};
     }
 }

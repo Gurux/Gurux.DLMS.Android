@@ -34,11 +34,14 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.HashSet;
 import java.util.Set;
 
 
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -570,15 +573,15 @@ public class GXDLMSPrimeNbOfdmPlcMacFunctionalParameters extends GXDLMSObject im
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "LnId", "LsId", "SId", "SNa", "State", "ScpLength", "NodeHierarchyLevel",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "LnId", "LsId", "SId", "SNa", "State", "ScpLength", "NodeHierarchyLevel",
                 "BeaconSlotCount", "BeaconRxSlot", "BeaconTxSlot", "BeaconRxFrequency", "BeaconTxFrequency",
                 "Capabilities"};
 
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

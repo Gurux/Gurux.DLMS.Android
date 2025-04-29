@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -53,12 +55,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXSimpleEntry;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.asn.GXAsn1Converter;
 import gurux.dlms.asn.GXPkcs10;
@@ -1483,13 +1485,32 @@ public class GXDLMSSecuritySetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Security Policy", "Security Suite",
-                "Client System Title", "Server System Title"};
+    public String[] getNames(final Context context) {
+        List<String> list = new ArrayList<String>();
+        list.add(context.getString(R.string.logical_name));
+        list.add(context.getString(R.string.security_policy));
+        list.add(context.getString(R.string.security_suite));
+        list.add(context.getString(R.string.client_system_title));
+        list.add(context.getString(R.string.server_system_title));
+        if (version > 0) {
+            list.add(context.getString(R.string.certificates));
+        }
+        return list.toArray(new String[0]);
     }
 
     @Override
-    public String[] getMethodNames() {
-        return new String[]{"Security activate", "Key transfer"};
+    public String[] getMethodNames(final Context context) {
+        List<String> list = new ArrayList<String>();
+        list.add(context.getString(R.string.security_activate));
+        list.add(context.getString(R.string.key_transfer));
+        if (version > 0) {
+            list.add(context.getString(R.string.key_agreement));
+            list.add(context.getString(R.string.generate_key_pair));
+            list.add(context.getString(R.string.generate_certificate_request));
+            list.add(context.getString(R.string.import_certificate));
+            list.add(context.getString(R.string.export_certificate));
+            list.add(context.getString(R.string.remove_certificate));
+        }
+        return list.toArray(new String[0]);
     }
 }

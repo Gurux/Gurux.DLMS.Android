@@ -34,16 +34,18 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
 
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -747,15 +749,15 @@ public class GXDLMSCharge extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "TotalAmountPaid", "ChargeType", "Priority",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "TotalAmountPaid", "ChargeType", "Priority",
                 "UnitChargeActive", "UnitChargePassive", "UnitChargeActivationTime", "Period",
                 "ChargeConfiguration", "LastCollectionTime", "LastCollectionAmount",
                 "TotalAmountRemaining", "Proportion"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Update unit charge", "Activate passive unit charge", "Collect",
                 "Update total amount remaining", "Set total amount remaining"};
     }

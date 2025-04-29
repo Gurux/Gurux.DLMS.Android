@@ -35,8 +35,11 @@
 package gurux.dlms.objects;
 
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -359,14 +362,14 @@ public class GXDLMSIECLocalPortSetup extends GXDLMSObject implements IGXDLMSBase
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Default Mode", "Default Baud rate",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Default Mode", "Default Baud rate",
                 "Proposed Baud rate", "Response Time", "Device Address", "Password 1", "Password 2",
                 "Password 5"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

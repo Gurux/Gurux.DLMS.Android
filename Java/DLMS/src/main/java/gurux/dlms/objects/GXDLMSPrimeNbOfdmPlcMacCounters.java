@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -46,6 +48,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -403,15 +406,18 @@ public class GXDLMSPrimeNbOfdmPlcMacCounters extends GXDLMSObject
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "TxDataPktCount",
-                "RxDataPktCount", "TxCtrlPktCount", "RxCtrlPktCount",
-                "CsmaFailCount", "CsmaChBusyCount"};
-
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name),
+                context.getString(R.string.tx_data_packet_count),
+                context.getString(R.string.rx_data_packet_count),
+                context.getString(R.string.tx_ctrl_packet_count),
+                context.getString(R.string.rx_ctrl_packet_count),
+                context.getString(R.string.csma_fail_count), 
+                context.getString(R.string.csma_channel_busy_count)};
     }
 
     @Override
-    public String[] getMethodNames() {
-        return new String[]{"Reset"};
+    public String[] getMethodNames(final Context context) {
+        return new String[]{context.getString(R.string.reset)};
     }
 }

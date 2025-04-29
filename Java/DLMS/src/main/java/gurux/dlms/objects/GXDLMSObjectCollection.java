@@ -44,7 +44,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 import gurux.dlms.GXDLMSClient;
+import gurux.dlms.enums.AccessMode;
+import gurux.dlms.enums.AccessMode3;
 import gurux.dlms.enums.DataType;
+import gurux.dlms.enums.MethodAccessMode;
+import gurux.dlms.enums.MethodAccessMode3;
 import gurux.dlms.enums.ObjectType;
 
 /**
@@ -156,6 +160,7 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
             int event;
             GXDLMSObject obj = null;
             ObjectType type;
+            int pos = 0;
             while ((event = parser.next()) != XmlPullParser.END_DOCUMENT) {
                 if (event == XmlPullParser.START_TAG) {
                     String target = parser.getName();
@@ -166,26 +171,45 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
                                 .valueOf(parser.getAttributeValue(0));
                         obj = GXDLMSClient.createObject(type);
                         add(obj);
-                    } else if ("SN".compareToIgnoreCase(target) == 0) {
-                        String data = readText(parser);
-                        obj.setShortName(Integer.parseInt(data));
-                    } else if ("LN".compareToIgnoreCase(target) == 0) {
-                        String data = readText(parser);
-                        obj.setLogicalName(data);
-                    } else if ("Description".compareToIgnoreCase(target) == 0) {
-                        String data = readText(parser);
-                        obj.setDescription(data);
-                    } else if ("DataTypes".compareToIgnoreCase(target) == 0 ||
-                            "UIDataTypes".compareToIgnoreCase(target) == 0) {
-                        event = parser.next();
-                    } else if ("DataType".compareToIgnoreCase(target) == 0) {
-                        index = Integer.parseInt(parser.getAttributeValue(0));
-                        DataType dt = DataType.forValue(Integer.parseInt(readText(parser)));
-                        obj.setDataType(index, dt);
-                    } else if ("UIDataType".compareToIgnoreCase(target) == 0) {
-                        index = Integer.parseInt(parser.getAttributeValue(0));
-                        DataType dt = DataType.forValue(Integer.parseInt(readText(parser)));
-                        obj.setUIDataType(index, dt);
+                    } else if (obj != null) {
+                        if ("SN".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            obj.setShortName(Integer.parseInt(data));
+                        } else if ("LN".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            obj.setLogicalName(data);
+                        } else if ("Description".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            obj.setDescription(data);
+                        } else if ("Version".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            obj.setVersion(Integer.parseInt(data));
+                        }else if ("Access".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            pos = 0;
+                            for (byte it : data.getBytes()) {
+                                ++pos;
+                                obj.setAccess(pos, AccessMode.forValue(it - 0x30));
+                            }
+                        } else if ("MethodAccess".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            pos = 0;
+                            for (byte it : data.getBytes()) {
+                                ++pos;
+                                obj.setMethodAccess(pos, MethodAccessMode.forValue(it - 0x30));
+                            }
+                        } else if ("DataTypes".compareToIgnoreCase(target) == 0 ||
+                                "UIDataTypes".compareToIgnoreCase(target) == 0) {
+                            event = parser.next();
+                        } else if ("DataType".compareToIgnoreCase(target) == 0) {
+                            index = Integer.parseInt(parser.getAttributeValue(0));
+                            DataType dt = DataType.forValue(Integer.parseInt(readText(parser)));
+                            obj.setDataType(index, dt);
+                        } else if ("UIDataType".compareToIgnoreCase(target) == 0) {
+                            index = Integer.parseInt(parser.getAttributeValue(0));
+                            DataType dt = DataType.forValue(Integer.parseInt(readText(parser)));
+                            obj.setUIDataType(index, dt);
+                        }
                     }
                 }
             }
@@ -198,18 +222,24 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
      * @return XML string.
      */
     public final String getXml() {
+        int lnVersion = 2;
+        for (GXDLMSObject it : this) {
+            if (it instanceof GXDLMSAssociationLogicalName) {
+                lnVersion = ((GXDLMSAssociationLogicalName) it).getVersion();
+            }
+        }
         StringBuffer sb = new StringBuffer();
-        String nl = System.getProperty("line.separator");
+        String nl = System.lineSeparator();
         sb.append("<Objects>");
         sb.append(nl);
         for (GXDLMSObject it : this) {
             sb.append("<Object Type=\"");
-            sb.append(String.valueOf(it.getObjectType()) + "\">");
+            sb.append(it.getObjectType() + "\">");
             sb.append(nl);
             // Add SN
             if (it.getShortName() != 0) {
                 sb.append("<SN>");
-                sb.append(String.valueOf(it.getShortName()));
+                sb.append(it.getShortName());
                 sb.append("</SN>");
                 sb.append(nl);
             }
@@ -226,6 +256,47 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
                 sb.append("</Description>");
                 sb.append(nl);
             }
+            // Add version .
+            sb.append("<Version>");
+            sb.append(it.getVersion());
+            sb.append("</Version>");
+            sb.append(nl);
+            //Add access rights.
+            if (lnVersion < 3) {
+                sb.append("<Access>");
+                for (int pos = 1; pos != it.getAttributeCount() + 1; ++pos) {
+                    sb.append(it.getAccess(pos).getValue());
+                }
+                sb.append("</Access>");
+                sb.append("<MethodAccess>");
+                for (int pos = 1; pos != it.getMethodCount() + 1; ++pos) {
+                    sb.append(it.getMethodAccess(pos).getValue());
+                }
+                sb.append("</MethodAccess>");
+            } else {
+                sb.append("<Access3>");
+                int value;
+                for (int pos = 1; pos != it.getAttributeCount() + 1; ++pos) {
+                    // Set highest bit to save integer with two chars.
+                    value = 0x8000;
+                    for (AccessMode3 it2 : it.getAccess3(pos)) {
+                        value |= it2.getValue();
+                    }
+                    sb.append(Integer.toHexString(value));
+                }
+                sb.append("</Access3>");
+                sb.append("<MethodAccess3>");
+                for (int pos = 1; pos != it.getMethodCount() + 1; ++pos) {
+                    // Set highest bit to save integer with two chars.
+                    value = 0x8000;
+                    for (MethodAccessMode3 it2 : it.getMethodAccess3(pos)) {
+                        value |= it2.getValue();
+                    }
+                    sb.append(Integer.toHexString(value));
+                }
+                sb.append("</MethodAccess3>");
+            }
+
             //Append data types.
             sb.append("<DataTypes>");
             for (int pos = 1; pos <= it.getAttributeCount(); ++pos) {

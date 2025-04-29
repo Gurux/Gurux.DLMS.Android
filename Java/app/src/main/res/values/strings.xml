@@ -40,6 +40,12 @@
     <string name="menu_meter_settings">Meter Settings</string>
     <string name="menu_media_settings">Media Settings</string>
     <string name="menu_manufacturers">Manufacturers</string>
-    <string name="cancel">Cancel</string>
-    <string name="ok">Ok</string>
+    <string name="media">Media</string>
+    <string name="logical_name">Logical Name</string>
+    <string name="short_name">Short Name</string>
+    <string name="unknown">Unknown</string>
+    <string name="copyright">Copyright (c) 1998-2025 Gurux Ltd. All rights reserved.</string>
+    <string name="readAssociationView">You need to read Association view to see all objects what the meter can offer. Do you want to do it now?</string>
+    <string name="readScalers">You need to read scalers and units for the register objects. Do you want to do it now?</string>
+    <string name="actionCompleted">Action completed successfully</string>
 </resources>

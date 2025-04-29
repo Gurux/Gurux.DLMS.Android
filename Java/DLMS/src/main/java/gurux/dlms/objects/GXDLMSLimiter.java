@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,7 @@ import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -625,14 +628,14 @@ public class GXDLMSLimiter extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Monitored Value", "Active Threshold", "Normal Threshold",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Monitored Value", "Active Threshold", "Normal Threshold",
                 "Emergency Threshold", "Threshold Duration Min Over", "Threshold Duration Min Under",
                 "Emergency Profile", "Emergency Profile Group", "Emergency Profile Active", "Actions"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

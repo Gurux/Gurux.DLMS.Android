@@ -33,5 +33,9 @@
             android:id="@+id/nav_manufacturers"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Manufacturers" />
+        <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/info_24px"
+            android:title="@string/info" />
     </group>
 </menu>

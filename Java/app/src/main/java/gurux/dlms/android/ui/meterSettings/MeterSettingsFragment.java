@@ -314,7 +314,7 @@ public class MeterSettingsFragment extends Fragment {
             text.setText(mDevice.getPassword());
             builder.setTitle(R.string.password)
                     .setView(view)
-                    .setPositiveButton(R.string.ok, (dialog, id) ->
+                    .setPositiveButton(android.R.string.ok, (dialog, id) ->
                     {
                         try {
                             mDevice.setPassword(String.valueOf(text.getText()));
@@ -324,7 +324,7 @@ public class MeterSettingsFragment extends Fragment {
                             GXGeneral.showError(getActivity(), ex, getString(R.string.error));
                         }
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, id) ->
+                    .setNegativeButton(android.R.string.cancel, (dialog, id) ->
                     {
                         dialog.dismiss();
                     }).show();
@@ -348,7 +348,7 @@ public class MeterSettingsFragment extends Fragment {
             text.setText(sdf.format(new Date(mDevice.getWaitTime())));
             builder.setTitle(R.string.waittime)
                     .setView(view)
-                    .setPositiveButton(R.string.ok, (dialog, id) ->
+                    .setPositiveButton(android.R.string.ok, (dialog, id) ->
                     {
                         try {
                             mDevice.setWaitTime((int) sdf.parse(String.valueOf(text.getText())).getTime());
@@ -358,7 +358,7 @@ public class MeterSettingsFragment extends Fragment {
                             GXGeneral.showError(getActivity(), ex, getString(R.string.error));
                         }
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, id) ->
+                    .setNegativeButton(android.R.string.cancel, (dialog, id) ->
                     {
                         dialog.dismiss();
                     }).show();
@@ -379,7 +379,7 @@ public class MeterSettingsFragment extends Fragment {
             text.setText(String.valueOf(mDevice.getClientAddress()));
             builder.setTitle(R.string.waittime)
                     .setView(view)
-                    .setPositiveButton(R.string.ok, (dialog, id) ->
+                    .setPositiveButton(android.R.string.ok, (dialog, id) ->
                     {
                         try {
                             mDevice.setClientAddress(Integer.parseInt(String.valueOf(text.getText())));
@@ -389,7 +389,7 @@ public class MeterSettingsFragment extends Fragment {
                             GXGeneral.showError(getActivity(), ex, getString(R.string.error));
                         }
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, id) ->
+                    .setNegativeButton(android.R.string.cancel, (dialog, id) ->
                     {
                         dialog.dismiss();
                     }).show();
@@ -447,7 +447,7 @@ public class MeterSettingsFragment extends Fragment {
             text.setText(String.valueOf(mDevice.getPhysicalAddress()));
             builder.setTitle(R.string.physicalAddress)
                     .setView(view)
-                    .setPositiveButton(R.string.ok, (dialog, id) ->
+                    .setPositiveButton(android.R.string.ok, (dialog, id) ->
                     {
                         try {
                             mDevice.setPhysicalAddress(Integer.parseInt(String.valueOf(text.getText())));
@@ -457,7 +457,7 @@ public class MeterSettingsFragment extends Fragment {
                             GXGeneral.showError(getActivity(), ex, getString(R.string.error));
                         }
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, id) ->
+                    .setNegativeButton(android.R.string.cancel, (dialog, id) ->
                     {
                         dialog.dismiss();
                     }).show();
@@ -478,7 +478,7 @@ public class MeterSettingsFragment extends Fragment {
             text.setText(String.valueOf(mDevice.getLogicalAddress()));
             builder.setTitle(R.string.logicalAddress)
                     .setView(view)
-                    .setPositiveButton(R.string.ok, (dialog, id) ->
+                    .setPositiveButton(android.R.string.ok, (dialog, id) ->
                     {
                         try {
                             mDevice.setLogicalAddress(Integer.parseInt(String.valueOf(text.getText())));
@@ -488,7 +488,7 @@ public class MeterSettingsFragment extends Fragment {
                             GXGeneral.showError(getActivity(), ex, getString(R.string.error));
                         }
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, id) ->
+                    .setNegativeButton(android.R.string.cancel, (dialog, id) ->
                     {
                         dialog.dismiss();
                     }).show();

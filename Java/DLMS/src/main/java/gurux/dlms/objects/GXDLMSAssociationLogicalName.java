@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -54,7 +56,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXCryptoKeyParameter;
@@ -64,6 +65,7 @@ import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.IGXCryptoNotifier;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.asn.GXAsn1Converter;
 import gurux.dlms.asn.GXAsn1Integer;
@@ -2060,26 +2062,26 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     @Override
-    public String[] getNames() {
+    public String[] getNames(final Context context) {
         if (version == 0) {
-            return new String[]{"Logical Name", "Object List", "Associated partners Id",
+            return new String[]{context.getString(R.string.logical_name), "Object List", "Associated partners Id",
                     "Application Context Name", "xDLMS Context Info",
                     "Authentication Mechanism Name", "Secret", "Association Status"};
         }
         if (version == 1) {
-            return new String[]{"Logical Name", "Object List", "Associated partners Id",
+            return new String[]{context.getString(R.string.logical_name), "Object List", "Associated partners Id",
                     "Application Context Name", "xDLMS Context Info",
                     "Authentication Mechanism Name", "Secret", "Association Status",
                     "Security Setup Reference"};
         }
-        return new String[]{"Logical Name", "Object List", "Associated partners Id",
+        return new String[]{context.getString(R.string.logical_name), "Object List", "Associated partners Id",
                 "Application Context Name", "xDLMS Context Info", "Authentication Mechanism Name",
                 "Secret", "Association Status", "Security Setup Reference", "UserList",
                 "CurrentUser"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         if (version > 1)
             return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object",
                     "Remove object", "Add user", "Remove user"};

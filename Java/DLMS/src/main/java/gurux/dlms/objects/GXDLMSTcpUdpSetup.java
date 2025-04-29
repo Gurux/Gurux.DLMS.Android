@@ -35,7 +35,10 @@
 package gurux.dlms.objects;
 
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -302,14 +305,14 @@ public class GXDLMSTcpUdpSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Port", "IP Reference", "Maximum Segment Size",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Port", "IP Reference", "Maximum Segment Size",
                 "Maximum Simultaneous Connections", "Inactivity Timeout"};
 
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

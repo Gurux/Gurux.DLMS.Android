@@ -35,7 +35,10 @@
 package gurux.dlms.objects;
 
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -258,13 +261,16 @@ public class GXDLMSPrimeNbOfdmPlcApplicationsIdentification extends GXDLMSObject
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "FirmwareVersion", "VendorId", "ProductId"};
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), 
+                context.getString(R.string.firmware_version), 
+                context.getString(R.string.vendor_id), 
+                context.getString(R.string.product_id)};
 
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

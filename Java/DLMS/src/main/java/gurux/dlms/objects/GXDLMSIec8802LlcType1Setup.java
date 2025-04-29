@@ -35,7 +35,10 @@
 package gurux.dlms.objects;
 
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -188,12 +191,12 @@ public class GXDLMSIec8802LlcType1Setup extends GXDLMSObject implements IGXDLMSB
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "MaximumOctetsUiPdu"};
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "MaximumOctetsUiPdu"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

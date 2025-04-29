@@ -33,8 +33,11 @@
 //---------------------------------------------------------------------------
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXUInt32;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -339,14 +342,14 @@ public class GXDLMSG3PlcMacLayerCounters extends GXDLMSObject implements IGXDLMS
     }
 
     @Override
-    public final String[] getNames() {
-        return new String[]{"Logical Name", "TxDataPacketCount", "RxDataPacketCount", "TxCmdPacketCount",
+    public final String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "TxDataPacketCount", "RxDataPacketCount", "TxCmdPacketCount",
                 "RxCmdPacketCount", " CSMAFailCount", "CSMANoAckCount", "BadCrcCount", "TxDataBroadcastCount",
                 " RxDataBroadcastCount"};
     }
 
     @Override
-    public final String[] getMethodNames() {
+    public final String[] getMethodNames(final Context context) {
         return new String[]{"Reset"};
     }
 

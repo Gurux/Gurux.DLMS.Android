@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -55,6 +57,7 @@ import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.GXStructure;
 import gurux.dlms.GXUInt16;
 import gurux.dlms.GXUInt8;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -922,8 +925,8 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getNames() {
-        return new String[]{"Logical Name", "MacShortAddress", "MacRcCoord", "MacPANId", "MackeyTable ",
+    public final String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "MacShortAddress", "MacRcCoord", "MacPANId", "MackeyTable ",
                 "MacFrameCounter", "MacToneMask", "MacTmrTtl", "MacMaxFrameRetries", "MacneighbourTableEntryTtl",
                 "MacNeighbourTable", "MachighPriorityWindowSize", "MacCscmFairnessLimit",
                 "MacBeaconRandomizationWindowLength", "MacA", "MacK", "MacMinCwAttempts", "MacCenelecLegacyMode",
@@ -932,7 +935,7 @@ public class GXDLMSG3PlcMacSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getMethodNames() {
+    public final String[] getMethodNames(final Context context) {
         return new String[]{"MAC get neighbour table entry", "MAC get POS tableentry"};
     }
 

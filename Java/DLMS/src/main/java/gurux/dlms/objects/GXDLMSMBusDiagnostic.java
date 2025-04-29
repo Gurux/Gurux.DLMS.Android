@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +44,7 @@ import java.security.SignatureException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
@@ -50,6 +53,7 @@ import gurux.dlms.GXEnum;
 import gurux.dlms.GXStructure;
 import gurux.dlms.GXUInt32;
 import gurux.dlms.GXUInt8;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -229,7 +233,6 @@ public class GXDLMSMBusDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     private GXCaptureTime captureTime;
 
     /**
-     *
      * @return Last time when ReceivedSignalStrength, LinkStatus, Transmissions,
      * ReceivedFrames or FailedReceivedFrames was changed.
      */
@@ -238,7 +241,6 @@ public class GXDLMSMBusDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     *
      * @param value Last time when ReceivedSignalStrength, LinkStatus,
      *              Transmissions, ReceivedFrames or FailedReceivedFrames was
      *              changed.
@@ -330,13 +332,13 @@ public class GXDLMSMBusDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getNames() {
-        return new String[]{"Logical Name", "Received signal strength ", "Channel Id", "Link status",
+    public final String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Received signal strength ", "Channel Id", "Link status",
                 "Broadcast frames", "Transmissions", "Received frames", "Failed received frames", "Capture time"};
     }
 
     @Override
-    public final String[] getMethodNames() {
+    public final String[] getMethodNames(final Context context) {
         return new String[]{"Reset"};
     }
 

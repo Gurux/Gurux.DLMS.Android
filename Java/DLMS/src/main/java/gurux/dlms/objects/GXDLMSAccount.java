@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -45,12 +47,12 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -1239,8 +1241,8 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "PaymentMode", "CurrentCreditInUse",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "PaymentMode", "CurrentCreditInUse",
                 "CurrentCreditStatus", "AvailableCredit", "AmountToClear", "ClearanceThreshold",
                 "AggregatedDebt", "CreditReferences", "ChargeReferences",
                 "CreditChargeConfigurations", "TokenGatewayConfigurations", "AccountActivationTime",
@@ -1249,7 +1251,7 @@ public class GXDLMSAccount extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Activate account", "Close account", "Reset account"};
     }
 }

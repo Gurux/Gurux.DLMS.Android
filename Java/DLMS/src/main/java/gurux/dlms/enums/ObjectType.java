@@ -485,7 +485,7 @@ public enum ObjectType {
     private static java.util.HashMap<Integer, ObjectType> getMappings() {
         synchronized (ObjectType.class) {
             if (mappings == null) {
-                mappings = new java.util.HashMap<Integer, ObjectType>();
+                mappings = new java.util.HashMap<>();
             }
         }
         return mappings;
@@ -513,11 +513,10 @@ public enum ObjectType {
 
     public static ObjectType getEnum(final String value) {
         String tmp = value.toUpperCase();
-        Iterator<Entry<Integer, ObjectType>> it =
-                mappings.entrySet().iterator();
+        Iterator<Entry<Integer, ObjectType>> it = mappings.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Integer, ObjectType> pair =
-                    (Map.Entry<Integer, ObjectType>) it.next();
+                    it.next();
             if (tmp.compareTo(pair.getValue().toString()) == 0 || tmp.compareTo(
                     pair.getValue().toString().replaceAll("_", "")) == 0) {
                 return pair.getValue();

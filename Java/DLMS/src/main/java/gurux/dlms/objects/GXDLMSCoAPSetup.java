@@ -1,10 +1,13 @@
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXEnum;
 import gurux.dlms.GXUInt16;
 import gurux.dlms.GXUInt8;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -332,14 +335,14 @@ public class GXDLMSCoAPSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getNames() {
-        return new String[]{"Logical Name", "Value", "UdpReference", "AckTimeout", "AckRandomFactor", "MaxRetransmit",
+    public final String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Value", "UdpReference", "AckTimeout", "AckRandomFactor", "MaxRetransmit",
                 "NStart", "DelayAckTimeout", "ExponentialBackOff", "ProbingRate", "CoAPUriPath", "TransportMode",
                 "WrapperVersion", "TokenLength"};
     }
 
     @Override
-    public final String[] getMethodNames() {
+    public final String[] getMethodNames(final Context context) {
         return new String[0];
     }
 

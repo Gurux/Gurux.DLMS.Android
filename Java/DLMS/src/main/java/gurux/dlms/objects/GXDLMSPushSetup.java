@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -54,6 +56,7 @@ import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.GXStructure;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -130,9 +133,8 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
+     *
+     * @param ln Logical Name of the object.
      */
     public GXDLMSPushSetup(final String ln) {
         this(ln, 0);
@@ -140,11 +142,9 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * Constructor.
-     * 
-     * @param ln
-     *            Logical Name of the object.
-     * @param sn
-     *            Short Name of the object.
+     *
+     * @param ln Logical Name of the object.
+     * @param sn Short Name of the object.
      */
     public GXDLMSPushSetup(final String ln, final int sn) {
         super(ObjectType.PUSH_SETUP, ln, sn);
@@ -183,8 +183,8 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Defines the list of attributes or objects to be pushed. Upon a
-     *         call of the push (data) method the selected attributes are sent
-     *         to the destination defined in getSendDestinationAndMethod.
+     * call of the push (data) method the selected attributes are sent
+     * to the destination defined in getSendDestinationAndMethod.
      */
     public final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> getPushObjectList() {
         return pushObjectList;
@@ -192,8 +192,8 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return Contains the start and end date/time stamp when the communication
-     *         window(s) for the push become active (for the start instant), or
-     *         inactive (for the end instant).
+     * window(s) for the push become active (for the start instant), or
+     * inactive (for the end instant).
      */
     public final List<Map.Entry<GXDateTime, GXDateTime>> getCommunicationWindow() {
         return communicationWindow;
@@ -201,10 +201,10 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return To avoid simultaneous network connections of a lot of devices at
-     *         ex-actly the same point in time, a randomisation interval in
-     *         seconds can be defined. This means that the push operation is not
-     *         started imme-diately at the beginning of the first communication
-     *         window but started randomly delayed.
+     * ex-actly the same point in time, a randomisation interval in
+     * seconds can be defined. This means that the push operation is not
+     * started imme-diately at the beginning of the first communication
+     * window but started randomly delayed.
      */
     public final int getRandomisationStartInterval() {
         return randomisationStartInterval;
@@ -216,21 +216,20 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     /**
      * @return The maximum number of re-trials in case of unsuccessful push
-     *         attempts. After a successful push no further push attempts are
-     *         made until the push setup is triggered again. A value of 0 means
-     *         no repetitions, i.e. only the initial connection attempt is made.
+     * attempts. After a successful push no further push attempts are
+     * made until the push setup is triggered again. A value of 0 means
+     * no repetitions, i.e. only the initial connection attempt is made.
      */
     public final int getNumberOfRetries() {
         return numberOfRetries;
     }
 
     /**
-     * @param value
-     *            The maximum number of re-trials in case of unsuccessful push
-     *            attempts. After a successful push no further push attempts are
-     *            made until the push setup is triggered again. A value of 0
-     *            means no repetitions, i.e. only the initial connection attempt
-     *            is made.
+     * @param value The maximum number of re-trials in case of unsuccessful push
+     *              attempts. After a successful push no further push attempts are
+     *              made until the push setup is triggered again. A value of 0
+     *              means no repetitions, i.e. only the initial connection attempt
+     *              is made.
      */
     public final void setNumberOfRetries(final byte value) {
         numberOfRetries = value;
@@ -244,8 +243,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     /**
-     * @param value
-     *            Repetition delay is used for versions zero and one.
+     * @param value Repetition delay is used for versions zero and one.
      */
     public final void setRepetitionDelay(final int value) {
         repetitionDelay = value;
@@ -254,24 +252,22 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     @Override
     public final Object[] getValues() {
         if (version < 2) {
-            return new Object[] { getLogicalName(), pushObjectList, service + " " + destination + " " + message,
+            return new Object[]{getLogicalName(), pushObjectList, service + " " + destination + " " + message,
                     communicationWindow, randomisationStartInterval, numberOfRetries, repetitionDelay, portReference,
                     pushClientSAP, pushProtectionParameters, pushOperationMethod, confirmationParameters,
-                    lastConfirmationDateTime };
+                    lastConfirmationDateTime};
         }
-        return new Object[] { getLogicalName(), pushObjectList, service + " " + destination + " " + message,
+        return new Object[]{getLogicalName(), pushObjectList, service + " " + destination + " " + message,
                 communicationWindow, randomisationStartInterval, numberOfRetries, repetitionDelay2, portReference,
                 pushClientSAP, pushProtectionParameters, pushOperationMethod, confirmationParameters,
-                lastConfirmationDateTime };
+                lastConfirmationDateTime};
     }
 
     /**
      * Get received objects from push message.
-     * 
-     * @param client
-     *            GXDLMSClient used to update the values.
-     * @param values
-     *            Received values.
+     *
+     * @param client GXDLMSClient used to update the values.
+     * @param values Received values.
      */
     public void getPushValues(final GXDLMSClient client, final List<?> values) {
         if (values.size() != pushObjectList.size()) {
@@ -475,174 +471,174 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
         GXByteBuffer buff = new GXByteBuffer();
         Object ret;
         switch (e.getIndex()) {
-        case 1:
-            ret = GXCommon.logicalNameToBytes(getLogicalName());
-            break;
-        case 2:
-            buff.setUInt8(DataType.ARRAY.getValue());
-            GXCommon.setObjectCount(pushObjectList.size(), buff);
-            for (Entry<GXDLMSObject, GXDLMSCaptureObject> it : pushObjectList) {
-                buff.setUInt8(DataType.STRUCTURE.getValue());
-                if (version < 1) {
-                    buff.setUInt8(4);
-                    GXCommon.setData(settings, buff, DataType.UINT16, it.getKey().getObjectType().getValue());
-                    GXCommon.setData(settings, buff, DataType.OCTET_STRING,
-                            GXCommon.logicalNameToBytes(it.getKey().getLogicalName()));
-                    GXCommon.setData(settings, buff, DataType.INT8, it.getValue().getAttributeIndex());
-                    GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getDataIndex());
-                } else {
-                    buff.setUInt8(version == 1 ? 5 : 6);
-                    GXCommon.setData(settings, buff, DataType.UINT16, it.getKey().getObjectType().getValue());
-                    GXCommon.setData(settings, buff, DataType.OCTET_STRING,
-                            GXCommon.logicalNameToBytes(it.getKey().getLogicalName()));
-                    GXCommon.setData(settings, buff, DataType.INT8, it.getValue().getAttributeIndex());
-                    GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getDataIndex());
-                    GXCommon.setData(settings, buff, DataType.ENUM, it.getValue().getRestriction().getType());
-                    switch (it.getValue().getRestriction().getType()) {
-                    case NONE:
-                        GXCommon.setData(settings, buff, DataType.NONE, null);
-                        break;
-                    case DATE:
-                        buff.setUInt8(DataType.STRUCTURE);
-                        buff.setUInt8(2);
+            case 1:
+                ret = GXCommon.logicalNameToBytes(getLogicalName());
+                break;
+            case 2:
+                buff.setUInt8(DataType.ARRAY.getValue());
+                GXCommon.setObjectCount(pushObjectList.size(), buff);
+                for (Entry<GXDLMSObject, GXDLMSCaptureObject> it : pushObjectList) {
+                    buff.setUInt8(DataType.STRUCTURE.getValue());
+                    if (version < 1) {
+                        buff.setUInt8(4);
+                        GXCommon.setData(settings, buff, DataType.UINT16, it.getKey().getObjectType().getValue());
                         GXCommon.setData(settings, buff, DataType.OCTET_STRING,
-                                it.getValue().getRestriction().getFrom());
-                        GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getValue().getRestriction().getTo());
-                        break;
-                    case ENTRY:
-                        buff.setUInt8(DataType.STRUCTURE);
-                        buff.setUInt8(2);
-                        GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getRestriction().getFrom());
-                        GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getRestriction().getTo());
-                        break;
-                    }
-                    if (version > 1) {
-                        if (it.getValue().getColumns() != null) {
-                            buff.setUInt8(DataType.ARRAY);
-                            GXCommon.setObjectCount(it.getValue().getColumns().size(), buff);
-                            for (Entry<GXDLMSObject, GXDLMSCaptureObject> it2 : it.getValue().getColumns()) {
+                                GXCommon.logicalNameToBytes(it.getKey().getLogicalName()));
+                        GXCommon.setData(settings, buff, DataType.INT8, it.getValue().getAttributeIndex());
+                        GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getDataIndex());
+                    } else {
+                        buff.setUInt8(version == 1 ? 5 : 6);
+                        GXCommon.setData(settings, buff, DataType.UINT16, it.getKey().getObjectType().getValue());
+                        GXCommon.setData(settings, buff, DataType.OCTET_STRING,
+                                GXCommon.logicalNameToBytes(it.getKey().getLogicalName()));
+                        GXCommon.setData(settings, buff, DataType.INT8, it.getValue().getAttributeIndex());
+                        GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getDataIndex());
+                        GXCommon.setData(settings, buff, DataType.ENUM, it.getValue().getRestriction().getType());
+                        switch (it.getValue().getRestriction().getType()) {
+                            case NONE:
+                                GXCommon.setData(settings, buff, DataType.NONE, null);
+                                break;
+                            case DATE:
                                 buff.setUInt8(DataType.STRUCTURE);
-                                buff.setUInt8(4);
-                                GXCommon.setData(settings, buff, DataType.UINT16, it2.getKey().getObjectType());
+                                buff.setUInt8(2);
                                 GXCommon.setData(settings, buff, DataType.OCTET_STRING,
-                                        GXCommon.logicalNameToBytes(it2.getKey().getLogicalName()));
-                                GXCommon.setData(settings, buff, DataType.INT8, it2.getValue().getAttributeIndex());
-                                GXCommon.setData(settings, buff, DataType.UINT16, it2.getValue().getDataIndex());
+                                        it.getValue().getRestriction().getFrom());
+                                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getValue().getRestriction().getTo());
+                                break;
+                            case ENTRY:
+                                buff.setUInt8(DataType.STRUCTURE);
+                                buff.setUInt8(2);
+                                GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getRestriction().getFrom());
+                                GXCommon.setData(settings, buff, DataType.UINT16, it.getValue().getRestriction().getTo());
+                                break;
+                        }
+                        if (version > 1) {
+                            if (it.getValue().getColumns() != null) {
+                                buff.setUInt8(DataType.ARRAY);
+                                GXCommon.setObjectCount(it.getValue().getColumns().size(), buff);
+                                for (Entry<GXDLMSObject, GXDLMSCaptureObject> it2 : it.getValue().getColumns()) {
+                                    buff.setUInt8(DataType.STRUCTURE);
+                                    buff.setUInt8(4);
+                                    GXCommon.setData(settings, buff, DataType.UINT16, it2.getKey().getObjectType());
+                                    GXCommon.setData(settings, buff, DataType.OCTET_STRING,
+                                            GXCommon.logicalNameToBytes(it2.getKey().getLogicalName()));
+                                    GXCommon.setData(settings, buff, DataType.INT8, it2.getValue().getAttributeIndex());
+                                    GXCommon.setData(settings, buff, DataType.UINT16, it2.getValue().getDataIndex());
+                                }
+                            } else {
+                                buff.setUInt8(DataType.ARRAY);
+                                buff.setUInt8(0);
                             }
-                        } else {
-                            buff.setUInt8(DataType.ARRAY);
-                            buff.setUInt8(0);
                         }
                     }
                 }
-            }
-            ret = buff.array();
-            break;
-        case 3:
-            buff.setUInt8(DataType.STRUCTURE.getValue());
-            buff.setUInt8(3);
-            GXCommon.setData(settings, buff, DataType.ENUM, getService().getValue());
-            byte[] tmp = null;
-            if (GXCommon.isHexString(destination)) {
-                tmp = GXCommon.hexToBytes(destination);
-            } else if (destination != null) {
-                tmp = getDestination().getBytes();
-            }
-            GXCommon.setData(settings, buff, DataType.OCTET_STRING, tmp);
-            GXCommon.setData(settings, buff, DataType.ENUM, getMessage().getValue());
-            ret = buff.array();
-            break;
-        case 4:
-            buff.setUInt8(DataType.ARRAY.getValue());
-            GXCommon.setObjectCount(communicationWindow.size(), buff);
-            for (Entry<GXDateTime, GXDateTime> it : communicationWindow) {
-                buff.setUInt8(DataType.STRUCTURE.getValue());
-                buff.setUInt8(2);
-                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getKey());
-                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getValue());
-            }
-            ret = buff.array();
-            break;
-        case 5:
-            ret = randomisationStartInterval;
-            break;
-        case 6:
-            ret = numberOfRetries;
-            break;
-        case 7:
-            if (version < 2) {
-                ret = repetitionDelay;
-            } else {
-                buff.setUInt8(DataType.STRUCTURE);
-                GXCommon.setObjectCount(3, buff);
-                GXCommon.setData(settings, buff, DataType.UINT16, repetitionDelay2.getMin());
-                GXCommon.setData(settings, buff, DataType.UINT16, repetitionDelay2.getExponent());
-                GXCommon.setData(settings, buff, DataType.UINT16, repetitionDelay2.getMax());
                 ret = buff.array();
-            }
-            break;
-        case 8:
-            if (portReference != null) {
-                ret = GXCommon.logicalNameToBytes(portReference.getLogicalName());
-            } else {
-                ret = null;
-            }
-            break;
-        case 9:
-            ret = pushClientSAP;
-            break;
-        case 10:
-            buff.setUInt8(DataType.ARRAY);
-            GXCommon.setObjectCount(pushProtectionParameters.length, buff);
-            for (GXPushProtectionParameters it : pushProtectionParameters) {
-                buff.setUInt8(DataType.STRUCTURE);
-                buff.setUInt8(2);
-                GXCommon.setData(settings, buff, DataType.ENUM, it.getProtectionType().getValue());
-                buff.setUInt8(DataType.STRUCTURE);
-                buff.setUInt8(5);
-                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getTransactionId());
-                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getOriginatorSystemTitle());
-                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getRecipientSystemTitle());
-                GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getOtherInformation());
-                buff.setUInt8(DataType.STRUCTURE);
-                buff.setUInt8(2);
-                GXCommon.setData(settings, buff, DataType.ENUM, it.getKeyInfo().getDataProtectionKeyType().getValue());
-                buff.setUInt8(DataType.STRUCTURE);
-                if (it.getKeyInfo().getDataProtectionKeyType() == DataProtectionKeyType.IDENTIFIED) {
-                    buff.setUInt8(1);
-                    GXCommon.setData(settings, buff, DataType.ENUM,
-                            it.getKeyInfo().getIdentifiedKey().getKeyType().getValue());
-                } else if (it.getKeyInfo().getDataProtectionKeyType() == DataProtectionKeyType.WRAPPED) {
-                    buff.setUInt8(2);
-                    GXCommon.setData(settings, buff, DataType.ENUM,
-                            it.getKeyInfo().getWrappedKey().getKeyType().getValue());
-                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getKeyInfo().getWrappedKey().getKey());
-                } else if (it.getKeyInfo().getDataProtectionKeyType() == DataProtectionKeyType.AGREED) {
-                    buff.setUInt8(2);
-                    GXCommon.setData(settings, buff, DataType.OCTET_STRING,
-                            it.getKeyInfo().getAgreedKey().getParameters());
-                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getKeyInfo().getAgreedKey().getData());
+                break;
+            case 3:
+                buff.setUInt8(DataType.STRUCTURE.getValue());
+                buff.setUInt8(3);
+                GXCommon.setData(settings, buff, DataType.ENUM, getService().getValue());
+                byte[] tmp = null;
+                if (GXCommon.isHexString(destination)) {
+                    tmp = GXCommon.hexToBytes(destination);
+                } else if (destination != null) {
+                    tmp = getDestination().getBytes();
                 }
-            }
-            ret = buff.array();
-            break;
-        case 11:
-            ret = pushOperationMethod.getValue();
-            break;
-        case 12:
-            buff.setUInt8(DataType.STRUCTURE);
-            GXCommon.setObjectCount(2, buff);
-            GXCommon.setData(settings, buff, DataType.DATETIME, confirmationParameters.getStartDate());
-            GXCommon.setData(settings, buff, DataType.UINT32, confirmationParameters.getInterval());
-            ret = buff.array();
-            break;
-        case 13:
-            ret = lastConfirmationDateTime;
-            break;
-        default:
-            ret = null;
-            e.setError(ErrorCode.READ_WRITE_DENIED);
-            break;
+                GXCommon.setData(settings, buff, DataType.OCTET_STRING, tmp);
+                GXCommon.setData(settings, buff, DataType.ENUM, getMessage().getValue());
+                ret = buff.array();
+                break;
+            case 4:
+                buff.setUInt8(DataType.ARRAY.getValue());
+                GXCommon.setObjectCount(communicationWindow.size(), buff);
+                for (Entry<GXDateTime, GXDateTime> it : communicationWindow) {
+                    buff.setUInt8(DataType.STRUCTURE.getValue());
+                    buff.setUInt8(2);
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getKey());
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getValue());
+                }
+                ret = buff.array();
+                break;
+            case 5:
+                ret = randomisationStartInterval;
+                break;
+            case 6:
+                ret = numberOfRetries;
+                break;
+            case 7:
+                if (version < 2) {
+                    ret = repetitionDelay;
+                } else {
+                    buff.setUInt8(DataType.STRUCTURE);
+                    GXCommon.setObjectCount(3, buff);
+                    GXCommon.setData(settings, buff, DataType.UINT16, repetitionDelay2.getMin());
+                    GXCommon.setData(settings, buff, DataType.UINT16, repetitionDelay2.getExponent());
+                    GXCommon.setData(settings, buff, DataType.UINT16, repetitionDelay2.getMax());
+                    ret = buff.array();
+                }
+                break;
+            case 8:
+                if (portReference != null) {
+                    ret = GXCommon.logicalNameToBytes(portReference.getLogicalName());
+                } else {
+                    ret = null;
+                }
+                break;
+            case 9:
+                ret = pushClientSAP;
+                break;
+            case 10:
+                buff.setUInt8(DataType.ARRAY);
+                GXCommon.setObjectCount(pushProtectionParameters.length, buff);
+                for (GXPushProtectionParameters it : pushProtectionParameters) {
+                    buff.setUInt8(DataType.STRUCTURE);
+                    buff.setUInt8(2);
+                    GXCommon.setData(settings, buff, DataType.ENUM, it.getProtectionType().getValue());
+                    buff.setUInt8(DataType.STRUCTURE);
+                    buff.setUInt8(5);
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getTransactionId());
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getOriginatorSystemTitle());
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getRecipientSystemTitle());
+                    GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getOtherInformation());
+                    buff.setUInt8(DataType.STRUCTURE);
+                    buff.setUInt8(2);
+                    GXCommon.setData(settings, buff, DataType.ENUM, it.getKeyInfo().getDataProtectionKeyType().getValue());
+                    buff.setUInt8(DataType.STRUCTURE);
+                    if (it.getKeyInfo().getDataProtectionKeyType() == DataProtectionKeyType.IDENTIFIED) {
+                        buff.setUInt8(1);
+                        GXCommon.setData(settings, buff, DataType.ENUM,
+                                it.getKeyInfo().getIdentifiedKey().getKeyType().getValue());
+                    } else if (it.getKeyInfo().getDataProtectionKeyType() == DataProtectionKeyType.WRAPPED) {
+                        buff.setUInt8(2);
+                        GXCommon.setData(settings, buff, DataType.ENUM,
+                                it.getKeyInfo().getWrappedKey().getKeyType().getValue());
+                        GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getKeyInfo().getWrappedKey().getKey());
+                    } else if (it.getKeyInfo().getDataProtectionKeyType() == DataProtectionKeyType.AGREED) {
+                        buff.setUInt8(2);
+                        GXCommon.setData(settings, buff, DataType.OCTET_STRING,
+                                it.getKeyInfo().getAgreedKey().getParameters());
+                        GXCommon.setData(settings, buff, DataType.OCTET_STRING, it.getKeyInfo().getAgreedKey().getData());
+                    }
+                }
+                ret = buff.array();
+                break;
+            case 11:
+                ret = pushOperationMethod.getValue();
+                break;
+            case 12:
+                buff.setUInt8(DataType.STRUCTURE);
+                GXCommon.setObjectCount(2, buff);
+                GXCommon.setData(settings, buff, DataType.DATETIME, confirmationParameters.getStartDate());
+                GXCommon.setData(settings, buff, DataType.UINT32, confirmationParameters.getInterval());
+                ret = buff.array();
+                break;
+            case 13:
+                ret = lastConfirmationDateTime;
+                break;
+            default:
+                ret = null;
+                e.setError(ErrorCode.READ_WRITE_DENIED);
+                break;
         }
         return ret;
     }
@@ -680,15 +676,15 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
                         GXStructure restriction = (GXStructure) tmp.get(4);
                         co.getRestriction().setType(RestrictionType.forValue(((Number) restriction.get(0)).intValue()));
                         switch (co.getRestriction().getType()) {
-                        case NONE:
-                            break;
-                        case DATE:
-                        case ENTRY:
-                            co.getRestriction().setFrom(restriction.get(1));
-                            co.getRestriction().setTo(restriction.get(2));
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Invalid restriction type.");
+                            case NONE:
+                                break;
+                            case DATE:
+                            case ENTRY:
+                                co.getRestriction().setFrom(restriction.get(1));
+                                co.getRestriction().setTo(restriction.get(2));
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Invalid restriction type.");
                         }
                         if (tmp.get(5) != null) {
                             for (Object tmp2 : (GXArray) tmp.get(5)) {
@@ -792,7 +788,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
                     list.add(p);
                 }
             }
-            pushProtectionParameters = list.toArray(new GXPushProtectionParameters[list.size()]);
+            pushProtectionParameters = list.toArray(new GXPushProtectionParameters[0]);
         } else if (version > 1 && e.getIndex() == 11) {
             pushOperationMethod = PushOperationMethod.forValue(((Number) e.getValue()).intValue());
         } else if (version > 1 && e.getIndex() == 12) {
@@ -824,7 +820,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
                     obj = GXDLMSClient.createObject(ot);
                     obj.setLogicalName(ln);
                 }
-                pushObjectList.add(new GXSimpleEntry<GXDLMSObject, GXDLMSCaptureObject>(obj, co));
+                pushObjectList.add(new GXSimpleEntry<>(obj, co));
             }
             reader.readEndElement("ObjectList");
         }
@@ -837,7 +833,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
             while (reader.isStartElement("Item", true)) {
                 GXDateTime start = reader.readElementContentAsDateTime("Start");
                 GXDateTime end = reader.readElementContentAsDateTime("End");
-                communicationWindow.add(new GXSimpleEntry<GXDateTime, GXDateTime>(start, end));
+                communicationWindow.add(new GXSimpleEntry<>(start, end));
             }
             reader.readEndElement("CommunicationWindow");
         }
@@ -862,7 +858,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
             }
             pushClientSAP = (byte) reader.readElementContentAsInt("PushClientSAP");
             if (reader.isStartElement("PushProtectionParameters", true)) {
-                List<GXPushProtectionParameters> list = new ArrayList<GXPushProtectionParameters>();
+                List<GXPushProtectionParameters> list = new ArrayList<>();
                 while (reader.isStartElement("Item", true)) {
                     GXPushProtectionParameters it = new GXPushProtectionParameters();
                     it.setProtectionType(ProtectionType.forValue(reader.readElementContentAsInt("ProtectionType")));
@@ -887,7 +883,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
                     list.add(it);
                 }
                 reader.readEndElement("PushProtectionParameters");
-                pushProtectionParameters = list.toArray(new GXPushProtectionParameters[list.size()]);
+                pushProtectionParameters = list.toArray(new GXPushProtectionParameters[0]);
             }
             if (version > 1) {
                 pushOperationMethod =
@@ -987,8 +983,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     public final void postLoad(final GXXmlReader reader) {
         // Update port reference.
         if (portReference != null) {
-            GXDLMSObject target =
-                    (GXDLMSObject) reader.getObjects().findByLN(ObjectType.NONE, portReference.getLogicalName());
+            GXDLMSObject target = reader.getObjects().findByLN(ObjectType.NONE, portReference.getLogicalName());
             if (target != null && target != portReference) {
                 portReference = target;
             }
@@ -996,20 +991,20 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[] { "Logical Name", "Object List", "Send Destination And Method", "Communication Window",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Object List", "Send Destination And Method", "Communication Window",
                 "Randomisation Start Interval", "Number Of Retries", "Repetition Delay", "Port reference",
                 "Push client SAP", "Push protection parameters", "Push operation method", "Confirmation parameters",
-                "Last confirmation date time" };
+                "Last confirmation date time"};
 
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         if (version < 2) {
-            return new String[] { "Push" };
+            return new String[]{"Push"};
         }
-        return new String[] { "Push", "Reset" };
+        return new String[]{"Push", "Reset"};
     }
 
     public GXRepetitionDelay getRepetitionDelay2() {
@@ -1026,7 +1021,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
 
     public void setPortReference(final GXDLMSObject value) {
         portReference = value;
-    };
+    }
 
     public byte getPushClientSAP() {
         return pushClientSAP;

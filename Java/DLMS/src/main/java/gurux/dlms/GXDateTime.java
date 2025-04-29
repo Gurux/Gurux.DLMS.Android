@@ -76,11 +76,11 @@ public class GXDateTime {
      * Constructor.
      */
     public GXDateTime() {
-        skip = new HashSet<DateTimeSkips>();
+        skip = new HashSet<>();
         meterCalendar = Calendar.getInstance();
-        status = new HashSet<ClockStatus>();
+        status = new HashSet<>();
         status.add(ClockStatus.OK);
-        extra = new HashSet<DateTimeExtraInfo>();
+        extra = new HashSet<>();
     }
 
     /**
@@ -89,12 +89,12 @@ public class GXDateTime {
      * @param value Date value.
      */
     public GXDateTime(final Date value) {
-        skip = new HashSet<DateTimeSkips>();
+        skip = new HashSet<>();
         meterCalendar = Calendar.getInstance();
         meterCalendar.setTime(value);
-        status = new HashSet<ClockStatus>();
+        status = new HashSet<>();
         status.add(ClockStatus.OK);
-        extra = new HashSet<DateTimeExtraInfo>();
+        extra = new HashSet<>();
     }
 
     /**
@@ -103,11 +103,11 @@ public class GXDateTime {
      * @param value Date value.
      */
     public GXDateTime(final Calendar value) {
-        skip = new HashSet<DateTimeSkips>();
+        skip = new HashSet<>();
         meterCalendar = value;
-        status = new HashSet<ClockStatus>();
+        status = new HashSet<>();
         status.add(ClockStatus.OK);
-        extra = new HashSet<DateTimeExtraInfo>();
+        extra = new HashSet<>();
     }
 
     /**
@@ -116,11 +116,10 @@ public class GXDateTime {
      * @param value Date value.
      */
     public GXDateTime(final GXDateTime value) {
-        skip = new HashSet<DateTimeSkips>();
-        meterCalendar = Calendar.getInstance();
+        skip = new HashSet<>();
         meterCalendar = value.getMeterCalendar();
-        status = new HashSet<ClockStatus>();
-        extra = new HashSet<DateTimeExtraInfo>();
+        status = new HashSet<>();
+        extra = new HashSet<>();
         if (value != null) {
             skip.addAll(value.getSkip());
             status.addAll(value.getStatus());

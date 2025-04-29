@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -48,6 +50,7 @@ import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
 import gurux.dlms.GXStructure;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -167,8 +170,8 @@ public class GXDLMSCoAPDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getNames() {
-        return new String[]{"Logical Name", "Messages counter", "Request response counter", "BT counter",
+    public final String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Messages counter", "Request response counter", "BT counter",
                 "Capture time"};
     }
 
@@ -192,7 +195,7 @@ public class GXDLMSCoAPDiagnostic extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getMethodNames() {
+    public final String[] getMethodNames(final Context context) {
         return new String[]{"Reset"};
     }
 

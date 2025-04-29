@@ -103,6 +103,34 @@ public final class GXCommon {
     @SuppressWarnings("squid:S2386")
     public static final byte[] LLC_REPLY_BYTES = {(byte) 0xE6, (byte) 0xE7, 0x00};
 
+    public static String toCamelCase(final String value) {
+        String name = value.toLowerCase();
+        StringBuilder camelCaseName = new StringBuilder();
+        boolean nextUpper = true;
+        for (char c : name.toCharArray()) {
+            if (c == '_') {
+                nextUpper = true;
+            } else if (nextUpper) {
+                camelCaseName.append(Character.toUpperCase(c));
+                nextUpper = false;
+            } else {
+                camelCaseName.append(c);
+            }
+        }
+        return camelCaseName.toString();
+    }
+
+    /**
+     * Check is string null or empty.
+     *
+     * @param value
+     *            String value.
+     * @return True, if string is null or empty.
+     */
+    public static boolean isNullOrEmpty(final String value) {
+        return value == null || value.isEmpty();
+    }
+
     /*
      * Convert string to byte array.
      * @param value String value.

@@ -34,12 +34,14 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -738,18 +740,27 @@ public class GXDLMSSFSKPhyMacSetUp extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "InitiatorElectricalPhase",
-                "DeltaElectricalPhase", "MaxReceivingGain",
-                "MaxTransmittingGain", "SearchInitiatorThreshold", "Frequency",
-                "MacAddress", "MacGroupAddresses", "Repeater", "RepeaterStatus",
-                "MinDeltaCredit", "InitiatorMacAddress",
-                "SynchronizationLocked", "TransmissionSpeed"};
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name),
+                context.getString(R.string.initiator_electrical_phase),
+                context.getString(R.string.delta_electrical_phase),
+                context.getString(R.string.max_receiving_gain),
+                context.getString(R.string.max_transmitting_gain),
+                context.getString(R.string.search_initiator_threshold),
+                context.getString(R.string.frequency),
+                context.getString(R.string.mac_address),
+                context.getString(R.string.mac_group_addresses),
+                context.getString(R.string.repeater),
+                context.getString(R.string.repeater_status),
+                context.getString(R.string.min_delta_credit),
+                context.getString(R.string.initiator_mac_address),
+                context.getString(R.string.synchronization_locked),
+                context.getString(R.string.transmission_speed)};
 
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -43,6 +45,7 @@ import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXSimpleEntry;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -340,13 +343,15 @@ public class GXDLMSRegisterActivation extends GXDLMSObject implements IGXDLMSBas
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Register Assignment", "Mask List", "Active Mask"};
-
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name),
+                "Register Assignment",
+                "Mask List",
+                "Active Mask"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Add register", "Add mask", "Delete mask"};
     }
 }

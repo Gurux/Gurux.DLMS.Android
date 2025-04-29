@@ -4,6 +4,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -757,5 +759,15 @@ public class GXDLMSConverter {
                 throw new IllegalArgumentException();
         }
         return ret;
+    }
+
+    /**
+     * Convert string to camel case format.
+     * @param value Converted string.
+     * @return String in camel case format.
+     */
+    public static String toCamelCase(final String value)
+    {
+        return GXCommon.toCamelCase(value);
     }
 }

@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Gurux.DLMS.Android"
-include ':app'
-include ':DLMS'
+include(":app")
+include(":DLMS")

@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -48,6 +50,7 @@ import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXStructure;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -529,12 +532,12 @@ public class GXDLMSArrayManager extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public final String[] getNames() {
-        return new String[]{"Logical Name", "Objects"};
+    public final String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Objects"};
     }
 
     @Override
-    public final String[] getMethodNames() {
+    public final String[] getMethodNames(final Context context) {
         return new String[]{"Amount", "Retrieve", "Insert", "Update", "Remove"};
     }
 

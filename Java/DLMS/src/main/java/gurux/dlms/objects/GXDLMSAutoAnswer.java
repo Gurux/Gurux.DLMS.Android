@@ -34,17 +34,19 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
 import gurux.dlms.GXSimpleEntry;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -367,13 +369,17 @@ public class GXDLMSAutoAnswer extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Mode", "Listening Window", "Status",
-                "Number Of Calls", "Number Of Rings In Listening Window"};
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name),
+                context.getString(R.string.mode),
+                context.getString(R.string.listening_window),
+                context.getString(R.string.status),
+                context.getString(R.string.number_of_calls),
+                context.getString(R.string.number_of_rings_in_listening_window)};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(Context context) {
         return new String[0];
     }
 }

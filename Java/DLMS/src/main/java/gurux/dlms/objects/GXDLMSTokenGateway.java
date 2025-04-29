@@ -34,14 +34,16 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDateTime;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -444,14 +446,17 @@ public class GXDLMSTokenGateway extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Token", "Time", "Description", "DeliveryMethod",
-                "Status"};
-
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name),
+                context.getString(R.string.token),
+                context.getString(R.string.time),
+                context.getString(R.string.description),
+                context.getString(R.string.delivery_method),
+                context.getString(R.string.status)};
     }
 
     @Override
-    public String[] getMethodNames() {
-        return new String[]{"Enter"};
+    public String[] getMethodNames(final Context context) {
+        return new String[]{context.getString(R.string.enter)};
     }
 }

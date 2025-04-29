@@ -1,5 +1,6 @@
 package gurux.dlms.android.ui.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,15 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.text.SimpleDateFormat;
@@ -36,8 +35,6 @@ import gurux.common.ReceiveEventArgs;
 import gurux.common.ReceiveParameters;
 import gurux.common.TraceEventArgs;
 import gurux.common.enums.MediaState;
-import gurux.common.enums.TraceLevel;
-import gurux.dlms.GXArray;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
 import gurux.dlms.GXDLMSException;
@@ -45,8 +42,11 @@ import gurux.dlms.GXReplyData;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.android.GXDevice;
 import gurux.dlms.android.GXGeneral;
+import gurux.dlms.android.IGXActionListener;
+import gurux.dlms.android.IGXSettingsChangedListener;
 import gurux.dlms.android.R;
 import gurux.dlms.android.databinding.FragmentMainBinding;
+import gurux.dlms.android.ui.objects.BaseObjectFragment;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -60,32 +60,42 @@ import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSObjectCollection;
 import gurux.dlms.objects.GXDLMSProfileGeneric;
 import gurux.dlms.objects.GXDLMSRegister;
-import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.secure.GXDLMSSecureClient;
 import gurux.io.BaudRate;
 import gurux.io.Parity;
 import gurux.io.StopBits;
 import gurux.serial.GXSerial;
 
-public class MainFragment extends Fragment implements IGXMediaListener {
+public class MainFragment extends Fragment implements IGXMediaListener, IGXActionListener {
 
-    ListView mObjects;
     GXDevice mDevice;
     GXDLMSSecureClient mClient;
-    EditText mAttributes;
-    Button mOpen;
-    Button mRead;
-    Button mRefresh;
-    SearchView mSearch;
     List<GXDLMSObject> mCosemObjects = new ArrayList<>();
-    CheckBox mShowTrace;
-    EditText mTrace;
+    private IGXSettingsChangedListener listener;
     private FragmentMainBinding binding;
 
     private static boolean isAdded(final GXDLMSObject it, final String newText) {
         return it.getObjectType().toString().toLowerCase().contains(newText) ||
                 (it.getLogicalName() != null && it.getLogicalName().toLowerCase().contains(newText)) ||
                 (it.getDescription() != null && it.getDescription().toLowerCase().contains(newText));
+    }
+
+    private void readAssociationView() {
+        //Clear trace.
+        binding.trace.setText("");
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> handler.post(() -> {
+            try {
+                refresh();
+                showObjects("");
+                //Notify activity that association has read again.
+                listener.onAssociationChanged();
+                Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                GXGeneral.showError(getActivity(), e, getString(R.string.error));
+            }
+        }));
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -96,35 +106,27 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         binding = FragmentMainBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         try {
-            mObjects = view.findViewById(R.id.objects);
-            mAttributes = view.findViewById(R.id.attributes);
-            mOpen = view.findViewById(R.id.open);
-            mRead = view.findViewById(R.id.read);
-            mRefresh = view.findViewById(R.id.refresh);
-            mSearch = view.findViewById(R.id.search);
-            mShowTrace = view.findViewById(R.id.showTrace);
-            mTrace = view.findViewById(R.id.trace);
-            mTrace.setVisibility(View.GONE);
+            binding.trace.setVisibility(View.GONE);
 
             int serverAddress = GXDLMSClient.getServerAddress(mDevice.getLogicalAddress(),
                     mDevice.getPhysicalAddress());
             mClient = new GXDLMSSecureClient(true, mDevice.getClientAddress(), serverAddress,
                     mDevice.getAuthentication().getType(), mDevice.getPassword(), InterfaceType.HDLC);
 
-            mShowTrace.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            binding.showTrace.setOnCheckedChangeListener((buttonView, isChecked) -> {
                         if (isChecked) {
-                            mTrace.setVisibility(View.VISIBLE);
-                            mAttributes.setVisibility(View.GONE);
+                            binding.trace.setVisibility(View.VISIBLE);
+                            binding.attributes.setVisibility(View.GONE);
                         } else {
-                            mTrace.setVisibility(View.GONE);
-                            mAttributes.setVisibility(View.VISIBLE);
+                            binding.trace.setVisibility(View.GONE);
+                            binding.attributes.setVisibility(View.VISIBLE);
                         }
                     }
             );
-            mOpen.setOnClickListener(v -> {
+            binding.open.setOnClickListener(v -> {
                 try {
                     //Clear trace.
-                    mTrace.setText("");
+                    binding.trace.setText("");
                     IGXMedia media = mDevice.getMedia();
                     if (media.isOpen()) {
                         //Close connection.
@@ -140,12 +142,24 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                         }));
                     } else {
                         //Open connection.
+                        binding.trace.setText("Connecting " + media.getName());
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         Handler handler = new Handler(Looper.getMainLooper());
                         executor.execute(() -> handler.post(() -> {
                             try {
                                 initializeConnection();
                                 Toast.makeText(getActivity(), "Connected.", Toast.LENGTH_SHORT).show();
+                                if (mDevice.getObjects().isEmpty()) {
+                                    new AlertDialog.Builder(getActivity())
+                                            .setTitle("Import association view")
+                                            .setMessage(R.string.readAssociationView)
+                                            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                                readAssociationView();
+                                            })
+                                            .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                                            })
+                                            .show();
+                                }
                             } catch (Exception e) {
                                 GXGeneral.showError(getActivity(), e, getString(R.string.error));
                             }
@@ -155,47 +169,25 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                     GXGeneral.showError(getActivity(), e, getString(R.string.error));
                 }
             });
-            mRead.setOnClickListener(v -> {
+            binding.read.setOnClickListener(v -> {
                 try {
                     //Clear trace.
-                    mTrace.setText("");
+                    binding.trace.setText("");
                     //Read selected item.
-                    int pos = mObjects.getCheckedItemPosition();
+                    int pos = binding.objects.getCheckedItemPosition();
                     if (pos != -1) {
                         GXDLMSObject obj = mCosemObjects.get(pos);
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        executor.execute(() -> handler.post(() -> {
-                            try {
-                                read(obj);
-                                showObject(obj);
-                                Toast.makeText(getActivity(), "Read done.", Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-                            }
-                        }));
+                        onRead(obj, 0);
                     }
                 } catch (Exception e) {
                     GXGeneral.showError(getActivity(), e, getString(R.string.error));
                 }
             });
-            mRefresh.setOnClickListener(v -> {
-                //Clear trace.
-                mTrace.setText("");
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                Handler handler = new Handler(Looper.getMainLooper());
-                executor.execute(() -> handler.post(() -> {
-                    try {
-                        refresh();
-                        showObjects("");
-                        Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        GXGeneral.showError(getActivity(), e, getString(R.string.error));
-                    }
-                }));
+            binding.refresh.setOnClickListener(v -> {
+                readAssociationView();
             });
 
-            mObjects.setOnItemClickListener((parent, view1, position, id) -> {
+            binding.objects.setOnItemClickListener((parent, view1, position, id) -> {
                 try {
                     showObject(mDevice.getObjects().get(position));
                 } catch (Exception e) {
@@ -211,15 +203,15 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                 }
                 if (mDevice.getManufacturer() == null || mDevice.getManufacturer().isEmpty()) {
                     Toast.makeText(getActivity(), R.string.invalidManufacturer, Toast.LENGTH_SHORT).show();
-                    mOpen.setEnabled(false);
+                    binding.open.setEnabled(false);
                 }
                 if (mDevice.getMedia() instanceof GXSerial && ((GXSerial) mDevice.getMedia()).getPort() == null) {
                     Toast.makeText(getActivity(), R.string.invalidSerialPort, Toast.LENGTH_SHORT).show();
-                    mOpen.setEnabled(false);
+                    binding.open.setEnabled(false);
                 }
             }
 
-            mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     return false;
@@ -229,7 +221,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                 public boolean onQueryTextChange(String newText) {
                     try {
                         showObjects(newText);
-                        ((BaseAdapter) mObjects.getAdapter()).notifyDataSetChanged();
+                        ((BaseAdapter) binding.objects.getAdapter()).notifyDataSetChanged();
                     } catch (Exception e) {
                         GXGeneral.showError(getActivity(), e, getString(R.string.error));
                     }
@@ -239,73 +231,30 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         } catch (Exception e) {
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+        showObjects("");
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof IGXSettingsChangedListener) {
+            listener = (IGXSettingsChangedListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement IGXMediaChangedListener");
+        }
     }
 
     /**
      * Show selected object
      *
-     * @param target Selected COSEM object.
+     * @param value Selected COSEM object.
      */
-    private void showObject(GXDLMSObject target) {
-        mAttributes.setText("");
-        StringBuilder sb = new StringBuilder();
-        String newline = System.getProperty("line.separator");
-        sb.append(target.getLogicalName());
-        if (target.getShortName() != 0) {
-            sb.append(" (");
-            sb.append(target.getShortName());
-            sb.append(")");
-        }
-        sb.append(newline);
-        sb.append(target.getDescription());
-        sb.append(newline);
-        sb.append("------------------------------------------------------------------");
-        sb.append(newline);
-        for (int pos = 0; pos != target.getAttributeCount(); ++pos) {
-            Object value = target.getValues()[pos];
-            if (value instanceof GXArray)
-            {
-                sb.append("{");
-                GXArray arr = (GXArray) value;
-                boolean first = true;
-                for(Object it : arr)
-                {
-                    if (first) {
-                        first = false;
-                    }else {
-                        sb.append(", ");
-                    }
-                    if (it instanceof GXSimpleEntry) {
-                        GXSimpleEntry<?,?> e = (GXSimpleEntry<?,?>) it;
-                        sb.append("[");
-                        sb.append(e.getKey());
-                        sb.append(", ");
-                        sb.append(e.getValue());
-                        sb.append("]");
-                    }
-                    else {
-                        sb.append(value);
-                    }
-                }
-                sb.append("}");
-            }
-            else if (value instanceof GXSimpleEntry) {
-                GXSimpleEntry<?,?> e = (GXSimpleEntry<?,?>) value;
-                sb.append("[");
-                sb.append(e.getKey());
-                sb.append(", ");
-                sb.append(e.getValue());
-                sb.append("]");
-            }
-            else {
-                sb.append(value);
-            }
-            sb.append(newline);
-            sb.append("------------------------------------------------------------------");
-            sb.append(newline);
-        }
-        mAttributes.setText(sb.toString());
+    private void showObject(final GXDLMSObject value) {
+        Fragment childFragment = BaseObjectFragment.newInstance(getActivity(),
+                this, mClient, mDevice.getMedia(), value);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.attributes, childFragment).commit();
     }
 
     private void showObjects(String newText) {
@@ -315,7 +264,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         if (!addAll) {
             newText = newText.toLowerCase();
         }
-        String newline = System.getProperty("line.separator");
+        String newline = System.lineSeparator();
         for (GXDLMSObject it : mDevice.getObjects()) {
             if (addAll || isAdded(it, newText)) {
                 if (it.getDescription() == null) {
@@ -328,7 +277,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         }
         ArrayAdapter<String> objects = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, rows);
-        mObjects.setAdapter(objects);
+        binding.objects.setAdapter(objects);
     }
 
 
@@ -392,6 +341,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         // Get description of the objects.
         GXDLMSConverter converter = new GXDLMSConverter();
         converter.updateOBISCodeInformation(getActivity(), mDevice.getObjects());
+        readScalerAndUnits(mDevice.getObjects());
     }
 
     /*
@@ -423,7 +373,6 @@ public class MainFragment extends Fragment implements IGXMediaListener {
                         readObject(it, 4);
                     }
                 } catch (Exception e) {
-//                    traceLn(logFile, "Err! Failed to read scaler and unit value: " + e.getMessage());
                     // Continue reading.
                 }
             }
@@ -467,32 +416,20 @@ public class MainFragment extends Fragment implements IGXMediaListener {
      */
     public Object readObject(GXDLMSObject item, int attributeIndex)
             throws Exception {
-        byte[][] data = mClient.read(item.getName(), item.getObjectType(),
-                attributeIndex);
-        GXReplyData reply = new GXReplyData();
-        readDataBlock(data, reply);
-        // Update data type on read.
-        if (item.getDataType(attributeIndex) == DataType.NONE) {
-            item.setDataType(attributeIndex, reply.getValueType());
-        }
-        return mClient.updateValue(item, attributeIndex, reply.getValue());
-    }
-
-
-    /*
-     * Read selected object.
-     */
-    public void read(GXDLMSObject obj) throws Exception {
-        for (int it : ((IGXDLMSBase) obj).getAttributeIndexToRead(true)) {
-            readObject(obj, it);
-        }
-    }
-
-    public void readDLMSPacket(byte[][] data) throws Exception {
-        GXReplyData reply = new GXReplyData();
-        for (byte[] it : data) {
-            reply.clear();
-            readDLMSPacket(it, reply);
+        try {
+            binding.read.setEnabled(false);
+            binding.refresh.setEnabled(false);
+            byte[][] data = mClient.read(item, attributeIndex);
+            GXReplyData reply = new GXReplyData();
+            readDataBlock(data, reply);
+            // Update data type on read.
+            if (item.getDataType(attributeIndex) == DataType.NONE) {
+                item.setDataType(attributeIndex, reply.getValueType());
+            }
+            return mClient.updateValue(item, attributeIndex, reply.getValue());
+        } finally {
+            binding.read.setEnabled(true);
+            binding.refresh.setEnabled(true);
         }
     }
 
@@ -505,7 +442,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mTrace.append(line + System.getProperty("line.separator"));
+                binding.trace.append(line + System.getProperty("line.separator"));
             }
         });
     }
@@ -604,7 +541,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     /**
      * Reads next data block.
      *
-     * @param data Send data.
+     * @param data  Send data.
      * @param reply Reply data.
      */
     void readDataBlock(byte[] data, GXReplyData reply) throws Exception {
@@ -838,12 +775,12 @@ public class MainFragment extends Fragment implements IGXMediaListener {
 
     private void enableUI(boolean open) {
         if (open) {
-            mOpen.setText(R.string.close);
+            binding.open.setText(R.string.close);
         } else {
-            mOpen.setText(R.string.open);
+            binding.open.setText(R.string.open);
         }
-        mRead.setEnabled(open);
-        mRefresh.setEnabled(open);
+        binding.read.setEnabled(open);
+        binding.refresh.setEnabled(open);
     }
 
     @Override
@@ -851,12 +788,7 @@ public class MainFragment extends Fragment implements IGXMediaListener {
         try {
             if (e.getState() == MediaState.OPEN ||
                     e.getState() == MediaState.CLOSED) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        enableUI(e.getState() == MediaState.OPEN);
-                    }
-                });
+                getActivity().runOnUiThread(() -> enableUI(e.getState() == MediaState.OPEN));
             }
         } catch (Exception ex) {
             Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
@@ -897,5 +829,66 @@ public class MainFragment extends Fragment implements IGXMediaListener {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onRead(GXDLMSObject object, int index) {
+        Toast.makeText(getActivity(), "Read started.", Toast.LENGTH_SHORT).show();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> handler.post(() -> {
+            try {
+                if (index == 0) {
+                    //Read all.
+                    for (int pos = 1; pos <= object.getAttributeCount(); ++pos) {
+                        if (mClient.canRead(object, pos)) {
+                            readObject(object, pos);
+                        }
+                        showObject(object);
+                    }
+                } else {
+                    if (mClient.canRead(object, index)) {
+                        readObject(object, index);
+                    }
+                    showObject(object);
+                }
+                Toast.makeText(getActivity(), "Read completed.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                GXGeneral.showError(getActivity(), e, getString(R.string.error));
+            }
+        }));
+    }
+
+    @Override
+    public void onWrite(GXDLMSObject object, int index) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> handler.post(() -> {
+            try {
+                if (mClient.canWrite(object, index)) {
+                    byte[][] data = mClient.write(object, index);
+                    GXReplyData reply = new GXReplyData();
+                    readDataBlock(data, reply);
+                }
+                Toast.makeText(getActivity(), "Write completed.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                GXGeneral.showError(getActivity(), e, getString(R.string.error));
+            }
+        }));
+    }
+
+    @Override
+    public void onInvoke(byte[][] frames) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> handler.post(() -> {
+            try {
+                GXReplyData reply = new GXReplyData();
+                readDataBlock(frames, reply);
+                Toast.makeText(getActivity(), "Action completed.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                GXGeneral.showError(getActivity(), e, getString(R.string.error));
+            }
+        }));
     }
 }

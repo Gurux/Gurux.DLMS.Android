@@ -40,13 +40,15 @@
 //
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -361,12 +363,12 @@ public class GXDLMSIecTwistedPairSetup extends GXDLMSObject implements IGXDLMSBa
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Mode", "Speed", "PrimaryAddresses", "Tabis"};
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Mode", "Speed", "PrimaryAddresses", "Tabis"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

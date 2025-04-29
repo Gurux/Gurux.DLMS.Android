@@ -35,7 +35,10 @@
 package gurux.dlms.objects;
 
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -272,14 +275,14 @@ public class GXDLMSSFSKMacSynchronizationTimeouts extends GXDLMSObject implement
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "SearchInitiatorTimeout", "SynchronizationConfirmationTimeout",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "SearchInitiatorTimeout", "SynchronizationConfirmationTimeout",
                 "TimeOutNotAddressed", "TimeOutFrameNotOK"};
 
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

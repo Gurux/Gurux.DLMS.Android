@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.InvalidAlgorithmParameterException;
@@ -53,6 +55,7 @@ import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXStructure;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -736,8 +739,8 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Data LinkLayer Reference",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Data LinkLayer Reference",
                 "Address Config Mode", "Unicast IP Address",
                 "Multicast IP Address", "Gateway IP Address",
                 "Primary DNS Address", "Secondary DNS Address", "Traffic Class",
@@ -745,7 +748,7 @@ public class GXDLMSIp6Setup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Add IP v6 address", "Remove IP v6 address"};
     }
 }

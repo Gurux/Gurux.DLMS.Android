@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Signature;
@@ -46,12 +48,12 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.ConnectionState;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.Authentication;
@@ -459,15 +461,15 @@ public class GXDLMSAssociationShortName extends GXDLMSObject implements IGXDLMSB
     }
 
     @Override
-    public String[] getNames() {
+    public String[] getNames(final Context context) {
         if (version < 2) {
-            return new String[]{"Logical Name", "Object List"};
+            return new String[]{context.getString(R.string.logical_name), "Object List"};
         }
-        return new String[]{"Logical Name", "Object List", "Access Rights List", "Security Setup Reference"};
+        return new String[]{context.getString(R.string.logical_name), "Object List", "Access Rights List", "Security Setup Reference"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Getlist by classid", "Getobj by logicalname", "Read by logicalname",
                 "Get attributes&services", "Change LLS secret", "Change HLS secret", "Get HLS challenge",
                 "Reply to HLS challenge", "Add user", "Remove user"};

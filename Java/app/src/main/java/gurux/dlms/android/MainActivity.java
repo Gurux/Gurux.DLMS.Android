@@ -2,12 +2,20 @@ package gurux.dlms.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.HtmlCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -18,6 +26,12 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import gurux.common.IGXMedia;
+import gurux.common.IGXMediaListener;
+import gurux.common.MediaStateEventArgs;
+import gurux.common.PropertyChangedEventArgs;
+import gurux.common.ReceiveEventArgs;
+import gurux.common.TraceEventArgs;
 import gurux.dlms.android.databinding.ActivityMainBinding;
 import gurux.dlms.android.ui.main.MainViewModel;
 import gurux.dlms.android.ui.manufacturers.ManufacturersViewModel;
@@ -30,9 +44,10 @@ import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.GXManufacturer;
 import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
+import gurux.net.GXNet;
 import gurux.serial.GXSerial;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IGXMediaListener, IGXSettingsChangedListener {
 
     GXDevice mDevice = new GXDevice();
     private AppBarConfiguration mAppBarConfiguration;
@@ -43,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDevice.setMedia(new GXSerial(this));
-
-        GXSerial serial = (GXSerial)mDevice.getMedia();
-        if (serial.getPorts().length != 0){
+        GXSerial serial = (GXSerial) mDevice.getMedia();
+        if (serial.getPorts().length != 0) {
             serial.setPort(serial.getPorts()[0]);
         }
         mManufacturers = new GXManufacturerCollection();
@@ -66,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
         loadSettings();
 
         MediaViewModel mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
+
+        IGXMedia[] medias = new IGXMedia[]{new GXSerial(this), new GXNet(this)};
+        mediaViewModel.setMedias(medias);
+
         mediaViewModel.setDevice(mDevice);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -86,12 +104,63 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_main, R.id.nav_meterSettings, R.id.nav_mediaSettings,
-                R.id.nav_xml_translator, R.id.nav_obis_translator, R.id.nav_manufacturers)
+                R.id.nav_xml_translator, R.id.nav_obis_translator, R.id.nav_manufacturers,
+                R.id.nav_info)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_info) {
+                try {
+                    PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                    LinearLayout layout = new LinearLayout(this);
+                    layout.setOrientation(LinearLayout.VERTICAL);
+                    layout.setPadding(50, 40, 50, 10);
+
+                    final TextView copyright = new EditText(this);
+                    copyright.setMovementMethod(LinkMovementMethod.getInstance());
+                    copyright.setText(R.string.copyright);
+                    copyright.setTextIsSelectable(false);
+                    copyright.setFocusable(false);
+                    copyright.setClickable(false);
+                    layout.addView(copyright);
+
+                    final TextView version = new EditText(this);
+                    version.setMovementMethod(LinkMovementMethod.getInstance());
+                    version.setText(String.format("Version: %s", packageInfo.versionName));
+                    version.setTextIsSelectable(false);
+                    version.setFocusable(false);
+                    version.setClickable(false);
+                    layout.addView(version);
+
+                    final TextView url = new EditText(this);
+                    url.setMovementMethod(LinkMovementMethod.getInstance());
+                    url.setText(HtmlCompat.fromHtml("<a href='https://www.gurux.fi'>More info</a>", HtmlCompat.FROM_HTML_MODE_LEGACY));
+                    url.setLinksClickable(true);
+                    url.setFocusable(false);
+                    url.setTextIsSelectable(false);
+                    layout.addView(url);
+                    new AlertDialog.Builder(this)
+                            .setTitle("About Gurux DLMS component")
+                            .setView(layout)
+                            .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+                            .show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+            if (handled) {
+                drawer.closeDrawer(GravityCompat.START);
+            }
+            return handled;
+        });
     }
 
 
@@ -140,6 +209,11 @@ public class MainActivity extends AppCompatActivity {
             mDevice.setPhysicalAddress(s.getInt("physicalAddress", 1));
             mDevice.setLogicalAddress(s.getInt("logicalAddress", 0));
         }
+        String type = s.getString("mediaType", mDevice.getMedia().getMediaType());
+        if (type.equals("Net")) {
+            mDevice.setMedia(new GXNet(this));
+        }
+        //Serial media is set as a default.
         //Read media settings.
         String mediaSettings = s.getString("mediaSettings", null);
         mDevice.getMedia().setSettings(mediaSettings);
@@ -169,9 +243,11 @@ public class MainActivity extends AppCompatActivity {
         editor.putInt("addressType", mDevice.getAddressType().getValue());
         editor.putInt("physicalAddress", mDevice.getPhysicalAddress());
         editor.putInt("logicalAddress", mDevice.getLogicalAddress());
+        editor.putString("mediaType", mDevice.getMedia().getMediaType());
         editor.putString("mediaSettings", mDevice.getMedia().getSettings());
         editor.putString("objects", mDevice.getObjects().getXml());
         editor.apply();
+        Toast.makeText(this, "Settings saved.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -198,5 +274,42 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         saveSettings();
         super.onDestroy();
+    }
+
+    @Override
+    public void onError(Object sender, RuntimeException ex) {
+
+    }
+
+    @Override
+    public void onReceived(Object sender, ReceiveEventArgs e) {
+
+    }
+
+    @Override
+    public void onMediaStateChange(Object sender, MediaStateEventArgs e) {
+    }
+
+    @Override
+    public void onTrace(Object sender, TraceEventArgs e) {
+
+    }
+
+    /**
+     * User has change media properties.
+     */
+    @Override
+    public void onPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+        saveSettings();
+    }
+
+    @Override
+    public void onMediaChanged(IGXMedia value) {
+        saveSettings();
+    }
+
+    @Override
+    public void onAssociationChanged() {
+        saveSettings();
     }
 }

@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
@@ -41,7 +43,6 @@ import java.security.SignatureException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-
 
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.ValueEventArgs;
@@ -68,14 +69,16 @@ public interface IGXDLMSBase {
     int getMethodCount();
 
     /**
+     * @param context Used context.
      * @return Returns names of attribute indexes.
      */
-    String[] getNames();
+    String[] getNames(Context context);
 
     /**
+     * @param context Used context.
      * @return Returns names of method indexes.
      */
-    String[] getMethodNames();
+    String[] getMethodNames(Context context);
 
     /**
      * Returns value of given attribute.

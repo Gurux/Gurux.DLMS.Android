@@ -35,7 +35,10 @@
 package gurux.dlms.objects;
 
 
+import android.content.Context;
+
 import gurux.dlms.GXDLMSSettings;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -292,13 +295,16 @@ public class GXDLMSMBusSlavePortSetup extends GXDLMSObject implements IGXDLMSBas
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Default Baud Rate", "Available Baud rate", "Address State",
-                "Bus Address"};
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name),
+                context.getString(R.string.default_baud_rate),
+                context.getString(R.string.available_baud_rate),
+                context.getString(R.string.address_state),
+                context.getString(R.string.bus_address)};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[0];
     }
 }

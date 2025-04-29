@@ -34,6 +34,8 @@
 
 package gurux.dlms.objects;
 
+import android.content.Context;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ import java.util.List;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
+import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -528,14 +531,14 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
     }
 
     @Override
-    public String[] getNames() {
-        return new String[]{"Logical Name", "Data LinkLayer Reference", "IP Address", "Multicast IP Address",
+    public String[] getNames(final Context context) {
+        return new String[]{context.getString(R.string.logical_name), "Data LinkLayer Reference", "IP Address", "Multicast IP Address",
                 "IP Options", "Subnet Mask", "Gateway IP Address", "Use DHCP", "Primary DNS Address",
                 "Secondary DNS Address"};
     }
 
     @Override
-    public String[] getMethodNames() {
+    public String[] getMethodNames(final Context context) {
         return new String[]{"Add mc IP address", "Delete mc IP address", "Get nbof mc IP addresses"};
     }
 }
