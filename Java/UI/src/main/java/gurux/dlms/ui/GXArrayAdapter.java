@@ -1,4 +1,4 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import android.content.Context;
 import android.view.View;

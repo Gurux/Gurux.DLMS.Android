@@ -1,4 +1,4 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,9 +25,6 @@ import gurux.common.TraceEventArgs;
 import gurux.common.enums.MediaState;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXSimpleEntry;
-import gurux.dlms.android.IGXActionListener;
-import gurux.dlms.android.R;
-import gurux.dlms.android.databinding.ObjectBaseBinding;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.AccessMode3;
 import gurux.dlms.enums.DataType;
@@ -37,6 +34,7 @@ import gurux.dlms.objects.GXDLMSData;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSRegister;
 import gurux.dlms.objects.IGXDLMSBase;
+import gurux.dlms.ui.databinding.ObjectBaseBinding;
 
 public class BaseObjectFragment extends Fragment implements IGXMediaListener {
 

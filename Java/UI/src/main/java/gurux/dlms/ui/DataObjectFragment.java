@@ -1,4 +1,4 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

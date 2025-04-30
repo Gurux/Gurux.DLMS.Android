@@ -13,6 +13,7 @@ navigationUi = "2.8.9"
 guruxCommonAndroid = "2.0.2"
 guruxSerialAndroid = "2.0.11"
 guruxNetAndroid = "1.0.3"
+guruxDlmsAndroid = "2.0.12"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +29,7 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version
 guruxCommonAndroid = { module = "org.gurux:Gurux.Common.Android", version.ref = "guruxCommonAndroid" }
 guruxSerialAndroid = { module = "org.gurux:gurux.serial.android", version.ref = "guruxSerialAndroid" }
 guruxNetAndroid = { module = "org.gurux:gurux.net.android", version.ref = "guruxNetAndroid" }
+guruxDlmsAndroid = { module = "org.gurux:gurux.dlms.android", version.ref = "guruxDlmsAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

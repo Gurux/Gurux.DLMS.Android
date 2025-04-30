@@ -11,7 +11,7 @@ android {
         minSdk = 31
         targetSdk = 34
         versionCode = 1
-        versionName = "2.0.12"
+        versionName = "2.0.13"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.guruxSerialAndroid)
     implementation(libs.guruxNetAndroid)
     implementation(project(":DLMS"))
+    implementation(project(":UI"))
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

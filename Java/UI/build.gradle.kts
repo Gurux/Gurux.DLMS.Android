@@ -5,12 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "gurux.dlms"
+    namespace = "gurux.dlms.ui"
     compileSdk = 34
 
     defaultConfig {
         minSdk = 31
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -28,6 +27,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -37,6 +39,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.guruxCommonAndroid)
+    debugImplementation(project(":DLMS"))
+    releaseImplementation(libs.guruxDlmsAndroid)
     implementation(libs.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
@@ -50,13 +55,12 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 groupId = "org.gurux"
-                artifactId = "gurux.dlms.android"
+                artifactId = "gurux.dlms.android.ui"
                 version = "2.0.13"
-
                 pom {
-                    name.set("gurux.dlms.android")
+                    name.set("gurux.dlms.android.ui")
                     description.set(
-                        "gurux.dlms.android package is a communication library for DLMS devices. " +
+                        "gurux.dlms.android.ui package is a communication library for DLMS devices. " +
                                 "Purpose of Gurux Device Framework is to help you read your devices, meters and sensors easier"
                     )
                     url.set("https://www.gurux.fi")
@@ -80,7 +84,8 @@ afterEvaluate {
                     }
                 }
 
-                val isEnabled = project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")
+                val isEnabled =
+                    project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")
                 repositories {
                     maven {
                         name = "MavenCentral"

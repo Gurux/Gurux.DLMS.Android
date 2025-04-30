@@ -1,10 +1,9 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import androidx.lifecycle.ViewModel;
 
 import gurux.common.IGXMedia;
 import gurux.dlms.GXDLMSClient;
-import gurux.dlms.android.IGXActionListener;
 import gurux.dlms.objects.GXDLMSObject;
 
 public class ObjectViewModel extends ViewModel {

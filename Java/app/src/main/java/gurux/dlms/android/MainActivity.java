@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
         mMeterSettingsViewModel.updateManufacturers(mManufacturers);
         mMeterSettingsViewModel.setDevice(mDevice);
         loadSettings();
-
+        mDevice.getMedia().addListener(this);
         MediaViewModel mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
 
         IGXMedia[] medias = new IGXMedia[]{new GXSerial(this), new GXNet(this)};
@@ -305,7 +305,9 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
 
     @Override
     public void onMediaChanged(IGXMedia value) {
+        mDevice.getMedia().removeListener(this);
         saveSettings();
+        mDevice.getMedia().addListener(this);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,19 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
 import gurux.dlms.GXSimpleEntry;
-import gurux.dlms.android.GXGeneral;
-import gurux.dlms.android.R;
-import gurux.dlms.android.databinding.ObjectRegisterBinding;
+import gurux.dlms.ui.databinding.RegisterFragmentBinding;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.MethodAccessMode;
@@ -33,14 +22,14 @@ import gurux.dlms.objects.IGXDLMSBase;
 
 public class RegisterObjectFragment extends BaseObjectFragment {
 
-    private ObjectRegisterBinding binding;
+    private RegisterFragmentBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final ObjectViewModel objectViewModel = new ViewModelProvider(requireActivity()).get(ObjectViewModel.class);
         final GXDLMSRegister target = objectViewModel.getObject(GXDLMSRegister.class);
         mMedia = objectViewModel.getMedia();
-        binding = ObjectRegisterBinding.inflate(inflater, container, false);
+        binding = RegisterFragmentBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         Fragment childFragment = new ObjectHeaderFragment();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -84,9 +73,8 @@ public class RegisterObjectFragment extends BaseObjectFragment {
             try {
                 binding.reset.setEnabled(false);
                 objectViewModel.getListener().onInvoke(target.reset(objectViewModel.getClient()));
-                Toast.makeText(getActivity(), R.string.actionCompleted, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                GXGeneral.showError(getActivity(), e, getString(R.string.error));
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         updateAccessRights();

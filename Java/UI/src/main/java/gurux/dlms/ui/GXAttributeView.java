@@ -1,4 +1,4 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import android.content.Context;
 import android.text.InputType;
@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.ArrayList;

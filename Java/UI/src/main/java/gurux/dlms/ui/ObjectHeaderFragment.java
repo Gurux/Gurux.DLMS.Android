@@ -1,4 +1,4 @@
-package gurux.dlms.android.ui.objects;
+package gurux.dlms.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import gurux.dlms.GXDLMSConverter;
-import gurux.dlms.android.databinding.ObjectHeaderBinding;
+import gurux.dlms.ui.databinding.ObjectHeaderBinding;
 import gurux.dlms.objects.GXDLMSObject;
 
 public class ObjectHeaderFragment extends Fragment {
