@@ -30,11 +30,22 @@ import gurux.dlms.enums.AccessMode3;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.MethodAccessMode;
 import gurux.dlms.enums.MethodAccessMode3;
+import gurux.dlms.objects.GXDLMSAssociationLogicalName;
+import gurux.dlms.objects.GXDLMSAssociationShortName;
+import gurux.dlms.objects.GXDLMSClock;
 import gurux.dlms.objects.GXDLMSData;
+import gurux.dlms.objects.GXDLMSGprsSetup;
+import gurux.dlms.objects.GXDLMSHdlcSetup;
+import gurux.dlms.objects.GXDLMSIECLocalPortSetup;
+import gurux.dlms.objects.GXDLMSIp4Setup;
 import gurux.dlms.objects.GXDLMSObject;
+import gurux.dlms.objects.GXDLMSProfileGeneric;
+import gurux.dlms.objects.GXDLMSPushSetup;
 import gurux.dlms.objects.GXDLMSRegister;
+import gurux.dlms.objects.GXDLMSTcpUdpSetup;
 import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.ui.databinding.ObjectBaseBinding;
+import gurux.dlms.ui.internal.GXAttributeView;
 
 public class BaseObjectFragment extends Fragment implements IGXMediaListener {
 
@@ -58,9 +69,23 @@ public class BaseObjectFragment extends Fragment implements IGXMediaListener {
         return (access.getValue() & MethodAccessMode3.ACCESS.getValue()) != 0;
     }
 
+    protected String getLabel(String[] values, GXDLMSObject target, int index) {
+        if (target.isDirty(index)) {
+            //Add star to indicate that the user has change the value.
+            return values[index - 1] + "\uD83C\uDF1F";
+        }
+        return values[index - 1];
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final ObjectViewModel objectViewModel = new ViewModelProvider(requireActivity()).get(ObjectViewModel.class);
+        objectViewModel.getInProgress().observe(getViewLifecycleOwner(), e1 ->
+        {
+            MediaStateEventArgs e = new MediaStateEventArgs();
+            e.setState(!e1 && mMedia.isOpen() ? MediaState.OPEN : MediaState.CLOSED);
+            onMediaStateChange(mMedia, e);
+        });
         final GXDLMSObject target = objectViewModel.getObject(GXDLMSObject.class);
         mMedia = objectViewModel.getMedia();
         binding = ObjectBaseBinding.inflate(inflater, container, false);
@@ -93,27 +118,59 @@ public class BaseObjectFragment extends Fragment implements IGXMediaListener {
         return view;
     }
 
+    /**
+     * Has user modified the value.
+     *
+     * @param target COSEM oject.
+     * @param index  Attribute index.
+     * @return True, if user has modified the value.
+     */
+    protected boolean isDirty(GXDLMSObject target, int index) {
+        return target.isDirty(index);
+    }
+
     protected void updateAccessRights() {
         MediaStateEventArgs e = new MediaStateEventArgs();
         e.setState(mMedia.isOpen() ? MediaState.OPEN : MediaState.CLOSED);
         onMediaStateChange(mMedia, e);
     }
 
-    public static Fragment newInstance(final FragmentActivity activity,
-                                       final IGXActionListener listener,
-                                       final GXDLMSClient client,
-                                       final IGXMedia media,
-                                       final GXDLMSObject value) {
+
+    public static BaseObjectFragment newInstance(final FragmentActivity activity,
+                                                 final IGXActionListener listener,
+                                                 final GXDLMSClient client,
+                                                 final IGXMedia media,
+                                                 final GXDLMSObject value) {
         final ObjectViewModel objectViewModel = new ViewModelProvider(activity).get(ObjectViewModel.class);
         objectViewModel.setMedia(media);
         objectViewModel.setObject(value);
         objectViewModel.setListener(listener);
         objectViewModel.setClient(client);
         BaseObjectFragment fragment;
-        if (value instanceof GXDLMSData) {
+        if (value instanceof GXDLMSAssociationLogicalName) {
+            fragment = new AssociationLogicalNameObjectFragment();
+        } else if (value instanceof GXDLMSAssociationShortName) {
+            fragment = new AssociationShortNameObjectFragment();
+        } else if (value instanceof GXDLMSData) {
             fragment = new DataObjectFragment();
         } else if (value instanceof GXDLMSRegister) {
             fragment = new RegisterObjectFragment();
+        } else if (value instanceof GXDLMSClock) {
+            fragment = new ClockObjectFragment();
+        } else if (value instanceof GXDLMSGprsSetup) {
+            fragment = new GprsSetupObjectFragment();
+        } else if (value instanceof GXDLMSHdlcSetup) {
+            fragment = new HdlcSetupObjectFragment();
+        } else if (value instanceof GXDLMSIECLocalPortSetup) {
+            fragment = new IecLocalPortSetupObjectFragment();
+        } else if (value instanceof GXDLMSIp4Setup) {
+            fragment = new Ip4SetupObjectFragment();
+        } else if (value instanceof GXDLMSTcpUdpSetup) {
+            fragment = new TcpUdpSetupObjectFragment();
+        } else if (value instanceof GXDLMSPushSetup) {
+            fragment = new PushSetupObjectFragment();
+        } else if (value instanceof GXDLMSProfileGeneric) {
+            fragment = new ProfileGenericObjectFragment();
         } else {
             fragment = new BaseObjectFragment();
         }

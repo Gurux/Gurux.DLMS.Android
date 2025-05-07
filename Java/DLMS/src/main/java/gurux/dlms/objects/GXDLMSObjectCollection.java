@@ -184,12 +184,20 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
                         } else if ("Version".compareToIgnoreCase(target) == 0) {
                             String data = readText(parser);
                             obj.setVersion(Integer.parseInt(data));
-                        }else if ("Access".compareToIgnoreCase(target) == 0) {
+                        } else if ("Access".compareToIgnoreCase(target) == 0) {
                             String data = readText(parser);
                             pos = 0;
                             for (byte it : data.getBytes()) {
                                 ++pos;
                                 obj.setAccess(pos, AccessMode.forValue(it - 0x30));
+                            }
+                        } else if ("Access3".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            if (data != null) {
+                                for ( pos = 0; pos != data.length() / 4; ++pos) {
+                                    obj.getAccess3(pos).addAll(
+                                            AccessMode3.forValue(Integer.parseInt(data.substring(4 * pos, 4 * pos + 4), 16)));
+                                }
                             }
                         } else if ("MethodAccess".compareToIgnoreCase(target) == 0) {
                             String data = readText(parser);
@@ -197,6 +205,14 @@ public class GXDLMSObjectCollection extends ArrayList<GXDLMSObject>
                             for (byte it : data.getBytes()) {
                                 ++pos;
                                 obj.setMethodAccess(pos, MethodAccessMode.forValue(it - 0x30));
+                            }
+                        } else if ("MethodAccess3".compareToIgnoreCase(target) == 0) {
+                            String data = readText(parser);
+                            if (data != null) {
+                                for ( pos = 0; pos != data.length() / 4; ++pos) {
+                                    obj.getMethodAccess3(pos).addAll(MethodAccessMode3
+                                            .forValue(Integer.parseInt(data.substring(4 * pos, 4 * pos + 4), 16)));
+                                }
                             }
                         } else if ("DataTypes".compareToIgnoreCase(target) == 0 ||
                                 "UIDataTypes".compareToIgnoreCase(target) == 0) {

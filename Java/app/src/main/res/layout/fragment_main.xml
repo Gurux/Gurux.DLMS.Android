@@ -40,6 +40,12 @@
                 android:text="@string/read" />
 
             <Button
+                android:id="@+id/write"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/write" />
+
+            <Button
                 android:id="@+id/refresh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

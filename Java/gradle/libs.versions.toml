@@ -14,6 +14,7 @@ guruxCommonAndroid = "2.0.2"
 guruxSerialAndroid = "2.0.11"
 guruxNetAndroid = "1.0.3"
 guruxDlmsAndroid = "2.0.13"
+flexbox = "3.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,6 +31,7 @@ guruxCommonAndroid = { module = "org.gurux:Gurux.Common.Android", version.ref = 
 guruxSerialAndroid = { module = "org.gurux:gurux.serial.android", version.ref = "guruxSerialAndroid" }
 guruxNetAndroid = { module = "org.gurux:gurux.net.android", version.ref = "guruxNetAndroid" }
 guruxDlmsAndroid = { module = "org.gurux:gurux.dlms.android", version.ref = "guruxDlmsAndroid" }
+flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

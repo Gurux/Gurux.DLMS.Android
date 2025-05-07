@@ -93,8 +93,8 @@ public class GXObisTranslator extends Fragment {
         try {
             StringBuilder sb = new StringBuilder();
             mObisResult.setText("");
-            String[] res = mConverter.getDescription(mObiscode.getText().toString(), mFilter.getText().toString());
-            String newline = System.getProperty("line.separator");
+            String[] res = mConverter.getDescription(requireContext(), mObiscode.getText().toString(), mFilter.getText().toString());
+            String newline = System.lineSeparator();
             for (String it : res) {
                 sb.append(it);
                 sb.append(newline);

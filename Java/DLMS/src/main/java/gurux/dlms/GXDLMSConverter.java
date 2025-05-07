@@ -4,8 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,7 +41,7 @@ public class GXDLMSConverter {
     /**
      * Collection of standard OBIS codes.
      */
-    private GXStandardObisCodeCollection codes = new GXStandardObisCodeCollection();
+    private final GXStandardObisCodeCollection codes = new GXStandardObisCodeCollection();
 
     private Standard standard = Standard.DLMS;
 
@@ -125,35 +123,41 @@ public class GXDLMSConverter {
     /**
      * Get OBIS code description.
      *
+     * @param context     Context where information is load.
      * @param logicalName Logical name (OBIS code).
      * @return Array of descriptions that match given OBIS code.
      */
-    public final String[] getDescription(final String logicalName) {
-        return getDescription(logicalName, ObjectType.NONE);
+    public final String[] getDescription(final Context context,
+                                         final String logicalName) {
+        return getDescription(context, logicalName, ObjectType.NONE);
     }
 
     /**
      * Get OBIS code description.
      *
+     * @param context     Context where information is load.
      * @param logicalName Logical name (OBIS code).
      * @param description Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
-    public final String[] getDescription(final String logicalName,
+    public final String[] getDescription(final Context context,
+                                         final String logicalName,
                                          final String description) {
-        return getDescription(logicalName, ObjectType.NONE, description);
+        return getDescription(context, logicalName, ObjectType.NONE, description);
     }
 
     /**
      * Get OBIS code description.
      *
+     * @param context     Context where information is load.
      * @param logicalName Logical name (OBIS code).
      * @param type        Object type.
      * @return Array of descriptions that match given OBIS code.
      */
-    public final String[] getDescription(final String logicalName,
+    public final String[] getDescription(final Context context,
+                                         final String logicalName,
                                          final ObjectType type) {
-        return getDescription(logicalName, type, null);
+        return getDescription(context, logicalName, type, null);
     }
 
     /**
@@ -164,10 +168,18 @@ public class GXDLMSConverter {
      * @param description Description filter.
      * @return Array of descriptions that match given OBIS code.
      */
-    public final String[] getDescription(final String logicalName, final ObjectType type,
+    public final String[] getDescription(final Context context,
+                                         final String logicalName, final ObjectType type,
                                          final String description) {
-        if (codes.isEmpty()) {
-            throw new RuntimeException("Read OBIS codes first.");
+
+        synchronized (codes) {
+            if (codes.isEmpty()) {
+                /* OBIS codes are not updated if context is unknown. */
+                if (context == null) {
+                    return new String[0];
+                }
+                readStandardObisInfo(context, standard, codes);
+            }
         }
         List<String> list = new ArrayList<String>();
         boolean all = logicalName == null || logicalName.isEmpty();
@@ -190,9 +202,9 @@ public class GXDLMSConverter {
     /**
      * Update OBIS code information.
      *
-     * @param codes COSEM objects.
-     * @param it    COSEM object.
-     * @param standard    used DLMS standard.
+     * @param codes    COSEM objects.
+     * @param it       COSEM object.
+     * @param standard used DLMS standard.
      */
     private static void updateOBISCodeInfo(final GXStandardObisCodeCollection codes,
                                            final GXDLMSObject it, final Standard standard) {
@@ -301,9 +313,11 @@ public class GXDLMSConverter {
     /**
      * Update standard OBIS codes description and type if defined.
      *
-     * @param object COSEM object.
+     * @param context Context where information is load.
+     * @param object  COSEM object.
      */
-    public final void updateOBISCodeInformation(final Context context, final GXDLMSObject object) {
+    public final void updateOBISCodeInformation(final Context context,
+                                                final GXDLMSObject object) {
         synchronized (codes) {
             if (codes.size() == 0) {
                 /* OBIS codes are not updated if context is unknown. */
@@ -319,6 +333,7 @@ public class GXDLMSConverter {
     /**
      * Update standard OBIS codes descriptions and type if defined.
      *
+     * @param context Context where information is load.
      * @param objects Collection of COSEM objects to update.
      */
     public final void updateOBISCodeInformation(final Context context, final GXDLMSObjectCollection objects) {
@@ -333,7 +348,7 @@ public class GXDLMSConverter {
     }
 
     /**
-     * Get country spesific OBIS codes.
+     * Get country specific OBIS codes.
      *
      * @param standard Used standard.
      * @return Collection for special OBIC codes.
@@ -763,11 +778,11 @@ public class GXDLMSConverter {
 
     /**
      * Convert string to camel case format.
+     *
      * @param value Converted string.
      * @return String in camel case format.
      */
-    public static String toCamelCase(final String value)
-    {
+    public static String toCamelCase(final String value) {
         return GXCommon.toCamelCase(value);
     }
 }

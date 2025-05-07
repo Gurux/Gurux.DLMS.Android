@@ -320,4 +320,13 @@
     <string name="type">Type</string>
     <string name="kek">KEK</string>
     <string name="text">Text</string>
+    <string name="shift_time">Shift Time</string>
+    <string name="preset_time">Preset Time</string>
+    <string name="interval_start">Interval start</string>
+    <string name="interval_end">Interval end</string>
+    <string name="preset_adjusting_time">Preset adjusting time</string>
+    <string name="current_time">Current time</string>
+    <string name="data_index">Data index</string>
+    <string name="attribute_index">Attribute index</string>
+    <string name="read">Read</string>
 </resources>

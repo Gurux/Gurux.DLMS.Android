@@ -377,7 +377,7 @@ public class MeterSettingsFragment extends Fragment {
             View view = inflater.inflate(R.layout.dialog_number, null, false);
             EditText text = view.findViewById(R.id.value);
             text.setText(String.valueOf(mDevice.getClientAddress()));
-            builder.setTitle(R.string.waittime)
+            builder.setTitle(R.string.clientAddress)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, (dialog, id) ->
                     {

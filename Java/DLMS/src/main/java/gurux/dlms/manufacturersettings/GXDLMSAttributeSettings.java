@@ -54,6 +54,10 @@ public class GXDLMSAttributeSettings {
     private String name;
     private int index;
     private int order;
+    /**
+     * Has user changed the value.
+     */
+    private boolean mDirty;
 
     /**
      * Constructor.
@@ -251,5 +255,19 @@ public class GXDLMSAttributeSettings {
      */
     public final void setMinimumVersion(final int value) {
         minimumVersion = value;
+    }
+
+    /**
+     * @return Has user changed the value.
+     */
+    public boolean isDirty() {
+        return mDirty;
+    }
+
+    /**
+     * @param value Has user changed the value.
+     */
+    public void setDirty(final boolean value) {
+        mDirty = value;
     }
 }

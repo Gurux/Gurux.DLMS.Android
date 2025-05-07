@@ -38,11 +38,19 @@ import android.content.Context;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import gurux.dlms.GXByteBuffer;
+import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.R;
@@ -165,6 +173,74 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
     public final void setSecondaryDNSAddress(final InetAddress value) {
         secondaryDNSAddress = value;
     }
+
+    /**
+     * Add multicast IP address.
+     *
+     * @param client  DLMS client.
+     * @param address New IP Address.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
+     */
+    public byte[][] addMcIpAddress(final GXDLMSClient client, final InetAddress address)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
+        GXByteBuffer bb = new GXByteBuffer();
+        bb.set(address.getAddress());
+        return client.method(this, 1, bb.getUInt32(), DataType.UINT32);
+    }
+
+    /**
+     * Delete multicast IP address.
+     *
+     * @param client  DLMS client.
+     * @param address Deleted IP Address.
+     * @return Action bytes.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
+     */
+    public byte[][] deleteMcIpAaddress(final GXDLMSClient client, final InetAddress address)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
+        GXByteBuffer bb = new GXByteBuffer();
+        bb.set(address.getAddress());
+        return client.method(this, 2, bb.getUInt32(), DataType.UINT32);
+    }
+
+    /**
+     * Returns the count of IP addresses array.
+     *
+     * @param client DLMS client.
+     * @param index  IP address index
+     * @return Action bytes.
+     * @throws NoSuchPaddingException             No such padding exception.
+     * @throws NoSuchAlgorithmException           No such algorithm exception.
+     * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
+     * @throws InvalidKeyException                Invalid key exception.
+     * @throws BadPaddingException                Bad padding exception.
+     * @throws IllegalBlockSizeException          Illegal block size exception.
+     * @throws SignatureException                 Signature exception.
+     */
+    public byte[][] getMcIpAddressCount(final GXDLMSClient client, short index)
+            throws InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException, SignatureException {
+        return client.method(this, 3, index, DataType.UINT16);
+    }
+
 
     @Override
     public final Object[] getValues() {
@@ -532,13 +608,22 @@ public class GXDLMSIp4Setup extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames(final Context context) {
-        return new String[]{context.getString(R.string.logical_name), "Data LinkLayer Reference", "IP Address", "Multicast IP Address",
-                "IP Options", "Subnet Mask", "Gateway IP Address", "Use DHCP", "Primary DNS Address",
+        return new String[]{context.getString(R.string.logical_name),
+                "Data LinkLayer Reference",
+                "IP Address",
+                "Multicast IP Address",
+                "IP Options",
+                "Subnet Mask",
+                "Gateway IP Address",
+                "Use DHCP",
+                "Primary DNS Address",
                 "Secondary DNS Address"};
     }
 
     @Override
     public String[] getMethodNames(final Context context) {
-        return new String[]{"Add mc IP address", "Delete mc IP address", "Get nbof mc IP addresses"};
+        return new String[]{"Add mc IP address",
+                "Delete mc IP address",
+                "Get count mc of IP addresses"};
     }
 }

@@ -24,7 +24,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import gurux.common.IGXMedia;
 import gurux.common.IGXMediaListener;
@@ -33,6 +32,7 @@ import gurux.common.PropertyChangedEventArgs;
 import gurux.common.ReceiveEventArgs;
 import gurux.common.TraceEventArgs;
 import gurux.dlms.android.databinding.ActivityMainBinding;
+import gurux.dlms.android.ui.main.MainFragment;
 import gurux.dlms.android.ui.main.MainViewModel;
 import gurux.dlms.android.ui.manufacturers.ManufacturersViewModel;
 import gurux.dlms.android.ui.media.MediaViewModel;
@@ -90,14 +90,15 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
-            }
+        binding.appBarMain.fabRead.setOnClickListener((View.OnClickListener) view -> {
+            //Start read.
+            mainViewModelViewModel.getListener().onRead(null, 0, null);
         });
+        binding.appBarMain.fabWrite.setOnClickListener((View.OnClickListener) view -> {
+            //Start write.
+            mainViewModelViewModel.getListener().onWrite(null, 0);
+        });
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -113,7 +114,16 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
+            //FAB is visible only read page.
+            View fabRead = findViewById(R.id.fabRead);
+            View fabWrite = findViewById(R.id.fabWrite);
+            if (id == R.id.nav_main) {
+                fabRead.setVisibility(View.VISIBLE);
+                fabWrite.setVisibility(View.VISIBLE);
+            } else {
+                fabRead.setVisibility(View.GONE);
+                fabWrite.setVisibility(View.GONE);
+            }
             if (id == R.id.nav_info) {
                 try {
                     PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);

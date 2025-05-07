@@ -51,7 +51,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "org.gurux"
                 artifactId = "gurux.dlms.android"
-                version = "2.0.13"
+                version = "2.0.14"
 
                 pom {
                     name.set("gurux.dlms.android")

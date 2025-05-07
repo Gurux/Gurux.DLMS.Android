@@ -12,9 +12,9 @@ public interface IGXActionListener {
      *
      * @param object Read object.
      * @param index  Attribute index.
+     * @param data   If data is give it's used.
      */
-    void onRead(GXDLMSObject object, int index);
-
+    void onRead(GXDLMSObject object, int index, byte[][] data);
 
     /**
      * Write selected attribute.
@@ -31,4 +31,16 @@ public interface IGXActionListener {
      */
     void onInvoke(byte[][] frames);
 
+    /**
+     * User has changed the attribute value.
+     *
+     * @param target Changed COSEM object.
+     * @param index  Attribute index.
+     */
+    void onObjectChanged(GXDLMSObject target, int index);
+
+    /**
+     * @return True, if transaction (read or write) is in progress.
+     */
+    boolean isProgress();
 }

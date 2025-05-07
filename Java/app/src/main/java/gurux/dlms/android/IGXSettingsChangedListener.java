@@ -1,6 +1,7 @@
 package gurux.dlms.android;
 
 import gurux.common.IGXMedia;
+import gurux.dlms.objects.GXDLMSObject;
 
 /**
  * This interface is used to notify activity when device settings are changed..

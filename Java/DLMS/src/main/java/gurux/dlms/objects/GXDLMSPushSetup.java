@@ -83,7 +83,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
     private List<Entry<GXDLMSObject, GXDLMSCaptureObject>> pushObjectList;
     private List<Map.Entry<GXDateTime, GXDateTime>> communicationWindow;
     private int randomisationStartInterval;
-    private int numberOfRetries;
+    private short numberOfRetries;
     /**
      * Repetition delay.
      */
@@ -220,7 +220,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
      * made until the push setup is triggered again. A value of 0 means
      * no repetitions, i.e. only the initial connection attempt is made.
      */
-    public final int getNumberOfRetries() {
+    public final short getNumberOfRetries() {
         return numberOfRetries;
     }
 
@@ -231,7 +231,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
      *              means no repetitions, i.e. only the initial connection attempt
      *              is made.
      */
-    public final void setNumberOfRetries(final byte value) {
+    public final void setNumberOfRetries(final short value) {
         numberOfRetries = value;
     }
 
@@ -736,7 +736,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
         } else if (e.getIndex() == 5) {
             randomisationStartInterval = ((Number) e.getValue()).intValue();
         } else if (e.getIndex() == 6) {
-            numberOfRetries = ((Number) e.getValue()).intValue();
+            numberOfRetries = ((Number) e.getValue()).shortValue();
         } else if (e.getIndex() == 7) {
             if (version < 2) {
                 repetitionDelay = ((Number) e.getValue()).intValue();
@@ -838,7 +838,7 @@ public class GXDLMSPushSetup extends GXDLMSObject implements IGXDLMSBase {
             reader.readEndElement("CommunicationWindow");
         }
         randomisationStartInterval = reader.readElementContentAsInt("RandomisationStartInterval");
-        numberOfRetries = reader.readElementContentAsInt("NumberOfRetries");
+        numberOfRetries = (short)reader.readElementContentAsInt("NumberOfRetries");
         if (version < 2) {
             repetitionDelay = reader.readElementContentAsInt("RepetitionDelay");
         } else {

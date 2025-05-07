@@ -49,7 +49,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSException;
 import gurux.dlms.GXDLMSServerBase;
@@ -459,6 +458,43 @@ public class GXDLMSObject {
             return DataType.NONE;
         }
         return att.getUIType();
+    }
+
+    /**
+     * Is value of selected attribute changed.
+     *
+     * @param index Attribute index of the object.
+     * @return UI data type of the object.
+     */
+    public boolean isDirty(final int index) {
+        if (index == 0) {
+            //Check all attributes and return true if any attribute is dirty.
+            for (GXDLMSAttributeSettings att : attributes) {
+                if (att.isDirty()) {
+                    return true;
+                }
+            }
+        }
+        GXDLMSAttributeSettings att = attributes.find(index);
+        if (att == null) {
+            return false;
+        }
+        return att.isDirty();
+    }
+
+    /**
+     * Is value of selected attribute changed.
+     *
+     * @param index Attribute index of the object.
+     * @return UI data type of the object.
+     */
+    public void setDirty(final int index, boolean value) {
+        GXDLMSAttributeSettings att = getMethodAttributes().find(index);
+        if (att == null) {
+            att = new GXDLMSAttributeSettings(index);
+            getMethodAttributes().add(att);
+        }
+        att.setDirty(value);
     }
 
     /**

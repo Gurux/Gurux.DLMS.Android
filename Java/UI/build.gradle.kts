@@ -47,6 +47,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.flexbox)
 }
 
 afterEvaluate {
@@ -56,7 +57,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "org.gurux"
                 artifactId = "gurux.dlms.android.ui"
-                version = "2.0.13"
+                version = "2.0.14"
                 pom {
                     name.set("gurux.dlms.android.ui")
                     description.set(

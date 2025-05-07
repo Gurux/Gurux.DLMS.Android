@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
-            android:text="@strings/reset"
+            android:text="@string/reset"
             />
 
         <FrameLayout

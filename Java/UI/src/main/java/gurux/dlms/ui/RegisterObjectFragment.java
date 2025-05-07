@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,16 +12,25 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import gurux.dlms.GXSimpleEntry;
-import gurux.dlms.ui.databinding.RegisterFragmentBinding;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.MethodAccessMode;
+import gurux.dlms.enums.Unit;
 import gurux.dlms.objects.GXDLMSRegister;
 import gurux.dlms.objects.IGXDLMSBase;
+import gurux.dlms.ui.databinding.RegisterFragmentBinding;
+import gurux.dlms.ui.internal.GXAttributeView;
+import gurux.dlms.ui.internal.IGXSet;
 
 public class RegisterObjectFragment extends BaseObjectFragment {
 
     private RegisterFragmentBinding binding;
+    private View.OnClickListener onClickListener;
+
+    void test(IGXSet<GXDLMSRegister> w) {
+
+    }
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,27 +48,47 @@ public class RegisterObjectFragment extends BaseObjectFragment {
         TextView lbl = new TextView(requireContext());
         lbl.setText(names[1]);
         binding.attributes.addView(lbl);
-        Object value = target.getValue();
         dt = target.getUIDataType(2);
         if (dt == DataType.NONE) {
             dt = target.getDataType(2);
         }
         AccessMode am = target.getAccess(2);
-        View editText = GXAttributeView.create(requireContext(), value, dt);
+        View editText = GXAttributeView.create(requireContext(), objectViewModel.getListener(),
+                target, 2, dt,
+                lbl,
+                (object, index) -> target.getValue(),
+                (object, index, value) ->
+                {
+                    target.setValue(value);
+                });
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
         //Add register scaler and unit.
         am = target.getAccess(3);
-
         lbl = new TextView(requireContext());
         lbl.setText(names[2]);
         binding.attributes.addView(lbl);
-        value = target.getScaler();
-        editText = GXAttributeView.create(requireContext(), value, DataType.FLOAT64);
+        editText = GXAttributeView.create(requireContext(), objectViewModel.getListener(),
+                target, 3, DataType.FLOAT64,
+                lbl,
+                (object, index) -> target.getScaler(),
+                (object, index, value) ->
+                {
+                    target.setScaler((Double) value);
+                });
+
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
-        value = target.getUnit();
-        editText = GXAttributeView.create(requireContext(), value, DataType.ENUM);
+        editText = GXAttributeView.create(requireContext(), objectViewModel.getListener(),
+                target, 3, DataType.ENUM,
+                lbl,
+                (object, index) -> target.getUnit(),
+                (object, index, value) ->
+                {
+                    Unit unit = (Unit) value;
+                    target.setUnit(unit);
+                });
+
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
 
@@ -69,14 +97,7 @@ public class RegisterObjectFragment extends BaseObjectFragment {
         binding.reset.setText(((IGXDLMSBase) target).getMethodNames(getContext())[0]);
         mComponents.add(new GXSimpleEntry<>(binding.reset, ma));
 
-        binding.reset.setOnClickListener(v -> {
-            try {
-                binding.reset.setEnabled(false);
-                objectViewModel.getListener().onInvoke(target.reset(objectViewModel.getClient()));
-            } catch (Exception e) {
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.reset.setOnClickListener(onClickListener);
         updateAccessRights();
         return view;
     }

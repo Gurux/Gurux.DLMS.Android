@@ -1,5 +1,7 @@
 package gurux.dlms.ui;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import gurux.common.IGXMedia;
@@ -24,6 +26,11 @@ public class ObjectViewModel extends ViewModel {
     private GXDLMSClient mClient;
 
     private IGXActionListener mListener;
+
+    /**
+     * Is read, write or action is progress.
+     */
+    private final MutableLiveData<Boolean> mInProgress = new MutableLiveData<>();
 
     public <T> T getObject(Class<T> type) {
         return (T) mObject;
@@ -62,5 +69,21 @@ public class ObjectViewModel extends ViewModel {
      */
     public void setClient(GXDLMSClient value) {
         mClient = value;
+    }
+
+    /**
+     *
+     * @return Is read, write or action is progress.
+     */
+    public LiveData<Boolean> getInProgress() {
+        return mInProgress;
+    }
+
+    /**
+     *
+     * @param value Is read, write or action is progress.
+     */
+    public void setInProgress(final boolean value) {
+        mInProgress.setValue(value);
     }
 }
