@@ -13,7 +13,7 @@ navigationUi = "2.8.9"
 guruxCommonAndroid = "2.0.2"
 guruxSerialAndroid = "2.0.11"
 guruxNetAndroid = "1.0.3"
-guruxDlmsAndroid = "2.0.13"
+guruxDlmsAndroid = "2.0.14"
 flexbox = "3.0.0"
 
 [libraries]
