@@ -104,6 +104,7 @@ public class lnAuthenticationMechanismNameFragment extends ObjectFragment {
                 (object, index, value) -> target.getAuthenticationMechanismName().setMechanismId((Authentication) value));
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

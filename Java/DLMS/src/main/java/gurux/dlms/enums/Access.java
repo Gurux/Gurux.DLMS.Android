@@ -64,7 +64,7 @@ public enum Access {
     private static java.util.HashMap<Integer, Access> getMappings() {
         synchronized (Access.class) {
             if (mappings == null) {
-                mappings = new java.util.HashMap<Integer, Access>();
+                mappings = new java.util.HashMap<>();
             }
         }
         return mappings;

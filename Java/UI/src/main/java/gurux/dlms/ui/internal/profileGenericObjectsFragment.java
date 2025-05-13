@@ -14,6 +14,7 @@ import gurux.dlms.enums.AccessMode;
 import gurux.dlms.objects.GXDLMSCaptureObject;
 import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.GXDLMSPushSetup;
+import gurux.dlms.ui.GXTable;
 import gurux.dlms.ui.R;
 
 public class profileGenericObjectsFragment extends ObjectFragment {
@@ -41,6 +42,7 @@ public class profileGenericObjectsFragment extends ObjectFragment {
         }
         mComponents.add(new GXSimpleEntry<>(table, am));
         binding.attributes.addView(table);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

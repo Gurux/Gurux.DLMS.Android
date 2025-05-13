@@ -1,4 +1,4 @@
-package gurux.dlms.ui.internal;
+package gurux.dlms.ui;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,7 +10,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.Arrays;
-
 
 public class GXTable extends TableLayout {
 

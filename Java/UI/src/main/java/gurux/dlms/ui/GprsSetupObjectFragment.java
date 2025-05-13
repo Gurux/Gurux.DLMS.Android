@@ -17,7 +17,6 @@ import gurux.dlms.enums.DataType;
 import gurux.dlms.objects.GXDLMSGprsSetup;
 import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.ui.databinding.GprsSetupFragmentBinding;
-import gurux.dlms.ui.internal.GXAccordion;
 import gurux.dlms.ui.internal.GXAttributeView;
 
 public class GprsSetupObjectFragment extends BaseObjectFragment {
@@ -231,6 +230,7 @@ public class GprsSetupObjectFragment extends BaseObjectFragment {
                 });
         mComponents.add(new GXSimpleEntry<>(editText, am));
         a.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

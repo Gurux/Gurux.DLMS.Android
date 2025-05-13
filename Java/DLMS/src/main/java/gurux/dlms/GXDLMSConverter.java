@@ -97,7 +97,7 @@ public class GXDLMSConverter {
                         try (InputStreamReader r = new InputStreamReader(io, StandardCharsets.UTF_8)) {
                             BufferedReader reader = new BufferedReader(r);
                             try (FileOutputStream writer = context.openFileOutput(path, MODE_PRIVATE)) {
-                                newline = System.getProperty("line.separator");
+                                newline = System.lineSeparator();
                                 while ((line = reader.readLine()) != null) {
                                     writer.write(line.getBytes());
                                     writer.write(newline.getBytes());

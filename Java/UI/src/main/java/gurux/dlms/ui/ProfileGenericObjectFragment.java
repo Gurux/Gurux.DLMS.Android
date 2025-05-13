@@ -40,7 +40,6 @@ import gurux.dlms.objects.enums.SortMethod;
 import gurux.dlms.ui.databinding.ProfileGenericFragmentBinding;
 import gurux.dlms.ui.internal.GXAttributeView;
 import gurux.dlms.ui.internal.GXHelpers;
-import gurux.dlms.ui.internal.GXTable;
 
 public class ProfileGenericObjectFragment extends BaseObjectFragment {
 
@@ -229,8 +228,10 @@ public class ProfileGenericObjectFragment extends BaseObjectFragment {
                     int i = Integer.parseInt(index.getText().toString());
                     int c = Integer.parseInt(count.getText().toString());
                     byte[][] data = objectViewModel.getClient().readRowsByEntry(target, i, c);
-                    objectViewModel.getListener().onRead(target, 2, data);
-
+                    objectViewModel.getListener().onRaw(data, value ->
+                    {
+                        objectViewModel.getClient().updateValue(target, 2, value);
+                    });
                 } else if (readLast.isChecked()) {
                     int l = Integer.parseInt(last.getText().toString());
                     Calendar cal2 = Calendar.getInstance();
@@ -241,15 +242,21 @@ public class ProfileGenericObjectFragment extends BaseObjectFragment {
                     GXDateTime f = new GXDateTime(cal2);
                     GXDateTime t = new GXDateTime(Calendar.getInstance());
                     byte[][] data = objectViewModel.getClient().readRowsByRange(target, f, t);
-                    objectViewModel.getListener().onRead(target, 2, data);
+                    objectViewModel.getListener().onRaw(data, value ->
+                    {
+                        objectViewModel.getClient().updateValue(target, 2, value);
+                    });
                 } else if (readFrom.isChecked()) {
-                    GXDateTime f = new GXDateTime( dateTimeFormat.parse(from.getText().toString()));
-                    GXDateTime t = new GXDateTime( dateTimeFormat.parse(to.getText().toString()));
+                    GXDateTime f = new GXDateTime(dateTimeFormat.parse(from.getText().toString()));
+                    GXDateTime t = new GXDateTime(dateTimeFormat.parse(to.getText().toString()));
                     byte[][] data = objectViewModel.getClient().readRowsByRange(target, f, t);
-                    objectViewModel.getListener().onRead(target, 2, data);
+                    objectViewModel.getListener().onRaw(data, value ->
+                    {
+                        objectViewModel.getClient().updateValue(target, 2, value);
+                    });
                 } else {
-                        //Read all.
-                    objectViewModel.getListener().onRead(target, 2, null);
+                    //Read all.
+                    objectViewModel.getListener().onRead(target, 2);
                 }
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -296,7 +303,7 @@ public class ProfileGenericObjectFragment extends BaseObjectFragment {
         binding.reset.setOnClickListener(v -> {
             try {
                 binding.reset.setEnabled(false);
-                objectViewModel.getListener().onInvoke(target.reset(objectViewModel.getClient()));
+                objectViewModel.getListener().onInvoke(target.reset(objectViewModel.getClient()), null);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -308,11 +315,12 @@ public class ProfileGenericObjectFragment extends BaseObjectFragment {
         binding.capture.setOnClickListener(v -> {
             try {
                 binding.capture.setEnabled(false);
-                objectViewModel.getListener().onInvoke(target.capture(objectViewModel.getClient()));
+                objectViewModel.getListener().onInvoke(target.capture(objectViewModel.getClient()), null);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

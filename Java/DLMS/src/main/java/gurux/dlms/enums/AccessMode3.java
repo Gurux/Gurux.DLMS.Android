@@ -81,13 +81,13 @@ public enum AccessMode3 {
      */
     DIGITALLY_SIGNED_RESPONSE(128);
 
-    private int value;
+    private final int value;
     private static java.util.HashMap<Integer, AccessMode3> mappings;
 
     private static java.util.HashMap<Integer, AccessMode3> getMappings() {
-        synchronized (AccessMode.class) {
+        synchronized (AccessMode3.class) {
             if (mappings == null) {
-                mappings = new java.util.HashMap<Integer, AccessMode3>();
+                mappings = new java.util.HashMap<>();
             }
         }
         return mappings;
@@ -120,7 +120,7 @@ public enum AccessMode3 {
      * @return The enumerated value, which represents the integer.
      */
     public static java.util.Set<AccessMode3> forValue(final int value) {
-        Set<AccessMode3> types = new HashSet<AccessMode3>();
+        Set<AccessMode3> types = new HashSet<>();
         AccessMode3[] enums = getEnumConstants();
         for (int pos = 0; pos != enums.length; ++pos) {
             if ((enums[pos].value & value) == enums[pos].value) {

@@ -12,6 +12,7 @@ import java.util.Map;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.objects.GXDLMSAssociationLogicalName;
+import gurux.dlms.ui.GXTable;
 import gurux.dlms.ui.R;
 
 public class lnUserListFragment extends ObjectFragment {
@@ -35,6 +36,7 @@ public class lnUserListFragment extends ObjectFragment {
         }
         mComponents.add(new GXSimpleEntry<>(table, am));
         binding.attributes.addView(table);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

@@ -34,6 +34,8 @@
 
 package gurux.dlms.android;
 
+import androidx.annotation.NonNull;
+
 import gurux.common.IGXMedia;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.InterfaceType;
@@ -41,6 +43,7 @@ import gurux.dlms.enums.Security;
 import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
 import gurux.dlms.objects.GXDLMSObjectCollection;
+import gurux.dlms.objects.enums.SecuritySuite;
 
 /**
  * DLMS meter settings.
@@ -73,26 +76,47 @@ public class GXDevice {
     /*
      * Password is used only if authentication is used.
      */
-    private String password = "";
+    private byte[] password;
 
     /*
-     * Used communication security.
+     * Used security level.
      */
-    private Security security = Security.NONE;
+    private Security mSecurity = Security.NONE;
+
+    /*
+     * Used security suite.
+     */
+    private SecuritySuite mSecuritySuite = SecuritySuite.SUITE_0;
 
     /*
      * System Title.
      */
-    private String mSystemTitle;
+    private byte[] mSystemTitle;
+
+    /*
+     *Meter system Title.
+     */
+    private byte[] mMeterSystemTitle;
+
     /**
      * Block cipher key.
      */
-    private String mBlockCipherKey;
+    private byte[] mBlockCipherKey;
 
     /*
      * Authentication key.
      */
-    private String mAuthenticationKey;
+    private byte[] mAuthenticationKey;
+
+    /*
+     * Dedicated key.
+     */
+    private byte[] mDedicatedKey;
+
+    /*
+     * Challenge.
+     */
+    private byte[] mChallenge;
 
     /**
      * Logical name of the invocation counter.
@@ -123,6 +147,10 @@ public class GXDevice {
      */
     private HDLCAddressType mAddressType = HDLCAddressType.DEFAULT;
 
+    /**
+     * Meter conformance.
+     */
+    private int mConformance = 0;
     /*
      * COSEM objects.
      */
@@ -178,14 +206,14 @@ public class GXDevice {
     /**
      * @return Used password.
      */
-    public final String getPassword() {
+    public final byte[] getPassword() {
         return password;
     }
 
     /**
      * @param value Used password.
      */
-    public final void setPassword(String value) {
+    public final void setPassword(final byte[] value) {
         password = value;
     }
 
@@ -193,27 +221,27 @@ public class GXDevice {
      * @return Used security.
      */
     public final Security getSecurity() {
-        return security;
+        return mSecurity;
     }
 
     /**
      * @param value Used security.
      */
     public final void setSecurity(Security value) {
-        security = value;
+        mSecurity = value;
     }
 
     /**
      * @return Used system title.
      */
-    public final String getSystemTitle() {
+    public final byte[] getSystemTitle() {
         return mSystemTitle;
     }
 
     /**
      * @param value Used system title.
      */
-    public final void setSystemTitle(String value) {
+    public final void setSystemTitle(final byte[] value) {
         mSystemTitle = value;
     }
 
@@ -221,28 +249,28 @@ public class GXDevice {
     /**
      * @return Block cipher key.
      */
-    public final String getBlockCipherKey() {
+    public final byte[] getBlockCipherKey() {
         return mBlockCipherKey;
     }
 
     /**
      * @param value Block cipher key.
      */
-    public final void setBlockCipherKey(String value) {
+    public final void setBlockCipherKey(final byte[] value) {
         mBlockCipherKey = value;
     }
 
     /**
      * @return Authentication key.
      */
-    public final String getAuthenticationKey() {
+    public final byte[] getAuthenticationKey() {
         return mAuthenticationKey;
     }
 
     /**
      * @param value Authentication key.
      */
-    public final void setAuthenticationKey(String value) {
+    public final void setAuthenticationKey(final byte[] value) {
         mAuthenticationKey = value;
     }
 
@@ -346,7 +374,6 @@ public class GXDevice {
     }
 
     /**
-     *
      * @return Is logican name referencing used.
      */
     public boolean isLogicalNameReferencing() {
@@ -354,23 +381,20 @@ public class GXDevice {
     }
 
     /**
-     *
      * @param value Is logican name referencing used.
      */
-    public void setLogicalNameReferencing(boolean value ) {
-        mUseLN = value ;
+    public void setLogicalNameReferencing(boolean value) {
+        mUseLN = value;
     }
 
     /**
      * Constructor.
      */
-   public GXDevice()
-   {
-       authentication = new GXAuthentication(Authentication.NONE, 16);
-   }
+    public GXDevice() {
+        authentication = new GXAuthentication(Authentication.NONE, 16);
+    }
 
     /**
-     *
      * @return Interface type.
      */
     public InterfaceType getInterfaceType() {
@@ -378,7 +402,6 @@ public class GXDevice {
     }
 
     /**
-     *
      * @param value Interface type.
      */
     public void setInterfaceType(final InterfaceType value) {
@@ -386,7 +409,6 @@ public class GXDevice {
     }
 
     /**
-     *
      * @return Logical name of the invocation counter.
      */
     public String getInvocationCounter() {
@@ -394,10 +416,80 @@ public class GXDevice {
     }
 
     /**
-     *
      * @param value Logical name of the invocation counter.
      */
     public void setInvocationCounter(final String value) {
         mInvocationCounter = value;
+    }
+
+    /**
+     * @return Security suite.
+     */
+    @NonNull
+    public SecuritySuite getSecuritySuite() {
+        return mSecuritySuite;
+    }
+
+    /**
+     * @param value Security suite.
+     */
+    public void setSecuritySuite(@NonNull final SecuritySuite value) {
+        mSecuritySuite = value;
+    }
+
+    /**
+     * @return Meter system Title.
+     */
+    public byte[] getMeterSystemTitle() {
+        return mMeterSystemTitle;
+    }
+
+    /**
+     * @param value Meter system Title.
+     */
+    public void setMeterSystemTitle(final byte[] value) {
+        mMeterSystemTitle = value;
+    }
+
+    /**
+     * @return Dedicated key.
+     */
+    public byte[] getDedicatedKey() {
+        return mDedicatedKey;
+    }
+
+    /**
+     * @param value Dedicated key.
+     */
+    public void setDedicatedKey(final byte[] value) {
+        mDedicatedKey = value;
+    }
+
+    /**
+     * @return Challenge
+     */
+    public byte[] getChallenge() {
+        return mChallenge;
+    }
+
+    /**
+     * @param value Challenge
+     */
+    public void setChallenge(final byte[] value) {
+        this.mChallenge = value;
+    }
+
+    /**
+     * @return Meter conformance.
+     */
+    public int getConformance() {
+        return mConformance;
+    }
+
+    /**
+     * @param value Meter conformance.
+     */
+    public void setConformance(final int value) {
+        mConformance = value;
     }
 }

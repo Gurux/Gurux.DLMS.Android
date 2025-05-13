@@ -211,7 +211,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
         mComponents.add(new GXSimpleEntry<>(binding.quarter, ma));
         binding.quarter.setOnClickListener(v -> {
             try {
-                objectViewModel.getListener().onInvoke(target.adjustToQuarter(objectViewModel.getClient()));
+                objectViewModel.getListener().onInvoke(target.adjustToQuarter(objectViewModel.getClient()), null);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -222,7 +222,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
         mComponents.add(new GXSimpleEntry<>(binding.measuringPeriod, ma));
         binding.measuringPeriod.setOnClickListener(v -> {
             try {
-                objectViewModel.getListener().onInvoke(target.adjustToMeasuringPeriod(objectViewModel.getClient()));
+                objectViewModel.getListener().onInvoke(target.adjustToMeasuringPeriod(objectViewModel.getClient()), null);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -233,7 +233,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
         mComponents.add(new GXSimpleEntry<>(binding.adjustToMinute, ma));
         binding.adjustToMinute.setOnClickListener(v -> {
             try {
-                objectViewModel.getListener().onInvoke(target.adjustToMinute(objectViewModel.getClient()));
+                objectViewModel.getListener().onInvoke(target.adjustToMinute(objectViewModel.getClient()), null);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -244,7 +244,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
         mComponents.add(new GXSimpleEntry<>(binding.adjustToPresetTime, ma));
         binding.adjustToPresetTime.setOnClickListener(v -> {
             try {
-                objectViewModel.getListener().onInvoke(target.adjustToPresetTime(objectViewModel.getClient()));
+                objectViewModel.getListener().onInvoke(target.adjustToPresetTime(objectViewModel.getClient()), null);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -293,7 +293,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
                             Date end = df.parse(presetTime.getText().toString());
                             objectViewModel.getListener().onInvoke(target.presetAdjustingTime(
                                     objectViewModel.getClient(), time, start, end
-                            ));
+                            ), null);
                         } catch (ParseException | InvalidKeyException |
                                  NoSuchAlgorithmException | NoSuchPaddingException |
                                  InvalidAlgorithmParameterException |
@@ -329,8 +329,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
                         try {
                             int val = Integer.parseInt(time.getText().toString());
                             objectViewModel.getListener().onInvoke(target.shiftTime(
-                                    objectViewModel.getClient(), val
-                            ));
+                                    objectViewModel.getClient(), val), null);
                         } catch (InvalidKeyException |
                                  NoSuchAlgorithmException | NoSuchPaddingException |
                                  InvalidAlgorithmParameterException |
@@ -342,6 +341,7 @@ public class ClockObjectFragment extends BaseObjectFragment {
                     .setNegativeButton(android.R.string.cancel, (d, which) -> d.cancel())
                     .show();
         });
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

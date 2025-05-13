@@ -15,6 +15,7 @@ import gurux.dlms.objects.GXDLMSPushSetup;
 import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.objects.enums.MessageType;
 import gurux.dlms.objects.enums.ServiceType;
+import gurux.dlms.ui.GXAccordion;
 import gurux.dlms.ui.R;
 
 public class pushGeneralFragment extends ObjectFragment {
@@ -121,6 +122,7 @@ public class pushGeneralFragment extends ObjectFragment {
                 });
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

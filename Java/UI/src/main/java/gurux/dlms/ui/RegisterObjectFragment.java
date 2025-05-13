@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,17 +21,10 @@ import gurux.dlms.objects.GXDLMSRegister;
 import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.ui.databinding.RegisterFragmentBinding;
 import gurux.dlms.ui.internal.GXAttributeView;
-import gurux.dlms.ui.internal.IGXSet;
 
 public class RegisterObjectFragment extends BaseObjectFragment {
 
     private RegisterFragmentBinding binding;
-    private View.OnClickListener onClickListener;
-
-    void test(IGXSet<GXDLMSRegister> w) {
-
-    }
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -97,7 +91,14 @@ public class RegisterObjectFragment extends BaseObjectFragment {
         binding.reset.setText(((IGXDLMSBase) target).getMethodNames(getContext())[0]);
         mComponents.add(new GXSimpleEntry<>(binding.reset, ma));
 
-        binding.reset.setOnClickListener(onClickListener);
+        binding.reset.setOnClickListener(v -> {
+            try {
+                objectViewModel.getListener().onInvoke(target.reset(objectViewModel.getClient()), null);
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

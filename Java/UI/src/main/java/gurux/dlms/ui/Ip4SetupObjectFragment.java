@@ -36,7 +36,6 @@ import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.ui.databinding.Ip4SetupFragmentBinding;
 import gurux.dlms.ui.internal.GXAttributeView;
-import gurux.dlms.ui.internal.GXTable;
 
 public class Ip4SetupObjectFragment extends BaseObjectFragment {
 
@@ -221,7 +220,7 @@ public class Ip4SetupObjectFragment extends BaseObjectFragment {
                         {
                             try {
                                 InetAddress address = InetAddress.getByName(ipAddress.getText().toString());
-                                objectViewModel.getListener().onInvoke(target.addMcIpAddress(objectViewModel.getClient(), address));
+                                objectViewModel.getListener().onInvoke(target.addMcIpAddress(objectViewModel.getClient(), address), null);
                                 dialog.dismiss();
                             } catch (Exception e) {
                                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -258,7 +257,7 @@ public class Ip4SetupObjectFragment extends BaseObjectFragment {
                         {
                             try {
                                 InetAddress address = InetAddress.getByName((String) ipAddress.getText().toString());
-                                objectViewModel.getListener().onInvoke(target.deleteMcIpAaddress(objectViewModel.getClient(), address));
+                                objectViewModel.getListener().onInvoke(target.deleteMcIpAaddress(objectViewModel.getClient(), address), null);
                                 dialog.dismiss();
                             } catch (Exception e) {
                                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -294,7 +293,7 @@ public class Ip4SetupObjectFragment extends BaseObjectFragment {
                         {
                             try {
                                 short index = Short.parseShort(indexTb.getText().toString());
-                                objectViewModel.getListener().onInvoke(target.getMcIpAddressCount(objectViewModel.getClient(), index));
+                                objectViewModel.getListener().onInvoke(target.getMcIpAddressCount(objectViewModel.getClient(), index), null);
                                 dialog.dismiss();
                             } catch (InvalidKeyException |
                                      NoSuchAlgorithmException | NoSuchPaddingException |
@@ -310,6 +309,7 @@ public class Ip4SetupObjectFragment extends BaseObjectFragment {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

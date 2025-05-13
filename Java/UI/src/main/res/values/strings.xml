@@ -329,4 +329,7 @@
     <string name="data_index">Data index</string>
     <string name="attribute_index">Attribute index</string>
     <string name="read">Read</string>
+    <string name="help">Help</string>
+    <string name="chosen">" chosen"</string>
+    <string name="save">Save</string>
 </resources>

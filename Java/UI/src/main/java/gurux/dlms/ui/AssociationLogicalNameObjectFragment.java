@@ -10,9 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import gurux.dlms.objects.GXDLMSAssociationLogicalName;
 import gurux.dlms.ui.databinding.AssociationLogicalNameFragmentBinding;
-import gurux.dlms.ui.internal.GXTab;
 import gurux.dlms.ui.internal.lnApplicationContextNameFragment;
 import gurux.dlms.ui.internal.lnAuthenticationMechanismNameFragment;
 import gurux.dlms.ui.internal.lnGeneralFragment;
@@ -28,7 +26,6 @@ public class AssociationLogicalNameObjectFragment extends BaseObjectFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final ObjectViewModel objectViewModel = new ViewModelProvider(requireActivity()).get(ObjectViewModel.class);
-        final GXDLMSAssociationLogicalName target = objectViewModel.getObject(GXDLMSAssociationLogicalName.class);
         mMedia = objectViewModel.getMedia();
         binding = AssociationLogicalNameFragmentBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -43,6 +40,8 @@ public class AssociationLogicalNameObjectFragment extends BaseObjectFragment {
         tab.addTab(getString(R.string.applicationContextName), new lnApplicationContextNameFragment());
         tab.addTab(getString(R.string.authenticationMechanismName), new lnAuthenticationMechanismNameFragment());
         tab.addTab(getString(R.string.userList), new lnUserListFragment());
+        mMedia.addListener(this);
+        updateAccessRights();
         return view;
     }
 

@@ -104,6 +104,7 @@ public class lnApplicationContextNameFragment extends ObjectFragment {
                 (object, index, value) -> target.getApplicationContextName().setContextId((ApplicationContextName) value));
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

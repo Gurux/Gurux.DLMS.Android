@@ -13,6 +13,7 @@ import gurux.dlms.GXDateTime;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.objects.GXDLMSPushSetup;
+import gurux.dlms.ui.GXTable;
 import gurux.dlms.ui.R;
 
 public class pushCommunicationWindowFragment extends ObjectFragment {
@@ -35,6 +36,7 @@ public class pushCommunicationWindowFragment extends ObjectFragment {
         }
         mComponents.add(new GXSimpleEntry<>(table, am));
         binding.attributes.addView(table);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

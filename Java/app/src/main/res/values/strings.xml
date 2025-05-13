@@ -49,4 +49,16 @@
     <string name="readAssociationView">You need to read Association view to see all objects what the meter can offer. Do you want to do it now?</string>
     <string name="readScalers">You need to read scalers and units for the register objects. Do you want to do it now?</string>
     <string name="actionCompleted">Action completed successfully</string>
+    <string name="security_setup">Security setup</string>
+    <string name="block_cipher_key">Block cipher key</string>
+    <string name="authentication_key">Authentication key</string>
+    <string name="invalid_value">Invalid value</string>
+    <string name="dedicated_key">Dedicated key</string>
+    <string name="challenge">Challenge</string>
+    <string name="invocation_counter">Invocation Counter</string>
+    <string name="supported_services">Supported services</string>
+    <string name="security">Security</string>
+    <string name="general">General</string>
+    <string name="reference">Reference</string>
+    <string name="logical_name_referencing">Logical Name Referencing</string>
 </resources>

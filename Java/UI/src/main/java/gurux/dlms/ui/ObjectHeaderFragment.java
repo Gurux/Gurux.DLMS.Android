@@ -1,5 +1,7 @@
 package gurux.dlms.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import gurux.dlms.GXDLMSConverter;
-import gurux.dlms.ui.databinding.ObjectHeaderBinding;
 import gurux.dlms.objects.GXDLMSObject;
+import gurux.dlms.ui.databinding.ObjectHeaderBinding;
 
 public class ObjectHeaderFragment extends Fragment {
 
@@ -32,6 +34,11 @@ public class ObjectHeaderFragment extends Fragment {
         } else {
             binding.shortName.setText(mTarget.getShortName());
         }
+        final String address = "https://www.gurux.fi/Gurux.DLMS.Objects." + mTarget.getClass().getSimpleName();
+        binding.help.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+            startActivity(browserIntent);
+        });
         return view;
     }
 

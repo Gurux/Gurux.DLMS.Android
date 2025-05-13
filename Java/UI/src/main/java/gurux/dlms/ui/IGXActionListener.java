@@ -12,9 +12,8 @@ public interface IGXActionListener {
      *
      * @param object Read object.
      * @param index  Attribute index.
-     * @param data   If data is give it's used.
      */
-    void onRead(GXDLMSObject object, int index, byte[][] data);
+    void onRead(GXDLMSObject object, int index);
 
     /**
      * Write selected attribute.
@@ -29,7 +28,15 @@ public interface IGXActionListener {
      *
      * @param frames Invoke frame.
      */
-    void onInvoke(byte[][] frames);
+    void onInvoke(byte[][] frames,  IGXResultHandler handler);
+
+    /**
+     * Send raw data.
+     *
+     * @param frames Invoke frame.
+     * @return Received data.
+     */
+    void onRaw(byte[][] frames, IGXResultHandler handler);
 
     /**
      * User has changed the attribute value.

@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.obisTranslator.GXObisTranslator">
-    <!--Mikko-->
+    tools:context=".ui.main.MainFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <CheckBox
-            android:text="@string/showTrace"
+            android:id="@+id/showTrace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/showTrace" />
+            android:text="@string/showTrace" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <SearchView
                 android:id="@+id/search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/search"/>
+                android:text="@string/search" />
 
             <Button
                 android:id="@+id/open"
@@ -52,23 +53,24 @@
             <ListView
                 android:id="@+id/objects"
                 android:layout_width="300px"
-                android:choiceMode="singleChoice"
-                android:listSelector="#666666"
+                android:layout_height="match_parent"
                 android:layout_below="@+id/search"
-                android:layout_height="match_parent" />
+                android:choiceMode="singleChoice"
+                android:listSelector="#666666" />
 
             <EditText
                 android:id="@+id/attributes"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="start|top"
-                android:ems="10" />
+                android:ems="10"
+                android:gravity="start|top" />
+
             <EditText
                 android:id="@+id/trace"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="start|top"
-                android:ems="10" />
+                android:ems="10"
+                android:gravity="start|top" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

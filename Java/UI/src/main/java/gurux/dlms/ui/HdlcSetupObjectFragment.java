@@ -159,6 +159,7 @@ public class HdlcSetupObjectFragment extends BaseObjectFragment {
                 });
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

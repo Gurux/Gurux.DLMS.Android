@@ -18,7 +18,6 @@ import gurux.dlms.objects.GXDLMSObject;
 import gurux.dlms.objects.IGXDLMSBase;
 import gurux.dlms.ui.databinding.AssociationShortNameFragmentBinding;
 import gurux.dlms.ui.internal.GXHelpers;
-import gurux.dlms.ui.internal.GXTable;
 
 public class AssociationShortNameObjectFragment extends BaseObjectFragment {
 
@@ -65,6 +64,7 @@ public class AssociationShortNameObjectFragment extends BaseObjectFragment {
         }
         mComponents.add(new GXSimpleEntry<>(table, am));
         binding.attributes.addView(table);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

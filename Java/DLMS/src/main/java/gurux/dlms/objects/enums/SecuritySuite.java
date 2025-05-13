@@ -33,6 +33,8 @@
 //---------------------------------------------------------------------------
 package gurux.dlms.objects.enums;
 
+import androidx.annotation.NonNull;
+
 /**
  * Security suite Specifies authentication, encryption and key wrapping
  * algorithm.
@@ -68,5 +70,45 @@ public enum SecuritySuite {
         }
         return ret;
 
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        String str;
+        switch (this) {
+            case SUITE_0:
+                str = "Suite 0";
+                break;
+            case SUITE_1:
+                str = "Suite 1";
+                break;
+            case SUITE_2:
+                str = "Suite 2";
+                break;
+            default:
+                throw new IllegalArgumentException("SecuritySuite");
+        }
+        return str;
+    }
+
+    /**
+     * Parse a string into its corresponding Security enum value.
+     *
+     * @param value The security level represented as a string.
+     * @return Security enumeration value.
+     */
+    public static SecuritySuite valueOfString(final String value) {
+        SecuritySuite v;
+        if ("Suite 0".equalsIgnoreCase(value)) {
+            v = SecuritySuite.SUITE_0;
+        } else if ("Suite 1".equalsIgnoreCase(value)) {
+            v = SecuritySuite.SUITE_1;
+        } else if ("Suite 2".equalsIgnoreCase(value)) {
+            v = SecuritySuite.SUITE_2;
+        } else {
+            throw new IllegalArgumentException(value);
+        }
+        return v;
     }
 }

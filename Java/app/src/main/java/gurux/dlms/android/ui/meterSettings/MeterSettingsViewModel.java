@@ -18,16 +18,11 @@ public class MeterSettingsViewModel extends ViewModel {
         return mManufacturers;
     }
 
-
     public GXDevice getDevice() {
         return mDevice;
     }
 
-    ;
-
     public void setDevice(GXDevice device) {
         mDevice = device;
     }
-
-    ;
 }

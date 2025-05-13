@@ -71,7 +71,7 @@ public class GXDLMSSecureClient extends GXDLMSClient {
      * @param useLogicalNameReferencing Is Logical Name referencing used.
      */
     public GXDLMSSecureClient(final boolean useLogicalNameReferencing) {
-        this(useLogicalNameReferencing, 16, 1, Authentication.NONE, null, InterfaceType.HDLC);
+        this(useLogicalNameReferencing, 16, 1, Authentication.NONE, (byte[])null, InterfaceType.HDLC);
     }
 
     /**
@@ -90,6 +90,24 @@ public class GXDLMSSecureClient extends GXDLMSClient {
         ciphering = new GXCiphering("ABCDEFGH".getBytes());
         setCipher(ciphering);
     }
+
+    /**
+     * Constructor.
+     *
+     * @param useLogicalNameReferencing Is Logical Name referencing used.
+     * @param clientAddress             Server address.
+     * @param serverAddress             Client address.
+     * @param forAuthentication         Authentication type.
+     * @param password                  Password if authentication is used.
+     * @param interfaceType             Object type.
+     */
+    public GXDLMSSecureClient(final boolean useLogicalNameReferencing, final int clientAddress, final int serverAddress,
+                              final Authentication forAuthentication, final byte[] password, final InterfaceType interfaceType) {
+        super(useLogicalNameReferencing, clientAddress, serverAddress, forAuthentication, password, interfaceType);
+        ciphering = new GXCiphering("ABCDEFGH".getBytes());
+        setCipher(ciphering);
+    }
+
 
     /**
      * @return Ciphering settings.

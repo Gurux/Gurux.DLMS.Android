@@ -72,6 +72,7 @@ public class lnGeneralFragment extends ObjectFragment {
                 (object, index, value) -> target.setAssociationStatus((AssociationStatus) value));
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

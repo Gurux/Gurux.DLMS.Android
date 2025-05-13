@@ -18,4 +18,9 @@ public interface IGXSettingsChangedListener {
      * User has read association view from the meter.
      */
     void onAssociationChanged();
+
+    /**
+     * User has change device settings.
+     */
+    void onDeviceSettingChanged();
 }

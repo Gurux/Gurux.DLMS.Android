@@ -1,8 +1,6 @@
-package gurux.dlms.ui.internal;
+package gurux.dlms.ui;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,24 +18,23 @@ import gurux.dlms.GXSimpleEntry;
 
 public class GXTab extends LinearLayout {
 
-    private ArrayList<GXSimpleEntry<String, Fragment>> mFragments = new ArrayList<>();
+    private final ArrayList<GXSimpleEntry<String, Fragment>> mFragments = new ArrayList<>();
 
-    private TabLayout mTabLayout;
-    private ViewPager2 mViewPager;
+    private final TabLayout mTabLayout;
+    private final ViewPager2 mViewPager;
 
     public GXTab(@NonNull Fragment fragment) {
         super(fragment.requireContext());
         setOrientation(LinearLayout.VERTICAL);
-        setLayoutParams(new LinearLayout.LayoutParams(
+        setLayoutParams(new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         ));
-      //  setBackgroundColor(Color.BLUE);
         Context context = fragment.requireContext();
         mTabLayout = new TabLayout(context);
         mViewPager = new ViewPager2(context);
         mViewPager.setId(View.generateViewId());
-        mViewPager.setLayoutParams(new LinearLayout.LayoutParams(
+        mViewPager.setLayoutParams(new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         ));
@@ -51,7 +48,7 @@ public class GXTab extends LinearLayout {
 
             @NonNull
             @Override
-            public androidx.fragment.app.Fragment createFragment(int position) {
+            public Fragment createFragment(int position) {
                 return mFragments.get(position).getValue();
             }
         });

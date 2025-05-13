@@ -34,6 +34,8 @@
 
 package gurux.dlms.enums;
 
+import androidx.annotation.NonNull;
+
 /**
  * Used security model.
  */
@@ -58,15 +60,13 @@ public enum Security {
      */
     AUTHENTICATION_ENCRYPTION(0x30);
 
-    private int intValue;
+    private final int intValue;
     private static java.util.HashMap<Integer, Security> mappings;
 
     private static java.util.HashMap<Integer, Security> getMappings() {
-        if (mappings == null) {
-            synchronized (Security.class) {
-                if (mappings == null) {
-                    mappings = new java.util.HashMap<Integer, Security>();
-                }
+        synchronized (Security.class) {
+            if (mappings == null) {
+                mappings = new java.util.HashMap<>();
             }
         }
         return mappings;
@@ -82,29 +82,29 @@ public enum Security {
     }
 
     public static Security forValue(final int value) {
-        Security tmp = getMappings().get(value);
+        Security tmp = mappings.get(value);
         if (tmp == null) {
             throw new IllegalArgumentException("Invalid security integer value.");
         }
         return tmp;
     }
 
+    @NonNull
     @Override
     public String toString() {
         String str;
-        Security value = Security.forValue(getValue());
-        switch (value) {
+        switch (this) {
             case NONE:
-                str = "NONE";
+                str = "None";
                 break;
             case AUTHENTICATION:
-                str = "AUTHENTICATION";
+                str = "Authentication";
                 break;
             case ENCRYPTION:
-                str = "ENCRYPTION";
+                str = "Encryption";
                 break;
             case AUTHENTICATION_ENCRYPTION:
-                str = "AUTHENTICATION_ENCRYPTION";
+                str = "Authentication Encryption";
                 break;
             default:
                 throw new IllegalArgumentException("Security");
@@ -112,15 +112,23 @@ public enum Security {
         return str;
     }
 
+    /**
+     * Parse a string into its corresponding Security enum value.
+     *
+     * @param value The security level represented as a string.
+     * @return Security enumeration value.
+     */
     public static Security valueOfString(final String value) {
         Security v;
-        if ("NONE".equalsIgnoreCase(value)) {
+        if ("None".equalsIgnoreCase(value)) {
             v = Security.NONE;
-        } else if ("AUTHENTICATION".equalsIgnoreCase(value)) {
+        } else if ("Authentication".equalsIgnoreCase(value)) {
             v = Security.AUTHENTICATION;
-        } else if ("ENCRYPTION".equalsIgnoreCase(value)) {
+        } else if ("Encryption".equalsIgnoreCase(value)) {
             v = Security.ENCRYPTION;
-        } else if ("AUTHENTICATION_ENCRYPTION".equalsIgnoreCase(value)) {
+        } else if ("Authentication Encryption".equalsIgnoreCase(value) ||
+                "AuthenticationEncryption".equalsIgnoreCase(value) ||
+                "AUTHENTICATION_ENCRYPTION".equalsIgnoreCase(value)) {
             v = Security.AUTHENTICATION_ENCRYPTION;
         } else {
             throw new IllegalArgumentException(value);

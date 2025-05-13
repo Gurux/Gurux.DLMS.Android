@@ -72,12 +72,7 @@ public class GXObisTranslator extends Fragment {
         mObiscode = (EditText) view.findViewById(R.id.obiscode);
         mFilter = (EditText) view.findViewById(R.id.filter);
         mObisResult = (EditText) view.findViewById(R.id.obisResult);
-        mSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSearch(v);
-            }
-        });
+        mSearch.setOnClickListener(v -> onSearch(v));
         try {
             mConverter.update(getActivity());
         } catch (Exception e) {
@@ -94,10 +89,9 @@ public class GXObisTranslator extends Fragment {
             StringBuilder sb = new StringBuilder();
             mObisResult.setText("");
             String[] res = mConverter.getDescription(requireContext(), mObiscode.getText().toString(), mFilter.getText().toString());
-            String newline = System.lineSeparator();
             for (String it : res) {
                 sb.append(it);
-                sb.append(newline);
+                sb.append(System.lineSeparator());
             }
             mObisResult.setText(sb.toString());
         } catch (Exception e) {

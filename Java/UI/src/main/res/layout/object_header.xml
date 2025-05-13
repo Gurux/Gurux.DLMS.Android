@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +12,21 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:autoLink="web"
+            android:clickable="true"
+            android:drawablePadding="8dp"
+            android:focusable="true"
+            app:drawableStartCompat="@drawable/baseline_help_24" />
+
+        <TextView
             android:id="@+id/objectType"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:padding="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

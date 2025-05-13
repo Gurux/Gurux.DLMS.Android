@@ -175,7 +175,7 @@ public final class GXCommon {
      */
     @SuppressWarnings("squid:S3034")
     public static byte[] hexToBytes(final String value) {
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             return new byte[0];
         }
         int len = value.length() / 2;
@@ -2444,7 +2444,7 @@ public final class GXCommon {
      * @return Logical name as byte array.
      */
     public static byte[] logicalNameToBytes(final String value) {
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             return new byte[6];
         }
         List<String> items = GXCommon.split(value, '.');

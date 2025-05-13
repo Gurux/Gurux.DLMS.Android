@@ -1,4 +1,4 @@
-package gurux.dlms.ui.internal;
+package gurux.dlms.ui;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
 
 public class GXAccordion extends LinearLayout {
 

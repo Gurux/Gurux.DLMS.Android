@@ -34,6 +34,8 @@
 
 package gurux.dlms.manufacturersettings;
 
+import androidx.annotation.NonNull;
+
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
@@ -46,8 +48,8 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     private String identification;
     private GXObisCodeCollection obisCodes;
     private String name;
-    private java.util.ArrayList<GXAuthentication> settings;
-    private java.util.ArrayList<GXServerAddress> serverSettings;
+    private final java.util.ArrayList<GXAuthentication> settings;
+    private final java.util.ArrayList<GXServerAddress> serverSettings;
     private int keepAliveInterval;
     private StartProtocolType startProtocol = StartProtocolType.IEC;
 
@@ -58,7 +60,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     private byte[] serverSystemTitle;
     private byte[] blockCipherKey;
     private byte[] authenticationKey;
-    private java.util.Set<InterfaceType> supporterdInterfaces;
+    private final java.util.Set<InterfaceType> supporterdInterfaces;
 
     /**
      * Constructor.
@@ -67,9 +69,9 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
         setInactivityMode(InactivityMode.KEEPALIVE);
         setStartProtocol(StartProtocolType.IEC);
         obisCodes = new GXObisCodeCollection();
-        setSettings(new java.util.ArrayList<>());
+        settings = new java.util.ArrayList<>();
         serverSettings = new java.util.ArrayList<>();
-        setKeepAliveInterval(40000);
+        keepAliveInterval = 40000;
         supporterdInterfaces = new java.util.HashSet<>();
     }
 
@@ -203,6 +205,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     /**
      * @return Initialize settings.
      */
+    @NonNull
     public final java.util.ArrayList<GXAuthentication> getSettings() {
         return settings;
     }
@@ -211,13 +214,15 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
      * @param value Initialize settings.
      */
     public final void
-    setSettings(final java.util.ArrayList<GXAuthentication> value) {
-        settings = value;
+    setSettings(@NonNull final java.util.ArrayList<GXAuthentication> value) {
+        settings.clear();
+        settings.addAll(value);
     }
 
     /**
      * @return Server settings
      */
+    @NonNull
     public final java.util.ArrayList<GXServerAddress> getServerSettings() {
         return serverSettings;
     }
@@ -363,6 +368,7 @@ public class GXManufacturer implements Comparable<GXManufacturer> {
     /**
      * @return Supported interface types.
      */
+    @NonNull
     public java.util.Set<InterfaceType> getSupporterdInterfaces() {
         if (supporterdInterfaces.isEmpty()) {
             supporterdInterfaces.add(InterfaceType.HDLC);

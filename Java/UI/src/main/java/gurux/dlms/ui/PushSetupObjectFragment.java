@@ -10,9 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import gurux.dlms.objects.GXDLMSPushSetup;
 import gurux.dlms.ui.databinding.PushSetupFragmentBinding;
-import gurux.dlms.ui.internal.GXTab;
 import gurux.dlms.ui.internal.pushCommunicationWindowFragment;
 import gurux.dlms.ui.internal.pushGeneralFragment;
 import gurux.dlms.ui.internal.pushObjectsFragment;
@@ -25,7 +23,6 @@ public class PushSetupObjectFragment extends BaseObjectFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final ObjectViewModel objectViewModel = new ViewModelProvider(requireActivity()).get(ObjectViewModel.class);
-        final GXDLMSPushSetup target = objectViewModel.getObject(GXDLMSPushSetup.class);
         binding = gurux.dlms.ui.databinding.PushSetupFragmentBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         Fragment childFragment = new ObjectHeaderFragment();

@@ -177,7 +177,7 @@ public class GXDLMSClient {
      * @param useLogicalNameReferencing Is Logical Name referencing used.
      */
     public GXDLMSClient(final boolean useLogicalNameReferencing) {
-        this(useLogicalNameReferencing, 16, 1, Authentication.NONE, null, InterfaceType.HDLC);
+        this(useLogicalNameReferencing, 16, 1, Authentication.NONE, (byte[])null, InterfaceType.HDLC);
     }
 
     /**
@@ -203,6 +203,31 @@ public class GXDLMSClient {
         setInterfaceType(interfaceType);
         settings.getPlc().reset();
     }
+
+    /**
+     * Constructor.
+     *
+     * @param useLogicalNameReferencing Is Logical Name referencing used.
+     * @param clientAddress             Server address.
+     * @param serverAddress             Client address.
+     * @param forAuthentication         Authentication type.
+     * @param password                  Password if authentication is used.
+     * @param interfaceType             Object type.
+     */
+    public GXDLMSClient(final boolean useLogicalNameReferencing, final int clientAddress,
+                        final int serverAddress, final Authentication forAuthentication, final byte[] password,
+                        final InterfaceType interfaceType) {
+        settings = new GXDLMSSettings(false,
+                this instanceof IGXCryptoNotifier ? (IGXCryptoNotifier) this : null);
+        setUseLogicalNameReferencing(useLogicalNameReferencing);
+        setClientAddress(clientAddress);
+        setServerAddress(serverAddress);
+        setAuthentication(forAuthentication);
+        setPassword(password);
+        setInterfaceType(interfaceType);
+        settings.getPlc().reset();
+    }
+
 
     /**
      * @return The version can be used for backward compatibility.
@@ -3023,9 +3048,7 @@ public class GXDLMSClient {
      * @param useLogicalNameReferencing Is logical name referencing used.
      * @return Initial Conformance.
      */
-    public static Set<Conformance>
-
-    getInitialConformance(final boolean useLogicalNameReferencing) {
+    public static Set<Conformance> getInitialConformance(final boolean useLogicalNameReferencing) {
         Set<Conformance> list = new HashSet<Conformance>();
         if (useLogicalNameReferencing) {
             list.addAll(Arrays.asList(Conformance.BLOCK_TRANSFER_WITH_ACTION,

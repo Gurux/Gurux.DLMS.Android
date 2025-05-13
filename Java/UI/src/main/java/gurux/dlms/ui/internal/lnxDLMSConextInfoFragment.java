@@ -8,14 +8,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.enums.AccessMode;
 import gurux.dlms.enums.Conformance;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.objects.GXDLMSAssociationLogicalName;
 import gurux.dlms.objects.IGXDLMSBase;
+import gurux.dlms.ui.GXAccordion;
+import gurux.dlms.ui.GXCheckList;
 
 public class lnxDLMSConextInfoFragment extends ObjectFragment {
 
@@ -28,19 +32,18 @@ public class lnxDLMSConextInfoFragment extends ObjectFragment {
 
         //Add Conformance.
         AccessMode am = target.getAccess(5);
+        List<Conformance> c = new ArrayList<>();
+        c.addAll(target.getXDLMSContextInfo().getConformance());
+        List<Conformance> list = new ArrayList<>();
+        list.addAll(GXDLMSClient.getInitialConformance(true));
+        list.remove(Conformance.NONE);
+
         GXAccordion a = new GXAccordion(binding.attributes.getContext(), "Conformance");
-        GXCheckList conformance = new GXCheckList(a.getContext());
+        GXCheckList conformance = new GXCheckList(a.getContext(), c, list, null);
         mComponents.add(new GXSimpleEntry<>(conformance, am));
         a.addView(conformance);
-        List<Object> values = GXHelpers.getEnumValues(Conformance.class);
-        values.remove(Conformance.NONE);
-        for (Object it : values) {
-            conformance.addItem(((Conformance) it).name(), target.getXDLMSContextInfo().getConformance().contains(it));
-        }
-
         mComponents.add(new GXSimpleEntry<>(a, am));
         binding.attributes.addView(a);
-
 
         TextView lbl = new TextView(requireContext());
         lbl.setText("Max receive PDU size");
@@ -97,6 +100,7 @@ public class lnxDLMSConextInfoFragment extends ObjectFragment {
                 });
         mComponents.add(new GXSimpleEntry<>(editText, am));
         binding.attributes.addView(editText);
+        mMedia.addListener(this);
         updateAccessRights();
         return view;
     }

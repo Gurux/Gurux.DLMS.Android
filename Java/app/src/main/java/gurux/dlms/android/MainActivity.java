@@ -31,8 +31,8 @@ import gurux.common.MediaStateEventArgs;
 import gurux.common.PropertyChangedEventArgs;
 import gurux.common.ReceiveEventArgs;
 import gurux.common.TraceEventArgs;
+import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.android.databinding.ActivityMainBinding;
-import gurux.dlms.android.ui.main.MainFragment;
 import gurux.dlms.android.ui.main.MainViewModel;
 import gurux.dlms.android.ui.manufacturers.ManufacturersViewModel;
 import gurux.dlms.android.ui.media.MediaViewModel;
@@ -44,6 +44,7 @@ import gurux.dlms.manufacturersettings.GXAuthentication;
 import gurux.dlms.manufacturersettings.GXManufacturer;
 import gurux.dlms.manufacturersettings.GXManufacturerCollection;
 import gurux.dlms.manufacturersettings.HDLCAddressType;
+import gurux.dlms.objects.enums.SecuritySuite;
 import gurux.net.GXNet;
 import gurux.serial.GXSerial;
 
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
         setSupportActionBar(binding.appBarMain.toolbar);
         binding.appBarMain.fabRead.setOnClickListener((View.OnClickListener) view -> {
             //Start read.
-            mainViewModelViewModel.getListener().onRead(null, 0, null);
+            mainViewModelViewModel.getListener().onRead(null, 0);
         });
         binding.appBarMain.fabWrite.setOnClickListener((View.OnClickListener) view -> {
             //Start write.
@@ -209,16 +210,25 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
                 //Old way...
                 mDevice.setAuthentication(new GXAuthentication(Authentication.forValue(s.getInt("authentication", 0)).toString()));
             }
-            mDevice.setPassword(s.getString("password", ""));
-            mDevice.setSecurity(Security.forValue(s.getInt("security", 0)));
-            mDevice.setSystemTitle(s.getString("systemTitle", ""));
-            mDevice.setBlockCipherKey(s.getString("blockCipherKey", ""));
-            mDevice.setAuthenticationKey(s.getString("authenticationKey", ""));
+            mDevice.setPassword(GXDLMSTranslator.hexToBytes(s.getString("password", null)));
             mDevice.setClientAddress(s.getInt("clientAddress", 16));
             mDevice.setAddressType(HDLCAddressType.values()[s.getInt("addressType", 0)]);
             mDevice.setPhysicalAddress(s.getInt("physicalAddress", 1));
             mDevice.setLogicalAddress(s.getInt("logicalAddress", 0));
         }
+        mDevice.setConformance(s.getInt("conformance", -1));
+
+        //Security
+        mDevice.setSecurity(Security.forValue(s.getInt("security", 0)));
+        mDevice.setSecuritySuite(SecuritySuite.forValue(s.getInt("securitySuite", 0)));
+        mDevice.setSystemTitle(GXDLMSTranslator.hexToBytes(s.getString("systemTitle", null)));
+        mDevice.setMeterSystemTitle(GXDLMSTranslator.hexToBytes(s.getString("meterSystemTitle", null)));
+        mDevice.setBlockCipherKey(GXDLMSTranslator.hexToBytes(s.getString("blockCipherKey", "00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F")));
+        mDevice.setAuthenticationKey(GXDLMSTranslator.hexToBytes(s.getString("authenticationKey", "D0  D1  D2  D3 D4  D5  D6  D7  D8  D9 DA  DB  DC  DD  DE  DF")));
+        mDevice.setDedicatedKey(GXDLMSTranslator.hexToBytes(s.getString("dedicatedKey", null)));
+        mDevice.setChallenge(GXDLMSTranslator.hexToBytes(s.getString("challenge", null)));
+        mDevice.setInvocationCounter(s.getString("invocationCounter", ""));
+
         String type = s.getString("mediaType", mDevice.getMedia().getMediaType());
         if (type.equals("Net")) {
             mDevice.setMedia(new GXNet(this));
@@ -244,15 +254,24 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
         if (mDevice.getAuthentication() != null) {
             editor.putString("authentication", mDevice.getAuthentication().toString());
         }
-        editor.putString("password", mDevice.getPassword());
-        editor.putInt("security", mDevice.getSecurity().getValue());
-        editor.putString("systemTitle", mDevice.getSystemTitle());
-        editor.putString("blockCipherKey", mDevice.getBlockCipherKey());
-        editor.putString("authenticationKey", mDevice.getAuthenticationKey());
+        editor.putString("password", GXDLMSTranslator.toHex(mDevice.getPassword()));
         editor.putInt("clientAddress", mDevice.getClientAddress());
         editor.putInt("addressType", mDevice.getAddressType().getValue());
         editor.putInt("physicalAddress", mDevice.getPhysicalAddress());
         editor.putInt("logicalAddress", mDevice.getLogicalAddress());
+
+        editor.putInt("conformance", mDevice.getConformance());
+        //Security.
+        editor.putInt("security", mDevice.getSecurity().getValue());
+        editor.putInt("securitySuite", mDevice.getSecuritySuite().getValue());
+        editor.putString("systemTitle", GXDLMSTranslator.toHex(mDevice.getSystemTitle()));
+        editor.putString("meterSystemTitle", GXDLMSTranslator.toHex(mDevice.getMeterSystemTitle()));
+        editor.putString("blockCipherKey", GXDLMSTranslator.toHex(mDevice.getBlockCipherKey()));
+        editor.putString("authenticationKey", GXDLMSTranslator.toHex(mDevice.getAuthenticationKey()));
+        editor.putString("dedicatedKey", GXDLMSTranslator.toHex(mDevice.getDedicatedKey()));
+        editor.putString("challenge", GXDLMSTranslator.toHex(mDevice.getChallenge()));
+        editor.putString("invocationCounter", mDevice.getInvocationCounter());
+
         editor.putString("mediaType", mDevice.getMedia().getMediaType());
         editor.putString("mediaSettings", mDevice.getMedia().getSettings());
         editor.putString("objects", mDevice.getObjects().getXml());
@@ -322,6 +341,11 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
 
     @Override
     public void onAssociationChanged() {
+        saveSettings();
+    }
+
+    @Override
+    public void onDeviceSettingChanged() {
         saveSettings();
     }
 }
