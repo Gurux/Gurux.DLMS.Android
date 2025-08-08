@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "gurux.dlms.ui"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 31
@@ -57,7 +57,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "org.gurux"
                 artifactId = "gurux.dlms.android.ui"
-                version = "2.0.15"
+                version = "2.0.16"
                 pom {
                     name.set("gurux.dlms.android.ui")
                     description.set(

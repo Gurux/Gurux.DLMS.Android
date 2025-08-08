@@ -58,7 +58,7 @@ public class GXSplashScreen extends Activity {
         Thread thread = new Thread(() -> {
             //Read OBIS codes.
             if (GXDLMSConverter.isFirstRun(this)) {
-                loading.setText("Loading OBIS codes.");
+                runOnUiThread(() -> loading.setText(R.string.loading_obis_codes));
                 GXDLMSConverter c = new GXDLMSConverter();
                 try {
                     c.update(this);
@@ -69,7 +69,7 @@ public class GXSplashScreen extends Activity {
             //Read Manufacturer settings.
             try {
                 GXManufacturerCollection man = new GXManufacturerCollection();
-                loading.setText("Loading manufacturer settings.");
+                runOnUiThread(() -> loading.setText(R.string.loading_manufacturer_settings));
                 if (GXManufacturerCollection.isFirstRun(this) ||
                         man.isUpdatesAvailable(this)) {
                     GXManufacturerCollection.updateManufactureSettings(this);

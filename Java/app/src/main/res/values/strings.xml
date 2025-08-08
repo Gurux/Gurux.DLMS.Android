@@ -61,4 +61,6 @@
     <string name="general">General</string>
     <string name="reference">Reference</string>
     <string name="logical_name_referencing">Logical Name Referencing</string>
+    <string name="loading_obis_codes">Loading OBIS codes.</string>
+    <string name="loading_manufacturer_settings">Loading manufacturer settings.</string>
 </resources>

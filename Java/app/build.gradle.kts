@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace = "gurux.dlms.android"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "gurux.dlms.android"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
-        versionName = "2.0.15"
+        versionName = "2.0.16"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
