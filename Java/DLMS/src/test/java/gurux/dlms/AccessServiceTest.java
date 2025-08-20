@@ -79,7 +79,7 @@ public class AccessServiceTest {
 
     @Before
     public final void setUp() {
-        target = new GXDLMSClient(true, 16, 1, Authentication.NONE, null,
+        target = new GXDLMSClient(true, 16, 1, Authentication.NONE, (String)null,
                 InterfaceType.PDU);
     }
 

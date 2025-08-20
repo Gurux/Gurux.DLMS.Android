@@ -1,5 +1,40 @@
+//
+// --------------------------------------------------------------------------
+//  Gurux Ltd
+//
+//
+//
+// Filename:        $HeadURL$
+//
+// Version:         $Revision$,
+//                  $Date$
+//                  $Author$
+//
+// Copyright (c) Gurux Ltd
+//
+//---------------------------------------------------------------------------
+//
+//  DESCRIPTION
+//
+// This file is a part of Gurux Device Framework.
+//
+// Gurux Device Framework is Open Source software; you can redistribute it
+// and/or modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; version 2 of the License.
+// Gurux Device Framework is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// More information of Gurux products: http://www.gurux.org
+//
+// This code is licensed under the GNU General Public License v2.
+// Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
+//---------------------------------------------------------------------------
+
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.jreleaser)
     id("maven-publish")
     id("signing")
 }
@@ -10,6 +45,7 @@ android {
 
     defaultConfig {
         minSdk = 31
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -57,7 +93,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "org.gurux"
                 artifactId = "gurux.dlms.android.ui"
-                version = "2.0.16"
+                version = project.version.toString()
                 pom {
                     name.set("gurux.dlms.android.ui")
                     description.set(
@@ -84,25 +120,56 @@ afterEvaluate {
                         url.set("https://github.com/gurux/gurux.dlms.android")
                     }
                 }
-
-                val isEnabled =
-                    project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")
-                repositories {
-                    maven {
-                        name = "MavenCentral"
-                        url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                        if (isEnabled) {
-                            credentials {
-                                username = project.property("sonatypeUsername") as String
-                                password = project.property("sonatypePassword") as String
-                            }
-                        }
-                    }
+                signing {
+                    useGpgCmd()
+                    sign(this@create)
                 }
 
-                // Signing
-                signing {
-                    sign(this@create)
+                repositories {
+                    maven {
+                        name = "staging"
+                        url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+                    }
+                }
+            }
+        }
+    }
+}
+
+jreleaser {
+    gitRootSearch.set(true)
+    project {
+        name.set("gurux.dlms.ui.android")
+    }
+
+    release {
+        github {
+            skipRelease.set(false)
+            repoOwner.set("Gurux")
+            name.set("gurux.dlms.ui.android")
+            tagName.set("v{{projectVersion}}")
+            releaseName.set("Gurux DLMS UI Android {{projectVersion}}")
+            changelog {
+                contributors{
+                    enabled.set(false)
+                }
+                preset.set("conventional-commits")
+                formatted.set(org.jreleaser.model.Active.ALWAYS)
+            }
+            token.set(findProperty("githubToken") as String)
+        }
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                register("central") {
+                    sign.set(false)
+                    active.set(org.jreleaser.model.Active.ALWAYS)
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    username.set(findProperty("sonatypeUsername") as String)
+                    password.set(findProperty("sonatypePassword") as String)
+                    applyMavenCentralRules.set(false)
+                    stagingRepositories.add("build/staging-deploy")
                 }
             }
         }
