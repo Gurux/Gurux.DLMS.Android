@@ -3949,8 +3949,8 @@ abstract class GXDLMS {
                     reply.getXml().integerToHex(number, 8));
         } else {
             // If meter's block index is zero based.
-            if (number == 0 && settings.getBlockIndex() == 1) {
-                settings.setBlockIndex(0);
+            if (number != 1 && settings.getBlockIndex() == 1) {
+                settings.setBlockIndex((int) number);
             }
             int expectedIndex = settings.getBlockIndex();
             if (number != expectedIndex) {

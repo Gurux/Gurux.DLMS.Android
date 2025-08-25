@@ -146,8 +146,8 @@ jreleaser {
         github {
             skipRelease.set(false)
             repoOwner.set("Gurux")
-            name.set("gurux.dlms.ui.android")
-            tagName.set("v{{projectVersion}}")
+            name.set("gurux.dlms.android")
+            tagName.set("ui.-v{{projectVersion}}")
             releaseName.set("Gurux DLMS UI Android {{projectVersion}}")
             changelog {
                 contributors{
