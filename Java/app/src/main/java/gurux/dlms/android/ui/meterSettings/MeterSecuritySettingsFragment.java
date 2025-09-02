@@ -324,7 +324,9 @@ public class MeterSecuritySettingsFragment extends Fragment {
                 R.string.invocation_counter,
                 mDevice.getInvocationCounter(), (value, index) ->
                 {
-                    GXDLMSObject.validateLogicalName(value);
+                    if (value != null && !value.isEmpty()){
+                        GXDLMSObject.validateLogicalName(value);
+                    }
                     mDevice.setInvocationCounter(value);
                     rows.set(8, getInvocationCounter());
                     ((BaseAdapter) binding.properties.getAdapter()).notifyDataSetChanged();
