@@ -77,7 +77,6 @@ public enum ObjectType {
      * Logical Name associations within a COSEM.
      */
     ASSOCIATION_LOGICAL_NAME(15),
-
     /*
      * AssociationShortName object type is used with meters that utilize Short
      * Name associations within a COSEM.
@@ -335,6 +334,9 @@ public enum ObjectType {
     CHARGE(113),
 
     TOKEN_GATEWAY(115),
+
+    IEC_6205541_ATTRIBUTES(116),
+
     /*
      * Allow managing attributes of type array of other interface objects.
      */
@@ -485,7 +487,7 @@ public enum ObjectType {
     private static java.util.HashMap<Integer, ObjectType> getMappings() {
         synchronized (ObjectType.class) {
             if (mappings == null) {
-                mappings = new java.util.HashMap<>();
+                mappings = new java.util.HashMap<Integer, ObjectType>();
             }
         }
         return mappings;
@@ -515,10 +517,9 @@ public enum ObjectType {
         String tmp = value.toUpperCase();
         Iterator<Entry<Integer, ObjectType>> it = mappings.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<Integer, ObjectType> pair =
-                    it.next();
-            if (tmp.compareTo(pair.getValue().toString()) == 0 || tmp.compareTo(
-                    pair.getValue().toString().replaceAll("_", "")) == 0) {
+            Map.Entry<Integer, ObjectType> pair = (Map.Entry<Integer, ObjectType>) it.next();
+            if (tmp.compareTo(pair.getValue().toString()) == 0
+                    || tmp.compareTo(pair.getValue().toString().replaceAll("_", "")) == 0) {
                 return pair.getValue();
             }
         }

@@ -418,7 +418,12 @@ public class GXCiphering implements GXICipher {
 
     @Override
     public void setDedicatedKey(final byte[] value) {
-        dedicatedKey = value;
+        if (value != null && value.length == 0) {
+            //Empty value is handled as null.
+            dedicatedKey = null;
+        } else {
+            dedicatedKey = value;
+        }
     }
 
     /**

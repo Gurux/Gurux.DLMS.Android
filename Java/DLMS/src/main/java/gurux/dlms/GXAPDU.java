@@ -36,7 +36,9 @@ package gurux.dlms;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,15 +48,21 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import gurux.dlms.asn.GXx509Certificate;
+import gurux.dlms.asn.enums.KeyUsage;
 import gurux.dlms.enums.AcseServiceProvider;
 import gurux.dlms.enums.AssociationResult;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.BerType;
 import gurux.dlms.enums.Command;
+import gurux.dlms.enums.ConfirmedServiceError;
 import gurux.dlms.enums.Conformance;
+import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ExceptionServiceError;
 import gurux.dlms.enums.Security;
+import gurux.dlms.enums.Service;
 import gurux.dlms.enums.SourceDiagnostic;
+import gurux.dlms.enums.TranslatorOutputType;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.objects.enums.ApplicationContextName;
 import gurux.dlms.secure.AesGcmParameter;
@@ -82,10 +90,9 @@ final class GXAPDU {
     /**
      * Retrieves the string that indicates the level of authentication, if any.
      */
-    private static void getAuthenticationString(final GXDLMSSettings settings,
-                                                final GXByteBuffer data, final boolean ignoreAcse) {
-        if (settings.getAuthentication() != Authentication.NONE
-                || (!ignoreAcse && settings.getCipher() != null
+    private static void getAuthenticationString(final GXDLMSSettings settings, final GXByteBuffer data,
+                                                final boolean ignoreAcse) {
+        if (settings.getAuthentication() != Authentication.NONE || (!ignoreAcse && settings.getCipher() != null
                 && settings.getCipher().getSecurity() != Security.NONE)) {
             // Add sender ACSE-requirements field component.
             data.setUInt8(BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS);
@@ -116,8 +123,7 @@ final class GXAPDU {
                 len = callingAuthenticationValue.length;
             }
             // 0xAC
-            data.setUInt8(
-                    BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AUTHENTICATION_VALUE);
+            data.setUInt8(BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AUTHENTICATION_VALUE);
             // Len
             data.setUInt8((2 + len));
             // Add authentication information.
@@ -138,8 +144,8 @@ final class GXAPDU {
      * @param cipher   Is ciphering settings.
      */
     @SuppressWarnings("squid:S2259")
-    private static void generateApplicationContextName(final int name,
-                                                       final GXDLMSSettings settings, final GXByteBuffer data, final GXICipher cipher) {
+    private static void generateApplicationContextName(final int name, final GXDLMSSettings settings,
+                                                       final GXByteBuffer data, final GXICipher cipher) {
         // ProtocolVersion
         if (settings.getProtocolVersion() != null) {
             data.setUInt8(BerType.CONTEXT | PduType.PROTOCOL_VERSION);
@@ -179,10 +185,9 @@ final class GXAPDU {
             }
         }
         // Add system title.
-        if (!settings.isServer()
-                && (ciphered || settings.getAuthentication() == Authentication.HIGH_GMAC)
+        if (!settings.isServer() && (ciphered || settings.getAuthentication() == Authentication.HIGH_GMAC
                 || settings.getAuthentication() == Authentication.HIGH_SHA256
-                || settings.getAuthentication() == Authentication.HIGH_ECDSA) {
+                || settings.getAuthentication() == Authentication.HIGH_ECDSA)) {
             if (cipher.getSystemTitle() == null || cipher.getSystemTitle().length == 0) {
                 throw new IllegalArgumentException("SystemTitle");
             }
@@ -194,6 +199,17 @@ final class GXAPDU {
             // LEN
             data.setUInt8(cipher.getSystemTitle().length);
             data.set(cipher.getSystemTitle());
+            if (settings.getClientPublicKeyCertificate() != null) {
+                // Add calling-AE-qualifier.
+                byte[] raw = settings.getClientPublicKeyCertificate().getEncoded();
+                data.setUInt8(BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AE_QUALIFIER);
+                // LEN
+                GXCommon.setObjectCount(4 + raw.length, data);
+                data.setUInt8(BerType.OCTET_STRING);
+                // LEN
+                GXCommon.setObjectCount(raw.length, data);
+                data.set(raw);
+            }
         }
         // Add CallingAEInvocationId.
         if (!settings.isServer() && settings.getUserId() != -1) {
@@ -207,23 +223,6 @@ final class GXAPDU {
         }
     }
 
-    // Reserved for internal use.
-    private static int getConformanceFromArray(GXByteBuffer data) {
-        int ret = GXCommon.swapBits(data.getUInt8());
-        ret |= GXCommon.swapBits(data.getUInt8()) << 8;
-        ret |= GXCommon.swapBits(data.getUInt8()) << 16;
-        return ret;
-    }
-
-    /*
-     * Reserved for internal use.
-     */
-    private static void setConformanceToArray(final int value, final GXByteBuffer data) {
-        data.setUInt8(GXCommon.swapBits((short) (value & 0xFF)));
-        data.setUInt8(GXCommon.swapBits((short) ((value >> 8) & 0xFF)));
-        data.setUInt8(GXCommon.swapBits((short) ((value >> 16) & 0xFF)));
-    }
-
     /**
      * Generate User information initiate request.
      *
@@ -231,8 +230,7 @@ final class GXAPDU {
      * @param data     Received data.
      * @param xml      Is XML used.
      */
-    static void getInitiateRequest(final GXDLMSSettings settings, final GXByteBuffer data,
-                                   final boolean xml) {
+    static void getInitiateRequest(final GXDLMSSettings settings, final GXByteBuffer data, final boolean xml) {
         // Tag for xDLMS-Initiate request
         data.setUInt8(Command.INITIATE_REQUEST);
         // Usage field for the response allowed component.
@@ -258,11 +256,11 @@ final class GXAPDU {
         // Tag for conformance block
         data.setUInt8(0x5F);
         data.setUInt8(0x1F);
-        // length of the conformance block
-        data.setUInt8(0x04);
-        // encoding the number of unused bits in the bit string
-        data.setUInt8(0x00);
-        setConformanceToArray(Conformance.toInteger(settings.getProposedConformance()), data);
+        data.setUInt8(DataType.BITSTRING);
+        // Pad bits.
+        data.setUInt8(0);
+        GXBitString bs = new GXBitString(Conformance.toInteger(settings.getProposedConformance()), 24);
+        data.set(bs.getValue());
         data.setUInt16(settings.getMaxPduSize());
     }
 
@@ -300,9 +298,8 @@ final class GXAPDU {
             } else {
                 GXByteBuffer tmp = new GXByteBuffer();
                 getInitiateRequest(settings, tmp, false);
-                AesGcmParameter p = new AesGcmParameter(settings, Command.GLO_INITIATE_REQUEST,
-                        cipher.getSecurity(), cipher.getSecuritySuite(),
-                        cipher.getInvocationCounter(), cipher.getSystemTitle(),
+                AesGcmParameter p = new AesGcmParameter(settings, Command.GLO_INITIATE_REQUEST, cipher.getSecurity(),
+                        cipher.getSecuritySuite(), cipher.getInvocationCounter(), cipher.getSystemTitle(),
                         cipher.getBlockCipherKey(), cipher.getAuthenticationKey());
                 byte[] crypted = GXCiphering.encrypt(p, tmp.array());
                 cipher.setInvocationCounter(1 + cipher.getInvocationCounter());
@@ -322,18 +319,16 @@ final class GXAPDU {
                                     final GXByteBuffer encryptedData, final GXByteBuffer data)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-        // AARQ APDU Tag
-        data.setUInt8(BerType.APPLICATION | BerType.CONSTRUCTED);
-        // Length is updated later.
-        int offset = data.size();
-        data.setUInt8(0);
+        GXByteBuffer tmp = new GXByteBuffer();
         ///////////////////////////////////////////
         // Add Application context name.
-        generateApplicationContextName(0, settings, data, cipher);
-        getAuthenticationString(settings, data,
-                (encryptedData != null && encryptedData.size() != 0));
-        generateUserInformation(settings, cipher, encryptedData, data);
-        data.setUInt8(offset, (data.size() - offset - 1));
+        generateApplicationContextName(0, settings, tmp, cipher);
+        getAuthenticationString(settings, tmp, (encryptedData != null && encryptedData.size() != 0));
+        generateUserInformation(settings, cipher, encryptedData, tmp);
+        // AARQ APDU Tag
+        data.setUInt8(BerType.APPLICATION | BerType.CONSTRUCTED);
+        GXCommon.setObjectCount(tmp.size(), data);
+        data.set(tmp);
     }
 
     private static void getConformance(final long value, final GXDLMSTranslatorStructure xml) {
@@ -356,9 +351,8 @@ final class GXAPDU {
     /*
      * Parse User Information from PDU.
      */
-    static SourceDiagnostic parseUserInformation(final GXDLMSSettings settings,
-                                                 final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml)
-            throws Exception {
+    static SourceDiagnostic parseUserInformation(final GXDLMSSettings settings, final GXICipher cipher,
+                                                 final GXByteBuffer data, final GXDLMSTranslatorStructure xml) throws Exception {
         short len = data.getUInt8();
         if (data.size() - data.position() < len) {
             if (xml == null) {
@@ -388,9 +382,8 @@ final class GXAPDU {
     }
 
     @SuppressWarnings("squid:S1066")
-    static SourceDiagnostic parse(final boolean initiateRequest, final GXDLMSSettings settings,
-                                  final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml,
-                                  final int tag2) {
+    static SourceDiagnostic parse(final boolean initiateRequest, final GXDLMSSettings settings, final GXICipher cipher,
+                                  final GXByteBuffer data, final GXDLMSTranslatorStructure xml, final int tag2) {
         int len;
         int tag;
         GXByteBuffer tmp2 = new GXByteBuffer();
@@ -421,9 +414,8 @@ final class GXAPDU {
             tag = data.getUInt8();
             if (tag != 0) {
                 // Return error if ciphering is not used.
-                if (xml == null && (cipher == null
-                        || cipher.getSecurity() != Security.AUTHENTICATION_ENCRYPTION)) {
-                    return SourceDiagnostic.NOT_SUPPORTED;
+                if (xml == null && (cipher == null || cipher.getSecurity() != Security.AUTHENTICATION_ENCRYPTION)) {
+                    return SourceDiagnostic.APPLICATION_CONTEXT_NAME_NOT_SUPPORTED;
                 }
                 len = data.getUInt8();
                 byte[] tmp = new byte[len];
@@ -435,8 +427,7 @@ final class GXAPDU {
                     settings.getAssignedAssociation().getXDLMSContextInfo().setCypheringInfo(tmp);
                 }
                 if (xml != null) {
-                    xml.appendLine(TranslatorGeneralTags.DEDICATED_KEY, null,
-                            GXCommon.toHex(tmp, false));
+                    xml.appendLine(TranslatorGeneralTags.DEDICATED_KEY, null, GXCommon.toHex(tmp, false));
                 }
             } else if (settings.getCipher() != null) {
                 settings.getCipher().setDedicatedKey(null);
@@ -446,10 +437,8 @@ final class GXAPDU {
             tag = data.getUInt8();
             if (tag != 0) {
                 len = data.getUInt8();
-                if (xml != null && (initiateRequest
-                        || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML)) {
-                    xml.appendLine(TranslatorGeneralTags.PROPOSED_QUALITY_OF_SERVICE, null,
-                            String.valueOf(len));
+                if (xml != null && (initiateRequest || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML)) {
+                    xml.appendLine(TranslatorGeneralTags.PROPOSED_QUALITY_OF_SERVICE, null, String.valueOf(len));
                 }
             } else {
                 if (xml != null && xml.getOutputType() == TranslatorOutputType.STANDARD_XML) {
@@ -470,18 +459,15 @@ final class GXAPDU {
                     ServiceError type = ServiceError.forValue(data.getUInt8());
 
                     String str = TranslatorStandardTags.serviceErrorToString(type);
-                    String value = TranslatorStandardTags.getServiceErrorValue(type,
-                            (byte) data.getUInt8());
+                    String value = TranslatorStandardTags.getServiceErrorValue(type, (byte) data.getUInt8());
                     xml.appendLine("x:" + str, null, value);
                     xml.appendEndTag(TranslatorTags.INITIATE_ERROR);
                 } else {
-                    xml.appendLine(TranslatorTags.SERVICE, "Value",
-                            xml.integerToHex(data.getUInt8(), 2));
+                    xml.appendLine(TranslatorTags.SERVICE, "Value", xml.integerToHex(data.getUInt8(), 2));
                     ServiceError type = ServiceError.forValue(data.getUInt8());
                     xml.appendStartTag(TranslatorTags.SERVICE_ERROR);
                     xml.appendLine(TranslatorSimpleTags.serviceErrorToString(type), "Value",
-                            TranslatorSimpleTags.getServiceErrorValue(type,
-                                    (byte) data.getUInt8()));
+                            TranslatorSimpleTags.getServiceErrorValue(type, (byte) data.getUInt8()));
                     xml.appendEndTag(TranslatorTags.SERVICE_ERROR);
                 }
                 xml.appendEndTag(Command.CONFIRMED_SERVICE_ERROR);
@@ -505,8 +491,7 @@ final class GXAPDU {
                 throw new IllegalArgumentException("Invalid DLMS version number.");
             }
             // ProposedDlmsVersionNumber
-            if (xml != null && (initiateRequest
-                    || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML)) {
+            if (xml != null && (initiateRequest || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML)) {
                 xml.appendLine(TranslatorGeneralTags.PROPOSED_DLMS_VERSION_NUMBER, "Value",
                         xml.integerToHex(settings.getDLMSVersion(), 2));
             }
@@ -514,8 +499,7 @@ final class GXAPDU {
             if (data.getUInt8() != 6) {
                 throw new IllegalArgumentException("Invalid DLMS version number.");
             }
-            if (xml != null && (initiateRequest
-                    || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML)) {
+            if (xml != null && (initiateRequest || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML)) {
                 xml.appendLine(TranslatorGeneralTags.NEGOTIATED_DLMS_VERSION_NUMBER, "Value",
                         xml.integerToHex(settings.getDLMSVersion(), 2));
             }
@@ -532,13 +516,13 @@ final class GXAPDU {
         }
         // len =
         data.getUInt8();
-        // The number of unused bits in the bit string.
-        // tag =
-        data.getUInt8();
-        int v = getConformanceFromArray(data);
+        byte[] conformance = new byte[4];
+        data.get(conformance);
+        GXBitString bs = new GXBitString(conformance);
+        int v = bs.toInteger();
         if (settings.isServer()) {
-            settings.setNegotiatedConformance(Conformance
-                    .forValue(v & Conformance.toInteger(settings.getProposedConformance())));
+            settings.setNegotiatedConformance(
+                    Conformance.forValue(v & Conformance.toInteger(settings.getProposedConformance())));
             if (xml != null) {
                 xml.appendStartTag(TranslatorGeneralTags.PROPOSED_CONFORMANCE);
                 getConformance(v, xml);
@@ -564,8 +548,7 @@ final class GXAPDU {
                     xml.append(TranslatorGeneralTags.PROPOSED_CONFORMANCE, false);
                 }
                 // ProposedMaxPduSize
-                xml.appendLine(TranslatorGeneralTags.PROPOSED_MAX_PDU_SIZE, "Value",
-                        xml.integerToHex(pdu, 4));
+                xml.appendLine(TranslatorGeneralTags.PROPOSED_MAX_PDU_SIZE, "Value", xml.integerToHex(pdu, 4));
             }
             // If client asks too high PDU.
             if (pdu > settings.getMaxServerPDUSize()) {
@@ -574,8 +557,8 @@ final class GXAPDU {
         } else {
             int pduSize = data.getUInt16();
             if (xml == null && pduSize < 64) {
-                throw new GXDLMSConfirmedServiceError(ConfirmedServiceError.INITIATE_ERROR,
-                        ServiceError.SERVICE, Service.PDU_SIZE.getValue());
+                throw new GXDLMSConfirmedServiceError(ConfirmedServiceError.INITIATE_ERROR, ServiceError.SERVICE,
+                        Service.PDU_SIZE.getValue());
             }
             if (xml != null) {
                 // NegotiatedConformance closing
@@ -585,8 +568,7 @@ final class GXAPDU {
                     xml.append(TranslatorGeneralTags.NEGOTIATED_CONFORMANCE, false);
                 }
                 // NegotiatedMaxPduSize
-                xml.appendLine(TranslatorGeneralTags.NEGOTIATED_MAX_PDU_SIZE, "Value",
-                        xml.integerToHex(pduSize, 4));
+                xml.appendLine(TranslatorGeneralTags.NEGOTIATED_MAX_PDU_SIZE, "Value", xml.integerToHex(pduSize, 4));
             }
             // If client asks too high PDU.
             if (pduSize > settings.getMaxServerPDUSize()) {
@@ -600,8 +582,7 @@ final class GXAPDU {
             tag = data.getUInt16();
             if (xml != null) {
                 if (initiateRequest || xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
-                    xml.appendLine(TranslatorGeneralTags.VAA_NAME, "Value",
-                            xml.integerToHex(tag, 4));
+                    xml.appendLine(TranslatorGeneralTags.VAA_NAME, "Value", xml.integerToHex(tag, 4));
                 }
             }
             if (tag == 0x0007) {
@@ -636,9 +617,8 @@ final class GXAPDU {
         return SourceDiagnostic.NONE;
     }
 
-    static SourceDiagnostic parseInitiate(final boolean initiateRequest,
-                                          final GXDLMSSettings settings, final GXICipher cipher, final GXByteBuffer data,
-                                          final GXDLMSTranslatorStructure xml)
+    static SourceDiagnostic parseInitiate(final boolean initiateRequest, final GXDLMSSettings settings,
+                                          final GXICipher cipher, final GXByteBuffer data, final GXDLMSTranslatorStructure xml)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         // Tag for xDLMS-Initate.response
@@ -672,8 +652,7 @@ final class GXAPDU {
                     int pos2 = data.position();
                     try {
                         data.position(originalPos - 1);
-                        p = new AesGcmParameter(settings, st,
-                                settings.getCipher().getBlockCipherKey(),
+                        p = new AesGcmParameter(settings, st, settings.getCipher().getBlockCipherKey(),
                                 settings.getCipher().getAuthenticationKey());
                         p.setXml(xml);
                         tmp = GXCiphering.decrypt(settings.getCipher(), p, data);
@@ -695,15 +674,13 @@ final class GXAPDU {
                 if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
                     xml.appendLine(tag, "Value", GXCommon.toHex(encrypted, false));
                 } else {
-                    xml.appendLine(TranslatorTags.CIPHERED_SERVICE, null,
-                            GXCommon.toHex(encrypted, false));
+                    xml.appendLine(TranslatorTags.CIPHERED_SERVICE, null, GXCommon.toHex(encrypted, false));
                     xml.appendEndTag(tag);
                 }
                 return SourceDiagnostic.NONE;
             }
             data.position(data.position() - 1);
-            p = new AesGcmParameter(settings, settings.getSourceSystemTitle(),
-                    settings.getCipher().getBlockCipherKey(),
+            p = new AesGcmParameter(settings, settings.getSourceSystemTitle(), settings.getCipher().getBlockCipherKey(),
                     settings.getCipher().getAuthenticationKey());
             tmp = GXCiphering.decrypt(settings.getCipher(), p, data);
             data.size(0);
@@ -742,14 +719,12 @@ final class GXAPDU {
         len = buff.getUInt8();
         byte[] tmp = new byte[len];
         buff.get(tmp);
-        if (tmp[0] != 0x60 || tmp[1] != -123 || tmp[2] != 0x74 || tmp[3] != 0x5 || tmp[4] != 0x8
-                || tmp[5] != 0x1) {
+        if (tmp[0] != 0x60 || tmp[1] != -123 || tmp[2] != 0x74 || tmp[3] != 0x5 || tmp[4] != 0x8 || tmp[5] != 0x1) {
             if (xml != null) {
                 xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, "Value", "UNKNOWN");
                 return null;
             }
-            throw new IllegalArgumentException(
-                    "Encoding failed. Invalid Application context name.");
+            throw new IllegalArgumentException("Encoding failed. Invalid Application context name.");
         }
         byte name = tmp[6];
         if (xml != null) {
@@ -762,8 +737,7 @@ final class GXAPDU {
                 settings.setUseLogicalNameReferencing(true);
             } else if (name == 3) {
                 if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
-                    xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, "Value",
-                            "LN_WITH_CIPHERING");
+                    xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, "Value", "LN_WITH_CIPHERING");
                 } else {
                     xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, null, "3");
                 }
@@ -777,8 +751,7 @@ final class GXAPDU {
                 settings.setUseLogicalNameReferencing(false);
             } else if (name == 4) {
                 if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
-                    xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, "Value",
-                            "SN_WITH_CIPHERING");
+                    xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, "Value", "SN_WITH_CIPHERING");
                 } else {
                     xml.appendLine(TranslatorGeneralTags.APPLICATION_CONTEXT_NAME, null, "4");
                 }
@@ -787,20 +760,19 @@ final class GXAPDU {
             return null;
         }
         if (settings.assignedAssociation != null) {
-            if (settings.assignedAssociation.getApplicationContextName().getContextId()
-                    .getValue() == name) {
+            if (settings.assignedAssociation.getApplicationContextName().getContextId().getValue() == name) {
                 return null;
             }
             return settings.assignedAssociation.getApplicationContextName().getContextId();
         } else {
             if (settings.getUseLogicalNameReferencing()) {
-                if (name == 1 && (settings.isServer() || (settings.getCipher() == null
-                        || settings.getCipher().getSecurity() == Security.NONE))) {
+                if (name == 1 && (settings.isServer()
+                        || (settings.getCipher() == null || settings.getCipher().getSecurity() == Security.NONE))) {
                     return null;
                 }
                 // If ciphering is used.
-                if (name == 3 && (settings.isServer() || (settings.getCipher() != null
-                        && settings.getCipher().getSecurity() != Security.NONE))) {
+                if (name == 3 && (settings.isServer()
+                        || (settings.getCipher() != null && settings.getCipher().getSecurity() != Security.NONE))) {
                     return null;
                 }
             } else {
@@ -809,8 +781,8 @@ final class GXAPDU {
                     return null;
                 }
                 // If ciphering is used.
-                if (name == 4 && (settings.isServer() || (settings.getCipher() != null
-                        && settings.getCipher().getSecurity() != Security.NONE))) {
+                if (name == 4 && (settings.isServer()
+                        || (settings.getCipher() != null && settings.getCipher().getSecurity() != Security.NONE))) {
                     return null;
                 }
             }
@@ -825,8 +797,7 @@ final class GXAPDU {
                 throw new IllegalArgumentException("Invalid tag.");
             }
         } else {
-            if (tag != (BerType.APPLICATION | BerType.CONSTRUCTED
-                    | PduType.APPLICATION_CONTEXT_NAME)) {
+            if (tag != (BerType.APPLICATION | BerType.CONSTRUCTED | PduType.APPLICATION_CONTEXT_NAME)) {
                 throw new IllegalArgumentException("Invalid tag.");
             }
         }
@@ -835,8 +806,8 @@ final class GXAPDU {
     /*
      * Parse APDU.
      */
-    public static Object parsePDU(final GXDLMSSettings settings, final GXICipher cipher,
-                                  final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
+    public static Object parsePDU(final GXDLMSSettings settings, final GXICipher cipher, final GXByteBuffer buff,
+                                  final GXDLMSTranslatorStructure xml) {
         // Get AARE tag and length
         validateAare(settings, buff);
         int len = GXCommon.getObjectCount(buff);
@@ -867,8 +838,8 @@ final class GXAPDU {
         return ret;
     }
 
-    private static AcseServiceProvider parseProtocolVersion(GXDLMSSettings settings,
-                                                            GXByteBuffer buff, GXDLMSTranslatorStructure xml) {
+    private static AcseServiceProvider parseProtocolVersion(GXDLMSSettings settings, GXByteBuffer buff,
+                                                            GXDLMSTranslatorStructure xml) {
         // Get count.
         buff.getUInt8();
         byte unusedBits = (byte) buff.getUInt8();
@@ -896,8 +867,8 @@ final class GXAPDU {
      * Parse APDU.
      */
     @SuppressWarnings("squid:S106")
-    public static Object parsePDU2(final GXDLMSSettings settings, final GXICipher cipher,
-                                   final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
+    public static Object parsePDU2(final GXDLMSSettings settings, final GXICipher cipher, final GXByteBuffer buff,
+                                   final GXDLMSTranslatorStructure xml) {
         AssociationResult resultComponent = AssociationResult.ACCEPTED;
         String msg = null;
         Object ret = 0;
@@ -927,7 +898,7 @@ final class GXAPDU {
                                     break;
                             }
                             throw new GXDLMSException(AssociationResult.PERMANENT_REJECTED,
-                                    SourceDiagnostic.NOT_SUPPORTED, msg);
+                                    SourceDiagnostic.APPLICATION_CONTEXT_NAME_NOT_SUPPORTED, msg);
                         }
                         ret = name;
                     }
@@ -947,8 +918,7 @@ final class GXAPDU {
                         buff.get(tmp);
                         if (xml != null) {
                             // Called AP Title
-                            xml.appendLine(TranslatorTags.CALLED_AP_TITLE, "Value",
-                                    GXCommon.toHex(tmp, false));
+                            xml.appendLine(TranslatorTags.CALLED_AP_TITLE, "Value", GXCommon.toHex(tmp, false));
                         }
                     } else {
                         // Choice for result (INTEGER, universal)
@@ -1028,32 +998,101 @@ final class GXAPDU {
                     break;
                 // Client CalledAeInvocationId.
                 case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AE_INVOCATION_ID:// 0xA5
-                    // len =
-                    buff.getUInt8();
-                    // tag =
-                    buff.getUInt8();
-                    // len =
-                    buff.getUInt8();
-                    settings.setUserId(buff.getUInt8());
-                    if (xml != null) {
-                        // CallingAPTitle
-                        xml.appendLine(TranslatorGeneralTags.CALLED_AE_INVOCATION_ID, "Value",
-                                xml.integerToHex(settings.getUserId(), 2));
+                    len = GXCommon.getObjectCount(buff);
+                    tag = buff.getUInt8();
+                    len = GXCommon.getObjectCount(buff);
+                    if (tag == BerType.OCTET_STRING) {
+                        byte[] tmp2 = new byte[len];
+                        buff.get(tmp2);
+                        if (xml != null) {
+                            xml.appendLine(TranslatorGeneralTags.CALLING_AE_QUALIFIER, "Value",
+                                    GXCommon.toHex(tmp2, false));
+                        }
+                        try {
+                            // If public key certificate is coming part of AARE.
+                            GXx509Certificate cert = new GXx509Certificate(tmp2);
+                            settings.setServerPublicKeyCertificate(cert);
+                            PrivateKey pk = null;
+                            if (cert.getKeyUsage().contains(KeyUsage.KEY_CERT_SIGN)) {
+                                if (settings.getCipher().getKeyAgreementKeyPair() != null) {
+                                    pk = settings.getCipher().getKeyAgreementKeyPair().getPrivate();
+                                }
+                                settings.getCipher().setKeyAgreementKeyPair(new KeyPair(cert.getPublicKey(), pk));
+                            }
+                            if (cert.getKeyUsage().contains(KeyUsage.DIGITAL_SIGNATURE)) {
+                                if (settings.getCipher().getSigningKeyPair() != null) {
+                                    pk = settings.getCipher().getSigningKeyPair().getPrivate();
+                                }
+                                settings.getCipher().setSigningKeyPair(new KeyPair(cert.getPublicKey(), pk));
+                            }
+                            if (xml != null && xml.isComments()) {
+                                xml.appendComment(cert.toString());
+                            }
+                        } catch (Exception ex) {
+                            if (xml == null) {
+                                throw ex;
+                            }
+                            xml.appendLine("Invalid certificate.");
+                        }
+                    } else {
+                        settings.setUserId(buff.getUInt8());
+                        if (xml != null) {
+                            // CallingAPTitle
+                            xml.appendLine(TranslatorGeneralTags.CALLED_AE_INVOCATION_ID, "Value",
+                                    xml.integerToHex(settings.getUserId(), 2));
+                        }
                     }
                     break;
                 // Server RespondingAEInvocationId.
                 case BerType.CONTEXT | BerType.CONSTRUCTED | 7:// 0xA7
                     // len =
-                    buff.getUInt8();
-                    // tag =
-                    buff.getUInt8();
-                    // len =
-                    buff.getUInt8();
-                    settings.setUserId(buff.getUInt8());
-                    if (xml != null) {
-                        // CallingAPTitle
-                        xml.appendLine(TranslatorGeneralTags.RESPONDING_AE_INVOCATION_ID, "Value",
-                                xml.integerToHex(settings.getUserId(), 2));
+                    GXCommon.getObjectCount(buff);
+                    tag = buff.getUInt8();
+                    len = GXCommon.getObjectCount(buff);
+                    if (tag == (byte) BerType.OCTET_STRING) {
+                        // If public key certificate is coming part of AARQ.
+                        byte[] tmp2 = new byte[len];
+                        buff.get(tmp2);
+                        if (xml != null) {
+                            xml.appendLine(TranslatorGeneralTags.CALLING_AE_QUALIFIER, "Value",
+                                    GXCommon.toHex(tmp2, false));
+                        }
+                        try {
+                            GXx509Certificate cert = new GXx509Certificate(tmp2);
+                            settings.setClientPublicKeyCertificate(cert);
+                            PrivateKey pk = null;
+                            if (cert.getKeyUsage().contains(KeyUsage.KEY_CERT_SIGN)) {
+                                if (settings.getCipher().getKeyAgreementKeyPair() != null) {
+                                    pk = settings.getCipher().getKeyAgreementKeyPair().getPrivate();
+                                }
+                                settings.getCipher().setKeyAgreementKeyPair(new KeyPair(cert.getPublicKey(), pk));
+                            }
+                            if (cert.getKeyUsage().contains(KeyUsage.DIGITAL_SIGNATURE)) {
+                                if (settings.getCipher().getSigningKeyPair() != null) {
+                                    pk = settings.getCipher().getSigningKeyPair().getPrivate();
+                                }
+                                settings.getCipher().setSigningKeyPair(new KeyPair(cert.getPublicKey(), pk));
+                            }
+                            if (xml != null && xml.isComments()) {
+                                xml.appendComment(cert.toString());
+                            }
+                        } catch (Exception ex) {
+                            if (xml == null) {
+                                throw ex;
+                            }
+                            xml.appendLine("Invalid certificate.");
+                        }
+                    } else {
+                        settings.setUserId(buff.getUInt8());
+                        if (xml != null) {
+                            if (settings.isServer()) {
+                                xml.appendLine(TranslatorGeneralTags.CALLING_AE_QUALIFIER, "Value",
+                                        xml.integerToHex(settings.getUserId(), 2));
+                            } else {
+                                xml.appendLine(TranslatorGeneralTags.RESPONDING_AE_INVOCATION_ID, "Value",
+                                        xml.integerToHex(settings.getUserId(), 2));
+                            }
+                        }
                     }
                     break;
                 case BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AP_INVOCATION_ID:// 0xA8
@@ -1070,8 +1109,7 @@ final class GXAPDU {
                     len = buff.getUInt8();
                     if (xml != null) {
                         // CallingApInvocationId
-                        xml.appendLine(TranslatorTags.CALLING_AP_INVOCATION_ID, "Value",
-                                xml.integerToHex(len, 2));
+                        xml.appendLine(TranslatorTags.CALLING_AP_INVOCATION_ID, "Value", xml.integerToHex(len, 2));
                     }
                     break;
                 case BerType.CONTEXT | PduType.SENDER_ACSE_REQUIREMENTS: // 0x8A
@@ -1099,8 +1137,7 @@ final class GXAPDU {
                             // CHECKSTYLE:ON
                             xml.appendLine(tag, "Value", settings.getAuthentication().toString());
                         } else {
-                            xml.appendLine(tag, "Value",
-                                    String.valueOf(settings.getAuthentication().ordinal()));
+                            xml.appendLine(tag, "Value", String.valueOf(settings.getAuthentication().ordinal()));
                         }
                     }
                     break;
@@ -1121,13 +1158,11 @@ final class GXAPDU {
                         if (xml == null) {
                             // Check result component. Some meters are returning
                             // invalid user-information if connection failed.
-                            if (resultComponent != AssociationResult.ACCEPTED
-                                    && ret instanceof SourceDiagnostic
+                            if (resultComponent != AssociationResult.ACCEPTED && ret instanceof SourceDiagnostic
                                     && (SourceDiagnostic) ret != SourceDiagnostic.NONE) {
                                 throw new GXDLMSException(resultComponent, (SourceDiagnostic) ret);
                             }
-                            if (resultComponent != AssociationResult.ACCEPTED
-                                    && ret instanceof AcseServiceProvider
+                            if (resultComponent != AssociationResult.ACCEPTED && ret instanceof AcseServiceProvider
                                     && (AcseServiceProvider) ret != AcseServiceProvider.NONE) {
                                 throw new GXDLMSException(resultComponent, (AcseServiceProvider) ret);
                             }
@@ -1145,8 +1180,7 @@ final class GXAPDU {
                     break;
                 default:
                     // Unknown tags.
-                    Logger.getLogger(GXAPDU.class.getName()).log(Level.WARNING,
-                            "Unknown tag: " + tag + ".");
+                    Logger.getLogger(GXAPDU.class.getName()).log(Level.WARNING, "Unknown tag: " + tag + ".");
                     if (buff.position() < buff.size()) {
                         len = buff.getUInt8();
                         buff.position(buff.position() + len);
@@ -1190,8 +1224,7 @@ final class GXAPDU {
             len = buff.getUInt8();
             if (xml != null) {
                 // RespondingAPTitle
-                xml.appendLine(TranslatorTags.CALLED_AP_INVOCATION_ID, "Value",
-                        xml.integerToHex(len, 2));
+                xml.appendLine(TranslatorTags.CALLED_AP_INVOCATION_ID, "Value", xml.integerToHex(len, 2));
             }
         } else {
             // Get length.
@@ -1212,9 +1245,9 @@ final class GXAPDU {
         }
     }
 
-    private static Object parseSourceDiagnostic(final GXDLMSSettings settings,
-                                                final GXByteBuffer buff, final GXDLMSTranslatorStructure xml) {
-        int tag;
+    private static Object parseSourceDiagnostic(final GXDLMSSettings settings, final GXByteBuffer buff,
+                                                final GXDLMSTranslatorStructure xml) {
+        int tag, tag2;
         int len;
         Object ret = 0;
         // len =
@@ -1222,16 +1255,16 @@ final class GXAPDU {
         // ACSE service user tag.
         tag = buff.getUInt8();
         len = buff.getUInt8();
-        if (settings.isServer()) {
+        tag2 = buff.getUInt8();
+        if (tag2 == BerType.OCTET_STRING) {
             byte[] calledAEQualifier = new byte[len];
             buff.get(calledAEQualifier);
             if (xml != null) {
-                xml.appendLine(TranslatorTags.CALLED_AE_QUALIFIER, "Value",
-                        GXCommon.toHex(calledAEQualifier, false));
+                xml.appendLine(TranslatorTags.CALLED_AE_QUALIFIER, "Value", GXCommon.toHex(calledAEQualifier, false));
             }
         } else {
             // Result source diagnostic component.
-            if (buff.getUInt8() != BerType.INTEGER) {
+            if (tag2 != BerType.INTEGER) {
                 throw new IllegalArgumentException("Invalid tag.");
             }
             if (buff.getUInt8() != 1) {
@@ -1264,8 +1297,8 @@ final class GXAPDU {
         return ret;
     }
 
-    private static void appendServerSystemTitleToXml(final GXDLMSSettings settings,
-                                                     final GXDLMSTranslatorStructure xml, final int tag) {
+    private static void appendServerSystemTitleToXml(final GXDLMSSettings settings, final GXDLMSTranslatorStructure xml,
+                                                     final int tag) {
         if (xml != null) {
             // RespondingAuthentication
             if (xml.getOutputType() == TranslatorOutputType.SIMPLE_XML) {
@@ -1290,8 +1323,7 @@ final class GXAPDU {
         }
     }
 
-    private static void appendResultToXml(final GXDLMSSettings settings,
-                                          final GXDLMSTranslatorStructure xml) {
+    private static void appendResultToXml(final GXDLMSSettings settings, final GXDLMSTranslatorStructure xml) {
         if (xml != null) {
             // RespondingAPTitle
             xml.appendLine(TranslatorGeneralTags.RESPONDING_AP_TITLE, "Value",
@@ -1343,8 +1375,7 @@ final class GXAPDU {
         }
     }
 
-    private static void updateAuthentication(final GXDLMSSettings settings,
-                                             final GXByteBuffer buff) {
+    private static void updateAuthentication(final GXDLMSSettings settings, final GXByteBuffer buff) {
         int ch;
         buff.getUInt8();
         if (buff.getUInt8() != 0x60) {
@@ -1390,11 +1421,11 @@ final class GXAPDU {
         data.setUInt8(06);
         data.setUInt8(0x5F);
         data.setUInt8(0x1F);
-        // length of the conformance block
-        data.setUInt8(0x04);
+        data.setUInt8(DataType.BITSTRING);
         // encoding the number of unused bits in the bit string
-        data.setUInt8(0x00);
-        setConformanceToArray(Conformance.toInteger(settings.getNegotiatedConformance()), data);
+        data.setUInt8(0);
+        GXBitString bs = new GXBitString(Conformance.toInteger(settings.getNegotiatedConformance()), 24);
+        data.set(bs.getValue());
         data.setUInt16(settings.getMaxPduSize());
         // VAA Name VAA name (0x0007 for LN referencing and 0xFA00 for SN)
         if (settings.getUseLogicalNameReferencing()) {
@@ -1403,10 +1434,9 @@ final class GXAPDU {
             data.setUInt16(0xFA00);
         }
         if (settings.isCiphered(false)) {
-            AesGcmParameter p = new AesGcmParameter(settings, Command.GLO_INITIATE_RESPONSE,
-                    cipher.getSecurity(), cipher.getSecuritySuite(), cipher.getInvocationCounter(),
-                    cipher.getSystemTitle(), cipher.getBlockCipherKey(),
-                    cipher.getAuthenticationKey());
+            AesGcmParameter p = new AesGcmParameter(settings, Command.GLO_INITIATE_RESPONSE, cipher.getSecurity(),
+                    cipher.getSecuritySuite(), cipher.getInvocationCounter(), cipher.getSystemTitle(),
+                    cipher.getBlockCipherKey(), cipher.getAuthenticationKey());
             byte[] tmp = GXCiphering.encrypt(p, data.array());
             cipher.setInvocationCounter(1 + cipher.getInvocationCounter());
             return tmp;
@@ -1417,16 +1447,14 @@ final class GXAPDU {
     /*
      * Server generates AARE message.
      */
-    public static void generateAARE(final int name, final GXDLMSSettings settings,
-                                    final GXByteBuffer data, final AssociationResult result, final Object diagnostic,
-                                    final GXICipher cipher, final GXByteBuffer errorData, final GXByteBuffer encryptedData)
+    public static void generateAARE(final int name, final GXDLMSSettings settings, final GXByteBuffer data,
+                                    final AssociationResult result, final Object diagnostic, final GXICipher cipher,
+                                    final GXByteBuffer errorData, final GXByteBuffer encryptedData)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         int offset = data.size();
         // Set AARE tag and length 0x61
         data.setUInt8(BerType.APPLICATION | BerType.CONSTRUCTED | PduType.APPLICATION_CONTEXT_NAME);
-        // Length is updated later.
-        data.setUInt8(0);
         generateApplicationContextName(name, settings, data, cipher);
         // Result 0xA2
         data.setUInt8(BerType.CONTEXT | BerType.CONSTRUCTED | BerType.INTEGER);
@@ -1467,7 +1495,15 @@ final class GXAPDU {
             data.set(cipher.getSystemTitle());
         }
         // Add CalledAEInvocationId.
-        if (settings.getUserId() != -1) {
+        if (settings.getAuthentication() == Authentication.HIGH_ECDSA
+                && settings.getServerPublicKeyCertificate() != null) {
+            byte[] raw = settings.getServerPublicKeyCertificate().getEncoded();
+            data.setUInt8(BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLING_AE_QUALIFIER);
+            GXCommon.setObjectCount(4 + raw.length, data);
+            data.setUInt8(BerType.OCTET_STRING);
+            GXCommon.setObjectCount(raw.length, data);
+            data.set(raw);
+        } else if (settings.getUserId() != -1) {
             data.setUInt8(BerType.CONTEXT | BerType.CONSTRUCTED | PduType.CALLED_AE_INVOCATION_ID);
             // LEN
             data.setUInt8(3);
@@ -1499,8 +1535,7 @@ final class GXAPDU {
             data.setUInt8(settings.getStoCChallenge().length);
             data.set(settings.getStoCChallenge());
         }
-        if (result == AssociationResult.ACCEPTED || cipher == null
-                || cipher.getSecurity() == Security.NONE) {
+        if (result == AssociationResult.ACCEPTED || cipher == null || cipher.getSecurity() == Security.NONE) {
             byte[] tmp;
             // Add User Information
             // Tag 0xBE
@@ -1525,6 +1560,7 @@ final class GXAPDU {
             data.setUInt8(tmp.length);
             data.set(tmp);
         }
-        data.setUInt8((short) (offset + 1), (data.size() - offset - 2));
+        // Set AARE length
+        GXCommon.insertObjectCount(data.size() - offset - 1, data, offset + 1);
     }
 }

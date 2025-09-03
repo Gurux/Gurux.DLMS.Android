@@ -39,6 +39,7 @@ import java.util.HashMap;
 import gurux.dlms.enums.AssociationResult;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.SourceDiagnostic;
+import gurux.dlms.enums.TranslatorOutputType;
 import gurux.dlms.secure.GXCiphering;
 
 class GXDLMSXmlSettings {
@@ -54,8 +55,8 @@ class GXDLMSXmlSettings {
 
     private int count = 0;
     private int requestType = 0xFF;
-    private GXByteBuffer attributeDescriptor = new GXByteBuffer();
-    private GXByteBuffer data = new GXByteBuffer();
+    private final GXByteBuffer attributeDescriptor = new GXByteBuffer();
+    private final GXByteBuffer data = new GXByteBuffer();
     private final GXDLMSSettings settings;
     private HashMap<String, Integer> tags = new HashMap<String, Integer>();
     private GXDateTime time = null;
@@ -75,12 +76,11 @@ class GXDLMSXmlSettings {
 
     /*
      * Constructor.
-     *
      * @param list
      */
     GXDLMSXmlSettings(final TranslatorOutputType type, final boolean numericsAsHex, final boolean hex,
                       final HashMap<String, Integer> list) {
-        settings = new GXDLMSSettings(true, this instanceof IGXCryptoNotifier ? (IGXCryptoNotifier) this : null);
+        settings = new GXDLMSSettings(true, null, null);
         outputType = type;
         showNumericsAsHex = outputType != TranslatorOutputType.STANDARD_XML && numericsAsHex;
         showStringAsHex = hex;

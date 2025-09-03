@@ -32,22 +32,26 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-package gurux.dlms;
+package gurux.dlms.enums;
 
 import java.util.HashMap;
 
 /**
- * Enumerates Translator output types.
+ * Confirmed service error tells when error has occurred.
  */
-public enum TranslatorOutputType {
+public enum ConfirmedServiceError {
     /**
-     * Simple XML format.
+     * Error has occurred on initialize.
      */
-    SIMPLE_XML(0),
+    INITIATE_ERROR(1),
     /**
-     * Standard XML format.
+     * Error has occurred on read.
      */
-    STANDARD_XML(1);
+    READ(5),
+    /**
+     * Error has occurred on write.
+     */
+    WRITE(6);
 
     /**
      * Integer value of enumerator.
@@ -56,19 +60,18 @@ public enum TranslatorOutputType {
     /**
      * Collection of enumerator values.
      */
-    private static java.util.HashMap<Integer, TranslatorOutputType> mappings;
+    private static java.util.HashMap<Integer, ConfirmedServiceError> mappings;
 
     /**
      * Returns collection of enumerator values.
-     *
+     * 
      * @return Enumerator values.
      */
-    private static java.util.HashMap<Integer, TranslatorOutputType>
-    getMappings() {
+    private static HashMap<Integer, ConfirmedServiceError> getMappings() {
         if (mappings == null) {
-            synchronized (TranslatorOutputType.class) {
+            synchronized (ConfirmedServiceError.class) {
                 if (mappings == null) {
-                    mappings = new HashMap<Integer, TranslatorOutputType>();
+                    mappings = new HashMap<Integer, ConfirmedServiceError>();
                 }
             }
         }
@@ -77,17 +80,18 @@ public enum TranslatorOutputType {
 
     /**
      * Constructor.
-     *
-     * @param value Integer value of enumerator.
+     * 
+     * @param value
+     *            Integer value of enumerator.
      */
-    TranslatorOutputType(final int value) {
+    ConfirmedServiceError(final int value) {
         intValue = value;
         getMappings().put(value, this);
     }
 
     /**
      * Get integer value for enumerator.
-     *
+     * 
      * @return Enumerator integer value.
      */
     public int getValue() {
@@ -96,11 +100,16 @@ public enum TranslatorOutputType {
 
     /**
      * Returns enumerator value from an integer value.
-     *
-     * @param value Integer value.
+     * 
+     * @param value
+     *            Integer value.
      * @return Enumeration value.
      */
-    public static TranslatorOutputType forValue(final int value) {
-        return getMappings().get(value);
+    public static ConfirmedServiceError forValue(final int value) {
+        ConfirmedServiceError ret = getMappings().get(value);
+        if (ret == null) {
+            throw new IllegalArgumentException("Invalid confirmed service error enum value.");
+        }
+        return ret;
     }
 }

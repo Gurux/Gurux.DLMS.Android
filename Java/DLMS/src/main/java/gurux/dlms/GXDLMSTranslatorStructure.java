@@ -37,6 +37,7 @@ package gurux.dlms;
 import java.util.HashMap;
 
 import gurux.dlms.enums.DataType;
+import gurux.dlms.enums.TranslatorOutputType;
 import gurux.dlms.internal.GXCommon;
 
 /**

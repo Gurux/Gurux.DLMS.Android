@@ -58,7 +58,6 @@ public enum InterfaceType {
      * Wireless M-Bus frame.
      */
     WIRELESS_MBUS,
-
     /**
      * IEC 62056-21 E-Mode is used to initialize communication before moving to
      * HDLC protocol.
@@ -98,7 +97,15 @@ public enum InterfaceType {
     /**
      * SMS short wrapper scheme is used.
      */
-    SMS;
+    SMS,
+    /**
+     * PRIME data concentrator wrapper.
+     */
+    PRIME_DC_WRAPPER,
+    /**
+     * Constrained Application Protocol (CoAP).
+     */
+    COAP;
 
     /**
      * @return Get integer value for enumeration.

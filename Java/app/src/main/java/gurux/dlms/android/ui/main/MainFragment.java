@@ -168,7 +168,13 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
                         }));
                     } else {
                         //Open connection.
-                        binding.trace.setText("Connecting " + media.getName());
+                        binding.trace.setText("Connecting " + media.getName() + System.lineSeparator());
+
+                        if (mClient.getCiphering().isCiphered()) {
+                            binding.trace.append("Security level: " + mClient.getCiphering().getSecurity() + System.lineSeparator());
+                            binding.trace.append("Block cipher key: " + GXDLMSTranslator.toHex(mClient.getCiphering().getBlockCipherKey()) + System.lineSeparator());
+                            binding.trace.append("Authentication key: " + GXDLMSTranslator.toHex(mClient.getCiphering().getAuthenticationKey()) + System.lineSeparator());
+                        }
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         Handler handler = new Handler(Looper.getMainLooper());
                         executor.execute(() -> handler.post(() -> {
@@ -378,7 +384,7 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
         // Get Association view from the meter.
         GXReplyData reply = new GXReplyData();
         readDataBlock(mClient.getObjectsRequest(), reply);
-        mDevice.setObjects(mClient.parseObjects(reply.getData(), true));
+        mDevice.setObjects(mClient.parseObjects(getActivity(), reply.getData(), true));
         // Get description of the objects.
         GXDLMSConverter converter = new GXDLMSConverter();
         converter.updateOBISCodeInformation(getActivity(), mDevice.getObjects());

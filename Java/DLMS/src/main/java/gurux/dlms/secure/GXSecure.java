@@ -60,13 +60,13 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXCryptoKeyParameter;
 import gurux.dlms.GXDLMSExceptionResponse;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXICipher;
-import gurux.dlms.asn.GXAsn1BitString;
 import gurux.dlms.asn.GXAsn1Converter;
 import gurux.dlms.asn.GXAsn1Integer;
 import gurux.dlms.asn.GXAsn1Sequence;
@@ -84,8 +84,8 @@ import gurux.dlms.objects.enums.SecurityPolicy;
 import gurux.dlms.objects.enums.SecuritySuite;
 
 public final class GXSecure {
-    private static final byte[] IV = {(byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6,
-            (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6};
+    private static final byte[] IV =
+            { (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6, (byte) 0xA6 };
 
     /**
      * Default Logger.
@@ -111,8 +111,8 @@ public final class GXSecure {
      * @param secret Secret.
      */
     static byte[] aes1Encrypt(final byte[] data, final byte[] secret)
-            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-            IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException, InvalidAlgorithmParameterException {
         byte[] d = new byte[getBlocklength(data)];
         byte[] s = new byte[16];
         System.arraycopy(data, 0, d, 0, data.length);
@@ -130,8 +130,8 @@ public final class GXSecure {
      * @param secret Secret.
      */
     static byte[] aes1Decrypt(final byte[] data, final byte[] secret)
-            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-            IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            BadPaddingException, InvalidAlgorithmParameterException {
         byte[] d = new byte[getBlocklength(data)];
         byte[] s = new byte[16];
         System.arraycopy(data, 0, d, 0, data.length);
@@ -148,9 +148,8 @@ public final class GXSecure {
      * Encrypt data using AES RFC3394 key-wrapping.
      * @param data Encrypted data.
      */
-    static byte[] encryptAesKeyWrapping(final byte[] data, final byte[] kek)
-            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            IllegalBlockSizeException, BadPaddingException {
+    static byte[] encryptAesKeyWrapping(final byte[] data, final byte[] kek) throws InvalidKeyException,
+            NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
         if (kek == null || kek.length % 8 != 0) {
             throw new IllegalArgumentException("Key Encrypting Key");
         }
@@ -252,9 +251,8 @@ public final class GXSecure {
      * @param secret Secret.
      * @return Chiphered text.
      */
-    public static byte[] secure(final GXDLMSSettings settings, final GXICipher cipher,
-                                final long ic, final byte[] data, final byte[] secret)
-            throws InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+    public static byte[] secure(final GXDLMSSettings settings, final GXICipher cipher, final long ic, final byte[] data,
+                                final byte[] secret) throws InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException, SignatureException {
         try {
 
@@ -267,7 +265,8 @@ public final class GXSecure {
             // Get shared secret
             if (settings.getAuthentication() == Authentication.HIGH_GMAC) {
                 challenge.set(data);
-            } else if (settings.getAuthentication() == Authentication.HIGH_SHA256) {
+            } else if (settings.getAuthentication() == Authentication.HIGH_SHA256
+                    || settings.getAuthentication() == Authentication.HIGH_ECDSA) {
                 challenge.set(secret);
             } else {
                 challenge.set(data);
@@ -290,36 +289,51 @@ public final class GXSecure {
                     break;
                 case HIGH_GMAC:
                     // SC is always Security.Authentication.
-                    AesGcmParameter p = new AesGcmParameter(settings, 0, Security.AUTHENTICATION,
-                            cipher.getSecuritySuite(), ic, secret, cipher.getBlockCipherKey(),
-                            cipher.getAuthenticationKey());
+                    AesGcmParameter p = new AesGcmParameter(settings, 0, Security.AUTHENTICATION, cipher.getSecuritySuite(),
+                            ic, secret, cipher.getBlockCipherKey(), cipher.getAuthenticationKey());
                     p.setType(CountType.TAG);
                     challenge.clear();
-                    challenge.setUInt8(Security.AUTHENTICATION.getValue()
-                            | settings.getCipher().getSecuritySuite().getValue());
+                    challenge.setUInt8(
+                            Security.AUTHENTICATION.getValue() | settings.getCipher().getSecuritySuite().getValue());
                     challenge.setUInt32(p.getInvocationCounter());
                     challenge.set(encryptAesGcm(true, p, d));
                     d = challenge.array();
                     break;
                 case HIGH_ECDSA:
-                    Signature sig = Signature.getInstance("SHA256withECDSA");
+                    Signature sig;
+                    if (settings.getCipher().getSecuritySuite() == SecuritySuite.SUITE_1) {
+                        sig = Signature.getInstance("SHA256withECDSA");
+                    } else if (settings.getCipher().getSecuritySuite() == SecuritySuite.SUITE_2) {
+                        sig = Signature.getInstance("SHA384withECDSA");
+                    } else {
+                        throw new IllegalArgumentException("Invalid security suite.");
+                    }
                     if (cipher.getSigningKeyPair() == null) {
                         throw new IllegalArgumentException("SigningKeyPair is empty.");
                     }
-                    System.out.println(GXCommon
-                            .toHex(GXAsn1Converter.rawValue(cipher.getSigningKeyPair().getPrivate())));
                     sig.initSign(cipher.getSigningKeyPair().getPrivate());
                     sig.update(secret);
                     d = sig.sign();
                     GXAsn1Sequence seq = (GXAsn1Sequence) GXAsn1Converter.fromByteArray(d);
                     GXByteBuffer bb = new GXByteBuffer();
                     bb.set(((GXAsn1Integer) seq.get(0)).getByteArray());
-                    if (bb.size() != 32) {
-                        bb.move(1, 0, 32);
-                    }
-                    bb.set(((GXAsn1Integer) seq.get(1)).getByteArray());
-                    if (bb.size() != 64) {
-                        bb.move(33, 32, 32);
+                    if (settings.getCipher().getSecuritySuite() == SecuritySuite.SUITE_1) {
+                        if (bb.size() != 32) {
+                            bb.move(1, 0, 32);
+                        }
+                        bb.set(((GXAsn1Integer) seq.get(1)).getByteArray());
+                        if (bb.size() != 64) {
+                            bb.move(33, 32, 32);
+                        }
+                    } else {
+                        // Security Suite 2.
+                        if (bb.size() != 48) {
+                            bb.move(1, 0, 48);
+                        }
+                        bb.set(((GXAsn1Integer) seq.get(1)).getByteArray());
+                        if (bb.size() != 96) {
+                            bb.move(49, 48, 48);
+                        }
                     }
                     d = bb.array();
                     break;
@@ -340,7 +354,7 @@ public final class GXSecure {
         // Random challenge is 8 to 64 bytes.
         Random r = new Random();
         int len = size;
-        if (size == 0) {
+        if (size == 0 || (size == 16 && authentication == Authentication.HIGH_ECDSA)) {
             if (authentication == Authentication.HIGH_ECDSA) {
                 len = r.nextInt(32) + 32;
             } else {
@@ -367,8 +381,8 @@ public final class GXSecure {
      * @return Generated KDF.
      */
     public static byte[] generateKDF(final String hashAlg, final byte[] z, final int keyDataLen,
-                                     final byte[] algorithmID, final byte[] partyUInfo, final byte[] partyVInfo,
-                                     final byte[] suppPubInfo, final byte[] suppPrivInfo) {
+                                     final byte[] algorithmID, final byte[] partyUInfo, final byte[] partyVInfo, final byte[] suppPubInfo,
+                                     final byte[] suppPrivInfo) {
         GXByteBuffer bb = new GXByteBuffer();
         bb.set(algorithmID);
         bb.set(partyUInfo);
@@ -436,13 +450,15 @@ public final class GXSecure {
     /**
      * Get Ephemeral Public Key Signature.
      *
-     * @param keyId        Key ID.
-     * @param ephemeralKey Ephemeral key.
+     * @param keyId
+     *            Key ID.
+     * @param ephemeralKey
+     *            Ephemeral key.
      * @return Ephemeral Public Key Signature.
      */
     public static byte[] getEphemeralPublicKeyData(final int keyId, final PublicKey ephemeralKey) {
-        GXAsn1BitString tmp = (GXAsn1BitString) ((GXAsn1Sequence) GXAsn1Converter
-                .fromByteArray(ephemeralKey.getEncoded())).get(1);
+        GXBitString tmp =
+                (GXBitString) ((GXAsn1Sequence) GXAsn1Converter.fromByteArray(ephemeralKey.getEncoded())).get(1);
 
         // Ephemeral public key client
         GXByteBuffer epk = new GXByteBuffer(tmp.getValue());
@@ -458,9 +474,8 @@ public final class GXSecure {
      * @param signKey Private Key.
      * @return Ephemeral Public Key Signature.
      */
-    public static byte[] getEphemeralPublicKeySignature(final int keyId,
-                                                        final PublicKey ephemeralKey, final PrivateKey signKey)
-            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    public static byte[] getEphemeralPublicKeySignature(final int keyId, final PublicKey ephemeralKey,
+                                                        final PrivateKey signKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         byte[] epk = getEphemeralPublicKeyData(keyId, ephemeralKey);
         // Add ephemeral public key signature.
         Signature instance = Signature.getInstance("SHA256withECDSA");
@@ -492,8 +507,7 @@ public final class GXSecure {
      * @return Is verify succeeded.
      */
     public static boolean validateEphemeralPublicKeySignature(final byte[] data, final byte[] sign,
-                                                              final PublicKey publicSigningKey)
-            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+                                                              final PublicKey publicSigningKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 
         GXAsn1Integer a = new GXAsn1Integer(sign, 0, 32);
         GXAsn1Integer b = new GXAsn1Integer(sign, 32, 32);
@@ -512,9 +526,8 @@ public final class GXSecure {
         return v;
     }
 
-    private static Cipher getCipher(final AesGcmParameter p, final boolean encrypt)
-            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-            InvalidAlgorithmParameterException {
+    private static Cipher getCipher(final AesGcmParameter p, final boolean encrypt) throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
         GXByteBuffer iv = new GXByteBuffer();
         iv.set(p.getSystemTitle());
         iv.setUInt32(p.getInvocationCounter());
@@ -555,16 +568,13 @@ public final class GXSecure {
         return tmp;
     }
 
-    public static byte[] encryptAesGcm(final boolean encrypt, final AesGcmParameter p,
-                                       final byte[] data)
-            throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+    public static byte[] encryptAesGcm(final boolean encrypt, final AesGcmParameter p, final byte[] data)
+            throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidAlgorithmParameterException {
         Cipher c = getCipher(p, encrypt || p.getSecurity() != Security.AUTHENTICATION_ENCRYPTION);
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.log(Level.FINEST, "Authentication key: {0}",
-                    GXCommon.toHex(p.getAuthenticationKey()));
-            LOGGER.log(Level.FINEST, "Block cipher key key: {0}",
-                    GXCommon.toHex(p.getBlockCipherKey()));
+            LOGGER.log(Level.FINEST, "Authentication key: {0}", GXCommon.toHex(p.getAuthenticationKey()));
+            LOGGER.log(Level.FINEST, "Block cipher key key: {0}", GXCommon.toHex(p.getBlockCipherKey()));
         }
         // If external Hardware Security Module is used.
         CryptoKeyType keyType;
@@ -576,8 +586,8 @@ public final class GXSecure {
                 keyType = CryptoKeyType.BLOCK_CIPHER;
                 break;
             case AUTHENTICATION_ENCRYPTION:
-                keyType = CryptoKeyType.forValue(CryptoKeyType.AUTHENTICATION.getValue()
-                        | CryptoKeyType.BLOCK_CIPHER.getValue());
+                keyType = CryptoKeyType
+                        .forValue(CryptoKeyType.AUTHENTICATION.getValue() | CryptoKeyType.BLOCK_CIPHER.getValue());
                 break;
             default:
                 throw new IllegalArgumentException("Security");
@@ -600,9 +610,9 @@ public final class GXSecure {
             } else if (p.getSecurity() == Security.AUTHENTICATION_ENCRYPTION) {
                 byte[] crypted = null;
                 if (p.getSettings() != null) {
-                    crypted = GXCommon.crypt(p.getSettings(), CertificateType.DIGITAL_SIGNATURE,
-                            data, true, keyType, Command.GLO_INITIATE_REQUEST, p.getSecurity(),
-                            p.getSecuritySuite(), p.getInvocationCounter());
+                    crypted = GXCommon.crypt(p.getSettings(), CertificateType.DIGITAL_SIGNATURE, data, true, keyType,
+                            Command.GLO_INITIATE_REQUEST, p.getSecurity(), p.getSecuritySuite(),
+                            p.getInvocationCounter());
                 }
                 if (crypted != null) {
                     bb.set(crypted);
@@ -617,8 +627,7 @@ public final class GXSecure {
             if (p.getType() == CountType.PACKET) {
                 GXByteBuffer bb2 = new GXByteBuffer(5 + bb.size());
                 bb2.setUInt8(p.getTag());
-                if (p.getTag() == Command.GENERAL_GLO_CIPHERING
-                        || p.getTag() == Command.GENERAL_DED_CIPHERING
+                if (p.getTag() == Command.GENERAL_GLO_CIPHERING || p.getTag() == Command.GENERAL_DED_CIPHERING
                         || p.getTag() == Command.DATA_NOTIFICATION) {
                     GXCommon.setObjectCount(p.getSystemTitle().length, bb2);
                     bb2.set(p.getSystemTitle());
@@ -652,15 +661,21 @@ public final class GXSecure {
         try {
             byte[] tmp = null;
             if (p.getSettings() != null) {
-                tmp = GXCommon.crypt(p.getSettings(), CertificateType.DIGITAL_SIGNATURE, data,
-                        false, keyType, Command.GLO_INITIATE_RESPONSE, p.getSecurity(),
-                        p.getSecuritySuite(), p.getInvocationCounter());
+                tmp = GXCommon.crypt(p.getSettings(), CertificateType.DIGITAL_SIGNATURE, data, false, keyType,
+                        Command.GLO_INITIATE_RESPONSE, p.getSecurity(), p.getSecuritySuite(), p.getInvocationCounter());
             }
             if (tmp != null) {
                 return tmp;
             }
             GXByteBuffer data2 = new GXByteBuffer();
-            data2.setUInt8(p.getSecurity().getValue() | p.getSecuritySuite().getValue());
+            int tag = p.getSecurity().getValue() | p.getSecuritySuite().getValue();
+            if (p.isCompressed()) {
+                tag |= 0x80;
+            }
+            if (p.isBroadcasted()) {
+                tag |= 0x40;
+            }
+            data2.setUInt8(tag);
             data2.set(p.getAuthenticationKey());
             c.updateAAD(data2.array());
             return c.doFinal(data);
@@ -819,22 +834,19 @@ public final class GXSecure {
                         }
                         kp = p.getSettings().getCipher().getKeyAgreementKeyPair();
                         if (kp == null || kp.getPublic() == null) {
-                            pub = (PublicKey) p.getSettings().getKey(CertificateType.KEY_AGREEMENT,
-                                    p.getSystemTitle(), false);
+                            pub = (PublicKey) p.getSettings().getKey(CertificateType.KEY_AGREEMENT, p.getSystemTitle(),
+                                    false);
                             if (pub != null) {
-                                p.getSettings().getCipher().setKeyAgreementKeyPair(
-                                        new KeyPair(pub, p.getSettings().getCipher()
-                                                .getKeyAgreementKeyPair().getPrivate()));
+                                p.getSettings().getCipher().setKeyAgreementKeyPair(new KeyPair(pub,
+                                        p.getSettings().getCipher().getKeyAgreementKeyPair().getPrivate()));
                             }
                         }
                         if (kp.getPrivate() == null) {
-                            key = (PrivateKey) p.getSettings().getKey(CertificateType.KEY_AGREEMENT,
-                                    p.getSystemTitle(), true);
+                            key = (PrivateKey) p.getSettings().getKey(CertificateType.KEY_AGREEMENT, p.getSystemTitle(),
+                                    true);
                             if (key != null) {
-                                p.getSettings().getCipher()
-                                        .setKeyAgreementKeyPair(new KeyPair(p.getSettings()
-                                                .getCipher().getKeyAgreementKeyPair().getPublic(),
-                                                key));
+                                p.getSettings().getCipher().setKeyAgreementKeyPair(new KeyPair(
+                                        p.getSettings().getCipher().getKeyAgreementKeyPair().getPublic(), key));
                             }
                         }
                         if (kp.getPublic() != null) {
@@ -850,8 +862,8 @@ public final class GXSecure {
                         }
                         kp = p.getSettings().getCipher().getKeyAgreementKeyPair();
                         if (kp == null || kp.getPublic() == null) {
-                            pub = (PublicKey) p.getSettings().getKey(CertificateType.KEY_AGREEMENT,
-                                    p.getSystemTitle(), false);
+                            pub = (PublicKey) p.getSettings().getKey(CertificateType.KEY_AGREEMENT, p.getSystemTitle(),
+                                    false);
                         } else {
                             pub = p.getSettings().getCipher().getKeyAgreementKeyPair().getPublic();
                         }
@@ -874,16 +886,15 @@ public final class GXSecure {
                     if (kp.getPublic() == null || kp.getPrivate() == null) {
                         if (kp.getPublic() == null) {
                             key = p.getSettings().getCipher().getSigningKeyPair().getPrivate();
-                            pub = (PublicKey) p.getSettings().getKey(
-                                    CertificateType.DIGITAL_SIGNATURE, p.getSystemTitle(), false);
+                            pub = (PublicKey) p.getSettings().getKey(CertificateType.DIGITAL_SIGNATURE,
+                                    p.getSystemTitle(), false);
                             kp = new KeyPair(pub, key);
                             p.getSettings().getCipher().setSigningKeyPair(kp);
                         }
                         if (kp.getPrivate() == null) {
                             pub = p.getSettings().getCipher().getSigningKeyPair().getPublic();
-                            key = (PrivateKey) p.getSettings().getKey(
-                                    CertificateType.DIGITAL_SIGNATURE, p.getRecipientSystemTitle(),
-                                    true);
+                            key = (PrivateKey) p.getSettings().getKey(CertificateType.DIGITAL_SIGNATURE,
+                                    p.getRecipientSystemTitle(), true);
                             kp = new KeyPair(pub, key);
                             p.getSettings().getCipher().setSigningKeyPair(kp);
                         }
@@ -905,8 +916,7 @@ public final class GXSecure {
                         list.add(SecurityPolicy.ENCRYPTED_REQUEST);
                         list.add(SecurityPolicy.AUTHENTICATED_REQUEST);
                         if ((p.getSettings().getCipher().getSecurityPolicy().containsAll(list))) {
-                            throw new GXDLMSExceptionResponse(
-                                    ExceptionStateError.SERVICE_NOT_ALLOWED,
+                            throw new GXDLMSExceptionResponse(ExceptionStateError.SERVICE_NOT_ALLOWED,
                                     ExceptionServiceError.DECIPHERING_ERROR, 0);
                         }
                     }
@@ -958,8 +968,8 @@ public final class GXSecure {
                         GXCommon.toHex(GXAsn1Converter.rawValue(pub), true));
                 LOGGER.log(Level.FINEST, "Shared secret: {0}", GXCommon.toHex(z, true));
                 GXByteBuffer kdf = new GXByteBuffer();
-                kdf.set(GXSecure.generateKDF("SHA-256", z, 256, algID, p.getSystemTitle(),
-                        p.getRecipientSystemTitle(), null, null));
+                kdf.set(GXSecure.generateKDF("SHA-256", z, 256, algID, p.getSystemTitle(), p.getRecipientSystemTitle(),
+                        null, null));
                 LOGGER.log(Level.FINEST, "KDF {0}", kdf);
                 p.setBlockCipherKey(kdf.subArray(0, 16));
             } else if (value == KeyAgreementScheme.STATIC_UNIFIED_MODEL.ordinal()) {
@@ -968,19 +978,17 @@ public final class GXSecure {
                 ka.init(p.getSettings().getCipher().getKeyAgreementKeyPair().getPrivate());
                 ka.doPhase(kp.getPublic(), true);
                 byte[] z = ka.generateSecret();
-                LOGGER.log(Level.FINEST, "Private Agreement key: {0}",
-                        GXDLMSTranslator.toHex(GXAsn1Converter.rawValue(p.getSettings().getCipher()
-                                .getKeyAgreementKeyPair().getPrivate())));
+                LOGGER.log(Level.FINEST, "Private Agreement key: {0}", GXDLMSTranslator.toHex(
+                        GXAsn1Converter.rawValue(p.getSettings().getCipher().getKeyAgreementKeyPair().getPrivate())));
                 LOGGER.log(Level.FINEST, "Public Agreement key: {0}",
                         GXDLMSTranslator.toHex(GXAsn1Converter.rawValue(pub)));
                 LOGGER.log(Level.FINEST, "Shared secret {0}", GXCommon.toHex(z, true));
                 GXByteBuffer kdf = new GXByteBuffer();
-                kdf.set(GXSecure.generateKDF("SHA-256", z, 256, algID, p.getSystemTitle(),
-                        transactionId.array(), p.getRecipientSystemTitle(), null));
+                kdf.set(GXSecure.generateKDF("SHA-256", z, 256, algID, p.getSystemTitle(), transactionId.array(),
+                        p.getRecipientSystemTitle(), null));
 
                 LOGGER.log(Level.FINEST, "KDF {0}", kdf);
-                LOGGER.log(Level.FINEST, "Authentication key {0}",
-                        GXDLMSTranslator.toHex(p.getAuthenticationKey()));
+                LOGGER.log(Level.FINEST, "Authentication key {0}", GXDLMSTranslator.toHex(p.getAuthenticationKey()));
                 // Get Ephemeral signing key.
                 p.setBlockCipherKey(kdf.subArray(0, 16));
             }
@@ -994,8 +1002,7 @@ public final class GXSecure {
             if (p.getSettings().getInvocationCounter() != null
                     && p.getSettings().getInvocationCounter().getValue() instanceof Number) {
                 {
-                    if (invocationCounter < ((Number) p.getSettings().getInvocationCounter()
-                            .getValue()).longValue()) {
+                    if (invocationCounter < ((Number) p.getSettings().getInvocationCounter().getValue()).longValue()) {
                         throw new GXDLMSExceptionResponse(ExceptionStateError.SERVICE_NOT_ALLOWED,
                                 ExceptionServiceError.INVOCATION_COUNTER_ERROR,
                                 p.getSettings().getInvocationCounter().getValue());
@@ -1013,26 +1020,24 @@ public final class GXSecure {
                 args.setInvocationCounter(invocationCounter);
                 args.setSystemTitle(p.getSystemTitle());
                 if (p.getBlockCipherKey() == null) {
-                    args.setKeyType(CryptoKeyType.forValue(
-                            args.getKeyType().getValue() | CryptoKeyType.BLOCK_CIPHER.getValue()));
+                    args.setKeyType(CryptoKeyType
+                            .forValue(args.getKeyType().getValue() | CryptoKeyType.BLOCK_CIPHER.getValue()));
                 }
                 if (p.getAuthenticationKey() == null) {
-                    args.setKeyType(CryptoKeyType.forValue(args.getKeyType().getValue()
-                            | CryptoKeyType.AUTHENTICATION.getValue()));
+                    args.setKeyType(CryptoKeyType
+                            .forValue(args.getKeyType().getValue() | CryptoKeyType.AUTHENTICATION.getValue()));
                 }
-                p.getSettings().getCryptoNotifier().onKey(p.getSettings().getCryptoNotifier(),
-                        args);
+                p.getSettings().getCryptoNotifier().onKey(p.getSettings().getCryptoNotifier(), args);
                 if (p.getBlockCipherKey() == null) {
-                    if (args.getBlockCipherKey() == null || (args.getBlockCipherKey().length != 16
-                            && args.getBlockCipherKey().length != 32)) {
+                    if (args.getBlockCipherKey() == null
+                            || (args.getBlockCipherKey().length != 16 && args.getBlockCipherKey().length != 32)) {
                         throw new Exception("Invalid Block cipher key.");
                     }
                     p.setBlockCipherKey(args.getBlockCipherKey());
                 }
                 if (p.getAuthenticationKey() == null) {
                     if (args.getAuthenticationKey() == null
-                            || (args.getAuthenticationKey().length != 16
-                            && args.getAuthenticationKey().length != 32)) {
+                            || (args.getAuthenticationKey().length != 16 && args.getAuthenticationKey().length != 32)) {
                         throw new Exception("Invalid authentication key.");
                     }
                     p.setAuthenticationKey(args.getAuthenticationKey());
@@ -1100,19 +1105,16 @@ public final class GXSecure {
                     if (kp.getPublic() == null) {
                         throw new IllegalArgumentException("Public key is not set.");
                     }
-                    if (!validateEphemeralPublicKeySignature(signedData.array(), p.getSignature(),
-                            kp.getPublic())) {
+                    if (!validateEphemeralPublicKeySignature(signedData.array(), p.getSignature(), kp.getPublic())) {
                         throw new Exception("Invalid signature.");
                     }
                 } else {
                     if (kp.getPublic() == null && kp.getPrivate() == null) {
-                        p.getXml().appendComment(
-                                "Failed to verify signed data. Public key is not set.");
+                        p.getXml().appendComment("Failed to verify signed data. Public key is not set.");
                     } else {
-                        if (!validateEphemeralPublicKeySignature(signedData.array(),
-                                p.getSignature(), kp.getPublic())) {
-                            p.getXml().appendComment(
-                                    "Failed to verify signed data. Invalid signature.");
+                        if (!validateEphemeralPublicKeySignature(signedData.array(), p.getSignature(),
+                                kp.getPublic())) {
+                            p.getXml().appendComment("Failed to verify signed data. Invalid signature.");
                         }
                     }
                 }

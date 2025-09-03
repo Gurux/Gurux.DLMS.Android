@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.crypto.BadPaddingException;
@@ -65,7 +66,6 @@ import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXSimpleEntry;
 import gurux.dlms.IGXCryptoNotifier;
-import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.asn.GXAsn1Converter;
 import gurux.dlms.asn.GXAsn1Integer;
@@ -156,6 +156,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     /**
      * @param value Object list.
+     *              Object list.
      */
     public final void setObjectList(final GXDLMSObjectCollection value) {
         objectList = value;
@@ -260,9 +261,9 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
      * @throws IllegalBlockSizeException          Illegal block size exception.
      * @throws SignatureException                 Signature exception.
      */
-    public byte[][] updateSecret(final GXDLMSClient client) throws InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
-            IllegalBlockSizeException, BadPaddingException, SignatureException {
+    public byte[][] updateSecret(final GXDLMSClient client)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         if (getAuthenticationMechanismName().getMechanismId() == Authentication.NONE) {
             throw new IllegalArgumentException("Invalid authentication level in MechanismId.");
         }
@@ -293,8 +294,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
      */
     public final byte[][] addUser(final GXDLMSClient client, final byte id, final String name)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-            SignatureException {
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -321,8 +321,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
      */
     public final byte[][] removeUser(final GXDLMSClient client, final byte id, final String name)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-            SignatureException {
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -335,13 +334,12 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     @Override
     public final Object[] getValues() {
         return new Object[]{getLogicalName(), getObjectList(), clientSAP + "/" + serverSAP,
-                getApplicationContextName(), getXDLMSContextInfo(),
-                getAuthenticationMechanismName(), getSecret(), getAssociationStatus(),
-                getSecuritySetupReference(), userList, currentUser};
+                getApplicationContextName(), getXDLMSContextInfo(), getAuthenticationMechanismName(), getSecret(),
+                getAssociationStatus(), getSecuritySetupReference(), userList, currentUser};
     }
 
-    static Object getKey(IGXCryptoNotifier cryptoNotifier, SecuritySuite securitySuite,
-                         CertificateType certificateType, byte[] systemTitle, boolean encrypt) {
+    static Object getKey(IGXCryptoNotifier cryptoNotifier, SecuritySuite securitySuite, CertificateType certificateType,
+                         byte[] systemTitle, boolean encrypt) {
         if (cryptoNotifier == null) {
             throw new RuntimeException("Failed to get the certificate.");
         }
@@ -374,29 +372,35 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
         boolean accept;
         if (settings.getAuthentication() == Authentication.HIGH_ECDSA) {
             try {
-                if (settings.getSourceSystemTitle() == null
-                        || settings.getSourceSystemTitle().length != 8) {
+                if (settings.getSourceSystemTitle() == null || settings.getSourceSystemTitle().length != 8) {
                     throw new IllegalArgumentException("SourceSystemTitle is invalid.");
                 }
                 // Get signature key if not set.
                 if (settings.getCipher().getSigningKeyPair() == null) {
-                    PrivateKey key = (PrivateKey) getKey(settings.getCryptoNotifier(),
-                            settings.getCipher().getSecuritySuite(),
-                            CertificateType.DIGITAL_SIGNATURE,
-                            settings.getCipher().getSystemTitle(), true);
-                    PublicKey pub = (PublicKey) getKey(settings.getCryptoNotifier(),
-                            settings.getCipher().getSecuritySuite(),
-                            CertificateType.DIGITAL_SIGNATURE,
-                            settings.getCipher().getSystemTitle(), false);
+                    PrivateKey key =
+                            (PrivateKey) getKey(settings.getCryptoNotifier(), settings.getCipher().getSecuritySuite(),
+                                    CertificateType.DIGITAL_SIGNATURE, settings.getCipher().getSystemTitle(), true);
+                    PublicKey pub =
+                            (PublicKey) getKey(settings.getCryptoNotifier(), settings.getCipher().getSecuritySuite(),
+                                    CertificateType.DIGITAL_SIGNATURE, settings.getCipher().getSystemTitle(), false);
                     settings.getCipher().setKeyAgreementKeyPair(new KeyPair(pub, key));
                 }
                 GXByteBuffer signature = new GXByteBuffer((byte[]) e.getParameters());
-                byte[] tmp = GXAsn1Converter
-                        .toByteArray(new Object[]{new GXAsn1Integer(signature.subArray(0, 32)),
-                                new GXAsn1Integer(signature.subArray(32, 32))});
+                byte[] tmp;
+                Signature ver;
+                if (settings.getCipher().getSecuritySuite() == SecuritySuite.SUITE_1) {
+                    ver = Signature.getInstance("SHA256withECDSA");
+                    tmp = GXAsn1Converter.toByteArray(new Object[]{new GXAsn1Integer(signature.subArray(0, 32)),
+                            new GXAsn1Integer(signature.subArray(32, 32))});
+                } else if (settings.getCipher().getSecuritySuite() == SecuritySuite.SUITE_2) {
+                    ver = Signature.getInstance("SHA384withECDSA");
+                    tmp = GXAsn1Converter.toByteArray(new Object[]{new GXAsn1Integer(signature.subArray(0, 48)),
+                            new GXAsn1Integer(signature.subArray(48, 48))});
+                } else {
+                    throw new IllegalArgumentException("Invalid security suite.");
+                }
                 signature.size(0);
                 signature.set(tmp);
-                Signature ver = Signature.getInstance("SHA256withECDSA");
                 ver.initVerify(settings.getCipher().getSigningKeyPair().getPublic());
                 GXByteBuffer bb = new GXByteBuffer();
                 bb.set(settings.getSourceSystemTitle());
@@ -404,6 +408,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 bb.set(settings.getStoCChallenge());
                 bb.set(settings.getCtoSChallenge());
                 ver.update(bb.array());
+                LOGGER.log(Level.INFO, "StoC " + bb.toHex(true, 0));
                 accept = ver.verify(signature.array());
 
             } catch (Exception ex) {
@@ -426,8 +431,8 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             } else {
                 readSecret = secret;
             }
-            serverChallenge = GXSecure.secure(settings, settings.getCipher(), ic,
-                    settings.getStoCChallenge(), readSecret);
+            serverChallenge =
+                    GXSecure.secure(settings, settings.getCipher(), ic, settings.getStoCChallenge(), readSecret);
             clientChallenge = (byte[]) e.getParameters();
             accept = GXCommon.compare(serverChallenge, clientChallenge);
         }
@@ -448,8 +453,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 tmp.set(settings.getStoCChallenge());
                 readSecret = tmp.array();
             }
-            byte[] tmp = GXSecure.secure(settings, settings.getCipher(), ic,
-                    settings.getCtoSChallenge(), readSecret);
+            byte[] tmp = GXSecure.secure(settings, settings.getCipher(), ic, settings.getCtoSChallenge(), readSecret);
             associationStatus = AssociationStatus.ASSOCIATED;
             return tmp;
         } else {
@@ -486,8 +490,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             }
             boolean exists = false;
             // Remove object if it's not in other association views.
-            for (GXDLMSObject it : settings.getObjects()
-                    .getObjects(ObjectType.ASSOCIATION_LOGICAL_NAME)) {
+            for (GXDLMSObject it : settings.getObjects().getObjects(ObjectType.ASSOCIATION_LOGICAL_NAME)) {
                 if (it != obj) {
                     GXDLMSAssociationLogicalName a = (GXDLMSAssociationLogicalName) it;
                     if (a.objectList.indexOf(obj) != -1) {
@@ -520,10 +523,8 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                         obj.setVersion(version);
                         GXDLMSAssociationLogicalName ln = (GXDLMSAssociationLogicalName) obj;
                         ln.getXDLMSContextInfo().setConformance(xDLMSContextInfo.getConformance());
-                        ln.getXDLMSContextInfo()
-                                .setMaxReceivePduSize(xDLMSContextInfo.getMaxReceivePduSize());
-                        ln.getXDLMSContextInfo()
-                                .setMaxSendPduSize(xDLMSContextInfo.getMaxSendPduSize());
+                        ln.getXDLMSContextInfo().setMaxReceivePduSize(xDLMSContextInfo.getMaxReceivePduSize());
+                        ln.getXDLMSContextInfo().setMaxSendPduSize(xDLMSContextInfo.getMaxSendPduSize());
                     } else if (obj instanceof GXDLMSSecuritySetup) {
                         GXDLMSSecuritySetup ss = (GXDLMSSecuritySetup) obj;
                         // Update server system title and keys.
@@ -565,8 +566,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
         if (tmp == null || tmp.size() != 2) {
             e.setError(ErrorCode.READ_WRITE_DENIED);
         } else {
-            userList.add(new GXSimpleEntry<Byte, String>(((Number) tmp.get(0)).byteValue(),
-                    (String) tmp.get(1)));
+            userList.add(new GXSimpleEntry<Byte, String>(((Number) tmp.get(0)).byteValue(), (String) tmp.get(1)));
         }
     }
 
@@ -705,8 +705,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 // Find current association and add it if's not found.
                 if (associationStatus == AssociationStatus.ASSOCIATED) {
                     for (GXDLMSObject it : objectList) {
-                        if (it != this
-                                && it.getObjectType() == ObjectType.ASSOCIATION_LOGICAL_NAME) {
+                        if (it != this && it.getObjectType() == ObjectType.ASSOCIATION_LOGICAL_NAME) {
                             if (it.getLogicalName().equals("0.0.40.0.0.255")) {
                                 found = true;
                             } else if (!multipleAssociationViews) {
@@ -741,8 +740,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 }
             }
             int pos = 0;
-            boolean gbt = settings.getNegotiatedConformance()
-                    .contains(Conformance.GENERAL_BLOCK_TRANSFER);
+            boolean gbt = settings.getNegotiatedConformance().contains(Conformance.GENERAL_BLOCK_TRANSFER);
             for (GXDLMSObject it : objectList) {
                 ++pos;
                 if (!(pos <= settings.getIndex())) {
@@ -757,8 +755,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                     // Count
                     data.setUInt8(4);
                     // ClassID
-                    GXCommon.setData(settings, data, DataType.UINT16,
-                            it.getObjectType().getValue());
+                    GXCommon.setData(settings, data, DataType.UINT16, it.getObjectType().getValue());
                     // Version
                     GXCommon.setData(settings, data, DataType.UINT8, it.getVersion());
                     // LN
@@ -769,8 +766,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                     settings.setIndex(settings.getIndex() + 1);
                     if (settings.isServer()) {
                         // If PDU is full.
-                        if (!gbt && !e.isSkipMaxPduSize()
-                                && data.size() >= settings.getMaxPduSize()) {
+                        if (!gbt && !e.isSkipMaxPduSize() && data.size() >= settings.getMaxPduSize()) {
                             break;
                         }
                     }
@@ -789,8 +785,8 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
 
     }
 
-    private void getAccessRights(final GXDLMSSettings settings, final GXDLMSObject item,
-                                 final GXDLMSServerBase server, final GXByteBuffer data) throws Exception {
+    private void getAccessRights(final GXDLMSSettings settings, final GXDLMSObject item, final GXDLMSServerBase server,
+                                 final GXByteBuffer data) throws Exception {
         data.setUInt8(DataType.STRUCTURE.getValue());
         data.setUInt8(2);
         if (server == null) {
@@ -968,34 +964,26 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             data.setUInt8(DataType.STRUCTURE.getValue());
             // Add count
             data.setUInt8(0x7);
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    applicationContextName.getJointIsoCtt());
+            GXCommon.setData(settings, data, DataType.UINT8, applicationContextName.getJointIsoCtt());
             GXCommon.setData(settings, data, DataType.UINT8, applicationContextName.getCountry());
-            GXCommon.setData(settings, data, DataType.UINT16,
-                    applicationContextName.getCountryName());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    applicationContextName.getIdentifiedOrganization());
+            GXCommon.setData(settings, data, DataType.UINT16, applicationContextName.getCountryName());
+            GXCommon.setData(settings, data, DataType.UINT8, applicationContextName.getIdentifiedOrganization());
             GXCommon.setData(settings, data, DataType.UINT8, applicationContextName.getDlmsUA());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    applicationContextName.getApplicationContext());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    applicationContextName.getContextId().getValue());
+            GXCommon.setData(settings, data, DataType.UINT8, applicationContextName.getApplicationContext());
+            GXCommon.setData(settings, data, DataType.UINT8, applicationContextName.getContextId().getValue());
             return data.array();
         }
         if (e.getIndex() == 5) {
             GXByteBuffer data = new GXByteBuffer();
             data.setUInt8(DataType.STRUCTURE.getValue());
             data.setUInt8(6);
-            GXCommon.setData(settings, data, DataType.BITSTRING, GXBitString
-                    .toBitString(Conformance.toInteger(xDLMSContextInfo.getConformance()), 24));
-            GXCommon.setData(settings, data, DataType.UINT16,
-                    xDLMSContextInfo.getMaxReceivePduSize());
+            GXBitString bs = new GXBitString(Conformance.toInteger(xDLMSContextInfo.getConformance()), 24);
+            GXCommon.setData(settings, data, DataType.BITSTRING, bs);
+            GXCommon.setData(settings, data, DataType.UINT16, xDLMSContextInfo.getMaxReceivePduSize());
             GXCommon.setData(settings, data, DataType.UINT16, xDLMSContextInfo.getMaxSendPduSize());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    xDLMSContextInfo.getDlmsVersionNumber());
+            GXCommon.setData(settings, data, DataType.UINT8, xDLMSContextInfo.getDlmsVersionNumber());
             GXCommon.setData(settings, data, DataType.INT8, xDLMSContextInfo.getQualityOfService());
-            GXCommon.setData(settings, data, DataType.OCTET_STRING,
-                    xDLMSContextInfo.getCypheringInfo());
+            GXCommon.setData(settings, data, DataType.OCTET_STRING, xDLMSContextInfo.getCypheringInfo());
             return data.array();
         }
         if (e.getIndex() == 6) {
@@ -1003,20 +991,14 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             data.setUInt8(DataType.STRUCTURE.getValue());
             // Add count
             data.setUInt8(0x7);
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    authenticationMechanismName.getJointIsoCtt());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    authenticationMechanismName.getCountry());
-            GXCommon.setData(settings, data, DataType.UINT16,
-                    authenticationMechanismName.getCountryName());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    authenticationMechanismName.getIdentifiedOrganization());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    authenticationMechanismName.getDlmsUA());
+            GXCommon.setData(settings, data, DataType.UINT8, authenticationMechanismName.getJointIsoCtt());
+            GXCommon.setData(settings, data, DataType.UINT8, authenticationMechanismName.getCountry());
+            GXCommon.setData(settings, data, DataType.UINT16, authenticationMechanismName.getCountryName());
+            GXCommon.setData(settings, data, DataType.UINT8, authenticationMechanismName.getIdentifiedOrganization());
+            GXCommon.setData(settings, data, DataType.UINT8, authenticationMechanismName.getDlmsUA());
             GXCommon.setData(settings, data, DataType.UINT8,
                     authenticationMechanismName.getAuthenticationMechanismName());
-            GXCommon.setData(settings, data, DataType.UINT8,
-                    authenticationMechanismName.getMechanismId().getValue());
+            GXCommon.setData(settings, data, DataType.UINT8, authenticationMechanismName.getMechanismId().getValue());
             return data.array();
         }
         if (e.getIndex() == 7) {
@@ -1077,8 +1059,8 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
         return obj;
     }
 
-    private void updateObjectList(final GXDLMSSettings settings,
-                                  final GXDLMSObjectCollection target, final Object value) {
+    private void updateObjectList(final GXDLMSSettings settings, final GXDLMSObjectCollection target,
+                                  final Object value) {
         target.clear();
         if (value != null) {
             for (Object tmp : (List<?>) value) {
@@ -1104,8 +1086,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 applicationContextName.setIdentifiedOrganization(buff.getUInt8());
                 applicationContextName.setDlmsUA(buff.getUInt8());
                 applicationContextName.setApplicationContext(buff.getUInt8());
-                applicationContextName
-                        .setContextId(ApplicationContextName.forValue(buff.getUInt8()));
+                applicationContextName.setContextId(ApplicationContextName.forValue(buff.getUInt8()));
             } else {
                 // Get Tag and length.
                 if (buff.getUInt8() != 2 && buff.getUInt8() != 7) {
@@ -1145,8 +1126,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 if (buff.getUInt8() != 0x11) {
                     throw new IllegalArgumentException();
                 }
-                applicationContextName
-                        .setContextId(ApplicationContextName.forValue(buff.getUInt8()));
+                applicationContextName.setContextId(ApplicationContextName.forValue(buff.getUInt8()));
             }
         } else {
             if (value != null) {
@@ -1157,8 +1137,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 applicationContextName.setIdentifiedOrganization(((Number) arr.get(3)).intValue());
                 applicationContextName.setDlmsUA(((Number) arr.get(4)).intValue());
                 applicationContextName.setApplicationContext(((Number) arr.get(5)).intValue());
-                applicationContextName.setContextId(
-                        ApplicationContextName.forValue(((Number) arr.get(6)).intValue()));
+                applicationContextName.setContextId(ApplicationContextName.forValue(((Number) arr.get(6)).intValue()));
             }
         }
     }
@@ -1176,8 +1155,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                     authenticationMechanismName.setIdentifiedOrganization(buff.getUInt8());
                     authenticationMechanismName.setDlmsUA(buff.getUInt8());
                     authenticationMechanismName.setAuthenticationMechanismName(buff.getUInt8());
-                    authenticationMechanismName
-                            .setMechanismId(Authentication.forValue(buff.getUInt8()));
+                    authenticationMechanismName.setMechanismId(Authentication.forValue(buff.getUInt8()));
                 } else {
                     // Get Tag and length.
                     if (buff.getUInt8() != 2 && buff.getUInt8() != 7) {
@@ -1217,21 +1195,17 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                     if (buff.getUInt8() != 0x11) {
                         throw new IllegalArgumentException();
                     }
-                    authenticationMechanismName
-                            .setMechanismId(Authentication.forValue(buff.getUInt8()));
+                    authenticationMechanismName.setMechanismId(Authentication.forValue(buff.getUInt8()));
                 }
             } else {
                 List<?> arr = (List<?>) value;
                 authenticationMechanismName.setJointIsoCtt(((Number) arr.get(0)).intValue());
                 authenticationMechanismName.setCountry(((Number) arr.get(1)).intValue());
                 authenticationMechanismName.setCountryName(((Number) arr.get(2)).intValue());
-                authenticationMechanismName
-                        .setIdentifiedOrganization(((Number) arr.get(3)).intValue());
+                authenticationMechanismName.setIdentifiedOrganization(((Number) arr.get(3)).intValue());
                 authenticationMechanismName.setDlmsUA(((Number) arr.get(4)).intValue());
-                authenticationMechanismName
-                        .setAuthenticationMechanismName(((Number) arr.get(5)).intValue());
-                authenticationMechanismName
-                        .setMechanismId(Authentication.forValue(((Number) arr.get(6)).intValue()));
+                authenticationMechanismName.setAuthenticationMechanismName(((Number) arr.get(5)).intValue());
+                authenticationMechanismName.setMechanismId(Authentication.forValue(((Number) arr.get(6)).intValue()));
             }
         }
     }
@@ -1261,8 +1235,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             case 5:
                 if (e.getValue() != null) {
                     List<?> arr = (List<?>) e.getValue();
-                    xDLMSContextInfo.setConformance(
-                            Conformance.forValue(((GXBitString) arr.get(0)).toInteger()));
+                    xDLMSContextInfo.setConformance(Conformance.forValue(((GXBitString) arr.get(0)).toInteger()));
                     xDLMSContextInfo.setMaxReceivePduSize(((Number) arr.get(1)).intValue());
                     xDLMSContextInfo.setMaxSendPduSize(((Number) arr.get(2)).intValue());
                     xDLMSContextInfo.setDlmsVersionNumber(((Number) arr.get(3)).byteValue());
@@ -1280,8 +1253,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 if (e.getValue() == null) {
                     setAssociationStatus(AssociationStatus.NON_ASSOCIATED);
                 } else {
-                    setAssociationStatus(
-                            AssociationStatus.values()[((Number) e.getValue()).intValue()]);
+                    setAssociationStatus(AssociationStatus.values()[((Number) e.getValue()).intValue()]);
                 }
                 break;
             case 9:
@@ -1292,16 +1264,14 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 if (e.getValue() != null) {
                     for (Object tmp : (List<?>) e.getValue()) {
                         List<?> item = (List<?>) tmp;
-                        userList.add(new GXSimpleEntry<Byte, String>((Byte) item.get(0),
-                                (String) item.get(1)));
+                        userList.add(new GXSimpleEntry<Byte, String>((Byte) item.get(0), (String) item.get(1)));
                     }
                 }
                 break;
             case 11:
                 if (e.getValue() != null) {
                     List<?> tmp = (List<?>) e.getValue();
-                    currentUser = new GXSimpleEntry<Byte, String>(((Number) tmp.get(0)).byteValue(),
-                            (String) tmp.get(1));
+                    currentUser = new GXSimpleEntry<Byte, String>(((Number) tmp.get(0)).byteValue(), (String) tmp.get(1));
                 } else {
                     currentUser = null;
                 }
@@ -1352,9 +1322,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                         if (access != null && access != "") {
                             buff = new int[access.length() / 4];
                             for (int pos = 0; pos != buff.length; ++pos) {
-                                buff[pos] =
-                                        Integer.parseInt(access.substring(4 * pos, 4 * pos + 4), 16)
-                                                & ~0x8000;
+                                buff[pos] = Integer.parseInt(access.substring(4 * pos, 4 * pos + 4), 16) & ~0x8000;
                             }
                             accessRights.put(obj, buff);
                         }
@@ -1371,9 +1339,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                         if (access != null && access != "") {
                             buff = new int[access.length() / 4];
                             for (int pos = 0; pos != buff.length; ++pos) {
-                                buff[pos] =
-                                        Integer.parseInt(access.substring(4 * pos, 4 * pos + 4), 16)
-                                                & ~0x8000;
+                                buff[pos] = Integer.parseInt(access.substring(4 * pos, 4 * pos + 4), 16) & ~0x8000;
                             }
                             methodAccessRights.put(obj, buff);
                         }
@@ -1398,44 +1364,36 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             applicationContextName.setJointIsoCtt(reader.readElementContentAsInt("JointIsoCtt"));
             applicationContextName.setCountry(reader.readElementContentAsInt("Country"));
             applicationContextName.setCountryName(reader.readElementContentAsInt("CountryName"));
-            applicationContextName.setIdentifiedOrganization(
-                    reader.readElementContentAsInt("IdentifiedOrganization"));
+            applicationContextName.setIdentifiedOrganization(reader.readElementContentAsInt("IdentifiedOrganization"));
             applicationContextName.setDlmsUA(reader.readElementContentAsInt("DlmsUA"));
+            applicationContextName.setApplicationContext(reader.readElementContentAsInt("ApplicationContext"));
             applicationContextName
-                    .setApplicationContext(reader.readElementContentAsInt("ApplicationContext"));
-            applicationContextName.setContextId(
-                    ApplicationContextName.forValue(reader.readElementContentAsInt("ContextId")));
+                    .setContextId(ApplicationContextName.forValue(reader.readElementContentAsInt("ContextId")));
             reader.readEndElement("ApplicationContextName");
         }
 
         if (reader.isStartElement("XDLMSContextInfo", true)) {
-            xDLMSContextInfo.setConformance(
-                    Conformance.forValue(reader.readElementContentAsInt("Conformance")));
-            xDLMSContextInfo
-                    .setMaxReceivePduSize(reader.readElementContentAsInt("MaxReceivePduSize"));
+            xDLMSContextInfo.setConformance(Conformance.forValue(reader.readElementContentAsInt("Conformance")));
+            xDLMSContextInfo.setMaxReceivePduSize(reader.readElementContentAsInt("MaxReceivePduSize"));
             xDLMSContextInfo.setMaxSendPduSize(reader.readElementContentAsInt("MaxSendPduSize"));
-            xDLMSContextInfo.setDlmsVersionNumber(
-                    (byte) reader.readElementContentAsInt("DlmsVersionNumber"));
+            xDLMSContextInfo.setDlmsVersionNumber((byte) reader.readElementContentAsInt("DlmsVersionNumber"));
+            xDLMSContextInfo.setQualityOfService(reader.readElementContentAsInt("QualityOfService"));
             xDLMSContextInfo
-                    .setQualityOfService(reader.readElementContentAsInt("QualityOfService"));
-            xDLMSContextInfo.setCypheringInfo(GXDLMSTranslator
-                    .hexToBytes(reader.readElementContentAsString("CypheringInfo")));
+                    .setCypheringInfo(GXDLMSTranslator.hexToBytes(reader.readElementContentAsString("CypheringInfo")));
             reader.readEndElement("XDLMSContextInfo");
         }
         if (reader.isStartElement("AuthenticationMechanismName", true)
                 || reader.isStartElement("XDLMSContextInfo", true)) {
-            authenticationMechanismName
-                    .setJointIsoCtt(reader.readElementContentAsInt("JointIsoCtt"));
+            authenticationMechanismName.setJointIsoCtt(reader.readElementContentAsInt("JointIsoCtt"));
             authenticationMechanismName.setCountry(reader.readElementContentAsInt("Country"));
+            authenticationMechanismName.setCountryName(reader.readElementContentAsInt("CountryName"));
             authenticationMechanismName
-                    .setCountryName(reader.readElementContentAsInt("CountryName"));
-            authenticationMechanismName.setIdentifiedOrganization(
-                    reader.readElementContentAsInt("IdentifiedOrganization"));
+                    .setIdentifiedOrganization(reader.readElementContentAsInt("IdentifiedOrganization"));
             authenticationMechanismName.setDlmsUA(reader.readElementContentAsInt("DlmsUA"));
-            authenticationMechanismName.setAuthenticationMechanismName(
-                    reader.readElementContentAsInt("AuthenticationMechanismName"));
-            authenticationMechanismName.setMechanismId(
-                    Authentication.forValue(reader.readElementContentAsInt("MechanismId")));
+            authenticationMechanismName
+                    .setAuthenticationMechanismName(reader.readElementContentAsInt("AuthenticationMechanismName"));
+            authenticationMechanismName
+                    .setMechanismId(Authentication.forValue(reader.readElementContentAsInt("MechanismId")));
             reader.readEndElement("AuthenticationMechanismName");
             reader.readEndElement("XDLMSContextInfo");
         }
@@ -1445,8 +1403,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
         } else {
             secret = GXDLMSTranslator.hexToBytes(str);
         }
-        associationStatus =
-                AssociationStatus.values()[reader.readElementContentAsInt("AssociationStatus")];
+        associationStatus = AssociationStatus.values()[reader.readElementContentAsInt("AssociationStatus")];
         securitySetupReference = reader.readElementContentAsString("SecuritySetupReference");
         // Load users.
         userList.clear();
@@ -1483,21 +1440,18 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                 // Default association view is not saved.
                 if (!(it.getObjectType() == ObjectType.ASSOCIATION_LOGICAL_NAME
                         && (it == this || it.getLogicalName().equals("0.0.40.0.0.255")))) {
-                    if (multipleAssociationViews
-                            || it.getObjectType() != ObjectType.ASSOCIATION_LOGICAL_NAME) {
+                    if (multipleAssociationViews || it.getObjectType() != ObjectType.ASSOCIATION_LOGICAL_NAME) {
                         writer.writeStartElement("GXDLMS" + getObjectName(it.getObjectType()));
                         // Add LN
                         writer.writeElementString("LN", it.getLogicalName());
 
                         if (!accessRights.containsKey(it)) {
                             if (getVersion() < 3) {
-                                for (int pos = 1; pos != ((IGXDLMSBase) it).getAttributeCount()
-                                        + 1; ++pos) {
+                                for (int pos = 1; pos != ((IGXDLMSBase) it).getAttributeCount() + 1; ++pos) {
                                     setAccess(it, pos, it.getAccess(pos));
                                 }
                             } else {
-                                for (int pos = 1; pos != ((IGXDLMSBase) it).getAttributeCount()
-                                        + 1; ++pos) {
+                                for (int pos = 1; pos != ((IGXDLMSBase) it).getAttributeCount() + 1; ++pos) {
                                     setAccess3(it, pos, it.getAccess3(pos));
                                 }
                             }
@@ -1523,13 +1477,11 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
                         }
                         if (!methodAccessRights.containsKey(it)) {
                             if (getVersion() < 3) {
-                                for (int pos = 1; pos != ((IGXDLMSBase) it).getMethodCount()
-                                        + 1; ++pos) {
+                                for (int pos = 1; pos != ((IGXDLMSBase) it).getMethodCount() + 1; ++pos) {
                                     setMethodAccess(it, pos, it.getMethodAccess(pos));
                                 }
                             } else {
-                                for (int pos = 1; pos != ((IGXDLMSBase) it).getMethodCount()
-                                        + 1; ++pos) {
+                                for (int pos = 1; pos != ((IGXDLMSBase) it).getMethodCount() + 1; ++pos) {
                                     setMethodAccess3(it, pos, it.getMethodAccess3(pos));
                                 }
                             }
@@ -1565,25 +1517,20 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             writer.writeElementString("JointIsoCtt", applicationContextName.getJointIsoCtt());
             writer.writeElementString("Country", applicationContextName.getCountry());
             writer.writeElementString("CountryName", applicationContextName.getCountryName());
-            writer.writeElementString("IdentifiedOrganization",
-                    applicationContextName.getIdentifiedOrganization());
+            writer.writeElementString("IdentifiedOrganization", applicationContextName.getIdentifiedOrganization());
             writer.writeElementString("DlmsUA", applicationContextName.getDlmsUA());
-            writer.writeElementString("ApplicationContext",
-                    applicationContextName.getApplicationContext());
-            writer.writeElementString("ContextId",
-                    applicationContextName.getContextId().getValue());
+            writer.writeElementString("ApplicationContext", applicationContextName.getApplicationContext());
+            writer.writeElementString("ContextId", applicationContextName.getContextId().getValue());
             writer.writeEndElement();
         }
         if (xDLMSContextInfo != null) {
             writer.writeStartElement("XDLMSContextInfo");
-            writer.writeElementString("Conformance",
-                    Conformance.toInteger(xDLMSContextInfo.getConformance()));
+            writer.writeElementString("Conformance", Conformance.toInteger(xDLMSContextInfo.getConformance()));
             writer.writeElementString("MaxReceivePduSize", xDLMSContextInfo.getMaxReceivePduSize());
             writer.writeElementString("MaxSendPduSize", xDLMSContextInfo.getMaxSendPduSize());
             writer.writeElementString("DlmsVersionNumber", xDLMSContextInfo.getDlmsVersionNumber());
             writer.writeElementString("QualityOfService", xDLMSContextInfo.getQualityOfService());
-            writer.writeElementString("CypheringInfo",
-                    GXDLMSTranslator.toHex(xDLMSContextInfo.getCypheringInfo()));
+            writer.writeElementString("CypheringInfo", GXDLMSTranslator.toHex(xDLMSContextInfo.getCypheringInfo()));
             writer.writeEndElement();
         }
         if (authenticationMechanismName != null) {
@@ -1596,8 +1543,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
             writer.writeElementString("DlmsUA", authenticationMechanismName.getDlmsUA());
             writer.writeElementString("AuthenticationMechanismName",
                     authenticationMechanismName.getAuthenticationMechanismName());
-            writer.writeElementString("MechanismId",
-                    authenticationMechanismName.getMechanismId().getValue());
+            writer.writeElementString("MechanismId", authenticationMechanismName.getMechanismId().getValue());
             writer.writeEndElement();
         }
         writer.writeElementString("Secret", GXDLMSTranslator.toHex(secret));
@@ -1918,8 +1864,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
      * @param index  Attribute index.
      * @param access Method access mode.
      */
-    public void setMethodAccess(final GXDLMSObject target, final int index,
-                                final MethodAccessMode access) {
+    public void setMethodAccess(final GXDLMSObject target, final int index, final MethodAccessMode access) {
         if (methodAccessRights.containsKey(target)) {
             methodAccessRights.get(target)[index - 1] = access.getValue();
         } else {
@@ -1975,8 +1920,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
      * @param index  Attribute index.
      * @param access Access mode.
      */
-    public void setAccess3(final GXDLMSObject target, final int index,
-                           final Set<AccessMode3> access) {
+    public void setAccess3(final GXDLMSObject target, final int index, final Set<AccessMode3> access) {
         if (accessRights.containsKey(target)) {
             accessRights.get(target)[index - 1] = AccessMode3.toInteger(access);
         } else {
@@ -2030,8 +1974,7 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
      * @param index  Attribute index.
      * @param access Method access mode.
      */
-    public void setMethodAccess3(final GXDLMSObject target, final int index,
-                                 final Set<MethodAccessMode3> access) {
+    public void setMethodAccess3(final GXDLMSObject target, final int index, final Set<MethodAccessMode3> access) {
         if (methodAccessRights.containsKey(target)) {
             methodAccessRights.get(target)[index - 1] = MethodAccessMode3.toInteger(access);
         } else {
@@ -2062,30 +2005,26 @@ public class GXDLMSAssociationLogicalName extends GXDLMSObject implements IGXDLM
     }
 
     @Override
-    public String[] getNames(final Context context) {
+    public String[] getNames(final Context contex) {
         if (version == 0) {
-            return new String[]{context.getString(R.string.logical_name), "Object List", "Associated partners Id",
-                    "Application Context Name", "xDLMS Context Info",
-                    "Authentication Mechanism Name", "Secret", "Association Status"};
+            return new String[]{"Logical Name", "Object List", "Associated partners Id", "Application Context Name",
+                    "xDLMS Context Info", "Authentication Mechanism Name", "Secret", "Association Status"};
         }
         if (version == 1) {
-            return new String[]{context.getString(R.string.logical_name), "Object List", "Associated partners Id",
-                    "Application Context Name", "xDLMS Context Info",
-                    "Authentication Mechanism Name", "Secret", "Association Status",
+            return new String[]{"Logical Name", "Object List", "Associated partners Id", "Application Context Name",
+                    "xDLMS Context Info", "Authentication Mechanism Name", "Secret", "Association Status",
                     "Security Setup Reference"};
         }
-        return new String[]{context.getString(R.string.logical_name), "Object List", "Associated partners Id",
-                "Application Context Name", "xDLMS Context Info", "Authentication Mechanism Name",
-                "Secret", "Association Status", "Security Setup Reference", "UserList",
-                "CurrentUser"};
+        return new String[]{"Logical Name", "Object List", "Associated partners Id", "Application Context Name",
+                "xDLMS Context Info", "Authentication Mechanism Name", "Secret", "Association Status",
+                "Security Setup Reference", "UserList", "CurrentUser"};
     }
 
     @Override
-    public String[] getMethodNames(final Context context) {
+    public String[] getMethodNames(final Context contex) {
         if (version > 1)
-            return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object",
-                    "Remove object", "Add user", "Remove user"};
-        return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object",
-                "Remove object"};
+            return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object", "Remove object",
+                    "Add user", "Remove user"};
+        return new String[]{"Reply to HLS authentication", "Change HLS secret", "Add object", "Remove object"};
     }
 }

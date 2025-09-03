@@ -72,6 +72,10 @@ public class GXDLMSObject {
     private HashMap<Integer, java.util.Date> readTimes = new HashMap<Integer, java.util.Date>();
     protected int version;
     private ObjectType objectType = ObjectType.NONE;
+    /**
+     * Custom object type.
+     */
+    private int customObjectType = 0;
     private GXAttributeCollection attributes = null;
     private GXAttributeCollection methodAttributes = null;
     private int shortName;
@@ -99,6 +103,23 @@ public class GXDLMSObject {
         attributes = new GXAttributeCollection();
         methodAttributes = new GXAttributeCollection();
         setObjectType(type);
+        this.setShortName(sn);
+        if (ln != null) {
+            List<String> items = GXCommon.split(ln, '.');
+            if (items.size() != 6) {
+                throw new GXDLMSException("Invalid Logical Name.");
+            }
+        }
+        logicalName = ln;
+    }
+
+    /*
+     * Constructor for custom objects.
+     */
+    protected GXDLMSObject(final int type, final String ln, final int sn) {
+        attributes = new GXAttributeCollection();
+        methodAttributes = new GXAttributeCollection();
+        customObjectType = type;
         this.setShortName(sn);
         if (ln != null) {
             List<String> items = GXCommon.split(ln, '.');
@@ -691,5 +712,12 @@ public class GXDLMSObject {
         } catch (XMLStreamException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    /**
+     * @return Custom object type.
+     */
+    public int getCustomObjectType() {
+        return customObjectType;
     }
 }

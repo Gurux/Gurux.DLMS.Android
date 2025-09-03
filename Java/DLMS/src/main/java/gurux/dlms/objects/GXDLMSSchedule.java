@@ -47,14 +47,12 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSSettings;
 import gurux.dlms.GXDate;
 import gurux.dlms.GXTime;
-import gurux.dlms.R;
 import gurux.dlms.ValueEventArgs;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.ErrorCode;
@@ -138,8 +136,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      */
     public final byte[][] insert(final GXDLMSClient client, final GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-            SignatureException {
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer data = new GXByteBuffer();
         addEntry(null, entry, data);
         return client.method(this, 2, data.array(), DataType.STRUCTURE);
@@ -161,8 +158,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      */
     public final byte[][] delete(GXDLMSClient client, GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-            SignatureException {
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -190,8 +186,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      */
     public final byte[][] enable(GXDLMSClient client, GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-            SignatureException {
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -221,8 +216,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
      */
     public final byte[][] disable(GXDLMSClient client, GXDLMSScheduleEntry entry)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-            SignatureException {
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         GXByteBuffer data = new GXByteBuffer();
         data.setUInt8(DataType.STRUCTURE.getValue());
         // Add structure size.
@@ -247,8 +241,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     private void enableDisable(java.util.ArrayList<?> tmp) {
         // Enable
-        for (int index = ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1))
-                .intValue(); ++index) {
+        for (int index = ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1)).intValue(); ++index) {
             if (index != 0) {
                 for (GXDLMSScheduleEntry it : entries) {
                     if (it.getIndex() == index) {
@@ -259,8 +252,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
             }
         }
         // Disable
-        for (int index = ((Number) tmp.get(2)).intValue(); index <= ((Number) tmp.get(3))
-                .intValue(); ++index) {
+        for (int index = ((Number) tmp.get(2)).intValue(); index <= ((Number) tmp.get(3)).intValue(); ++index) {
             if (index != 0) {
                 for (GXDLMSScheduleEntry it : entries) {
                     if (it.getIndex() == index) {
@@ -282,16 +274,14 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
             break;
             // Insert entry
             case 2:
-                GXDLMSScheduleEntry entry =
-                        createEntry(settings, (java.util.ArrayList<?>) e.getParameters());
+                GXDLMSScheduleEntry entry = createEntry(settings, (java.util.ArrayList<?>) e.getParameters());
                 removeEntry(entry.getIndex());
                 entries.add(entry);
                 break;
             // Delete entry
             case 3: {
                 java.util.ArrayList<?> tmp = (java.util.ArrayList<?>) e.getParameters();
-                for (int index = ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1))
-                        .intValue(); ++index) {
+                for (int index = ((Number) tmp.get(0)).intValue(); index <= ((Number) tmp.get(1)).intValue(); ++index) {
                     removeEntry(index);
                 }
             }
@@ -348,8 +338,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
         throw new IllegalArgumentException("getDataType failed. Invalid attribute index.");
     }
 
-    private void addEntry(final GXDLMSSettings settings, final GXDLMSScheduleEntry it,
-                          GXByteBuffer data) {
+    private void addEntry(final GXDLMSSettings settings, final GXDLMSScheduleEntry it, GXByteBuffer data) {
         data.setUInt8(DataType.STRUCTURE.getValue());
         data.setUInt8(10);
         // Add index.
@@ -376,7 +365,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
         data.setUInt16(it.getValidityWindow());
         // Add exec week days.
         GXCommon.setData(settings, data, DataType.BITSTRING,
-                GXBitString.toBitString(Weekdays.toInteger(it.getExecWeekdays()), 7));
+                new GXBitString(Weekdays.toInteger(it.getExecWeekdays()), 7));
         // Add exec spec days.
         GXCommon.setData(settings, data, DataType.BITSTRING, it.getExecSpecDays());
         // Add begin date.
@@ -415,15 +404,12 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
         item.setEnable(((Boolean) tmp.get(1)).booleanValue());
         item.setLogicalName(GXCommon.toLogicalName(tmp.get(2)));
         item.setScriptSelector(((Number) tmp.get(3)).intValue());
-        item.setSwitchTime(
-                (GXTime) GXDLMSClient.changeType((byte[]) tmp.get(4), DataType.TIME, settings));
+        item.setSwitchTime((GXTime) GXDLMSClient.changeType((byte[]) tmp.get(4), DataType.TIME, settings));
         item.setValidityWindow(((Number) tmp.get(5)).intValue());
         item.setExecWeekdays(Weekdays.forValue(((GXBitString) tmp.get(6)).toInteger()));
         item.setExecSpecDays(tmp.get(7).toString());
-        item.setBeginDate(
-                (GXDate) GXDLMSClient.changeType((byte[]) tmp.get(8), DataType.DATE, settings));
-        item.setEndDate(
-                (GXDate) GXDLMSClient.changeType((byte[]) tmp.get(9), DataType.DATE, settings));
+        item.setBeginDate((GXDate) GXDLMSClient.changeType((byte[]) tmp.get(8), DataType.DATE, settings));
+        item.setEndDate((GXDate) GXDLMSClient.changeType((byte[]) tmp.get(9), DataType.DATE, settings));
         return item;
     }
 
@@ -460,8 +446,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
                 it.setScriptSelector((byte) reader.readElementContentAsInt("ScriptSelector"));
                 it.setSwitchTime(reader.readElementContentAsTime("SwitchTime"));
                 it.setValidityWindow((byte) reader.readElementContentAsInt("ValidityWindow"));
-                it.setExecWeekdays(
-                        Weekdays.forValue(reader.readElementContentAsInt("ExecWeekdays")));
+                it.setExecWeekdays(Weekdays.forValue(reader.readElementContentAsInt("ExecWeekdays")));
                 it.setExecSpecDays(reader.readElementContentAsString("ExecSpecDays"));
                 it.setBeginDate(reader.readElementContentAsDate("BeginDate"));
                 it.setEndDate(reader.readElementContentAsDate("EndDate"));
@@ -499,8 +484,7 @@ public class GXDLMSSchedule extends GXDLMSObject implements IGXDLMSBase {
 
     @Override
     public String[] getNames(final Context context) {
-        return new String[]{context.getString(R.string.logical_name), 
-                context.getString(R.string.entries)};
+        return new String[]{"Logical Name", "Entries"};
     }
 
     @Override

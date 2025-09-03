@@ -44,17 +44,16 @@ import android.widget.EditText;
 import androidx.fragment.app.Fragment;
 
 import gurux.dlms.GXDLMSTranslator;
-import gurux.dlms.TranslatorOutputType;
 import gurux.dlms.android.GXGeneral;
 import gurux.dlms.android.R;
+import gurux.dlms.enums.TranslatorOutputType;
 
 /**
  * Pdu XML translator fragment.
  */
 public class GXXmlTranslator extends Fragment {
 
-    GXDLMSTranslator translator =
-            new GXDLMSTranslator(TranslatorOutputType.SIMPLE_XML);
+    GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SIMPLE_XML);
     private EditText pduText;
     private EditText xmlText;
 
@@ -85,8 +84,7 @@ public class GXXmlTranslator extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_xml_translator, container, false);
         Button toXml = view.findViewById(R.id.toXml);
         Button toPdu = view.findViewById(R.id.toPdu);

@@ -18,6 +18,7 @@ import gurux.dlms.enums.HardwareResource;
 import gurux.dlms.enums.Initiate;
 import gurux.dlms.enums.LoadDataSet;
 import gurux.dlms.enums.Task;
+import gurux.dlms.enums.TranslatorOutputType;
 import gurux.dlms.enums.VdeStateError;
 
 final class TranslatorSimpleTags {

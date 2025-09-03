@@ -57,6 +57,7 @@ import gurux.dlms.enums.Command;
 import gurux.dlms.enums.DataType;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
+import gurux.dlms.enums.TranslatorOutputType;
 import gurux.dlms.internal.GXCommon;
 import gurux.dlms.secure.GXDLMSSecureClient;
 
