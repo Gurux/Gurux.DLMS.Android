@@ -100,16 +100,20 @@ import gurux.dlms.secure.GXSecure;
  */
 public class GXDLMSClient {
 
-    private static final Logger LOGGER = Logger.getLogger(GXDLMSClient.class.getName());
     /**
-     * DLMS settings.
+     * If protected release is used release is including a ciphered xDLMS
+     * Initiate request.
+     * </p>
+     * New DLMS Conformance Tests tests expect protected release. It's not
+     * optional anymore.
      */
-    protected final GXDLMSSettings settings;
+    private boolean useProtectedRelease = true;
+
     /**
      * DLMS translator.
      */
     protected GXDLMSTranslator translator;
-    private boolean useProtectedRelease = false;
+
     /**
      * Initialize challenge that is restored after the connection is closed.
      */
@@ -118,31 +122,37 @@ public class GXDLMSClient {
      * Initialize PDU size that is restored after the connection is closed.
      */
     private int initializePduSize;
+
     /**
      * Initialize Max HDLC transmission size that is restored after the
      * connection is closed.
      */
     private int initializeMaxInfoTX;
+
     /**
      * Initialize Max HDLC receive size that is restored after the connection is
      * closed.
      */
     private int initializeMaxInfoRX;
+
     /**
      * Initialize max HDLC window size in transmission that is restored after
      * the connection is closed.
      */
     private int initializeWindowSizeTX;
+
     /**
      * Initialize max HDLC window size in receive that is restored after the
      * connection is closed.
      */
     private int initializeWindowSizeRX;
+
     /**
      * XML client don't throw exceptions. It serializes them as a default. Set
      * value to true, if exceptions are thrown.
      */
     private boolean throwExceptions;
+
     /**
      * Manufacturer ID.
      * <p>
@@ -151,7 +161,15 @@ public class GXDLMSClient {
      * </p>
      */
     private String manufacturerId;
+
+    /**
+     * DLMS settings.
+     */
+    protected final GXDLMSSettings settings;
     private GXObisCodeCollection obisCodes;
+
+    private static final Logger LOGGER = Logger.getLogger(GXDLMSClient.class.getName());
+
     /**
      * Is authentication required.
      */
@@ -170,7 +188,7 @@ public class GXDLMSClient {
      * @param useLogicalNameReferencing Is Logical Name referencing used.
      */
     public GXDLMSClient(final boolean useLogicalNameReferencing) {
-        this(useLogicalNameReferencing, 16, 1, Authentication.NONE, (byte[])null, InterfaceType.HDLC);
+        this(useLogicalNameReferencing, 16, 1, Authentication.NONE, (byte[]) null, InterfaceType.HDLC);
     }
 
     /**
@@ -221,322 +239,6 @@ public class GXDLMSClient {
         setPassword(password);
         setInterfaceType(interfaceType);
         settings.getPlc().reset();
-    }
-
-
-    /**
-     * Reserved for internal use.
-     *
-     * @param settings     DLMS settings.
-     * @param classID      Class ID.
-     * @param version      Version number.
-     * @param baseName     Short name.
-     * @param ln           Logical name.
-     * @param accessRights Array of access rights.
-     * @return Created COSEM object.
-     */
-    static GXDLMSObject createDLMSObject(final GXDLMSSettings settings, final int classID, final Object version,
-                                         final int baseName, final Object ln, final Object accessRights, final int lnVersion) {
-        ObjectType type = ObjectType.forValue(classID);
-        GXDLMSObject obj = GXDLMS.createObject(settings, type, classID, ((Number) version).intValue());
-        updateObjectData(obj, type, version, baseName, (byte[]) ln, accessRights, lnVersion);
-        return obj;
-    }
-
-    /*
-     * Reserved for internal use.
-     * @param objectType
-     * @param version
-     * @param baseName
-     * @param logicalName
-     * @param accessRights
-     */
-    private static void updateObjectData(final GXDLMSObject obj, final ObjectType objectType, final Object version,
-                                         final Object baseName, final byte[] logicalName, final Object accessRights, final int lnVersion) {
-        obj.setObjectType(objectType);
-        // Check access rights.
-        if (accessRights instanceof List<?> && ((List<?>) accessRights).size() == 2) {
-            // access_rights: access_right
-            List<?> access = (List<?>) accessRights;
-            for (Object attributeAccess : (List<?>) access.get(0)) {
-                int id = ((Number) ((List<?>) attributeAccess).get(0)).intValue();
-                // Kamstrup is returning -1 here.
-                if (id > 0) {
-                    int tmp = ((Number) ((List<?>) attributeAccess).get(1)).intValue();
-                    if (lnVersion < 3) {
-                        obj.setAccess(id, AccessMode.forValue(tmp));
-                    } else {
-                        obj.setAccess3(id, AccessMode3.forValue(tmp));
-                    }
-                }
-            }
-            for (Object methodAccess : (List<?>) access.get(1)) {
-                int id = ((Number) ((List<?>) methodAccess).get(0)).intValue();
-                int tmp;
-                // If version is 0
-                if (((List<?>) methodAccess).get(1) instanceof Boolean) {
-                    if ((Boolean) ((List<?>) methodAccess).get(1)) {
-                        tmp = 1;
-                    } else {
-                        tmp = 0;
-                    }
-                } else {
-                    // If version is 1.
-                    tmp = ((Number) ((List<?>) methodAccess).get(1)).intValue();
-                }
-
-                if (lnVersion < 3) {
-                    obj.setMethodAccess(id, MethodAccessMode.forValue(tmp));
-                } else {
-                    obj.setMethodAccess3(id, MethodAccessMode3.forValue(tmp));
-                }
-            }
-        }
-        if (baseName != null) {
-            obj.setShortName(((Number) baseName).intValue());
-        }
-        if (version != null) {
-            obj.setVersion(((Number) version).intValue());
-        }
-        obj.setLogicalName(GXCommon.toLogicalName(logicalName));
-    }
-
-    /**
-     * Get Value from byte array received from the meter.
-     *
-     * @param data Byte array received from the meter.
-     * @return Received data.
-     */
-    public static Object getValue(final GXByteBuffer data) {
-        GXDataInfo info = new GXDataInfo();
-        return GXCommon.getData(null, data, info);
-    }
-
-    /**
-     * Get Value from byte array received from the meter.
-     *
-     * @param data   Byte array received from the meter.
-     * @param useUtc Standard says that Time zone is from normal time to UTC in
-     *               minutes. If meter is configured to use UTC time (UTC to normal
-     *               time) set this to true.
-     * @return Received data.
-     */
-    public static Object getValue(final GXByteBuffer data, final boolean useUtc) {
-        GXDataInfo info = new GXDataInfo();
-        GXDLMSSettings settings = new GXDLMSSettings(false, null, null);
-        settings.setUseUtc2NormalTime(useUtc);
-        return GXCommon.getData(settings, data, info);
-    }
-
-    /**
-     * Changes byte array received from the meter to given type.
-     *
-     * @param value Byte array received from the meter.
-     * @param type  Wanted type.
-     * @return Value changed by type.
-     */
-    public static Object changeType(final byte[] value, final DataType type) {
-        return changeType(value, type, false);
-    }
-
-    /**
-     * Changes byte array received from the meter to given type.
-     *
-     * @param value  Byte array received from the meter.
-     * @param type   Wanted type.
-     * @param useUtc Standard says that Time zone is from normal time to UTC in
-     *               minutes. If meter is configured to use UTC time (UTC to normal
-     *               time) set this to true.
-     * @return Value changed by type.
-     */
-    public static Object changeType(final byte[] value, final DataType type, final boolean useUtc) {
-        if (value == null) {
-            return null;
-        }
-        GXDLMSSettings settings = new GXDLMSSettings(false, null, null);
-        settings.setUseUtc2NormalTime(useUtc);
-        return changeType(value, type, settings);
-    }
-
-    /**
-     * Changes byte array received from the meter to given type.
-     *
-     * @param value    Byte array received from the meter.
-     * @param type     Wanted type.
-     * @param settings DLMS settings.
-     * @return Value changed by type.
-     */
-    public static Object changeType(final byte[] value, final DataType type, final GXDLMSSettings settings) {
-        if (value == null) {
-            return null;
-        }
-        if (type == DataType.NONE) {
-            return GXCommon.toHex(value, true);
-        }
-        if (type == DataType.OCTET_STRING && value instanceof byte[]) {
-            return new GXByteBuffer(value);
-        }
-        if (type == DataType.STRING && !GXByteBuffer.isAsciiString(value)) {
-            return new GXByteBuffer(value);
-        }
-        if (value.length == 0 && (type == DataType.STRING || type == DataType.OCTET_STRING)) {
-            return "";
-        }
-        if (value.length == 0 && type == DataType.DATETIME) {
-            return new GXDateTime(new Date(0));
-        }
-        if (value.length == 0 && type == DataType.DATE) {
-            return new GXDate(new Date(0));
-        }
-        if (value.length == 0 && type == DataType.TIME) {
-            return new GXTime(new Date(0));
-        }
-        GXDataInfo info = new GXDataInfo();
-        info.setType(type);
-        Object ret = GXCommon.getData(settings, new GXByteBuffer(value), info);
-        if (!info.isComplete()) {
-            throw new IllegalArgumentException("Change type failed. Not enought data.");
-        }
-        return ret;
-    }
-
-    /**
-     * Create object by object type.
-     *
-     * @param type Object type.
-     * @return Created object.
-     */
-    public static GXDLMSObject createObject(final ObjectType type) {
-        return GXDLMS.createObject(null, type, 0, 0);
-    }
-
-    /**
-     * Create custom object by object type.
-     *
-     * @param type Object type as an integer.
-     * @return Created object.
-     */
-    public static GXDLMSObject createCustomObject(final GXDLMSSettings settings, final int type) {
-        return GXDLMS.createObject(settings, null, type, 0);
-    }
-
-    /**
-     * Converts meter serial number to server address. Default formula is used.
-     * All meters do not use standard formula or support serial number
-     * addressing at all.
-     *
-     * @param serialNumber Meter serial number
-     * @return Server address.
-     */
-    public static int getServerAddress(final int serialNumber) {
-        return getServerAddress(serialNumber, null);
-    }
-
-    /**
-     * Converts meter serial number to server address. Default formula is used.
-     * All meters do not use standard formula or support serial number
-     * addressing at all.
-     *
-     * @param serialNumber Meter serial number
-     * @param formula      Formula used to convert serial number to server address.
-     * @return Server address.
-     */
-
-    public static int getServerAddress(final int serialNumber, final String formula) {
-        // If formula is not given use default formula.
-        // This formula is defined in DLMS specification.
-        if (formula == null || formula.length() == 0) {
-            return 0x4000 | SerialNumberCounter.count(serialNumber, "SN % 10000 + 1000");
-        }
-        return 0x4000 | SerialNumberCounter.count(serialNumber, formula);
-    }
-
-    /**
-     * Convert physical address and logical address to server address.
-     *
-     * @param logicalAddress  Server logical address.
-     * @param physicalAddress Server physical address.
-     * @return Server address.
-     */
-    public static int getServerAddress(final int logicalAddress, final int physicalAddress) {
-        return getServerAddress(logicalAddress, physicalAddress, 0);
-    }
-
-    /**
-     * Convert physical address and logical address to server address.
-     *
-     * @param logicalAddress  Server logical address.
-     * @param physicalAddress Server physical address.
-     * @param addressSize     Address size in bytes.
-     * @return Server address.
-     */
-    public static int getServerAddress(final int logicalAddress, final int physicalAddress, final int addressSize) {
-        if (addressSize < 4 && physicalAddress < 0x80 && logicalAddress < 0x80) {
-            return logicalAddress << 7 | physicalAddress;
-        }
-        if (physicalAddress < 0x4000 && logicalAddress < 0x4000) {
-            return logicalAddress << 14 | physicalAddress;
-        }
-        throw new IllegalArgumentException("Invalid logical or physical address.");
-    }
-
-    /**
-     * Get initial Conformance.
-     *
-     * @param useLogicalNameReferencing Is logical name referencing used.
-     * @return Initial Conformance.
-     */
-    public static Set<Conformance> getInitialConformance(final boolean useLogicalNameReferencing) {
-        Set<Conformance> list = new HashSet<Conformance>();
-        if (useLogicalNameReferencing) {
-            list.addAll(Arrays.asList(Conformance.GENERAL_BLOCK_TRANSFER, Conformance.BLOCK_TRANSFER_WITH_ACTION,
-                    Conformance.BLOCK_TRANSFER_WITH_SET_OR_WRITE, Conformance.BLOCK_TRANSFER_WITH_GET_OR_READ,
-                    Conformance.SET, Conformance.SELECTIVE_ACCESS, Conformance.ACTION, Conformance.MULTIPLE_REFERENCES,
-                    Conformance.GET, Conformance.ACCESS, Conformance.GENERAL_PROTECTION,
-                    Conformance.DELTA_VALUE_ENCODING));
-        } else {
-            list.addAll(Arrays.asList(Conformance.INFORMATION_REPORT, Conformance.READ, Conformance.UN_CONFIRMED_WRITE,
-                    Conformance.WRITE, Conformance.PARAMETERIZED_ACCESS, Conformance.MULTIPLE_REFERENCES,
-                    Conformance.DELTA_VALUE_ENCODING));
-        }
-        return list;
-    }
-
-    /**
-     * Get HDLC sender and receiver address information.
-     *
-     * @param reply  Received data.
-     * @param target target (primary) address
-     * @param source Source (secondary) address.
-     * @param type   DLMS frame type.
-     */
-    public static void getHdlcAddressInfo(final GXByteBuffer reply, final int[] target, final int[] source,
-                                          final short[] type) {
-        GXDLMS.getHdlcAddressInfo(reply, target, source, type);
-    }
-
-    /**
-     * Encrypt Landis+Gyr High level password.
-     *
-     * @param password User password.
-     * @param seed     Seed received from the meter.
-     * @return Encrypted challenge.
-     */
-    public static byte[] encryptLandisGyrHighLevelAuthentication(final byte[] password, final byte[] seed) {
-        byte[] crypted = seed.clone();
-        for (int pos = 0; pos != password.length; ++pos) {
-            if (password[pos] != 0x30) {
-                crypted[pos] += (password[pos] - 0x30);
-                // Convert to upper case.
-                if (crypted[pos] > '9' && crypted[pos] < 'A') {
-                    crypted[pos] += 7;
-                }
-            }
-            if (crypted[pos] > 'F') {
-                crypted[pos] = (byte) ('0' + crypted[pos] - 'G');
-            }
-        }
-        return crypted;
     }
 
     /**
@@ -593,14 +295,6 @@ public class GXDLMSClient {
     public final void setObisCodes(final GXObisCodeCollection value) {
         obisCodes = value;
     }
-
-    /// <summary>
-    /// Client to Server custom challenge.
-    /// </summary>
-    /// <remarks>
-    /// This is for debugging purposes. Reset custom challenge settings
-    /// CtoSChallenge to null.
-    /// </remarks>
 
     /**
      * Set starting packet index. Default is One based, but some meters use Zero
@@ -744,6 +438,14 @@ public class GXDLMSClient {
         settings.setUseLogicalNameReferencing(value);
     }
 
+    /// <summary>
+    /// Client to Server custom challenge.
+    /// </summary>
+    /// <remarks>
+    /// This is for debugging purposes. Reset custom challenge settings
+    /// CtoSChallenge to null.
+    /// </remarks>
+
     /**
      * Client to Server custom challenge.
      *
@@ -760,9 +462,8 @@ public class GXDLMSClient {
      * @param value Client to Server challenge.
      */
     public final void setCtoSChallenge(final byte[] value) {
-        boolean custom = value != null && value.length != 0;
-        settings.setUseCustomChallenge(custom);
-        settings.setCtoSChallenge(custom ? value : null);
+        settings.setUseCustomChallenge(value != null);
+        settings.setCtoSChallenge(value);
     }
 
     /**
@@ -1466,8 +1167,8 @@ public class GXDLMSClient {
             // Length.
             buff.setUInt8(0);
             buff.setUInt8(0x80);
-            buff.setUInt8(01);
-            buff.setUInt8(00);
+            buff.setUInt8(1);
+            buff.setUInt8(0);
             GXAPDU.generateUserInformation(settings, settings.getCipher(), null, buff);
             if (settings.isCiphered(false)) {
                 settings.getCipher().setInvocationCounter(settings.getCipher().getInvocationCounter() + 1);
@@ -1555,6 +1256,25 @@ public class GXDLMSClient {
     }
 
     /**
+     * Reserved for internal use.
+     *
+     * @param settings     DLMS settings.
+     * @param classID      Class ID.
+     * @param version      Version number.
+     * @param baseName     Short name.
+     * @param ln           Logical name.
+     * @param accessRights Array of access rights.
+     * @return Created COSEM object.
+     */
+    static GXDLMSObject createDLMSObject(final GXDLMSSettings settings, final int classID, final Object version,
+                                         final int baseName, final Object ln, final Object accessRights, final int lnVersion) {
+        ObjectType type = ObjectType.forValue(classID);
+        GXDLMSObject obj = GXDLMS.createObject(settings, type, classID, ((Number) version).intValue());
+        updateObjectData(obj, type, version, baseName, (byte[]) ln, accessRights, lnVersion);
+        return obj;
+    }
+
+    /**
      * Parse SN objects.
      *
      * @param buff                  Byte stream where objects are parsed.
@@ -1595,16 +1315,74 @@ public class GXDLMSClient {
                     if ((!ignoreInactiveObjects || !"0.0.127.0.0.0".equals(comp.getLogicalName()))) {
                         items.add(comp);
                     } else {
-                        String str = "Inactive object : " + String.valueOf(classID) + " " + String.valueOf(baseName);
+                        String str = "Inactive object : " + classID + " " + baseName;
                         LOGGER.log(Level.FINE, str);
                     }
                 } else {
-                    String str = "Unknown object : " + String.valueOf(classID) + " " + String.valueOf(baseName);
+                    String str = "Unknown object : " + classID + " " + baseName;
                     LOGGER.log(Level.FINE, str);
                 }
             }
         }
         return items;
+    }
+
+    /*
+     * Reserved for internal use.
+     * @param objectType
+     * @param version
+     * @param baseName
+     * @param logicalName
+     * @param accessRights
+     */
+    private static void updateObjectData(final GXDLMSObject obj, final ObjectType objectType, final Object version,
+                                         final Object baseName, final byte[] logicalName, final Object accessRights, final int lnVersion) {
+        obj.setObjectType(objectType);
+        // Check access rights.
+        if (accessRights instanceof List<?> && ((List<?>) accessRights).size() == 2) {
+            // access_rights: access_right
+            List<?> access = (List<?>) accessRights;
+            for (Object attributeAccess : (List<?>) access.get(0)) {
+                int id = ((Number) ((List<?>) attributeAccess).get(0)).intValue();
+                // Kamstrup is returning -1 here.
+                if (id > 0) {
+                    int tmp = ((Number) ((List<?>) attributeAccess).get(1)).intValue();
+                    if (lnVersion < 3) {
+                        obj.setAccess(id, AccessMode.forValue(tmp));
+                    } else {
+                        obj.setAccess3(id, AccessMode3.forValue(tmp));
+                    }
+                }
+            }
+            for (Object methodAccess : (List<?>) access.get(1)) {
+                int id = ((Number) ((List<?>) methodAccess).get(0)).intValue();
+                int tmp;
+                // If version is 0
+                if (((List<?>) methodAccess).get(1) instanceof Boolean) {
+                    if ((Boolean) ((List<?>) methodAccess).get(1)) {
+                        tmp = 1;
+                    } else {
+                        tmp = 0;
+                    }
+                } else {
+                    // If version is 1.
+                    tmp = ((Number) ((List<?>) methodAccess).get(1)).intValue();
+                }
+
+                if (lnVersion < 3) {
+                    obj.setMethodAccess(id, MethodAccessMode.forValue(tmp));
+                } else {
+                    obj.setMethodAccess3(id, MethodAccessMode3.forValue(tmp));
+                }
+            }
+        }
+        if (baseName != null) {
+            obj.setShortName(((Number) baseName).intValue());
+        }
+        if (version != null) {
+            obj.setVersion(((Number) version).intValue());
+        }
+        obj.setLogicalName(GXCommon.toLogicalName(logicalName));
     }
 
     /**
@@ -1697,12 +1475,11 @@ public class GXDLMSClient {
             int ot = ((Number) (objects.get(0))).intValue() & 0xFFFF;
             // Get LN association version.
             if (ot == ObjectType.ASSOCIATION_LOGICAL_NAME.getValue()
-                    && "0.0.40.0.0.255".equals(GXCommon.toLogicalName((byte[]) objects.get(2)))) {
+                    && "0.0.40.0.0.255".equals(GXCommon.toLogicalName(objects.get(2)))) {
                 lnVersion = ((Number) (objects.get(1))).intValue();
                 break;
             }
         }
-        objectCnt = 0;
         buff.position(pos);
         for (long objPos = 0; objPos != cnt; ++objPos) {
             // Some meters give wrong item count.
@@ -1725,12 +1502,11 @@ public class GXDLMSClient {
                     if ((!ignoreInactiveObjects || !"0.0.127.0.0.0".equals(comp.getLogicalName()))) {
                         items.add(comp);
                     } else {
-                        String str = "Inactive object : " + String.valueOf(classID) + " " + comp.getLogicalName();
+                        String str = "Inactive object : " + classID + " " + comp.getLogicalName();
                         LOGGER.log(Level.INFO, str);
                     }
                 } else {
-                    String str = "Unknown object : " + String.valueOf(classID) + " "
-                            + GXCommon.toLogicalName((byte[]) objects.get(2));
+                    String str = "Unknown object : " + classID + " " + GXCommon.toLogicalName(objects.get(2));
                     LOGGER.log(Level.INFO, str);
                 }
             }
@@ -1779,6 +1555,33 @@ public class GXDLMSClient {
     }
 
     /**
+     * Get Value from byte array received from the meter.
+     *
+     * @param data Byte array received from the meter.
+     * @return Received data.
+     */
+    public static Object getValue(final GXByteBuffer data) {
+        GXDataInfo info = new GXDataInfo();
+        return GXCommon.getData(null, data, info);
+    }
+
+    /**
+     * Get Value from byte array received from the meter.
+     *
+     * @param data   Byte array received from the meter.
+     * @param useUtc Standard says that Time zone is from normal time to UTC in
+     *               minutes. If meter is configured to use UTC time (UTC to normal
+     *               time) set this to true.
+     * @return Received data.
+     */
+    public static Object getValue(final GXByteBuffer data, final boolean useUtc) {
+        GXDataInfo info = new GXDataInfo();
+        GXDLMSSettings settings = new GXDLMSSettings(false, null, null);
+        settings.setUseUtc2NormalTime(useUtc);
+        return GXCommon.getData(settings, data, info);
+    }
+
+    /**
      * Update list of values.
      *
      * @param list   read objects.
@@ -1801,11 +1604,83 @@ public class GXDLMSClient {
      * @param type  Wanted type.
      * @return Value changed by type.
      */
+    public static Object changeType(final byte[] value, final DataType type) {
+        return changeType(value, type, false);
+    }
+
+    /**
+     * Changes byte array received from the meter to given type.
+     *
+     * @param value  Byte array received from the meter.
+     * @param type   Wanted type.
+     * @param useUtc Standard says that Time zone is from normal time to UTC in
+     *               minutes. If meter is configured to use UTC time (UTC to normal
+     *               time) set this to true.
+     * @return Value changed by type.
+     */
+    public static Object changeType(final byte[] value, final DataType type, final boolean useUtc) {
+        if (value == null) {
+            return null;
+        }
+        GXDLMSSettings settings = new GXDLMSSettings(false, null, null);
+        settings.setUseUtc2NormalTime(useUtc);
+        return changeType(value, type, settings);
+    }
+
+    /**
+     * Changes byte array received from the meter to given type.
+     *
+     * @param value Byte array received from the meter.
+     * @param type  Wanted type.
+     * @return Value changed by type.
+     */
     public Object changeType2(final byte[] value, final DataType type) {
         if (value == null) {
             return null;
         }
         return changeType(value, type, settings);
+    }
+
+    /**
+     * Changes byte array received from the meter to given type.
+     *
+     * @param value    Byte array received from the meter.
+     * @param type     Wanted type.
+     * @param settings DLMS settings.
+     * @return Value changed by type.
+     */
+    public static Object changeType(final byte[] value, final DataType type, final GXDLMSSettings settings) {
+        if (value == null) {
+            return null;
+        }
+        if (type == DataType.NONE) {
+            return GXCommon.toHex(value, true);
+        }
+        if (type == DataType.OCTET_STRING) {
+            return new GXByteBuffer(value);
+        }
+        if (type == DataType.STRING && !GXByteBuffer.isAsciiString(value)) {
+            return new GXByteBuffer(value);
+        }
+        if (value.length == 0 && (type == DataType.STRING || type == DataType.OCTET_STRING)) {
+            return "";
+        }
+        if (value.length == 0 && type == DataType.DATETIME) {
+            return new GXDateTime(new Date(0));
+        }
+        if (value.length == 0 && type == DataType.DATE) {
+            return new GXDate(new Date(0));
+        }
+        if (value.length == 0 && type == DataType.TIME) {
+            return new GXTime(new Date(0));
+        }
+        GXDataInfo info = new GXDataInfo();
+        info.setType(type);
+        Object ret = GXCommon.getData(settings, new GXByteBuffer(value), info);
+        if (!info.isComplete()) {
+            throw new IllegalArgumentException("Change type failed. Not enought data.");
+        }
+        return ret;
     }
 
     /**
@@ -2050,6 +1925,7 @@ public class GXDLMSClient {
      * @param dataType   Data type of write object.
      * @param objectType Object type.
      * @param index      Attribute index where data is write.
+     * @param mode       Access mode.
      * @return Generated write message(s).
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
@@ -2057,7 +1933,7 @@ public class GXDLMSClient {
      * @throws InvalidKeyException                Invalid key exception.
      * @throws BadPaddingException                Bad padding exception.
      * @throws IllegalBlockSizeException          Illegal block size exception.
-     * @throws SignatureException
+     * @throws SignatureException                 Signature exception.
      */
     final byte[][] write(final Object name, final Object value, final DataType dataType, final int objectType,
                          final int index, final int mode)
@@ -2390,7 +2266,7 @@ public class GXDLMSClient {
         if (!getNegotiatedConformance().contains(Conformance.MULTIPLE_REFERENCES)) {
             throw new IllegalArgumentException("Meter doesn't support multiple objects reading with one request.");
         }
-        List<byte[]> messages = new ArrayList<byte[]>();
+        List<byte[]> messages = new ArrayList<>();
         GXByteBuffer data = new GXByteBuffer();
         settings.resetBlockIndex();
         if (this.getUseLogicalNameReferencing()) {
@@ -2514,7 +2390,7 @@ public class GXDLMSClient {
                                           final List<Entry<GXDLMSObject, GXDLMSCaptureObject>> columns)
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
-        int pos = 0;
+        int pos;
         int columnStart = 1, columnEnd = 0;
         // If columns are given find indexes.
         if (columns != null && !columns.isEmpty()) {
@@ -2828,6 +2704,26 @@ public class GXDLMSClient {
     }
 
     /**
+     * Create object by object type.
+     *
+     * @param type Object type.
+     * @return Created object.
+     */
+    public static GXDLMSObject createObject(final ObjectType type) {
+        return GXDLMS.createObject(null, type, 0, 0);
+    }
+
+    /**
+     * Create custom object by object type.
+     *
+     * @param type Object type as an integer.
+     * @return Created object.
+     */
+    public static GXDLMSObject createCustomObject(final GXDLMSSettings settings, final int type) {
+        return GXDLMS.createObject(settings, null, type, 0);
+    }
+
+    /**
      * Generates an acknowledgment message, with which the server is informed to
      * send next packets.
      *
@@ -2946,7 +2842,7 @@ public class GXDLMSClient {
             throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, SignatureException {
         data.setXml(null);
-        boolean ret = false;
+        boolean ret;
         try {
             ret = GXDLMS.getData(settings, reply, data, notify);
         } catch (Exception ex) {
@@ -3013,11 +2909,72 @@ public class GXDLMSClient {
     }
 
     /**
+     * Converts meter serial number to server address. Default formula is used.
+     * All meters do not use standard formula or support serial number
+     * addressing at all.
+     *
+     * @param serialNumber Meter serial number
+     * @return Server address.
+     */
+    public static int getServerAddress(final int serialNumber) {
+        return getServerAddress(serialNumber, null);
+    }
+
+    /**
+     * Converts meter serial number to server address. Default formula is used.
+     * All meters do not use standard formula or support serial number
+     * addressing at all.
+     *
+     * @param serialNumber Meter serial number
+     * @param formula      Formula used to convert serial number to server address.
+     * @return Server address.
+     */
+
+    public static int getServerAddress(final int serialNumber, final String formula) {
+        // If formula is not given use default formula.
+        // This formula is defined in DLMS specification.
+        if (formula == null || formula.length() == 0) {
+            return 0x4000 | SerialNumberCounter.count(serialNumber, "SN % 10000 + 1000");
+        }
+        return 0x4000 | SerialNumberCounter.count(serialNumber, formula);
+    }
+
+    /**
+     * Convert physical address and logical address to server address.
+     *
+     * @param logicalAddress  Server logical address.
+     * @param physicalAddress Server physical address.
+     * @return Server address.
+     */
+    public static int getServerAddress(final int logicalAddress, final int physicalAddress) {
+        return getServerAddress(logicalAddress, physicalAddress, 0);
+    }
+
+    /**
+     * Convert physical address and logical address to server address.
+     *
+     * @param logicalAddress  Server logical address.
+     * @param physicalAddress Server physical address.
+     * @param addressSize     Address size in bytes.
+     * @return Server address.
+     */
+    public static int getServerAddress(final int logicalAddress, final int physicalAddress, final int addressSize) {
+        if (addressSize < 4 && physicalAddress < 0x80 && logicalAddress < 0x80) {
+            return logicalAddress << 7 | physicalAddress;
+        }
+        if (physicalAddress < 0x4000 && logicalAddress < 0x4000) {
+            return logicalAddress << 14 | physicalAddress;
+        }
+        throw new IllegalArgumentException("Invalid logical or physical address.");
+    }
+
+    /**
      * Generates a access service message.
      *
      * @param time Send time. Set to DateTime.MinValue is not used.
      * @param list List of access items.
-     * @return Read request as byte array. {@link #parseAccessResponse(List, GXByteBuffer)}
+     * @return Read request as byte array.
+     * {@link #parseAccessResponse(List, GXByteBuffer)
      * @throws NoSuchPaddingException             No such padding exception.
      * @throws NoSuchAlgorithmException           No such algorithm exception.
      * @throws InvalidAlgorithmParameterException Invalid algorithm parameter exception.
@@ -3104,6 +3061,28 @@ public class GXDLMSClient {
                 ((IGXDLMSBase) it.getTarget()).setValue(settings, ve);
             }
         }
+    }
+
+    /**
+     * Get initial Conformance.
+     *
+     * @param useLogicalNameReferencing Is logical name referencing used.
+     * @return Initial Conformance.
+     */
+    public static Set<Conformance> getInitialConformance(final boolean useLogicalNameReferencing) {
+        Set<Conformance> list = new HashSet<Conformance>();
+        if (useLogicalNameReferencing) {
+            list.addAll(Arrays.asList(Conformance.GENERAL_BLOCK_TRANSFER, Conformance.BLOCK_TRANSFER_WITH_ACTION,
+                    Conformance.BLOCK_TRANSFER_WITH_SET_OR_WRITE, Conformance.BLOCK_TRANSFER_WITH_GET_OR_READ,
+                    Conformance.SET, Conformance.SELECTIVE_ACCESS, Conformance.ACTION, Conformance.MULTIPLE_REFERENCES,
+                    Conformance.GET, Conformance.ACCESS, Conformance.GENERAL_PROTECTION,
+                    Conformance.DELTA_VALUE_ENCODING));
+        } else {
+            list.addAll(Arrays.asList(Conformance.INFORMATION_REPORT, Conformance.READ, Conformance.UN_CONFIRMED_WRITE,
+                    Conformance.WRITE, Conformance.PARAMETERIZED_ACCESS, Conformance.MULTIPLE_REFERENCES,
+                    Conformance.DELTA_VALUE_ENCODING));
+        }
+        return list;
     }
 
     /**
@@ -3250,11 +3229,16 @@ public class GXDLMSClient {
     }
 
     /**
-     * @return If protected release is used, release is including a ciphered
-     * xDLMS Initiate request.
+     * Get HDLC sender and receiver address information.
+     *
+     * @param reply  Received data.
+     * @param target target (primary) address
+     * @param source Source (secondary) address.
+     * @param type   DLMS frame type.
      */
-    public boolean getUseProtectedRelease() {
-        return useProtectedRelease;
+    public static void getHdlcAddressInfo(final GXByteBuffer reply, final int[] target, final int[] source,
+                                          final short[] type) {
+        GXDLMS.getHdlcAddressInfo(reply, target, source, type);
     }
 
     /**
@@ -3265,6 +3249,14 @@ public class GXDLMSClient {
      */
     public void setUseProtectedRelease(boolean protectedRelease) {
         useProtectedRelease = protectedRelease;
+    }
+
+    /**
+     * @return If protected release is used, release is including a ciphered
+     * xDLMS Initiate request.
+     */
+    public boolean getUseProtectedRelease() {
+        return useProtectedRelease;
     }
 
     /**
@@ -3284,6 +3276,30 @@ public class GXDLMSClient {
             throw new IllegalArgumentException("Manufacturer ID is 3 chars long string");
         }
         manufacturerId = value;
+    }
+
+    /**
+     * Encrypt Landis+Gyr High level password.
+     *
+     * @param password User password.
+     * @param seed     Seed received from the meter.
+     * @return Encrypted challenge.
+     */
+    public static byte[] encryptLandisGyrHighLevelAuthentication(final byte[] password, final byte[] seed) {
+        byte[] crypted = seed.clone();
+        for (int pos = 0; pos != password.length; ++pos) {
+            if (password[pos] != 0x30) {
+                crypted[pos] += (password[pos] - 0x30);
+                // Convert to upper case.
+                if (crypted[pos] > '9' && crypted[pos] < 'A') {
+                    crypted[pos] += 7;
+                }
+            }
+            if (crypted[pos] > 'F') {
+                crypted[pos] = (byte) ('0' + crypted[pos] - 'G');
+            }
+        }
+        return crypted;
     }
 
     /**

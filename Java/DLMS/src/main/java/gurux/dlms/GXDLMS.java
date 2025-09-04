@@ -1035,6 +1035,10 @@ abstract class GXDLMS {
                     reply.set(tmp);
                 }
             }
+            if (reply.size() != 0 && p.command != Command.GENERAL_BLOCK_TRANSFER
+                    && p.getSettings().getCryptoNotifier() != null) {
+                p.getSettings().getCryptoNotifier().onPdu(p.getSettings().getCryptoNotifier(), reply.array());
+            }
             if (ciphering && reply.size() != 0 && p.getCommand() != Command.RELEASE_REQUEST && (!p.isMultipleBlocks()
                     || !p.getSettings().getNegotiatedConformance().contains(Conformance.GENERAL_BLOCK_TRANSFER))) {
                 // GBT ciphering is done for all the data, not just block.
@@ -5062,6 +5066,10 @@ abstract class GXDLMS {
                 byte[] tmp = GXCiphering.decrypt(settings.getCipher(), p, data.getData());
                 cipher.setSecuritySuite(p.getSecuritySuite());
                 cipher.setSecurity(p.getSecurity());
+                if (settings.getCryptoNotifier() != null && data.isComplete()
+                        && !data.getMoreData().contains(RequestTypes.FRAME)) {
+                    settings.getCryptoNotifier().onPdu(settings.getCryptoNotifier(), tmp);
+                }
                 data.getData().clear();
                 data.getData().set(tmp);
                 // Get command.
@@ -5109,7 +5117,13 @@ abstract class GXDLMS {
                     }
 
                 }
-                data.getData().set(GXCiphering.decrypt(settings.getCipher(), p, bb));
+                byte[] tmp = GXCiphering.decrypt(settings.getCipher(), p, bb);
+                data.getData().set(tmp);
+                if (settings.getCryptoNotifier() != null && data.isComplete()
+                        && !data.getMoreData().contains(RequestTypes.FRAME)) {
+                    settings.getCryptoNotifier().onPdu(settings.getCryptoNotifier(), tmp);
+                }
+
                 // Get command.
                 data.setCipheredCommand(data.getCommand());
                 data.setCommand(Command.NONE);

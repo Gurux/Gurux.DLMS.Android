@@ -34,6 +34,8 @@
 
 package gurux.dlms.enums;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -114,20 +116,9 @@ public enum InterfaceType {
         return this.ordinal();
     }
 
-    public static InterfaceType[] getEnumConstants() {
-        return new InterfaceType[]{HDLC,
-                WRAPPER,
-                PDU,
-                WIRELESS_MBUS,
-                HDLC_WITH_MODE_E,
-                PLC,
-                PLC_HDLC,
-                LPWAN,
-                WI_SUN,
-                PLC_PRIME,
-                WIRED_MBUS,
-                SMS
-        };
+    static InterfaceType[] getEnumConstants() {
+        return new InterfaceType[] { HDLC, WRAPPER, PDU, WIRELESS_MBUS, HDLC_WITH_MODE_E, PLC, PLC_HDLC, LPWAN, WI_SUN,
+                PLC_PRIME, WIRED_MBUS, SMS, PRIME_DC_WRAPPER, COAP };
     }
 
     /*
@@ -141,7 +132,7 @@ public enum InterfaceType {
      * Convert integer for enumeration values.
      */
     public static Set<InterfaceType> getInterfaceTypes(final int value) {
-        Set<InterfaceType> types = new HashSet<InterfaceType>();
+        Set<InterfaceType> types = new HashSet<>();
         InterfaceType[] enums = getEnumConstants();
         for (int pos = 0; pos != enums.length; ++pos) {
             if ((enums[pos].getValue() & value) == enums[pos].getValue()) {
@@ -151,6 +142,7 @@ public enum InterfaceType {
         return types;
     }
 
+    @NonNull
     @Override
     public String toString() {
         String str;
@@ -192,6 +184,12 @@ public enum InterfaceType {
             case SMS:
                 str = "SMS";
                 break;
+            case PRIME_DC_WRAPPER:
+                str = "DC WRAPPER";
+                break;
+            case COAP:
+                str = "CoAP";
+                break;
             default:
                 str = "";
                 break;
@@ -199,6 +197,7 @@ public enum InterfaceType {
         return str;
     }
 
+    @SuppressWarnings("unused")
     public static InterfaceType valueOfString(final String value) {
         InterfaceType v;
         if ("HDLC".equalsIgnoreCase(value)) {
@@ -225,6 +224,10 @@ public enum InterfaceType {
             v = InterfaceType.WIRED_MBUS;
         } else if ("SMS".equalsIgnoreCase(value)) {
             v = InterfaceType.SMS;
+        } else if ("DC WRAPPER".equalsIgnoreCase(value)) {
+            v = InterfaceType.PRIME_DC_WRAPPER;
+        } else if ("CoAP".equalsIgnoreCase(value)) {
+            v = InterfaceType.COAP;
         } else {
             throw new IllegalArgumentException(value);
         }
