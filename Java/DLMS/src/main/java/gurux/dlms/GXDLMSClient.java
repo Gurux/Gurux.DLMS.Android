@@ -462,7 +462,7 @@ public class GXDLMSClient {
      * @param value Client to Server challenge.
      */
     public final void setCtoSChallenge(final byte[] value) {
-        settings.setUseCustomChallenge(value != null);
+        settings.setUseCustomChallenge(value != null && value.length != 0);
         settings.setCtoSChallenge(value);
     }
 
