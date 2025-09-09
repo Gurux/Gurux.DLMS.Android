@@ -37,6 +37,7 @@ package gurux.dlms.android;
 import androidx.annotation.NonNull;
 
 import gurux.common.IGXMedia;
+import gurux.common.enums.TraceLevel;
 import gurux.dlms.enums.Authentication;
 import gurux.dlms.enums.InterfaceType;
 import gurux.dlms.enums.Security;
@@ -160,6 +161,11 @@ public class GXDevice {
      * Media.
      */
     private IGXMedia mMedia;
+
+    /*
+     * Trace level.
+     */
+    private TraceLevel mTraceLevel;
 
     /**
      * @return Wait time.
@@ -491,5 +497,19 @@ public class GXDevice {
      */
     public void setConformance(final int value) {
         mConformance = value;
+    }
+
+    /**
+     * @return Trace level.
+     */
+    public TraceLevel getTraceLevel() {
+        return mTraceLevel;
+    }
+
+    /**
+     * @param value Trace level.
+     */
+    public void setTraceLevel(final TraceLevel value) {
+        this.mTraceLevel = value;
     }
 }

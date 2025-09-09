@@ -1,8 +1,11 @@
 package gurux.dlms.android;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -31,6 +34,7 @@ import gurux.common.MediaStateEventArgs;
 import gurux.common.PropertyChangedEventArgs;
 import gurux.common.ReceiveEventArgs;
 import gurux.common.TraceEventArgs;
+import gurux.common.enums.TraceLevel;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.android.databinding.ActivityMainBinding;
 import gurux.dlms.android.ui.main.MainViewModel;
@@ -155,10 +159,28 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
                     url.setFocusable(false);
                     url.setTextIsSelectable(false);
                     layout.addView(url);
+
+                    final TextView osVersion = new EditText(this);
+                    osVersion.setMovementMethod(LinkMovementMethod.getInstance());
+                    osVersion.setText(String.format("Android version: %s (SDK %s", Build.VERSION.RELEASE, Build.VERSION.SDK_INT));
+                    osVersion.setLinksClickable(false);
+                    osVersion.setFocusable(false);
+                    osVersion.setTextIsSelectable(false);
+                    layout.addView(osVersion);
+
+                    String message = String.format("Version: %s", packageInfo.versionName) + System.lineSeparator() +
+                            String.format("Android version: %s (SDK %s", Build.VERSION.RELEASE, Build.VERSION.SDK_INT);
+
                     new AlertDialog.Builder(this)
                             .setTitle("About Gurux DLMS component")
                             .setView(layout)
                             .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+                            .setNeutralButton("Copy", (dialog, which) -> {
+                                ClipboardManager clipboard =
+                                        (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText("Gurux.DLMS", message);
+                                clipboard.setPrimaryClip(clip);
+                            })
                             .show();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -183,6 +205,13 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
             mDevice.setManufacturer(man);
             try {
                 mDevice.setInterfaceType(InterfaceType.values()[s.getInt("interfaceType", 0)]);
+            } catch (Exception ex) {
+                //Old way...
+                mDevice.setInterfaceType(InterfaceType.HDLC);
+            }
+
+            try {
+                mDevice.setTraceLevel(TraceLevel.values()[s.getInt("traceLevel", 0)]);
             } catch (Exception ex) {
                 //Old way...
                 mDevice.setInterfaceType(InterfaceType.HDLC);
@@ -251,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
         editor.putInt("interfaceType", mDevice.getInterfaceType().getValue());
         editor.putInt("waitTime", mDevice.getWaitTime());
         editor.putInt("maximumBaudRate", mDevice.getMaximumBaudRate());
+        editor.putInt("traceLevel", mDevice.getTraceLevel().ordinal());
         if (mDevice.getAuthentication() != null) {
             editor.putString("authentication", mDevice.getAuthentication().toString());
         }

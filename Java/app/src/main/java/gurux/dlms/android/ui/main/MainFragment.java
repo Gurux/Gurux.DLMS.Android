@@ -35,6 +35,7 @@ import gurux.common.ReceiveEventArgs;
 import gurux.common.ReceiveParameters;
 import gurux.common.TraceEventArgs;
 import gurux.common.enums.MediaState;
+import gurux.common.enums.TraceLevel;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSClient;
 import gurux.dlms.GXDLMSConverter;
@@ -92,19 +93,20 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     private void readAssociationView() {
         //Clear trace.
         binding.trace.setText("");
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> handler.post(() -> {
-            try {
-                refresh();
-                showObjects("");
-                //Notify activity that association has read again.
-                mListener.onAssociationChanged();
-                Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-            }
-        }));
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            executor.execute(() -> handler.post(() -> {
+                try {
+                    refresh();
+                    showObjects("");
+                    //Notify activity that association has read again.
+                    mListener.onAssociationChanged();
+                    Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
+                }
+            }));
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -138,15 +140,23 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
             mClient.getCiphering().setDedicatedKey(mDevice.getDedicatedKey());
             mClient.setCtoSChallenge(mDevice.getChallenge());
             mClient.setServerSystemTitle(mDevice.getMeterSystemTitle());
-
+            //Enable trace.
+            if (mDevice.getTraceLevel() == TraceLevel.VERBOSE) {
+                binding.showTrace.setChecked(true);
+                binding.trace.setVisibility(View.VISIBLE);
+                binding.attributes.setVisibility(View.GONE);
+            }
             binding.showTrace.setOnCheckedChangeListener((buttonView, isChecked) -> {
                         if (isChecked) {
+                            mDevice.setTraceLevel(TraceLevel.VERBOSE);
                             binding.trace.setVisibility(View.VISIBLE);
                             binding.attributes.setVisibility(View.GONE);
                         } else {
+                            mDevice.setTraceLevel(TraceLevel.OFF);
                             binding.trace.setVisibility(View.GONE);
                             binding.attributes.setVisibility(View.VISIBLE);
                         }
+                        mListener.onDeviceSettingChanged();
                     }
             );
             binding.open.setOnClickListener(v -> {
@@ -471,13 +481,20 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
                 .format(java.util.Calendar.getInstance().getTime());
     }
 
+    private final StringBuilder mTrace = new StringBuilder();
+
     void writeTrace(final String line) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                binding.trace.append(line + System.lineSeparator());
+        mTrace.append(line).append(System.lineSeparator());
+        //Add trace only 5 times in a second.
+        Runnable flusher = new Runnable() {
+            @Override public void run() {
+                String chunk = mTrace.toString();
+                mTrace.setLength(0);
+                if (!chunk.isEmpty()) binding.trace.append(chunk);
+                binding.trace.postDelayed(this, 200);
             }
-        });
+        };
+        binding.trace.post(flusher);
     }
 
     /*
