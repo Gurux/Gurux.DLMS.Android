@@ -482,14 +482,21 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     }
 
     private final StringBuilder mTrace = new StringBuilder();
+    private final Object uiLLock = new Object();
 
     void writeTrace(final String line) {
-        mTrace.append(line).append(System.lineSeparator());
+        synchronized (uiLLock)
+        {
+            mTrace.append(line).append(System.lineSeparator());
+        }
         //Add trace only 5 times in a second.
         Runnable flusher = new Runnable() {
             @Override public void run() {
-                String chunk = mTrace.toString();
-                mTrace.setLength(0);
+                String chunk;
+                synchronized (uiLLock) {
+                    chunk = mTrace.toString();
+                    mTrace.setLength(0);
+                }
                 if (!chunk.isEmpty()) binding.trace.append(chunk);
                 binding.trace.postDelayed(this, 200);
             }

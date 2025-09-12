@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSCertificateException;
 import gurux.dlms.GXSimpleEntry;
@@ -55,8 +56,8 @@ public class GXPkcs10 {
     private String subject;
 
     /**
-     * Collection of attributes providing additional information about the subject
-     * of the certificate.
+     * Collection of attributes providing additional information about the
+     * subject of the certificate.
      */
     private List<Map.Entry<PkcsObjectIdentifier, Object[]>> attributes;
     /**
@@ -97,9 +98,8 @@ public class GXPkcs10 {
      * Constructor.
      *
      * @param data Base64 string.
-     * @deprecated use {@link #fromPem} instead.
+     * @deprecated use {@link #fromPem(String)} instead.
      */
-    @Deprecated
     public GXPkcs10(final String data) {
         final String START = "CERTIFICATE REQUEST-----\n";
         final String END = "-----END CERTIFICATE REQUEST";
@@ -125,10 +125,10 @@ public class GXPkcs10 {
     }
 
     /**
-     * Create x509Certificate from PEM string.
+     * Create GXPkcs10 certificate request from PEM string.
      *
      * @param data PEM string.
-     * @return x509 certificate.
+     * @return GXPkcs10 certificate request.
      */
     public static GXPkcs10 fromPem(final String data) {
         final String START = "CERTIFICATE REQUEST-----\n";
@@ -238,7 +238,7 @@ public class GXPkcs10 {
         }
         /////////////////////////////
         // signature
-        signature = ((GXAsn1BitString) seq.get(2)).getValue();
+        signature = ((GXBitString) seq.get(2)).getValue();
 
         GXByteBuffer tmp2 = new GXByteBuffer();
         tmp2.set(data);
@@ -391,8 +391,10 @@ public class GXPkcs10 {
     private boolean verify(final byte[] data, final byte[] sign) {
         try {
             Signature instance;
-            if (signatureAlgorithm == HashAlgorithm.SHA256withECDSA) {
+            if (signatureAlgorithm == HashAlgorithm.SHA_256_WITH_ECDSA) {
                 instance = Signature.getInstance("SHA256withECDSA");
+            } else if (signatureAlgorithm == HashAlgorithm.SHA_384_WITH_ECDSA) {
+                instance = Signature.getInstance("SHA384withECDSA");
             } else if (signatureAlgorithm == HashAlgorithm.SHA_256_RSA) {
                 instance = Signature.getInstance("SHA256withRSA");
             } else {
@@ -410,7 +412,7 @@ public class GXPkcs10 {
         GXByteBuffer bb = new GXByteBuffer();
         bb.setUInt8(4);
         bb.set(GXAsn1Converter.rawValue(publicKey));
-        Object subjectPKInfo = new GXAsn1BitString(bb.array(), 0);
+        Object subjectPKInfo = new GXBitString(bb.array(), 0);
         Object[] tmp = new Object[]{new GXAsn1ObjectIdentifier("1.2.840.10045.2.1"),
                 new GXAsn1ObjectIdentifier("1.2.840.10045.3.1.7")};
         GXAsn1Context list = new GXAsn1Context();
@@ -442,7 +444,7 @@ public class GXPkcs10 {
         // Certification request info.
         // subject Public key info.
         GXAsn1ObjectIdentifier sa = new GXAsn1ObjectIdentifier(signatureAlgorithm.getValue());
-        Object[] list = new Object[]{getData(), new Object[]{sa}, new GXAsn1BitString(signature, 0)};
+        Object[] list = new Object[]{getData(), new Object[]{sa}, new GXBitString(signature, 0)};
         return GXAsn1Converter.toByteArray(list);
     }
 
@@ -478,7 +480,13 @@ public class GXPkcs10 {
         pkc10.setAlgorithm(X9ObjectIdentifier.IdECPublicKey);
         pkc10.setPublicKey(kp.getPublic());
         pkc10.setSubject(subject);
-        pkc10.sign(kp, HashAlgorithm.SHA256withECDSA);
+        HashAlgorithm algorithm;
+        if (kp.getPrivate().getEncoded().length < 70) {
+            algorithm = HashAlgorithm.SHA_256_WITH_ECDSA;
+        } else {
+            algorithm = HashAlgorithm.SHA_384_WITH_ECDSA;
+        }
+        pkc10.sign(kp, algorithm);
         return pkc10;
     }
 
@@ -489,7 +497,7 @@ public class GXPkcs10 {
      * @param cert    PKCS #10 certificate.
      * @param usage   Certificate usage.
      * @return Generated certificate.
-     * @throws IOException IO exception.
+     * @throws IOException IOException
      */
     public static GXx509Certificate getCertificate(final String address, final GXPkcs10 cert, final KeyUsage usage)
             throws IOException {
@@ -548,7 +556,7 @@ public class GXPkcs10 {
      * @param address        Certificate server address.
      * @param certifications List of certification requests.
      * @return Generated certificate(s).
-     * @throws IOException IO exception.
+     * @throws IOException IOException
      */
     public static GXx509Certificate[] getCertificate(final String address,
                                                      final List<GXCertificateRequest> certifications) throws IOException {
@@ -635,11 +643,11 @@ public class GXPkcs10 {
      */
     public static GXPkcs10 load(final Path path) throws IOException {
         byte[] encoded = Files.readAllBytes(path);
-        return new GXPkcs10(new String(encoded));
+        return GXPkcs10.fromPem(new String(encoded));
     }
 
     /**
-     * Save public key to PEM file.
+     * Save Certificate Signing Request to PEM file.
      *
      * @param path File path.
      * @throws IOException IO exception.
@@ -649,7 +657,7 @@ public class GXPkcs10 {
     }
 
     /**
-     * @return Public key in PEM format.
+     * @return Certificate Signing Request in PEM format.
      */
     public String toPem() {
         StringBuilder sb = new StringBuilder();
@@ -663,7 +671,7 @@ public class GXPkcs10 {
     }
 
     /**
-     * @return Public key in DER format.
+     * @return Certificate Signing Request in DER format.
      */
     public String toDer() {
         return GXCommon.toBase64(getEncoded());

@@ -4,6 +4,11 @@
 
 package gurux.dlms.asn;
 
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,11 +36,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-
+import gurux.dlms.GXBitString;
 import gurux.dlms.GXByteBuffer;
 import gurux.dlms.GXDLMSTranslator;
 import gurux.dlms.GXSimpleEntry;
@@ -102,46 +103,64 @@ public final class GXAsn1Converter {
      */
     public static PrivateKey getPrivateKey(final byte[] value)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
-        if (value == null || value.length != 32) {
+        if (value != null && (value.length == 32 || value.length == 48)) {
+            byte[] privKeyBytes;
+            if (value.length == 32) {
+                privKeyBytes = GXCommon
+                        .hexToBytes("3041020100301306072A8648CE3D0201" + "06082A8648CE3D030107 042730250201010420");
+            } else {
+                privKeyBytes =
+                        GXCommon.hexToBytes("304E020100301006072A8648CE3D0201" + "06052B81040022 043730350201010430");
+            }
+            byte[] key = new byte[privKeyBytes.length + value.length];
+            System.arraycopy(privKeyBytes, 0, key, 0, privKeyBytes.length);
+            System.arraycopy(value, 0, key, privKeyBytes.length, value.length);
+            PKCS8EncodedKeySpec priv = new PKCS8EncodedKeySpec(key);
+            KeyFactory kf = KeyFactory.getInstance("EC");
+            return kf.generatePrivate(priv);
+        } else {
             throw new IllegalArgumentException("Invalid private key.");
         }
-        byte[] privKeyBytes = GXCommon
-                .hexToBytes("3041020100301306072A8648CE3D0201" + "06082A8648CE3D030107042730250201010420");
-        byte[] key = new byte[privKeyBytes.length + value.length];
-        System.arraycopy(privKeyBytes, 0, key, 0, privKeyBytes.length);
-        System.arraycopy(value, 0, key, privKeyBytes.length, value.length);
-        PKCS8EncodedKeySpec priv = new PKCS8EncodedKeySpec(key);
-        KeyFactory kf = KeyFactory.getInstance("EC");
-        return kf.generatePrivate(priv);
     }
 
     private static byte[] p256Head = GXCommon.fromBase64("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE");
 
-    /*
-     * Get public key from bytes (P256Key).
+    private static byte[] p384Head =
+            GXCommon.hexToBytes("30 76 30 10 06 07 2A 86 48 CE 3D 02 01" + "06 05 2B 81 04 00 22 03 62 00 04");
+
+    /**
+     * Get public key from bytes.
      *
      * @param value Public key bytes.
-     *
      * @return Public key.
      */
     public static PublicKey getPublicKey(final byte[] value) {
-        if (value == null || value.length != 64) {
+        if (value != null && (value.length == 64 || value.length == 96)) {
+            byte[] head;
+            if (value.length == 64) {
+                head = p256Head;
+            } else {
+                head = p384Head;
+            }
+            byte[] encodedKey;
+            encodedKey = new byte[head.length + value.length];
+            System.arraycopy(head, 0, encodedKey, 0, head.length);
+            System.arraycopy(value, 0, encodedKey, head.length, value.length);
+            KeyFactory eckf;
+            try {
+                eckf = KeyFactory.getInstance("EC");
+            } catch (NoSuchAlgorithmException e) {
+                throw new IllegalStateException("EC key factory not present in runtime");
+            }
+            try {
+                X509EncodedKeySpec ecpks = new X509EncodedKeySpec(encodedKey);
+                return eckf.generatePublic(ecpks);
+            } catch (InvalidKeySpecException e) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
+
+        } else {
             throw new IllegalArgumentException("Invalid public key.");
-        }
-        byte[] encodedKey = new byte[p256Head.length + value.length];
-        System.arraycopy(p256Head, 0, encodedKey, 0, p256Head.length);
-        System.arraycopy(value, 0, encodedKey, p256Head.length, value.length);
-        KeyFactory eckf;
-        try {
-            eckf = KeyFactory.getInstance("EC");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("EC key factory not present in runtime");
-        }
-        try {
-            X509EncodedKeySpec ecpks = new X509EncodedKeySpec(encodedKey);
-            return eckf.generatePublic(ecpks);
-        } catch (InvalidKeySpecException e) {
-            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -155,10 +174,15 @@ public final class GXAsn1Converter {
         if (key == null) {
             throw new IllegalArgumentException("Invalid public key.");
         }
-        GXAsn1BitString tmp = (GXAsn1BitString) ((GXAsn1Sequence) GXAsn1Converter.fromByteArray(key.getEncoded()))
-                .get(1);
+        GXBitString tmp = (GXBitString) ((GXAsn1Sequence) GXAsn1Converter.fromByteArray(key.getEncoded())).get(1);
         GXByteBuffer bb = new GXByteBuffer();
-        bb.set(tmp.getValue(), 1, 64);
+        if (key.getEncoded().length == 91) {
+            bb.set(tmp.getValue(), 1, 64);
+        } else if (key.getEncoded().length == 120) {
+            bb.set(tmp.getValue(), 1, 96);
+        } else {
+            throw new IllegalArgumentException("Invalid public key.");
+        }
         return bb.array();
     }
 
@@ -172,8 +196,9 @@ public final class GXAsn1Converter {
         if (key == null) {
             throw new IllegalArgumentException("Invalid private key.");
         }
-        byte[] tmp = (byte[]) ((GXAsn1Sequence) ((GXAsn1Sequence) GXAsn1Converter.fromByteArray(key.getEncoded()))
-                .get(2)).get(1);
+        byte[] tmp =
+                (byte[]) ((GXAsn1Sequence) ((GXAsn1Sequence) GXAsn1Converter.fromByteArray(key.getEncoded())).get(2))
+                        .get(1);
         GXByteBuffer bb = new GXByteBuffer();
         bb.set(tmp);
         return bb.array();
@@ -207,7 +232,7 @@ public final class GXAsn1Converter {
         return list;
     }
 
-    static String getSubject(final GXAsn1Sequence values) {
+    public static String getSubject(final GXAsn1Sequence values) {
         Object value;
         StringBuilder sb = new StringBuilder();
         for (Object tmp : values) {
@@ -367,13 +392,13 @@ public final class GXAsn1Converter {
                 objects.add(null);
                 break;
             case BerType.BIT_STRING:
-                GXAsn1BitString tmp3 = new GXAsn1BitString(bb.subArray(bb.position(), len));
+                GXBitString tmp3 = new GXBitString(bb.subArray(bb.position(), len));
                 objects.add(tmp3);
                 bb.position(bb.position() + len);
                 if (s != null) {
                     // Append comment.
                     s.appendComment(connectPos, String.valueOf(tmp3.length()) + " bit.");
-                    s.append(tmp3.asString());
+                    s.append(tmp3.toString());
                 }
                 break;
             case BerType.UTC_TIME:
@@ -648,8 +673,8 @@ public final class GXAsn1Converter {
             str = target.toString();
             GXCommon.setObjectCount(str.length(), bb);
             bb.add(str);
-        } else if (target instanceof GXAsn1BitString) {
-            GXAsn1BitString bs = (GXAsn1BitString) target;
+        } else if (target instanceof GXBitString) {
+            GXBitString bs = (GXBitString) target;
             bb.setUInt8(BerType.BIT_STRING);
             GXCommon.setObjectCount(1 + bs.getValue().length, bb);
             bb.setUInt8(bs.getPadBits());
@@ -829,7 +854,7 @@ public final class GXAsn1Converter {
                 list.add(null);
                 break;
             case BerType.BIT_STRING:
-                list.add(new GXAsn1BitString(node.getChildNodes().item(0).getNodeValue()));
+                list.add(new GXBitString(node.getChildNodes().item(0).getNodeValue()));
                 break;
             case BerType.UTC_TIME:
                 try {
