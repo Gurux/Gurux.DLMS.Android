@@ -162,14 +162,14 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
 
                     final TextView osVersion = new EditText(this);
                     osVersion.setMovementMethod(LinkMovementMethod.getInstance());
-                    osVersion.setText(String.format("Android version: %s (SDK %s", Build.VERSION.RELEASE, Build.VERSION.SDK_INT));
+                    osVersion.setText(String.format("Android version: %s (SDK %s)", Build.VERSION.RELEASE, Build.VERSION.SDK_INT));
                     osVersion.setLinksClickable(false);
                     osVersion.setFocusable(false);
                     osVersion.setTextIsSelectable(false);
                     layout.addView(osVersion);
 
                     String message = String.format("Version: %s", packageInfo.versionName) + System.lineSeparator() +
-                            String.format("Android version: %s (SDK %s", Build.VERSION.RELEASE, Build.VERSION.SDK_INT);
+                            String.format("Android version: %s (SDK %s)", Build.VERSION.RELEASE, Build.VERSION.SDK_INT);
 
                     new AlertDialog.Builder(this)
                             .setTitle("About Gurux DLMS component")

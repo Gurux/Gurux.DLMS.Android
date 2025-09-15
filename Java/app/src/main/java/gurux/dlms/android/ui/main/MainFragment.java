@@ -82,6 +82,11 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     private FragmentMainBinding binding;
 
     private ObjectViewModel mObjectViewModel;
+    //Association read background thread.
+    private final ExecutorService associationExecutor = Executors.newSingleThreadExecutor();
+
+    //Association read UI updater.
+    private final Handler associationHandler = new Handler(Looper.getMainLooper());
 
 
     private static boolean isAdded(final GXDLMSObject it, final String newText) {
@@ -93,20 +98,25 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     private void readAssociationView() {
         //Clear trace.
         binding.trace.setText("");
-        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
-            Handler handler = new Handler(Looper.getMainLooper());
-            executor.execute(() -> handler.post(() -> {
-                try {
-                    refresh();
-                    showObjects("");
-                    //Notify activity that association has read again.
-                    mListener.onAssociationChanged();
-                    Toast.makeText(getActivity(), "Refresh done.", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
-                }
-            }));
-        }
+        associationExecutor.execute(() -> {
+            try {
+                refresh();
+                associationHandler.post(() -> {
+                    try {
+                        showObjects("");
+                        mListener.onAssociationChanged();
+                        Toast.makeText(requireContext(), "Refresh done.", Toast.LENGTH_SHORT).show();
+                    } catch (Exception uiEx) {
+                        GXGeneral.showError(requireActivity(), uiEx, getString(R.string.error));
+                    }
+                });
+
+            } catch (Exception e) {
+                associationHandler.post(() ->
+                        GXGeneral.showError(requireActivity(), e, getString(R.string.error))
+                );
+            }
+        });
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -485,13 +495,13 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     private final Object uiLLock = new Object();
 
     void writeTrace(final String line) {
-        synchronized (uiLLock)
-        {
+        synchronized (uiLLock) {
             mTrace.append(line).append(System.lineSeparator());
         }
         //Add trace only 5 times in a second.
         Runnable flusher = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 String chunk;
                 synchronized (uiLLock) {
                     chunk = mTrace.toString();
@@ -916,6 +926,7 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        associationExecutor.shutdownNow();
         binding = null;
     }
 
