@@ -82,11 +82,6 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     private FragmentMainBinding binding;
 
     private ObjectViewModel mObjectViewModel;
-    //Association read background thread.
-    private final ExecutorService associationExecutor = Executors.newSingleThreadExecutor();
-
-    //Association read UI updater.
-    private final Handler associationHandler = new Handler(Looper.getMainLooper());
 
 
     private static boolean isAdded(final GXDLMSObject it, final String newText) {
@@ -97,26 +92,31 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
 
     private void readAssociationView() {
         //Clear trace.
-        binding.trace.setText("");
-        associationExecutor.execute(() -> {
-            try {
-                refresh();
-                associationHandler.post(() -> {
-                    try {
-                        showObjects("");
-                        mListener.onAssociationChanged();
-                        Toast.makeText(requireContext(), "Refresh done.", Toast.LENGTH_SHORT).show();
-                    } catch (Exception uiEx) {
-                        GXGeneral.showError(requireActivity(), uiEx, getString(R.string.error));
-                    }
-                });
+        if (binding.trace != null) {
+            binding.trace.setText("");
+        }
+        Handler handler = new Handler(Looper.getMainLooper());
+        try (ExecutorService associationExecutor = Executors.newSingleThreadExecutor()) {
+            associationExecutor.execute(() -> {
+                try {
+                    refresh();
+                    handler.post(() -> {
+                        try {
+                            showObjects("");
+                            mListener.onAssociationChanged();
+                            Toast.makeText(requireContext(), "Refresh done.", Toast.LENGTH_SHORT).show();
+                        } catch (Exception ex) {
+                            GXGeneral.showError(requireActivity(), ex, getString(R.string.error));
+                        }
+                    });
 
-            } catch (Exception e) {
-                associationHandler.post(() ->
-                        GXGeneral.showError(requireActivity(), e, getString(R.string.error))
-                );
-            }
-        });
+                } catch (Exception e) {
+                    handler.post(() ->
+                            GXGeneral.showError(requireActivity(), e, getString(R.string.error))
+                    );
+                }
+            });
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -176,16 +176,17 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
                     IGXMedia media = mDevice.getMedia();
                     if (media.isOpen()) {
                         //Close connection.
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        executor.execute(() -> handler.post(() -> {
-                            try {
-                                close();
-                                Toast.makeText(getActivity(), "Disconnected.", Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-                            }
-                        }));
+                        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            executor.execute(() -> handler.post(() -> {
+                                try {
+                                    close();
+                                    Toast.makeText(getActivity(), "Disconnected.", Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
+                                }
+                            }));
+                        }
                     } else {
                         //Open connection.
                         binding.trace.setText("Connecting " + media.getName() + System.lineSeparator());
@@ -195,27 +196,28 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
                             binding.trace.append("Block cipher key: " + GXDLMSTranslator.toHex(mClient.getCiphering().getBlockCipherKey()) + System.lineSeparator());
                             binding.trace.append("Authentication key: " + GXDLMSTranslator.toHex(mClient.getCiphering().getAuthenticationKey()) + System.lineSeparator());
                         }
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        executor.execute(() -> handler.post(() -> {
-                            try {
-                                initializeConnection();
-                                Toast.makeText(getActivity(), "Connected.", Toast.LENGTH_SHORT).show();
-                                if (mDevice.getObjects().isEmpty()) {
-                                    new AlertDialog.Builder(getActivity())
-                                            .setTitle("Import association view")
-                                            .setMessage(R.string.readAssociationView)
-                                            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                                                readAssociationView();
-                                            })
-                                            .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
-                                            })
-                                            .show();
+                        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            executor.execute(() -> handler.post(() -> {
+                                try {
+                                    initializeConnection();
+                                    Toast.makeText(getActivity(), "Connected.", Toast.LENGTH_SHORT).show();
+                                    if (mDevice.getObjects().isEmpty()) {
+                                        new AlertDialog.Builder(requireActivity())
+                                                .setTitle("Import association view")
+                                                .setMessage(R.string.readAssociationView)
+                                                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                                    readAssociationView();
+                                                })
+                                                .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                                                })
+                                                .show();
+                                    }
+                                } catch (Exception e) {
+                                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
                                 }
-                            } catch (Exception e) {
-                                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-                            }
-                        }));
+                            }));
+                        }
                     }
                 } catch (Exception e) {
                     GXGeneral.showError(getActivity(), e, getString(R.string.error));
@@ -385,9 +387,11 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
                 // Release is call only for secured connections.
                 // All meters are not supporting Release and it's causing
                 // problems.
-                if (mClient.getInterfaceType() == InterfaceType.WRAPPER || (mClient.getInterfaceType() == InterfaceType.HDLC
-                        && mClient.getCiphering().getSecurity() != Security.NONE)) {
-                    readDataBlock(mClient.releaseRequest(), reply);
+                if (mClient.getCiphering().getSecurity() != Security.NONE) {
+                    byte[][] data = mClient.releaseRequest();
+                    if (data != null) {
+                        readDataBlock(data, reply);
+                    }
                 }
             } catch (Exception e) {
                 //All meters don't support release. It's OK.
@@ -507,11 +511,17 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
                     chunk = mTrace.toString();
                     mTrace.setLength(0);
                 }
-                if (!chunk.isEmpty()) binding.trace.append(chunk);
-                binding.trace.postDelayed(this, 200);
+                if (!chunk.isEmpty() && binding != null) {
+                    binding.trace.append(chunk);
+                }
+                if (binding != null) {
+                    binding.trace.postDelayed(this, 200);
+                }
             }
         };
-        binding.trace.post(flusher);
+        if (binding != null) {
+            binding.trace.post(flusher);
+        }
     }
 
     /*
@@ -926,7 +936,6 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        associationExecutor.shutdownNow();
         binding = null;
     }
 
@@ -944,112 +953,116 @@ public class MainFragment extends Fragment implements IGXMediaListener, IGXActio
         binding.write.setEnabled(false);
         mObjectViewModel.setInProgress(true);
         Toast.makeText(getActivity(), object + " read started.", Toast.LENGTH_SHORT).show();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> handler.post(() -> {
-            try {
-                if (index == 0) {
-                    //Read all.
-                    for (int pos : ((IGXDLMSBase) object).getAttributeIndexToRead(false)) {
-                        if (object instanceof GXDLMSProfileGeneric && pos == 2) {
-                            //Profile generic buffer is read separately.
-                            continue;
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            executor.execute(() -> handler.post(() -> {
+                try {
+                    if (index == 0) {
+                        //Read all.
+                        for (int pos : ((IGXDLMSBase) object).getAttributeIndexToRead(false)) {
+                            if (object instanceof GXDLMSProfileGeneric && pos == 2) {
+                                //Profile generic buffer is read separately.
+                                continue;
+                            }
+                            if (mClient.canRead(object, pos)) {
+                                readObject(object, pos);
+                                object.setDirty(pos, false);
+                            }
+                            showObject(object);
                         }
-                        if (mClient.canRead(object, pos)) {
-                            readObject(object, pos);
-                            object.setDirty(pos, false);
+                    } else {
+                        if (mClient.canRead(object, index)) {
+                            readObject(object, index);
+                            object.setDirty(index, false);
                         }
                         showObject(object);
                     }
-                } else {
-                    if (mClient.canRead(object, index)) {
-                        readObject(object, index);
-                        object.setDirty(index, false);
-                    }
-                    showObject(object);
+                    Toast.makeText(getActivity(), object + " read completed.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
                 }
-                Toast.makeText(getActivity(), object + " read completed.", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-            }
-            mObjectViewModel.setInProgress(false);
-        }));
+                mObjectViewModel.setInProgress(false);
+            }));
+        }
     }
 
     @Override
     public void onWrite(GXDLMSObject object, int index) {
         binding.write.setEnabled(false);
         mObjectViewModel.setInProgress(true);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> handler.post(() -> {
-            try {
-                Toast.makeText(getActivity(), object + " write started.", Toast.LENGTH_SHORT).show();
-                if (index == 0) {
-                    //Write changed attributes.
-                    for (int pos = 1; pos <= object.getAttributeCount(); ++pos) {
-                        if (object.isDirty(pos) && mClient.canWrite(object, pos)) {
-                            byte[][] data = mClient.write(object, pos);
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            executor.execute(() -> handler.post(() -> {
+                try {
+                    Toast.makeText(getActivity(), object + " write started.", Toast.LENGTH_SHORT).show();
+                    if (index == 0) {
+                        //Write changed attributes.
+                        for (int pos = 1; pos <= object.getAttributeCount(); ++pos) {
+                            if (object.isDirty(pos) && mClient.canWrite(object, pos)) {
+                                byte[][] data = mClient.write(object, pos);
+                                GXReplyData reply = new GXReplyData();
+                                readDataBlock(data, reply);
+                                object.setDirty(pos, false);
+                            }
+                            showObject(object);
+                        }
+                    } else {
+                        if (mClient.canWrite(object, index)) {
+                            byte[][] data = mClient.write(object, index);
                             GXReplyData reply = new GXReplyData();
                             readDataBlock(data, reply);
-                            object.setDirty(pos, false);
-                        }
-                        showObject(object);
-                    }
-                } else {
-                    if (mClient.canWrite(object, index)) {
-                        byte[][] data = mClient.write(object, index);
-                        GXReplyData reply = new GXReplyData();
-                        readDataBlock(data, reply);
-                        object.setDirty(index, false);
+                            object.setDirty(index, false);
 
+                        }
                     }
+                    Toast.makeText(getActivity(), object + " write completed.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
                 }
-                Toast.makeText(getActivity(), object + " write completed.", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-            }
-            mObjectViewModel.setInProgress(false);
-        }));
+                mObjectViewModel.setInProgress(false);
+            }));
+        }
     }
 
     @Override
     public void onInvoke(byte[][] frames, final IGXResultHandler handler) {
         mObjectViewModel.setInProgress(true);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler h = new Handler(Looper.getMainLooper());
-        executor.execute(() -> h.post(() -> {
-            try {
-                GXReplyData reply = new GXReplyData();
-                readDataBlock(frames, reply);
-                if (handler != null) {
-                    handler.run(reply.getValue());
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            Handler h = new Handler(Looper.getMainLooper());
+            executor.execute(() -> h.post(() -> {
+                try {
+                    GXReplyData reply = new GXReplyData();
+                    readDataBlock(frames, reply);
+                    if (handler != null) {
+                        handler.run(reply.getValue());
+                    }
+                    Toast.makeText(getActivity(), "Action completed.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
                 }
-                Toast.makeText(getActivity(), "Action completed.", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-            }
-            mObjectViewModel.setInProgress(false);
-        }));
+                mObjectViewModel.setInProgress(false);
+            }));
+        }
     }
 
     @Override
     public void onRaw(byte[][] frames, final IGXResultHandler handler) {
         mObjectViewModel.setInProgress(true);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler h = new Handler(Looper.getMainLooper());
-        executor.execute(() -> h.post(() -> {
-            try {
-                GXReplyData reply = new GXReplyData();
-                readDataBlock(frames, reply);
-                if (handler != null) {
-                    handler.run(reply.getValue());
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            Handler h = new Handler(Looper.getMainLooper());
+            executor.execute(() -> h.post(() -> {
+                try {
+                    GXReplyData reply = new GXReplyData();
+                    readDataBlock(frames, reply);
+                    if (handler != null) {
+                        handler.run(reply.getValue());
+                    }
+                } catch (Exception e) {
+                    GXGeneral.showError(getActivity(), e, getString(R.string.error));
                 }
-            } catch (Exception e) {
-                GXGeneral.showError(getActivity(), e, getString(R.string.error));
-            }
-            mObjectViewModel.setInProgress(false);
-        }));
+                mObjectViewModel.setInProgress(false);
+            }));
+        }
     }
 
     /**

@@ -36,7 +36,9 @@ package gurux.dlms.android;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GXGeneral {
     private GXGeneral() {
@@ -44,6 +46,7 @@ public class GXGeneral {
     }
 
     public static void showError(final Context context, final Exception ex, final String title) {
+        Logger.getLogger(GXGeneral.class.getName()).log(Level.SEVERE, ex.getMessage());
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(ex.getMessage())
