@@ -49,7 +49,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.IO.Ports;
 using System.Text;
-using System.Drawing;
 
 namespace Gurux.DLMS.Client.Example.UI
 {
@@ -531,17 +530,27 @@ namespace Gurux.DLMS.Client.Example.UI
             _client.UpdateValue(pg, 2, reply.Value);
         }
 
-        /**
-         * Reads selected DLMS object with selected attribute index.
-         *
-         * @param item Object to read.
-         * @param attributeIndex
-         * @return Read value.
-         * @ Occurred exception.
-         */
+        /// <summary>
+        /// Write the COSEM object with selected attribute index.
+        /// </summary>
+        /// <param name="item">Object to write.</param>
+        /// <param name="attributeIndex">Attribute index</param>
+        public void WriteObject(GXDLMSObject item, int attributeIndex)
+        {
+            var data = _client.Write(item, attributeIndex);
+            GXReplyData reply = new GXReplyData();
+            ReadDataBlock(data, reply);
+        }
+
+        /// <summary>
+        /// Reads selected DLMS object with selected attribute index.
+        /// </summary>
+        /// <param name="item">Object to read.</param>
+        /// <param name="attributeIndex">Attribute index</param>
+        /// <returns>Read value.</returns>
         public object ReadObject(GXDLMSObject item, int attributeIndex)
         {
-            var data = _client.Read(item.Name, item.ObjectType, attributeIndex)[0];
+            var data = _client.Read(item, attributeIndex);
             GXReplyData reply = new GXReplyData();
             ReadDataBlock(data, reply);
             // Update data type on read.

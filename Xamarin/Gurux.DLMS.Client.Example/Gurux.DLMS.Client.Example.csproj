@@ -127,7 +127,7 @@
       <Version>8.4.2406.401</Version>
     </PackageReference>
     <PackageReference Include="Gurux.DLMS">
-      <Version>9.0.2405.1301</Version>
+      <Version>9.0.2508.2201</Version>
     </PackageReference>
     <PackageReference Include="Gurux.Serial.Android">
       <Version>8.4.2403.2701</Version>
