@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements IGXMediaListener,
                             .setTitle("About Gurux DLMS component")
                             .setView(layout)
                             .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
-                            .setNeutralButton("Copy", (dialog, which) -> {
+                            .setNeutralButton(android.R.string.copy, (dialog, which) -> {
                                 ClipboardManager clipboard =
                                         (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clip = ClipData.newPlainText("Gurux.DLMS", message);
