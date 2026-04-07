@@ -141,7 +141,7 @@ public class MeterGeneralSettingsFragment extends Fragment {
     }
 
     private String getPassword() {
-        if (GXByteBuffer.isAsciiString(mDevice.getPassword())) {
+        if (mDevice.getPassword() != null && GXByteBuffer.isAsciiString(mDevice.getPassword())) {
             return getString(R.string.password) + System.lineSeparator() + new String(mDevice.getPassword());
         }
         return getString(R.string.password) + System.lineSeparator() + GXDLMSTranslator.toHex(mDevice.getPassword());
