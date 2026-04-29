@@ -116,7 +116,7 @@ public class MeterGeneralSettingsFragment extends Fragment {
         if (context instanceof IGXSettingsChangedListener) {
             mListener = (IGXSettingsChangedListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement IGXMediaChangedListener");
+            throw new RuntimeException(context + " must implement IGXMediaChangedListener");
         }
     }
 
